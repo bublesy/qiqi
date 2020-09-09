@@ -1,0 +1,94 @@
+package ${package.Controller};
+
+import ${package.Entity}.${entity};
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.lang.TypeReference;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.qiqi.common.entity.PageEntity;
+import io.swagger.annotations.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import ${package.Service}.${table.serviceName};
+
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+import org.springframework.web.bind.annotation.*;
+import javax.annotation.Resource;
+import java.util.List;
+
+/**
+ * <p>
+ * $!{table.comment} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#set ($tableComment=$table.comment.replace("表",""))
+#set ($tableNamePath=$table.name.replace("_","/"))
+#set ($tableName=$table.entityName.replace("DO",""))
+@Api("${tableComment}相关接口")
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@RequestMapping("/${tableNamePath}")
+#if(${superControllerClass})
+@Validated
+public class ${table.controllerName} extends ${superControllerClass} {
+#else
+public class ${table.controllerName} {
+#end
+#set ($serviceImplName=$table.serviceName.substring(0,1).toLowerCase()+$table.serviceName.substring(1))
+
+    @Resource
+    private ${table.serviceName} ${serviceImplName};
+
+    @ApiOperation(value = "获取$!{tableComment}(列表)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "page",value = "当前页",required = true,dataType = "Long"),
+            @ApiImplicitParam(paramType = "query", name = "count", value = "当前页个数",required = true,dataType = "Long")
+    })
+    @GetMapping("")
+    public PageEntity<${table.entityName}> get${tableName}Page(@RequestParam(value = "page",defaultValue = "1") Long page,
+                                        @RequestParam(value = "count",defaultValue = "10") Long count) {
+        IPage<${table.entityName}> iPage = ${serviceImplName}.page(new Page<>(page,count));
+        //todo: 需要转Vo
+
+        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<${table.entityName}>>() {}, iPage.getRecords()));
+    }
+
+    @ApiOperation(value = "获取$!{tableComment}(单个)")
+    @GetMapping("/{id}")
+    public ${table.entityName} get${tableName}(@PathVariable Long id) {
+        //todo: 需要转Vo
+
+        return ${serviceImplName}.getById(id);
+    }
+
+    @ApiOperation(value = "修改$!{tableComment}")
+    @PutMapping("")
+    public Boolean update${tableName}(@RequestBody ${entity} ${table.entityPath}) {
+        return ${serviceImplName}.updateById(${table.entityPath});
+    }
+
+    @ApiOperation(value = "新增$!{tableComment}")
+    @PostMapping("")
+    public Boolean save${tableName}(@RequestBody ${entity} ${table.entityPath}) {
+        return ${serviceImplName}.save(${table.entityPath});
+    }
+
+    @ApiOperation(value = "删除$!{tableComment}(批量))")
+    @DeleteMapping("")
+    public Boolean delete${tableName}ByIds(@RequestBody List<Long> idList) {
+        return ${serviceImplName}.removeByIds(idList);
+    }
+
+    @ApiOperation(value = "删除$!{tableComment}(单个))")
+    @DeleteMapping("/{id}")
+    public Boolean delete${tableName}ById(@PathVariable Long id) {
+        return ${serviceImplName}.removeById(id);
+    }
+}

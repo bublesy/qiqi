@@ -1,0 +1,24 @@
+# 服务器配置
+server:
+  port: 8080
+  servlet:
+    context-path: /api/admin
+
+# Spring配置
+spring:
+  # 数据源配置
+  datasource:
+    url: jdbc:p6spy:mysql://192.168.1.190:3306/new_retail?characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=UTF-8
+    username: root
+    password: jhls123456
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    type: com.zaxxer.hikari.HikariDataSource
+  jackson:
+    #日期格式化
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+jwt:
+  secret: qiqi-admin-secret #JWT加解密使用的密钥
+  expiration: 604800 #JWT的超期限时间(60*60*24*7)
+
