@@ -2,7 +2,8 @@
   <div style="padding:30px">
     <p class="font">生产排期表</p>
     <el-table
-      ref="multipleTable"
+      re
+      f="multipleTable"
       :data="tableData"
       tooltip-effect="dark"
       style="width: 100%"
