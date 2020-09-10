@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <div id="print">
     <p class="font">海宁市中奇纸箱包装厂</p>
     <p class="font2">生产 制造单</p>
+    <el-button v-print="'#print'" type="primary">打印</el-button>
     <!-- <div id="app" style="padding:20px;">
       <div class="panel panel-primary">
         <div class="panel-heading">用户管理</div>

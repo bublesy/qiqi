@@ -1,5 +1,6 @@
 <template>
   <div style="padding:30px">
+    <p class="font">生产排期表</p>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -62,6 +63,17 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.font{
+  font-weight: bold;
+  width:400px;
+  height: 100px;
+  line-height: 100px;
+  font-size: 30px;
+  font-family: 'Courier New', Courier, monospace;
+  /* text-align: center; */
+  margin-left: 40%;
+  margin-bottom: 0%;
+}
+</style>>
 
-</style>
