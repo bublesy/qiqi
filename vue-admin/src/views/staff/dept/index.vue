@@ -1,6 +1,6 @@
 <template>
   <div style="margin:30px">
-    <p class="font">职位管理</p>
+    <p class="font">部门管理</p>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -9,7 +9,8 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column prop="name" label="职位名称" width="120" />
+      <el-table-column prop="name" label="部门名称" width="120" />
+      <el-table-column prop="name" label="lastmodifytime" width="120" />
     </el-table>
     <el-pagination
       :current-page="page"
@@ -25,7 +26,7 @@
 
 <script>
 export default {
-  name: 'Position',
+  name: 'Daily',
   data() {
     return {
       tableData: [],

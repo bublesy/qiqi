@@ -1,7 +1,6 @@
 <template>
   <div id="print" style="margin:30px">
     <p class="font">人事档案管理</p>
-    <el-button v-print="'#print'" type="primary">打印</el-button>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -46,7 +45,7 @@
 
 <script>
 export default {
-  name: 'Daily',
+  name: 'Personnel',
   data() {
     return {
       tableData: [],
