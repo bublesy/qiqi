@@ -6,6 +6,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
 import '@/styles/index.scss' // global css
+import Print from 'vue-print-nb'
 
 import App from './App'
 import store from './store'
@@ -18,6 +19,7 @@ Vue.use(ElementUI)
 import Avue from '@smallwei/avue'
 import '@smallwei/avue/lib/index.css'
 Vue.use(Avue)
+Vue.use(Print)
 
 import crudCommon from '@/mixins/crud'
 window.$crudCommon = crudCommon
