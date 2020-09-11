@@ -1,5 +1,5 @@
 <template>
-  <div id="print" style="margin:30px">
+  <div style="margin:30px">
     <p class="font">人事档案管理</p>
     <el-table
       ref="multipleTable"

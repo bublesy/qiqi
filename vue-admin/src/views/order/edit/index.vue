@@ -33,7 +33,7 @@
       </el-form-item>
     </el-form>
     <el-button type="primary" size="mini">查询</el-button>
-    <el-button type="primary" size="mini">新增</el-button>
+    <el-button type="primary" size="mini" @click="add">新增</el-button>
     <el-card>
       <el-table
         ref="multipleTable"
@@ -120,6 +120,7 @@ export default {
       this.initTable()
     },
     deleted(id) {},
+    add() {},
     updated(id) {
       this.editDialog.show = true
     }
