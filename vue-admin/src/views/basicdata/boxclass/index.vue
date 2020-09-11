@@ -14,6 +14,7 @@
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
     <el-button size="mini" type="primary" @click="add">新增</el-button>
+    <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
     <el-table
       ref="table"
       :data="tableData"
@@ -55,6 +56,7 @@
 <script>
 import addDialog from '@/views/basicdata/boxclass/add'
 import { getBoxClass, delBoxClass } from '@/api/basedata/boxclass'
+import { export2Excel } from '@/utils/common'
 export default {
   components: { addDialog },
   data() {
@@ -106,7 +108,14 @@ export default {
     query() {
 
     },
-    handleSelectionChange() {}
+    handleSelectionChange() {},
+    toExcel() {
+      var list = this.tableData
+      const th = ['编码', '名称', '限定最大纸长']
+      const filterVal = ['code', 'name', 'limitPaperLength']
+      const data = list.map(v => filterVal.map(k => v[k]))
+      export2Excel(th, data, '箱类设定')
+    }
   }
 
 }
