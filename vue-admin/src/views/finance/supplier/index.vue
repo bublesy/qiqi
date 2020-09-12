@@ -1,18 +1,64 @@
 <template>
   <div class="app-container">
-    <avue-crud
-      v-model="form"
-      v-bind="bindVal"
-      :page.sync="page"
-      v-on="onEvent"
-    />
+    <div class="xz" />
+    <el-select v-model="value" placeholder="请选择月份">
+      <el-option
+        v-for="item in options"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      />
+    </el-select>
+    <el-select v-model="value" placeholder="请选择客户">
+      <el-option
+        v-for="item in options"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      />
+    </el-select>
+    <el-button type="primary">确定</el-button>
+    <el-button type="primary">打印</el-button>
+    <div class="biaoge">
+      <h2 style="text-align:center">供方月结对账单</h2>
+      <p>供方:佳宏包装</p>
+      <p style="text-align:center;margin-top:-40px">打印日期:2020-09-10</p>
+      <table>
+        <tr>
+          <th>任务编号</th>
+          <th>入厂日期</th>
+          <th>采购序号</th>
+          <th>材质</th>
+          <th>纸长</th>
+          <th>纸宽</th>
+          <th>购入数量</th>
+          <th>退货数量</th>
+          <th>退货金额</th>
+          <th>单价</th>
+          <th>账款年月</th>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>2020-09-09</td>
+          <td>480</td>
+          <td>A646A</td>
+          <td>2323</td>
+          <td>889</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>6.55</td>
+          <td>550</td>
+          <td>2020-09-10</td>
+        </tr>
+      </table>
+    </div>
   </div>
 </template>
 
 <script>
 
 export default window.$crudCommon({
-  name: 'Settlement',
+  name: 'Supplier',
   data() {
     return {
       a: []
@@ -98,7 +144,7 @@ export default window.$crudCommon({
     delAfter() {}
   }
 }, {
-  name: 'finance/settlement', // 模块名字
+  name: 'finance/supplier', // 模块名字
   list: 'getRoles', // 列表接口名字
   update: 'editRole', // 更新接口名字
   add: 'addRole', // 新增接口名字
@@ -111,4 +157,24 @@ export default window.$crudCommon({
 })
 </script>
 <style lang="scss" scoped>
+.biaoge{
+  width: 100%;
+  height: 80px;
+  border-bottom:1px solid #717171;
+}
+table{
+  width: 100%;
+  color: black;
+  margin-top: 30px
+}
+tr{
+  width: 9%;
+  line-height: 25px;
+  text-align: center;
+}
+td{
+  width: 9%;
+  text-align: center;
+  height: 30px;
+}
 </style>
