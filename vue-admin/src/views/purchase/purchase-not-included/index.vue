@@ -1,21 +1,13 @@
 <template>
   <el-container>
     <el-main>
-      <div>
+      <div id="print">
         <el-header align="center">采购未进一览表</el-header>
-        <el-form :inline="true" :model="form" size="mini" align="center">
-          <el-form-item label="制表人:">
-            <el-input v-model="form.identity" />
-          </el-form-item>
-          <el-form-item label="日期" prop="deliveryTime">
-            <el-date-picker
-              v-model="form.time"
-              align="right"
-              type="date"
-              placeholder="选择日期"
-            />
-          </el-form-item>
-        </el-form>
+        <span style="margin-left:60px">制表人:{{ }}</span>
+        <span style="margin-left:40%">打印日期:{{ }}</span>
+        <br>
+        <br>
+        <el-button v-print="'#print'" type="primary">打印</el-button>
         <el-table
           ref="multipleTable"
           :summary-method="getSummaries"

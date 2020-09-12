@@ -1,7 +1,10 @@
 <template>
   <div class="app-container">
     <div>
+<<<<<<< HEAD
       <el-button type="success" style="margin-left:80%" @click="print">前往打印</el-button>
+=======
+>>>>>>> master
       <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
       <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
       <div class="dh">
@@ -52,7 +55,11 @@
           <td>备注</td>
         </tr>
         <tr>
+<<<<<<< HEAD
           <td><input type="checkbox"> 分压</td>
+=======
+          <td><input type="checkbox"> 分压<input type="checkbox"></td>
+>>>>>>> master
           <td />
           <td />
           <td />
@@ -60,7 +67,11 @@
           <td />
         </tr>
         <tr>
+<<<<<<< HEAD
           <td><input type="checkbox"> 裱糊</td>
+=======
+          <td><input type="checkbox"> 裱糊<input type="checkbox" checked="checked"></td>
+>>>>>>> master
           <td />
           <td />
           <td />
@@ -68,7 +79,11 @@
           <td />
         </tr>
         <tr>
+<<<<<<< HEAD
           <td><input type="checkbox" checked="checked"> 印刷</td>
+=======
+          <td><input type="checkbox" checked="checked"> 印刷<input type="checkbox" checked="checked"></td>
+>>>>>>> master
           <td />
           <td />
           <td />
@@ -78,23 +93,36 @@
           <td>总面积</td>
         </tr>
         <tr>
+<<<<<<< HEAD
           <td><input type="checkbox" checked="checked"> 开槽</td>
+=======
+          <td><input type="checkbox" checked="checked"> 开槽<input type="checkbox" checked="checked"></td>
+>>>>>>> master
           <td />
           <td />
           <td />
           <td />
           <td />
+<<<<<<< HEAD
           <td colspan="5" rowspan="4" style="vertical-align:top;">生产时注意的内容写在这里!显示在生产单上!</td>
           <td>373.744</td>
         </tr>
         <tr>
           <td><input type="checkbox"> 模切</td>
+=======
+          <td colspan="5" rowspan="3" style="vertical-align:top;">生产时注意的内容写在这里!显示在生产单上!</td>
+          <td>373.744</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"> 模切<input type="checkbox"></td>
+>>>>>>> master
           <td />
           <td />
           <td />
           <td />
           <td />
           <td>是否常规</td>
+<<<<<<< HEAD
         </tr>
         <td><input type="checkbox" checked="checked"> 结合</td>
         <td />
@@ -106,6 +134,20 @@
           <input type="checkbox"> 是<input type="checkbox">
           <input type="checkbox" checked="checked"> 否<input type="checkbox" checked="checked">
         </td>
+=======
+        </tr><tr /><tr>
+          <td><input type="checkbox" checked="checked"> 结合<input type="checkbox" checked="checked"></td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td>
+            <input type="checkbox"> 是<input type="checkbox">
+            <input type="checkbox" checked="checked"> 否<input type="checkbox" checked="checked">
+          </td>
+        </tr>
+>>>>>>> master
       </table>
       <div class="footer">
         <p>制单:管理</p>
@@ -123,6 +165,7 @@ export default {
   inject: ['closeTag', 'reloadTag', 'refreshTag'],
   data() {
     return {
+<<<<<<< HEAD
       // my: '这是测试文本'
 
     }
@@ -143,6 +186,15 @@ export default {
         path: '/index2',
         query: { a: '测试跳转' }
       })
+=======
+      my: '这是测试文本'
+    }
+  },
+  methods: {
+    changeText() {
+      this.my = '这是修改后的文本'
+      this.reloadTag()
+>>>>>>> master
     }
   }
 

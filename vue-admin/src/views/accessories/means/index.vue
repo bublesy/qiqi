@@ -5,14 +5,20 @@
       v-bind="bindVal"
       :page.sync="page"
       v-on="onEvent"
-    />
+    >
+      <template slot="menu" slot-scope="scope">
+        <el-popconfirm title="确认删除这条数据吗？" style="margin-left:10px;" @onConfirm="handleDel( scope.row, scope.index )">
+          <el-button slot="reference" type="text" icon="el-icon-delete" size="small">&nbsp;删除</el-button>
+        </el-popconfirm>
+      </template>
+    </avue-crud>
   </div>
 </template>
 
 <script>
-
+import { removeRole } from '@/api/accessories/means'
 export default window.$crudCommon({
-  name: 'Settlement',
+  inject: ['reloadTag'],
   data() {
     return {
       a: []
@@ -21,6 +27,20 @@ export default window.$crudCommon({
   created() {
   },
   methods: {
+    handleDel(row, index) {
+      removeRole(row.id).then(response => {
+        if (response) {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+        } else {
+          this.$message.error('删除失败')
+        }
+      }).finally(() => {
+        this.reloadTag()
+      })
+    },
     onLoadTable({ page, value, data }, callback) {
       // 首次加载去查询对应的值
       if (value) {
@@ -80,7 +100,12 @@ export default window.$crudCommon({
       // this.form.createUser = 'small'
     },
     // 新增后操作方法
-    addAfter() {
+    addAfter(val) {
+      if (val) {
+        this.$message.success('新增成功')
+      } else {
+        this.$message.error('新增失败')
+      }
     },
 
     // 修改前操作方法
@@ -89,16 +114,24 @@ export default window.$crudCommon({
     },
 
     // 修改后操作方法
-    updateAfter() {},
+    updateAfter(val) {
+      if (val) {
+        this.$message.success('修改成功')
+      } else {
+        this.$message.error('修改失败')
+      }
+    },
 
     // 删除前操作方法
     delBefore() {},
 
     // 删除后操作方法
-    delAfter() {}
+    delAfter() {
+
+    }
   }
 }, {
-  name: 'finance/settlement', // 模块名字
+  name: 'accessories/means', // 模块名字
   list: 'getRoles', // 列表接口名字
   update: 'editRole', // 更新接口名字
   add: 'addRole', // 新增接口名字
