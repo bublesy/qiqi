@@ -21,7 +21,6 @@ export default (safe) => {
       {
         label: '日期',
         prop: 'name',
-        search: true,
         type: 'datetime',
         format: 'yyyy 年 MM 月 dd 日',
         rules: [{
@@ -33,6 +32,7 @@ export default (safe) => {
       {
         label: '供方',
         prop: 'code',
+        search: true,
         rules: [{
           required: true,
           message: '请输入供方名称',

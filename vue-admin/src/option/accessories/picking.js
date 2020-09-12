@@ -22,6 +22,7 @@ export default (safe) => {
         label: '领料人',
         prop: 'name',
         dicData: safe.a,
+        search: true,
         rules: [{
           required: true,
           message: '请输入领料人',
@@ -72,15 +73,9 @@ export default (safe) => {
         prop: 'Table',
         hide: true,
         formslot: true
-        // formWidth: '500px'
-      },
-      {
-        label: '名称',
-        search: true,
-        hide: true,
-        addDisplay: false,
-        editDisplay: false
+        // form '500px'
       }
+
       // 树
       // {
       //   label: '描述',
