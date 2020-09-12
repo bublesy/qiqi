@@ -2,7 +2,7 @@
   <el-container>
     <el-main>
       <div id="print">
-        <el-header align="center">采购过期未进一览表</el-header>
+        <el-header align="center">成品库存待送货情况表</el-header>
         <span style="margin-left:60px">制表人:{{ }}</span>
         <span style="margin-left:40%">打印日期:{{ }}</span>
         <br>
@@ -18,19 +18,23 @@
           style="width: 100%"
         >
           <el-table-column width="50px" align="center" />
-          <el-table-column prop="taskNumber" label="任务编号" />
           <el-table-column prop="customerName" label="客户名称" />
-          <el-table-column prop="paperSize" label="纸片尺寸(MM)纸长 X 纸宽">
+          <el-table-column prop="customerNo" label="客户单号" />
+          <el-table-column prop="taskNumber" label="任务编号" />
+          <el-table-column prop="material" label="材质" />
+          <el-table-column prop="specifications" label="规格(mm)">
             <template slot-scope="scope">
-              {{ scope.row.paperLength }}{{ scope.row.paperWidth }}
+              {{ scope.row.paperLength }} x {{ scope.row.paperWidth }} x {{ scope.row.paperHeight }}
             </template>
           </el-table-column>
-          <el-table-column v-show="true" prop="orderQuantity" label="订单数量" width="140" />
-          <el-table-column prop="purQuantity" label="购入数量" />
-          <el-table-column prop="quaNotEnt" label="未进数量" />
-          <el-table-column prop="supplier" label="供方" />
-          <el-table-column prop="orderDate" label="订货日期" />
-          <el-table-column prop="purchaseDate" label="进货日期" />
+          <el-table-column prop="orderQuantity" label="订单量" />
+          <el-table-column prop="warehousingQuantity" label="入仓数量" />
+          <el-table-column prop="deliveredQuantity" label="已送数量" />
+          <el-table-column prop="stayDeliveredQuantity" label="待送数量" />
+          <el-table-column prop="unitPrice" label="单价" />
+          <el-table-column prop="amount" label="金额" />
+          <el-table-column prop="deliveryDate" label="交货日期" />
+          <el-table-column prop="typeNo" label="款号" />
         </el-table>
         <el-pagination
           background
@@ -50,7 +54,7 @@
 <script scope>
 import initData from '@/mixins/initData'
 export default {
-  name: 'PurchaseNotIncludedOverdue',
+  name: 'EndProductListNotDeliveryNote',
   mixins: [initData],
   data() {
     return {

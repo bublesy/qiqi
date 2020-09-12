@@ -26,14 +26,16 @@
           <el-table-column v-show="true" prop="documentsNo" label="入仓单号" width="140" />
           <el-table-column v-show="true" prop="taskNumber" label="任务编号" width="140" />
           <el-table-column v-show="true" prop="customerName" label="客户名称" width="140" />
-          <el-table-column v-show="true" prop="ridgeType" label="楞型" width="140" />
+          <el-table-column v-show="true" prop="customerNo" label="客户单号" width="140" />
+          <el-table-column v-show="true" prop="typeNo" label="款号" width="140" />
+          <el-table-column v-show="true" prop="boxType" label="箱型" width="140" />
           <el-table-column v-show="true" prop="material" label="材质" width="140" />
-          <el-table-column v-show="true" prop="paperLength" label="纸长" width="140" />
-          <el-table-column v-show="true" prop="paperWidth" label="纸宽" width="140" />
-          <el-table-column v-show="true" prop="orderQuantity" label="订购数量" width="140" />
-          <el-table-column v-show="true" prop="purchaseQuantity" label="购入数量" width="140" />
-          <el-table-column v-show="true" prop="quantityNotEntered" label="未进数量" width="140" />
-          <el-table-column v-show="true" prop="unitPrice" label="单价" width="140" />
+          <el-table-column v-show="true" prop="length" label="长" width="140" />
+          <el-table-column v-show="true" prop="width" label="宽" width="140" />
+          <el-table-column v-show="true" prop="height" label="高" width="140" />
+          <el-table-column v-show="true" prop="unit" label="单位" width="140" />
+          <el-table-column v-show="true" prop="EndProductPos" label="成品仓位" width="140" />
+          <el-table-column v-show="true" prop="warehousingTime" label="入仓时间" width="140" />
           <el-table-column label="操作" width="120">
             <template slot-scope="scope">
               <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
@@ -53,11 +55,11 @@
           @current-change="pageChange"
         />
       </div>
-      <!-- 新增/编辑采购单 -->
+      <!-- 新增/编辑纸板入仓单 -->
       <el-dialog :title="titleType+'纸板入仓单'" :visible.sync="purAddVisible">
         <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="80px">
-          <el-form-item label="单据类型" prop="supplier">
-            <el-select v-model="formAdd.supplier">
+          <el-form-item label="任务编号" prop="taskNumber">
+            <el-select v-model="formAdd.taskNumber">
               <el-option
                 v-for="item in supplierFor"
                 :key="item.id"
@@ -79,28 +81,6 @@
               type="date"
               placeholder="选择日期"
             />
-          </el-form-item>
-          <el-form-item label="过账">
-            <el-input v-model="formAdd.carryTo" />
-          </el-form-item>
-          <el-form-item label="过账年月">
-            <el-date-picker
-              v-model="formAdd.carryToYears"
-              align="right"
-              type="date"
-              placeholder="选择日期"
-            />
-          </el-form-item>
-          <el-form-item label="入仓日期">
-            <el-date-picker
-              v-model="formAdd.WarehousingDate"
-              align="right"
-              type="date"
-              placeholder="选择日期"
-            />
-          </el-form-item>
-          <el-form-item label="原始单号:">
-            <el-input v-model="formAdd.oldDocumentsNo" />
           </el-form-item>
           <el-form-item label="备注:">
             <el-input v-model="formAdd.remark" />
@@ -124,34 +104,54 @@
               <el-link type="primary" @click="modifyTask(scope)">{{ scope.row.taskNumber }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column v-show="true" prop="oldDocumentsNo" label="原始单号" width="140">
+          <el-table-column v-show="true" prop="customerName" label="客户名称" width="140">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.oldDocumentsNo" size="mini" />
+              <el-input v-model="scope.row.customerName" size="mini" />
+            </template>
+          </el-table-column>
+          <el-table-column v-show="true" prop="customerNo" label="客户单号" width="140">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.customerNo" size="mini" />
+            </template>
+          </el-table-column>
+          <el-table-column v-show="true" prop="typeNo" label="款号" width="140">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.typeNo" size="mini" :controls="false" />
+            </template>
+          </el-table-column>
+          <el-table-column v-show="true" prop="boxType" label="箱型" width="140">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.boxType" size="mini" :controls="false" />
             </template>
           </el-table-column>
           <el-table-column v-show="true" prop="material" label="材质" width="140">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.material" size="mini" />
+              <el-input-number v-model="scope.row.material" size="mini" :controls="false" />
             </template>
           </el-table-column>
-          <el-table-column v-show="true" prop="paperLength" label="纸长" width="140">
+          <el-table-column v-show="true" prop="length" label="长" width="140">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.paperLength" size="mini" :controls="false" />
+              <el-input-number v-model="scope.row.length" size="mini" :controls="false" />
             </template>
           </el-table-column>
-          <el-table-column v-show="true" prop="paperWidth" label="纸宽" width="140">
+          <el-table-column v-show="true" prop="width" label="宽" width="140">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.paperWidth" size="mini" :controls="false" />
+              <el-input-number v-model="scope.row.width" size="mini" :controls="false" />
             </template>
           </el-table-column>
-          <el-table-column v-show="true" prop="unitPrice" label="单价" width="140">
+          <el-table-column v-show="true" prop="height" label="高" width="140">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.unitPrice" size="mini" :controls="false" />
+              <el-input-number v-model="scope.row.height" size="mini" :controls="false" />
             </template>
           </el-table-column>
-          <el-table-column v-show="true" prop="purchaseQuantity" label="购入数量" width="140">
+          <el-table-column v-show="true" prop="unit" label="单位" width="140">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.purchaseQuantity" size="mini" :controls="false" />
+              <el-input-number v-model="scope.row.unit" size="mini" :controls="false" />
+            </template>
+          </el-table-column>
+          <el-table-column v-show="true" prop="EndProductPos" label="成品仓位" width="140">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.EndProductPos" size="mini" :controls="false" />
             </template>
           </el-table-column>
           <el-table-column v-show="true" prop="warehousingTime" label="入仓时间" width="140">
@@ -163,11 +163,6 @@
                 size="mini"
                 placeholder="选择日期"
               />
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="position" label="仓位" width="140">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.position" size="mini" :controls="false" />
             </template>
           </el-table-column>
         </el-table>
@@ -198,7 +193,15 @@
           </el-table-column>
           <el-table-column type="selection" :reserve-selection="true" width="55" align="center" />
           <el-table-column property="taskNumber" label="任务编号" />
-          <el-table-column property="taskName" label="任务名称" />
+          <el-table-column property="customerName" label="客户名称" />
+          <el-table-column property="typeNo" label="款号" />
+          <el-table-column property="boxType" label="箱型" />
+          <el-table-column property="material" label="材质" />
+          <el-table-column property="length" label="长" />
+          <el-table-column property="width" label="宽" />
+          <el-table-column property="height" label="高" />
+          <el-table-column property="cardPickNumber" label="纸板领料数量" />
+          <el-table-column property="warehousingNumber" label="可入仓数量" />
         </el-table>
         <el-pagination
           background
@@ -227,13 +230,14 @@
         >
           <el-table-column property="taskNumber" label="任务编号" />
           <el-table-column property="customerName" label="客户名称" />
-          <el-table-column property="textureOfMaterial" label="材质" />
-          <el-table-column property="paperLength" label="纸长" />
-          <el-table-column property="paperWidth" label="纸宽" />
-          <el-table-column property="orderQuantity" label="订单数量" />
-          <el-table-column property="purchaseQuantity" label="购入数量" />
-          <el-table-column property="quantityNotEntered" label="未进数量" />
-          <el-table-column property="supplier" label="供方" />
+          <el-table-column property="typeNo" label="款号" />
+          <el-table-column property="boxType" label="箱型" />
+          <el-table-column property="material" label="材质" />
+          <el-table-column property="length" label="长" />
+          <el-table-column property="width" label="宽" />
+          <el-table-column property="height" label="高" />
+          <el-table-column property="cardPickNumber" label="纸板领料数量" />
+          <el-table-column property="warehousingNumber" label="可入仓数量" />
         </el-table>
         <el-pagination
           background
@@ -259,7 +263,7 @@
 <script>
 import initData from '@/mixins/initData'
 export default {
-  name: 'CardboardList',
+  name: 'EndProductList',
   mixins: [initData],
   data() {
     return {

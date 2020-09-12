@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-main>
-      <el-form :inline="true" :model="form" size="mini">
+      <el-form :inline="true" :model="form" size="mini" align="center">
         <el-form-item label="采购单号:">
           <el-input v-model="form.documentsNo" />
         </el-form-item>
@@ -14,7 +14,7 @@
 
         <el-button type="warning" size="mini">查询</el-button>
         <el-button type="primary" size="mini" @click="purAdd">新增</el-button>
-        <el-button type="danger" size="mini" @click="drop">删除</el-button>
+        <!-- <el-button type="danger" size="mini" @click="drop">删除</el-button> -->
       </el-form>
       <div>
         <el-table
@@ -24,11 +24,7 @@
           style="width: 100%"
           @current-change="handleCurrentChange"
         >
-          <el-table-column v-show="true" prop="documentsNo" label="采购单号" width="140">
-            <template slot-scope="scope">
-              <el-link type="primary" @click="modifyPur(scope.row)">{{ scope.row.documentsNo }}</el-link>
-            </template>
-          </el-table-column>
+          <el-table-column v-show="true" prop="documentsNo" label="采购单号" width="140" />
           <el-table-column v-show="true" prop="taskNumber" label="任务编号" width="140" />
           <el-table-column v-show="true" prop="customerName" label="客户名称" width="140" />
           <el-table-column v-show="true" prop="ridgeType" label="楞型" width="140" />
@@ -42,6 +38,12 @@
           <el-table-column v-show="true" prop="unitPrice" label="单价" width="140" />
           <el-table-column v-show="true" prop="amount" label="金额" width="140" />
           <el-table-column v-show="true" prop="unit" label="单位" width="140" />
+          <el-table-column label="操作" width="120">
+            <template slot-scope="scope">
+              <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
+              <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
+            </template>
+          </el-table-column>
         </el-table>
         <!--分页组件-->
         <el-pagination
@@ -179,7 +181,9 @@
             </template>
           </el-table-column>
           <el-table-column v-show="true" prop="unit" label="单位" width="140" />
+
         </el-table>
+
         <span slot="footer" class="dialog-footer">
           <el-button size="small" @click="purAddNo">取 消</el-button>
           <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
@@ -370,7 +374,6 @@ export default {
     // 确定客户成品信息 回调
     modifyTaskConfirm() {
       this.$set(this.addTableData, this.indexId, this.currentRowTow)
-      console.log(this.addTableData)
       this.modifyTaskVisible = false
     },
     /**
@@ -398,7 +401,6 @@ export default {
     },
     // 确定任务编号 回调
     selectedConfirm() {
-      // this.addTableData.push(this.currentRow)
       this.selectedTableData.forEach(x => {
         var status = true
         if (this.addTableData.length > 0) {
