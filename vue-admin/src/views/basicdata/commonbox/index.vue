@@ -32,7 +32,9 @@
       <el-table-column label="操作" width="180">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
-          <el-button type="danger" size="mini" @click="deleted(scope.row.id)">删除</el-button>
+          <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
+            <el-button slot="reference" type="danger" size="mini">删除</el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -92,7 +94,13 @@ export default {
       })
     },
     deleted(id) {
-      delBoxClass(id).then(res => {})
+      delBoxClass(id).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+        } else {
+          this.$message.success('删除失败')
+        }
+      })
     },
     add() {
       this.addDialog.show = true

@@ -1,15 +1,18 @@
 <template>
   <div style="margin:30px">
-    <p class="font">箱类设定</p>
+    <p class="font">客户报价单管理</p>
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
       <el-form-item label="编码:">
         <el-input v-model="form.code" />
       </el-form-item>
-      <el-form-item label="名称:">
+      <el-form-item label="简称:">
         <el-input v-model="form.name" />
       </el-form-item>
-      <el-form-item label="限定最大纸长:" label-width="180">
-        <el-checkbox v-model="form.limitPaperLength" />
+      <el-form-item label="全称:">
+        <el-input v-model="form.code" />
+      </el-form-item>
+      <el-form-item label="名称:">
+        <el-input v-model="form.name" />
       </el-form-item>
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
@@ -36,7 +39,9 @@
       <el-table-column label="操作" width="180">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
-          <el-button type="danger" size="mini" @click="deleted(scope.row.id)">删除</el-button>
+          <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
+            <el-button slot="reference" type="danger" size="mini">删除</el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -96,7 +101,13 @@ export default {
       })
     },
     deleted(id) {
-      delBoxClass(id).then(res => {})
+      delBoxClass(id).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+        } else {
+          this.$message.success('删除失败')
+        }
+      })
     },
     add() {
       this.addDialog.show = true

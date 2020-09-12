@@ -2,7 +2,7 @@
   <div style="margin:30px">
     <p class="font">订单出货日报表</p>
     <span style="margin-left:10%">制表:</span>
-    <span style="margin-left:400px">打印日期:</span>
+    <span style="margin-left:400px">打印日期:{{ new Date() }}</span>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -42,8 +42,16 @@ export default {
       total: 0
     }
   },
+  created() {
+    this.initTable()
+  },
   methods: {
-    initTable() {},
+
+    initTable() {
+      console.log(this)
+      var a = this.dateStr()
+      console.log(a)
+    },
     handleSelectionChange() {},
     handleSizeChange(size) {
       this.size = size
