@@ -31,15 +31,10 @@
         </el-select>
       </el-form-item>
     </el-form>
-<<<<<<< HEAD
     <el-button size="mini" type="primary" @click="query">查询</el-button>
     <el-button size="mini" type="primary" @click="add">新增</el-button>
     <el-button v-print="'#print'" size="mini" type="warning">打印</el-button>
     <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
-=======
-    <el-button type="primary" size="mini">查询</el-button>
-    <el-button type="primary" size="mini" @click="add">新增</el-button>
->>>>>>> master
     <el-card>
       <el-table
         ref="multipleTable"
@@ -63,11 +58,7 @@
         <el-table-column prop="audit" label="审核人" width="120" />
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
-<<<<<<< HEAD
             <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
-=======
-            <el-link @click="updated(scope.row.id)">编辑</el-link>
->>>>>>> master
             <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
               <el-button slot="reference" type="danger" size="mini">删除</el-button>
             </el-popconfirm>
@@ -139,17 +130,11 @@ export default {
       this.initTable()
     },
     deleted(id) {
-<<<<<<< HEAD
 
     },
     add() {
       this.editDialog.show = true
     },
-=======
-      def
-    },
-    add() {},
->>>>>>> master
     updated(id) {
       this.id = id
       this.editDialog.show = true
