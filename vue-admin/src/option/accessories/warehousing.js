@@ -21,6 +21,10 @@ export default (safe) => {
       {
         label: '日期',
         prop: 'name',
+<<<<<<< HEAD
+=======
+        search: true,
+>>>>>>> master
         type: 'datetime',
         format: 'yyyy 年 MM 月 dd 日',
         rules: [{
@@ -32,7 +36,10 @@ export default (safe) => {
       {
         label: '供方',
         prop: 'code',
+<<<<<<< HEAD
         search: true,
+=======
+>>>>>>> master
         rules: [{
           required: true,
           message: '请输入供方名称',

@@ -21,7 +21,10 @@ export default (safe) => {
       {
         label: '品名规格',
         prop: 'name',
+<<<<<<< HEAD
         search: true,
+=======
+>>>>>>> master
         rules: [{
           required: true,
           message: '请输入品名规格',
@@ -36,6 +39,7 @@ export default (safe) => {
           message: '请输入单位',
           trigger: 'blur'
         }]
+<<<<<<< HEAD
       }
       // {
       //   label: '名称',
@@ -46,6 +50,18 @@ export default (safe) => {
       //   editDisplay: false
       // }
       // {
+=======
+      },
+      {
+        label: '名称',
+        search: true,
+        prop: 'nam',
+        hide: true,
+        addDisplay: false,
+        editDisplay: false
+      }
+      // {
+>>>>>>> master
       //   label: '描述',
       //   prop: 'remark',
       //   search: true

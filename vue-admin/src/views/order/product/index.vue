@@ -32,7 +32,7 @@
           <td colspan="3" class="center">印刷</td>
           <td colspan="3" class="center">结合</td>
           <td colspan="6" rowspan="5" class="xx"><span>箱型展开图: </span>
-            <img src="./1.jpg" alt="" style="width:400px;height:200px" class="xx_img">
+            <!-- <img src="./1.jpg" alt="" style="width:400px;height:200px" class="xx_img"> -->
           </td>
         </tr>
         <tr>
@@ -51,7 +51,7 @@
           <td>备注</td>
         </tr>
         <tr>
-          <td><input type="checkbox"> 分压</input type="checkbox"></td>
+          <td><input type="checkbox"> 分压<input type="checkbox"></td>
           <td />
           <td />
           <td />
@@ -59,7 +59,7 @@
           <td />
         </tr>
         <tr>
-          <td><input type="checkbox"  /> 裱糊</input type="checkbox" checked="checked"></td>
+          <td><input type="checkbox"> 裱糊<input type="checkbox" checked="checked"></td>
           <td />
           <td />
           <td />
@@ -67,7 +67,7 @@
           <td />
         </tr>
         <tr>
-          <td><input type="checkbox" checked="checked"> 印刷</input type="checkbox" checked="checked"></td>
+          <td><input type="checkbox" checked="checked"> 印刷<input type="checkbox" checked="checked"></td>
           <td />
           <td />
           <td />
@@ -77,7 +77,7 @@
           <td>总面积</td>
         </tr>
         <tr>
-          <td><input type="checkbox"checked="checked" /> 开槽</input type="checkbox" checked="checked"></td>
+          <td><input type="checkbox" checked="checked"> 开槽<input type="checkbox" checked="checked"></td>
           <td />
           <td />
           <td />
@@ -86,42 +86,32 @@
           <td colspan="5" rowspan="3" style="vertical-align:top;">生产时注意的内容写在这里!显示在生产单上!</td>
           <td>373.744</td>
         </tr>
-        </tr>
         <tr>
-          <td><input type="checkbox"> 模切</input type="checkbox"></td>
+          <td><input type="checkbox"> 模切<input type="checkbox"></td>
           <td />
           <td />
           <td />
           <td />
           <td />
-          <td>是否常规</td
-          </tr
-          >
-        </tr><tr>
-          <td><input type="checkbox"checked="checked" /> 结合</input type="checkbox" checked="checked"></td>
+          <td>是否常规</td>
+        </tr><tr /><tr>
+          <td><input type="checkbox" checked="checked"> 结合<input type="checkbox" checked="checked"></td>
           <td />
           <td />
           <td />
           <td />
           <td />
           <td>
-            <input type="checkbox" /> 是</input type="checkbox">
-            <input type="checkbox"checked="checked" /> 否</input type="checkbox" checked="checked">
+            <input type="checkbox"> 是<input type="checkbox">
+            <input type="checkbox" checked="checked"> 否<input type="checkbox" checked="checked">
           </td>
         </tr>
       </table>
       <div class="footer">
-<<<<<<< HEAD
         <p>制单:管理</p>
         <p>复核：</p>
         <p>制单日期：2020-09-11 13:55</p>
         <p>交货日期：2020-09-11</p>
-=======
-          <p>制单:管理</p>
-          <p>复核：</p>
-          <p>制单日期：2020-09-11 13:55</p>
-          <p>交货日期：2020-09-11</p>
->>>>>>> master
       </div>
     </div>
   </div>
@@ -204,8 +194,6 @@ table td{
 }
 .xx_img{
   display: block;
-  margin-left: 0%;
+  margin-left: 8%;
 }
-
 </style>
-
