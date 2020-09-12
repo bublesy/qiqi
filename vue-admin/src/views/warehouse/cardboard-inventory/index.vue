@@ -1,6 +1,7 @@
 <template>
   <el-container>
     <el-main>
+      <h1 align="center">纸板库存管理</h1>
       <el-table
         ref="singleTable"
         :data="stockTable"

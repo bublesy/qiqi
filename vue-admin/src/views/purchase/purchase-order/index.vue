@@ -1,6 +1,7 @@
 <template>
   <el-container>
     <el-main>
+      <h1 align="center">采购单管理</h1>
       <el-form :inline="true" :model="form" size="mini" align="center">
         <el-form-item label="采购单号:">
           <el-input v-model="form.documentsNo" />
