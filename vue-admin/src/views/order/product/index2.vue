@@ -1,5 +1,7 @@
 <template>
-  <div class="app-container">
+  <div id="printTest" class="app-container">
+    <el-button type="info" style="margin-left:84%" @click="back">返回</el-button>
+    <el-button v-print="'#printTest'" type="success">打印</el-button>
     <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
     <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
     <div class="dh">
@@ -52,7 +54,7 @@
         <td colspan="10">生产时注意的内容写在这里！显示生产单上！</td>
       </tr>
     </table>
-    <div class="img" />
+    <!-- <div class="img" /> -->
   </div>
 </template>
 
@@ -67,6 +69,9 @@ export default window.$crudCommon({
   created() {
   },
   methods: {
+    back() {
+      this.$router.push('/product')
+    },
     onLoadTable({ page, value, data }, callback) {
       // 首次加载去查询对应的值
       if (value) {

@@ -93,6 +93,7 @@ export default {
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '箱类设定')
     }
+
   }
 }
 </script>
