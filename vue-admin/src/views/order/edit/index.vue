@@ -33,7 +33,7 @@
       </el-form-item>
     </el-form>
     <el-button type="primary" size="mini">查询</el-button>
-    <el-button type="primary" size="mini">新增</el-button>
+    <el-button type="primary" size="mini" @click="add">新增</el-button>
     <el-card>
       <el-table
         ref="multipleTable"
@@ -58,8 +58,10 @@
         <el-table-column prop="audit" label="审核人" width="120" />
         <el-table-column label="操作" width="120">
           <template slot-scope="scope">
-            <el-link @click="deleted(scope.row.id)">删除</el-link>
             <el-link @click="updated(scope.row.id)">编辑</el-link>
+            <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
+              <el-button slot="reference" type="danger" size="mini">删除</el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -119,7 +121,10 @@ export default {
       this.queryForm.page = page
       this.initTable()
     },
-    deleted(id) {},
+    deleted(id) {
+      def
+    },
+    add() {},
     updated(id) {
       this.editDialog.show = true
     }

@@ -402,7 +402,7 @@ export default {
 
 </script>
 <style scoped lang="scss">
-  >>>.el-dialog__header {
+  .el-dialog__header {
     border: 0;
   }
 </style>
