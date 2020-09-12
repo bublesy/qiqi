@@ -53,7 +53,6 @@
         </tr>
         <tr>
           <td><input type="checkbox"> 分压</td>
-          <td><input type="checkbox"> 分压<input type="checkbox"></td>
           <td />
           <td />
           <td />
@@ -62,7 +61,6 @@
         </tr>
         <tr>
           <td><input type="checkbox"> 裱糊</td>
-          <td><input type="checkbox"> 裱糊<input type="checkbox" checked="checked"></td>
           <td />
           <td />
           <td />
@@ -71,7 +69,6 @@
         </tr>
         <tr>
           <td><input type="checkbox" checked="checked"> 印刷</td>
-          <td><input type="checkbox" checked="checked"> 印刷<input type="checkbox" checked="checked"></td>
           <td />
           <td />
           <td />
@@ -82,7 +79,6 @@
         </tr>
         <tr>
           <td><input type="checkbox" checked="checked"> 开槽</td>
-          <td><input type="checkbox" checked="checked"> 开槽<input type="checkbox" checked="checked"></td>
           <td />
           <td />
           <td />
