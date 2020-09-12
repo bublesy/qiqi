@@ -122,7 +122,7 @@ export default {
       this.initTable()
     },
     deleted(id) {
-      def
+
     },
     add() {},
     updated(id) {
