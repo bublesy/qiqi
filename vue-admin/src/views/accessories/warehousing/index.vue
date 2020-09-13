@@ -6,9 +6,10 @@
       :page.sync="page"
       v-on="onEvent"
     >
-      <template slot="myTableForm">
+      <!-- 自定义菜单 -->
+      <!-- <template slot="myTableForm">
         <avue-crud ref="crud" :option="myOption" :data="myData" style="width:1000px" @row-update="addUpdate" />
-      </template>
+      </template> -->
       <template slot="menu" slot-scope="scope">
         <el-popconfirm title="确认删除这条数据吗？" style="margin-left:10px;" @onConfirm="handleDel( scope.row, scope.index )">
           <el-button slot="reference" type="text" icon="el-icon-delete" size="small">&nbsp;删除</el-button>
@@ -25,87 +26,75 @@ export default window.$crudCommon({
   inject: ['reloadTag'],
   data() {
     return {
-      a: [],
-      myData: [{
-        id: 0,
-        name: '张三',
-        sex: 1,
-        $cellEdit: true
-      }, {
-        id: 1,
-        name: '李四',
-        sex: 0
-      }],
-      myOption: {
-        addBtn: false,
-        refreshBtn: false,
-        columnBtn: false,
-        editBtn: false,
-        addRowBtn: true,
-        cellBtn: true,
-        searchShow: false,
-        menuWidth: 380,
-        column: [{
-          label: '品名规格',
-          prop: 'name',
-          cell: true,
-          rules: [{
-            required: true,
-            message: '请输入规格名字',
-            trigger: 'blur'
-          }]
-          // {
-          //   label: '描述',
-          //   prop: 'remark',
-          //   type: 'radio',
-          //   dicData: [{
-          //     label: '选项1',
-          //     value: 0
-          //   }, {
-          //     label: '选项2',
-          //     value: 1
-          //   }]
-          // }
-        },
-        {
-          label: '单位',
-          prop: 'unit',
-          cell: true,
-          rules: [{
-            required: true,
-            message: '请输入单位名字',
-            trigger: 'blur'
-          }],
-          dicData: [{
-            label: '选项1',
-            value: 0
-          }, {
-            label: '选项2',
-            value: 1
-          }]
-        },
-        {
-          label: '数量',
-          prop: 'number',
-          cell: true,
-          rules: [{
-            required: true,
-            message: '请输入原始编号',
-            trigger: 'blur',
-            pattern: /^\d{1,}$/
-          }]
-        },
-        {
-          label: '单价',
-          prop: 'univalent;',
-          cell: true
-        },
-        {
-          label: '金额',
-          prop: 'money',
-          cell: true
-        }]
-      }
+      a: []
+    //   myData: [{
+    //     id: 0,
+    //     name: '张三',
+    //     sex: 1,
+    //     $cellEdit: true
+    //   }, {
+    //     id: 1,
+    //     name: '李四',
+    //     sex: 0
+    //   }],
+    //   myOption: {
+    //     addBtn: false,
+    //     refreshBtn: false,
+    //     columnBtn: false,
+    //     editBtn: false,
+    //     addRowBtn: true,
+    //     cellBtn: true,
+    //     searchShow: false,
+    //     menuWidth: 380,
+    //     column: [{
+    //       label: '品名规格',
+    //       prop: 'name',
+    //       cell: true,
+    //       rules: [{
+    //         required: true,
+    //         message: '请输入规格名字',
+    //         trigger: 'blur'
+    //       }]
+    //     },
+    //     {
+    //       label: '单位',
+    //       prop: 'unit',
+    //       cell: true,
+    //       rules: [{
+    //         required: true,
+    //         message: '请输入单位名字',
+    //         trigger: 'blur'
+    //       }],
+    //       dicData: [{
+    //         label: '选项1',
+    //         value: 0
+    //       }, {
+    //         label: '选项2',
+    //         value: 1
+    //       }]
+    //     },
+    //     {
+    //       label: '数量',
+    //       prop: 'number',
+    //       cell: true,
+    //       rules: [{
+    //         required: true,
+    //         message: '请输入原始编号',
+    //         trigger: 'blur',
+    //         pattern: /^\d{1,}$/
+    //       }]
+    //     },
+    //     {
+    //       label: '单价',
+    //       prop: 'univalent;',
+    //       cell: true
+    //     },
+    //     {
+    //       label: '金额',
+    //       prop: 'money',
+    //       cell: true
+    //     }]
+    //   }
     }
   },
   created() {
