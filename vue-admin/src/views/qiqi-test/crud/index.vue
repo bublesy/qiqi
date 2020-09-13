@@ -42,10 +42,7 @@
         <td>结合</td>
         <td class="center">粘胶</td>
         <td>是否常规</td>
-        <td>
-          <input type="checkbox" /> 是</input type="checkbox">
-          <input type="checkbox"checked="checked" /> 否</input type="checkbox" checked="checked">
-        </td>
+        <td />
       </tr>
       <tr>
         <td class="center">备注</td>

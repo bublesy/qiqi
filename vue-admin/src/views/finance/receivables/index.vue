@@ -16,38 +16,45 @@
         :value="item.value"
       />
     </el-select>
-    <el-button type="primary">确定</el-button>
-    <el-button type="primary">打印</el-button>
-    <el-button type="primary">导出</el-button>
+    <el-button type="primary">搜索</el-button>
+    <el-button v-print="'#printTest'" type="primary">打印</el-button>
+    <el-button type="primary" @click="toExcel">导出</el-button>
     <el-pagination
-      style="float:right"
-      small
-      layout="prev, pager, next"
-      :total="50"
+      style="float:right;"
+      :current-page="currentPage4"
+      :page-sizes="[10, 20, 30, 50]"
+      :page-size="1"
+      layout="prev, pager, next, jumper"
+      :total="10"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
     />
-    <div class="biaoge">
+    <div id="printTest" class="biaoge">
       <h2 style="text-align:center;padding-top:10px">客户应收款总表</h2>
-      <p style="text-align:center;  line-height: 2px;">打印日期:2020-09-10</p>
+      <p style="text-align:center;  line-height: 2px;">打印日期:{{ value }}</p>
       <table>
         <tr>
           <th>客户</th>
           <th>前期</th>
-          <th>2010-04</th>
-          <th>2012-05</th>
-          <th>2012-06</th>
-          <th>2012-07</th>
-          <th>2012-08</th>
-          <th>2012-09</th>
+          <th>2012年-04月</th>
+          <th>2012年-05月</th>
+          <th>2012年-06月</th>
+          <th>2012年-07月</th>
+          <th>2012年-08月</th>
+          <th>2012年-09月</th>
+          <th>合计</th>
+
         </tr>
-        <tr>
-          <td>12</td>
-          <td>202</td>
-          <td>48</td>
-          <td>A646A</td>
-          <td>2323</td>
-          <td>889</td>
-          <td>0</td>
-          <td>0.00</td>
+        <tr v-for="item in form" :key="item.id">
+          <td>{{ item.customer }}</td>
+          <td>{{ item.early }}</td>
+          <td>{{ item.data1 }}</td>
+          <td>{{ item.data2 }}</td>
+          <td>{{ item.data3 }}</td>
+          <td>{{ item.data4 }}</td>
+          <td>{{ item.data5 }}</td>
+          <td>{{ item.data6 }}</td>
+          <td>{{ item.total }}</td>
         </tr>
       </table>
     </div>
@@ -55,17 +62,45 @@
 </template>
 
 <script>
-
+import { export2Excel } from '@/utils/common'
 export default window.$crudCommon({
   name: 'Receivables',
   data() {
     return {
+      form: [
+        {
+          customer: 12,
+          early: 202,
+          data1: 12,
+          data2: 780,
+          data3: 90,
+          data4: 13.09,
+          data5: 7,
+          data6: 7,
+          total: 856
+        }
+
+      ],
       a: []
     }
   },
-  created() {
+  created: function() {
+    var aData = new Date()
+    console.log(aData) // Wed Aug 21 2019 10:00:58 GMT+0800 (中国标准时间)
+
+    this.data =
+      aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
+    console.log(this.data) // 2019-8-20
   },
   methods: {
+    // 打印功能
+    toExcel() {
+      var list = this.form
+      const th = ['客户', '前期', '2012年-04月', '2012年-05月', '2012年-06月', '2012年-07月', '2012年-08月', '2012年-09月', '合计']
+      const filterVal = ['customer', 'early', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'total']
+      const data = list.map(v => filterVal.map(k => v[k]))
+      export2Excel(th, data, '客户应收款总表')
+    },
     onLoadTable({ page, value, data }, callback) {
       // 首次加载去查询对应的值
       if (value) {

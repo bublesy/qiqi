@@ -4,7 +4,6 @@
       <el-row>
         <el-button v-print="'#printTest'" type="primary">打印</el-button>
         <el-button type="primary" @click="toExcel">导出</el-button>
-        <ElButton type="" @click="a">1111</ElButton>
         <el-pagination
           style="float:right;"
           :current-page="currentPage4"
@@ -55,7 +54,7 @@
 // accessories  means
 import { export2Excel } from '@/utils/common'
 export default {
-  name: 'Stock',
+  name: 'Printing',
   data() {
     return {
       form: [
@@ -71,9 +70,6 @@ export default {
     // console.log(document.getElementById('da'))
   },
   methods: {
-    a() {
-      this.$router.push('/accessories/printing')
-    },
     toExcel() {
       var list = this.form
       const th = ['编码', '品名规格', '单位', '数量', '领料人']

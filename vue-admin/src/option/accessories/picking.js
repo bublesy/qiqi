@@ -50,7 +50,6 @@ export default (safe) => {
       {
         label: '开单员',
         prop: 'jurisdiction',
-        multiple: true,
         rules: [{
           required: true,
           message: '请输入开单员',

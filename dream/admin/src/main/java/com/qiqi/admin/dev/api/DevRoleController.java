@@ -58,7 +58,8 @@ public class DevRoleController {
     })
     @GetMapping("")
     public PageEntity<DevRoleVO> getSysRolePage(@RequestParam(value = "page",defaultValue = "1") Long page,
-                                                @RequestParam(value = "count",defaultValue = "10") Long count) {
+                                                @RequestParam(value = "count",defaultValue = "10") Long count,
+                                                @RequestParam(value = "name",defaultValue = "") String name) {
         IPage<SysRoleDO> iPage = sysRoleService.page(new Page<>(page,count));
         List<DevRoleVO> convert = Convert.convert(new TypeReference<List<DevRoleVO>>() {}, iPage.getRecords());
         List<SysRoleMenuDO> roleMenuList = sysRoleMenuService.list(new LambdaQueryWrapper<SysRoleMenuDO>()

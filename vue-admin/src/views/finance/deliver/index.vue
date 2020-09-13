@@ -1,6 +1,26 @@
 <template>
   <div class="app-container">
-    <el-button type="primary">过账</el-button>
+    <div class="box">
+      <div class="top">
+        <el-tooltip class="item" effect="dark" content="单击下表一行数据无误，后选择过账" placement="top">
+          <el-button type="primary" @click="dialogVisible = true">过账</el-button>
+        </el-tooltip>
+      </div>
+    </div>
+    <el-dialog
+      title="确认过账"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
+    >
+      <span>当前出货单号【BWLO00079】过账年月【2012年09月】，确定过账吗?
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
     <el-form ref="form" :model="form" label-width="80px" inline>
       <el-form-item label="单据类型:">
         <el-select v-model="form.region" placeholder="请选择单据类型">
@@ -45,12 +65,35 @@
         <el-input v-model="form.user" placeholder="请选择业务员" />
       </el-form-item>
     </el-form>
+    <!-- <div class="bz">
+      <el-radio v-model="radio" label="1">备选项</el-radio>
+      <el-radio v-model="radio" label="2">备选项</el-radio>
+      备注<el-input v-model="input" placeholder="请输入内容" />
+    </div> -->
+    <div class="xz">
+      <el-radio v-model="radio" label="1">备选项</el-radio>
+      <el-radio v-model="radio" label="2">备选项</el-radio>
+    </div>
+    <div style="float:left;">备注</div>
+    <div class="bz">
+      <el-input
+        v-model="input"
+        style="foalt:left"
+        placeholder="请输入内容"
+        clearable
+        @click="clear"
+      />
+    </div>
     <el-table
       :data="tableData"
       border
       style="width: 100%"
+      highlight-current-row
+      height="600"
+      @current-change="handleCurrentChange"
     >
       <el-table-column
+        type="index"
         prop="date"
         label="客户名称"
         width="180"
@@ -111,12 +154,80 @@ export default window.$crudCommon({
   name: 'Deliver',
   data() {
     return {
-      a: []
+      a: [],
+      // 控制弹出框的显示于隐藏
+      dialogVisible: false,
+      input: '',
+      radio: '1',
+      tableData: [{
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-08',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-06',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-07',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      },
+      {
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-08',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-06',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-07',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }]
     }
   },
   created() {
   },
   methods: {
+    clear() {
+      console.log(11111)
+    },
+    handleCurrentChange(val) {
+      this.$router.push('/finance/receivables')
+    },
     onLoadTable({ page, value, data }, callback) {
       // 首次加载去查询对应的值
       if (value) {
@@ -207,4 +318,14 @@ export default window.$crudCommon({
 })
 </script>
 <style lang="scss" scoped>
+.xz{
+  float: left;
+  margin-left: 10px;
+  margin-right: 20px;
+}
+.bz{
+  float: left;
+  margin-left: 20px;
+  margin-top: -10px;
+}
 </style>
