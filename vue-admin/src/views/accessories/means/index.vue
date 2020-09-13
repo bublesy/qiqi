@@ -5,14 +5,7 @@
       v-bind="bindVal"
       :page.sync="page"
       v-on="onEvent"
-    >
-    <!-- 自定义菜单 -->
-      <!-- <template slot="menu" slot-scope="scope">
-        <el-popconfirm title="确认删除这条数据吗？" style="margin-left:10px;" @onConfirm="handleDel( scope.row, scope.index )">
-          <el-button slot="reference" type="text" icon="el-icon-delete" size="small">&nbsp;删除</el-button>
-        </el-popconfirm>
-      </template> -->
-    </avue-crud>
+    />
   </div>
 </template>
 

@@ -19,7 +19,7 @@ export default (safe) => {
     menuAlign: 'center',
     column: [
       {
-        label: '领料人',
+        label: '领料人aaaaa',
         prop: 'name',
         dicData: safe.a,
         search: true,
