@@ -21,6 +21,7 @@
 <script>
 import { removeRole } from '@/api/accessories/warehousing'
 export default window.$crudCommon({
+  name: 'Warehousing',
   inject: ['reloadTag'],
   data() {
     return {
@@ -53,6 +54,18 @@ export default window.$crudCommon({
             message: '请输入规格名字',
             trigger: 'blur'
           }]
+          // {
+          //   label: '描述',
+          //   prop: 'remark',
+          //   type: 'radio',
+          //   dicData: [{
+          //     label: '选项1',
+          //     value: 0
+          //   }, {
+          //     label: '选项2',
+          //     value: 1
+          //   }]
+          // }
         },
         {
           label: '单位',
@@ -62,6 +75,13 @@ export default window.$crudCommon({
             required: true,
             message: '请输入单位名字',
             trigger: 'blur'
+          }],
+          dicData: [{
+            label: '选项1',
+            value: 0
+          }, {
+            label: '选项2',
+            value: 1
           }]
         },
         {

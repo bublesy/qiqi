@@ -17,6 +17,7 @@
 
 <script>
 import { removeRole } from '@/api/accessories/means'
+import { export2Excel } from '@/utils/common'
 export default window.$crudCommon({
   inject: ['reloadTag'],
   data() {
@@ -27,6 +28,13 @@ export default window.$crudCommon({
   created() {
   },
   methods: {
+    toExcel() {
+      var list = this.tableData
+      const th = ['编码', '名称', '限定最大纸长']
+      const filterVal = ['code', 'name', 'limitPaperLength']
+      const data = list.map(v => filterVal.map(k => v[k]))
+      export2Excel(th, data, '箱类设定')
+    },
     handleDel(row, index) {
       removeRole(row.id).then(response => {
         if (response) {
@@ -144,4 +152,5 @@ export default window.$crudCommon({
 })
 </script>
 <style lang="scss" scoped>
+
 </style>
