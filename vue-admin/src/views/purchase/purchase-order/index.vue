@@ -10,7 +10,7 @@
         <el-button type="warning" size="mini">查询</el-button>
         <el-button type="primary" size="mini" @click="purAdd">新增</el-button>
         <el-button type="primary" size="mini" @click="selectPrinting">选择打印</el-button>
-        <el-button type="primary" size="mini" @click="printing">整页打印</el-button>
+        <el-button type="primary" size="mini" @click="aaprinting">整页打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
       </el-form>
       <div>
