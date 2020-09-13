@@ -191,6 +191,7 @@
           <el-input v-model="form2.remark" />
         </el-form-item>
       </el-form>
+      <p>添加样图:</p>
       <upload />
     </el-card>
   </el-dialog>
@@ -263,7 +264,7 @@ export default {
     generate() {
       this.dialog.show = false
       this.$router.push({
-        path: '/product',
+        path: '/index',
         query: { id: this.id }
       })
     },

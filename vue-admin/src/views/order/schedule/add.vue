@@ -1,6 +1,11 @@
 <template>
-  <div id="printTest" style="padding:30px">
-    <p class="font">生产排期表</p>
+  <el-dialog
+    title="添加排期"
+    :visible.sync="dialog.show"
+    width="60%"
+    :close-on-click-modal="false"
+  >
+    <p class="font">选择订单</p>
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
       <el-form-item label="排期日期:">
         <el-date-picker
@@ -17,9 +22,6 @@
       </el-form-item>
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
-    <el-button size="mini" type="primary" @click="add">新增</el-button>
-    <el-button type="warning" size="mini" @click="print">批量打印</el-button>
-    <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
     <el-table
       re
       f="multipleTable"
@@ -31,7 +33,7 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column prop="schedule" label="排期日期" width="120" />
+      <!-- <el-table-column prop="schedule" label="排期日期" width="120" /> -->
       <el-table-column prop="taskNo" label="任务编号" width="120" />
       <el-table-column prop="customerInfo" label="客户简介" width="120" />
       <el-table-column prop="boxType" label="箱型" width="120" />
@@ -45,16 +47,16 @@
       <el-table-column prop="orderNum" label="订单数量" width="120" />
       <el-table-column prop="productNum" label="成品数量" width="120" />
       <el-table-column prop="delivery" label="交货日期" width="120" />
-      <el-table-column prop="isSchedule" label="是否排期" width="120" />
-      <el-table-column label="操作" width="250">
-        <template slot-scope="scope">
-          <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
-          <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
-            <el-button slot="reference" type="danger" size="mini">删除</el-button>
-          </el-popconfirm>
-          <el-button type="success" size="mini" @click="singlePrint(scope.row)">打印</el-button>
-        </template>
-      </el-table-column>
+      <!-- <el-table-column prop="isSchedule" label="是否排期" width="120" /> -->
+      <!-- <el-table-column label="操作" width="250">
+          <template slot-scope="scope">
+            <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
+            <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
+              <el-button slot="reference" type="danger" size="mini">删除</el-button>
+            </el-popconfirm>
+            <el-button type="success" size="mini" @click="singlePrint(scope.row)">打印</el-button>
+          </template>
+        </el-table-column> -->
     </el-table>
     <el-pagination
       :current-page="form.page"
@@ -65,17 +67,23 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-    <addDialog :dialog="addDialog" />
-    <editDialog :id="id" :dialog="editDialog" />
-  </div>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="dialog.show = false">取 消</el-button>
+      <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script>
-import { export2Excel } from '@/utils/common'
-import addDialog from '@/views/order/schedule/add'
-import editDialog from '@/views/order/schedule/edit'
+// import { export2Excel } from '@/utils/common'
 export default {
-  components: { addDialog, editDialog },
+  props: {
+    dialog: {
+      type: Object,
+      default: () => {}
+
+    }
+  },
   data() {
     return {
       tableData: [],
@@ -84,14 +92,7 @@ export default {
         count: 10,
         page: 1
       },
-      addDialog: {
-        show: false
-      },
-      editDialog: {
-        show: false
-      },
-      select: [],
-      id: ''
+      select: []
     }
   },
   created() {
@@ -103,12 +104,9 @@ export default {
       this.initTable()
     },
     add() {
-      this.addDialog.show = true
+
     },
-    updated(id) {
-      this.id = id
-      this.editDialog.show = true
-    },
+    updated(id) {},
     deleted() {},
     initTable() {},
     handleSizeChange(size) {
@@ -119,33 +117,36 @@ export default {
       this.page = page
       this.initTable()
     },
-    toExcel() {
-      var list = this.tableData
-      const th = ['客户名称', '出货日期', '出货单号', '箱型', '出货数量', '单价', '金额', '回签状态']
-      const filterVal = ['code', 'name', 'limitPaperLength']
-      const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '箱类设定')
-    },
-    print() {
-      if (this.select.length === 0) {
-        this.select = this.tableData
-      }
-      this.$router.push({
-        path: '/scheduleOrder',
-        query: this.select
-      })
-    },
-    handleSelectionChange(select) {
-      this.select = select
-    },
-    singlePrint(row) {
-      var list = []
-      list.push(row)
-      this.$router.push({
-        path: '/scheduleOrder',
-        query: list
-      })
+    handleSelectionChange(val) {
+
     }
+    // toExcel() {
+    //   var list = this.tableData
+    //   const th = ['客户名称', '出货日期', '出货单号', '箱型', '出货数量', '单价', '金额', '回签状态']
+    //   const filterVal = ['code', 'name', 'limitPaperLength']
+    //   const data = list.map(v => filterVal.map(k => v[k]))
+    //   export2Excel(th, data, '箱类设定')
+    // },
+    // print() {
+    //   if (this.select.length === 0) {
+    //     this.select = this.tableData
+    //   }
+    //   this.$router.push({
+    //     path: '/scheduleOrder',
+    //     query: this.select
+    //   })
+    // },
+    // handleSelectionChange(select) {
+    //   this.select = select
+    // },
+    // singlePrint(row) {
+    //   var list = []
+    //   list.push(row)
+    //   this.$router.push({
+    //     path: '/scheduleOrder',
+    //     query: list
+    //   })
+    // }
   }
 }
 </script>

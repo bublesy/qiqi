@@ -32,10 +32,6 @@ import Layout from '@/layout'
  */
 export const constantRoutes = [
   {
-    path: '/index2',
-    component: () => import('@/views/order/product/index2')
-  },
-  {
     path: '/redirect',
     component: Layout,
     hidden: true,
@@ -66,6 +62,26 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: '主页', icon: 'dashboard', affix: true }
     }]
+  },
+  {
+    path: '/index',
+    component: () => import('@/views/order/product/index')
+  },
+  {
+    path: '/index2',
+    component: () => import('@/views/order/product/index2')
+  },
+  {
+    path: '/customerOrder',
+    component: () => import('@/views/order/edit/print')
+  },
+  {
+    path: '/scheduleOrder',
+    component: () => import('@/views/order/schedule/print')
+  },
+  {
+    path: '/prodailyOrder',
+    component: () => import('@/views/order/prodaily/print')
   }
 ]
 

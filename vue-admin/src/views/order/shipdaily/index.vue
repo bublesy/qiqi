@@ -1,8 +1,8 @@
 <template>
-  <div style="margin:30px">
-    <p class="font">客户订单日报表</p>
+  <div id="printTest" style="margin:30px">
+    <p class="font">出货日报表</p>
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
-      <el-form-item label="创建日期:">
+      <el-form-item label="出货日期:">
         <el-date-picker
           v-model="form.date"
           type="date"
@@ -11,7 +11,7 @@
       </el-form-item>
       <el-form-item label="">
         <el-button size="mini" type="primary">查询</el-button>
-        <el-button v-print="'#printTest'" type="warning" size="mini">批量打印</el-button>
+        <el-button v-print="'#printTest'" type="warning">打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
       </el-form-item>
     </el-form>
@@ -24,18 +24,16 @@
       style="width: 100%"
       border
       stripe
-      @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" />
+      <el-table-column type="index" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
-      <el-table-column prop="name" label="任务编号" width="120" />
-      <el-table-column prop="name" label="款号" width="120" />
-      <el-table-column prop="name" label="材质" width="120" />
-      <el-table-column prop="name" label="订单尺寸" width="120" />
-      <el-table-column prop="name" label="订单数量" width="120" />
+      <el-table-column prop="name" label="出货日期" width="120" />
+      <el-table-column prop="name" label="出货单号" width="120" />
+      <el-table-column prop="name" label="箱型" width="120" />
+      <el-table-column prop="name" label="出货数量" width="120" />
       <el-table-column prop="name" label="单价" width="120" />
       <el-table-column prop="name" label="金额" width="120" />
-      <el-table-column prop="name" label="交货日期" width="120" />
+      <el-table-column prop="name" label="回签状态" width="120" />
     </el-table>
     <el-pagination
       :current-page="form.page"
@@ -52,15 +50,14 @@
 <script>
 import { export2Excel } from '@/utils/common'
 export default {
-  name: 'Daily',
+  name: 'ProDaily',
   data() {
     return {
       tableData: [],
       total: 0,
       form: {
         page: 1,
-        size: 10,
-        date: null
+        size: 10
       }
     }
   },
@@ -89,7 +86,6 @@ export default {
       export2Excel(th, data, '箱类设定')
     }
   }
-
 }
 </script>
 
@@ -105,5 +101,4 @@ export default {
   margin-left: 40%;
   margin-bottom: 0%;
 }
-
 </style>

@@ -70,7 +70,7 @@ export default window.$crudCommon({
   },
   methods: {
     back() {
-      this.$router.push('/product')
+      this.$router.push('/edit')
     },
     onLoadTable({ page, value, data }, callback) {
       // 首次加载去查询对应的值

@@ -11,7 +11,7 @@
       </el-form-item>
       <el-form-item label="">
         <el-button size="mini" type="primary">查询</el-button>
-        <el-button v-print="'#printTest'" type="warning">打印</el-button>
+        <el-button type="warning" size="mini" @click="print">批量打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
       </el-form-item>
     </el-form>
@@ -24,8 +24,9 @@
       style="width: 100%"
       border
       stripe
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column type="index" width="55" />
+      <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
       <el-table-column prop="name" label="任务编号" width="120" />
       <el-table-column prop="name" label="款号" width="120" />
@@ -36,6 +37,11 @@
       <el-table-column prop="name" label="单价" width="120" />
       <el-table-column prop="name" label="金额" width="120" />
       <el-table-column prop="name" label="是否生产" width="120" />
+      <el-table-column label="操作" width="100">
+        <template slot-scope="scope">
+          <el-button type="warning" size="mini" @click="singlePrint(scope.row)">打印</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       :current-page="form.page"
@@ -60,7 +66,9 @@ export default {
       form: {
         page: 1,
         size: 10
-      }
+      },
+      select: [],
+      now: null
     }
   },
   created() {
@@ -71,7 +79,6 @@ export default {
   },
   methods: {
     initTable() {},
-    handleSelectionChange() {},
     handleSizeChange(size) {
       this.size = size
       this.initTable()
@@ -86,6 +93,26 @@ export default {
       const filterVal = ['code', 'name', 'limitPaperLength']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '箱类设定')
+    },
+    print() {
+      if (this.select.length === 0) {
+        this.select = this.tableData
+      }
+      this.$router.push({
+        path: '/prodailyOrder',
+        query: this.select
+      })
+    },
+    handleSelectionChange(select) {
+      this.select = select
+    },
+    singlePrint(row) {
+      var list = []
+      list.push(row)
+      this.$router.push({
+        path: '/prodailyOrder',
+        query: list
+      })
     }
   }
 }
