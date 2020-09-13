@@ -2,20 +2,16 @@
   <el-container>
     <el-main>
       <h1 align="center">采购单管理</h1>
-      <el-form :inline="true" :model="form" size="mini" align="center">
+      <el-form :inline="true" :model="form" size="mini">
         <el-form-item label="采购单号:">
           <el-input v-model="form.documentsNo" />
-        </el-form-item>
-        <el-form-item label="任务编号:">
-          <el-input v-model="form.taskNumber" />
-        </el-form-item>
-        <el-form-item label="客户名称">
-          <el-input v-model="form.customerName" />
         </el-form-item>
 
         <el-button type="warning" size="mini">查询</el-button>
         <el-button type="primary" size="mini" @click="purAdd">新增</el-button>
-        <!-- <el-button type="danger" size="mini" @click="drop">删除</el-button> -->
+        <el-button type="primary" size="mini" @click="selectPrinting">选择打印</el-button>
+        <el-button type="primary" size="mini" @click="printing">整页打印</el-button>
+        <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
       </el-form>
       <div>
         <el-table
@@ -23,8 +19,9 @@
           :data="tableData"
           highlight-current-row
           style="width: 100%"
-          @current-change="handleCurrentChange"
+          @selection-change="handleSelectionChange"
         >
+          <el-table-column type="selection" width="55" />
           <el-table-column v-show="true" prop="documentsNo" label="采购单号" width="140" />
           <el-table-column v-show="true" prop="taskNumber" label="任务编号" width="140" />
           <el-table-column v-show="true" prop="customerName" label="客户名称" width="140" />
@@ -32,6 +29,7 @@
           <el-table-column v-show="true" prop="material" label="材质" width="140" />
           <el-table-column v-show="true" prop="paperLength" label="纸长" width="140" />
           <el-table-column v-show="true" prop="paperWidth" label="纸宽" width="140" />
+          <el-table-column v-show="true" prop="parPreSpe" label="分压规格" width="140" />
           <el-table-column v-show="true" prop="orderQuantity" label="订单数量" width="140" />
           <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" width="140" />
           <el-table-column v-show="true" prop="batching" label="配料面积" width="140" />
@@ -43,6 +41,7 @@
             <template slot-scope="scope">
               <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
               <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
+              <el-link type="primary" size="small" @click="printing">打印</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -60,7 +59,7 @@
       </div>
       <!-- 新增/编辑采购单 -->
       <el-dialog :title="titleType+'采购单'" :visible.sync="purAddVisible">
-        <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="80px">
+        <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="120px">
           <el-form-item label="供方" prop="supplier">
             <el-select v-model="formAdd.supplier">
               <el-option
@@ -97,137 +96,79 @@
               placeholder="选择日期"
             />
           </el-form-item>
+
+          <el-form-item label="客户名称">
+            <el-select v-model="formAdd.customerName" size="mini">
+              <el-option
+                v-for="item in customerFor"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="楞型">
+            <el-input v-model="formAdd.ridgeType" />
+          </el-form-item>
+
+          <el-form-item label="分压规格">
+            <el-input v-model="formAdd.parPreSpe" />
+          </el-form-item>
+
+          <el-form-item label="材质">
+            <el-input v-model="formAdd.material" />
+          </el-form-item>
+
+          <el-form-item label="纸长">
+            <el-input v-model="formAdd.paperLength" />
+          </el-form-item>
+
+          <el-form-item label="纸宽">
+            <el-input v-model="formAdd.paperWidth" />
+          </el-form-item>
+
+          <el-form-item label="订单数量">
+            <el-input v-model="formAdd.orderQuantity" />
+          </el-form-item>
+
+          <el-form-item label="采购数量">
+            <el-input v-model="formAdd.purchaseQuantity" />
+          </el-form-item>
+
+          <el-form-item label="配料面积">
+            <el-input v-model="formAdd.batching" />
+          </el-form-item>
+
+          <el-form-item label="平方价">
+            <el-input v-model="formAdd.squarePrice" />
+          </el-form-item>
+
+          <el-form-item label="平方价">
+            <el-input v-model="formAdd.squarePrice" />
+          </el-form-item>
+
+          <el-form-item label="单价">
+            <el-input v-model="formAdd.unitPrice" />
+          </el-form-item>
+
+          <el-form-item label="金额">
+            <el-input v-model="formAdd.amount" />
+          </el-form-item>
+
+          <el-form-item label="单位">
+            <el-input v-model="formAdd.unit" />
+          </el-form-item>
+
           <el-form-item label="备注">
             <el-input v-model="formAdd.remark" />
           </el-form-item>
-        </el-form>
-        <el-button type="primary" size="mini" @click="addTaskNumber">添加任务编号</el-button>
-        <el-table
-          ref="multipleTable"
-          :data="addTableData"
-          tooltip-effect="dark"
-          style="width: 100%"
-          size="small"
-        >
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-link class="el-icon-delete" @click="delRule(scope)" />
-            </template>
-          </el-table-column>
-          <el-table-column prop="taskNumber" label="任务编号" width="140">
-            <template slot-scope="scope">
-              <el-link type="primary" @click="modifyTask(scope)">{{ scope.row.taskNumber }}</el-link>
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="customerName" label="客户名称" width="140">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.customerName" size="mini">
-                <el-option
-                  v-for="item in customerFor"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="ridgeType" label="楞型" width="140">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.ridgeType" size="mini" />
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="material" label="材质" width="140">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.material" size="mini" />
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="paperLength" label="纸长" width="140">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.paperLength" size="mini" :controls="false" />
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="paperWidth" label="纸宽" width="140">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.paperWidth" size="mini" :controls="false" />
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="orderQuantity" label="订单数量" width="140">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.orderQuantity" size="mini" :controls="false" />
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" width="140">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.purchaseQuantity" size="mini" :controls="false" />
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="batching" label="配料面积" width="140">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.batching" size="mini" :controls="false" />
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="squarePrice" label="平方价" width="140">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.squarePrice" size="mini" :controls="false" />
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="unitPrice" label="单价" width="140">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.unitPrice" size="mini" :controls="false" />
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="amount" label="金额" width="140">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.amount" size="mini" :controls="false" />
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="unit" label="单位" width="140" />
 
-        </el-table>
+        </el-form>
 
         <span slot="footer" class="dialog-footer">
           <el-button size="small" @click="purAddNo">取 消</el-button>
           <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
-        </span>
-      </el-dialog>
-
-      <!-- 添加任务编号 -->
-      <el-dialog title="添加任务编号" :visible.sync="taskNumberVisible" width="800px">
-        <el-table
-          ref="multipleTable"
-          :data="taskNumberTable"
-          stripe
-          highlight-current-row
-          style="width: 100%"
-          border
-          height="300"
-          :row-key="getRowKeys"
-          :row-class-name="tableRowClassName"
-          @current-change="selectionChange"
-          @selection-change="selectionChange"
-        >
-          <el-table-column width="50px" align="center">
-            <template slot-scope="scope">
-              {{ scope.$index + 1 }}
-            </template>
-          </el-table-column>
-          <el-table-column type="selection" :reserve-selection="true" width="55" align="center" />
-          <el-table-column property="taskNumber" label="任务编号" />
-          <el-table-column property="taskName" label="任务名称" />
-        </el-table>
-        <el-pagination
-          background
-          layout="total, sizes, prev, pager, next"
-          :total="pagination.total"
-          :current-page="pagination.page"
-          :page-size="pagination.size"
-          align="center"
-          @size-change="sizeChange"
-          @current-change="pageChange"
-        />
-        <span slot="footer" class="dialog-footer">
-          <el-button size="small" @click="taskNumberVisible = false">取 消</el-button>
-          <el-button size="small" type="primary" @click="selectedConfirm">确 定</el-button>
         </span>
       </el-dialog>
 
@@ -274,6 +215,8 @@
 
 <script>
 import initData from '@/mixins/initData'
+import { export2Excel } from '@/utils/common'
+
 export default {
   name: 'PurchaseOrder',
   mixins: [initData],
@@ -328,33 +271,53 @@ export default {
         customerName: '张三',
         taskNumber: '2'
       }],
-      dropRow: {},
+      multipleSelection: [],
       indexId: {}
 
     }
   },
   methods: {
+    // 导出
+    toExcel() {
+      var list = this.tableData
+      const th = ['编码', '名称', '限定最大纸长']
+      const filterVal = ['code', 'name', 'limitPaperLength']
+      const data = list.map(v => filterVal.map(k => v[k]))
+      export2Excel(th, data, '箱类设定')
+    },
+    // 选择打印
+    selectPrinting() {
+      if (this.multipleSelection === null || this.multipleSelection === '') {
+        this.$message.error('请选择打印的内容！！！')
+        return
+      } else {
+        console.log(this.multipleSelection)
+      }
+    },
+    // 打印
+    printing() {
+      this.$router.push('/purchase_order_printing')
+    },
     handleCurrentChange(row) {
-      this.dropRow = row
+      this.multipleSelection = row
     },
     // 删除
     drop() {
-      if (this.dropRow.id == null) {
-        this.$message.error('请选择一条进行操作')
-      } else {
-        this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
+      this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功'
         })
-      }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
     delRule(val) {
       if (this.addTableData.length !== 1) {

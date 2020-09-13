@@ -71,13 +71,7 @@ export default {
   mixins: [initData],
   data() {
     return {
-      tableData: [{
-        taskNumber: '1',
-        material: '木头',
-        nickname: '10',
-        unitPrice: '10',
-        totalPrice: '100'
-      }],
+      tableData: [],
       form: {}
     }
   },
