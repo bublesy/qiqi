@@ -1,6 +1,8 @@
 <template>
   <div id="printTest" style="margin:30px">
-    <p class="font">订单未产总表</p>
+    <p class="font">订单未交总表</p>
+    <el-button type="info" style="margin-left:84%" @click="back">返回</el-button>
+    <el-button v-print="'#printTest'" type="success">打印</el-button>
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
       <!-- <el-form-item label="出货日期:">
         <el-date-picker
@@ -11,8 +13,8 @@
       </el-form-item> -->
       <el-form-item label="">
         <!-- <el-button size="mini" type="primary">查询</el-button> -->
-        <el-button type="warning" size="mini" @click="print">批量打印</el-button>
-        <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
+        <!-- <el-button v-print="'#printTest'" type="warning">打印</el-button>
+        <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br> -->
       </el-form-item>
     </el-form>
     <span style="margin-left:25%">制表:</span>
@@ -39,13 +41,8 @@
       <el-table-column prop="name" label="已产数量" width="120" />
       <el-table-column prop="name" label="未产数量" width="120" />
       <el-table-column prop="name" label="交货日期" width="120" />
-      <el-table-column label="操作" width="100">
-        <template slot-scope="scope">
-          <el-button type="warning" size="mini" @click="singlePrint(scope.row)">打印</el-button>
-        </template>
-      </el-table-column>
     </el-table>
-    <el-pagination
+    <!-- <el-pagination
       :current-page="form.page"
       :page-sizes="[10, 20, 30, 40]"
       :page-size="form.count"
@@ -53,68 +50,44 @@
       :total="total"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-    />
+    /> -->
   </div>
 </template>
 
 <script>
-import { export2Excel } from '@/utils/common'
+// import { export2Excel } from '@/utils/common'
 export default {
   name: 'ProDaily',
   data() {
     return {
       tableData: [],
+      now: null,
       total: 0,
       form: {
         page: 1,
-        size: 10
-      },
-      select: [],
-      now: null
+        size: 10,
+        date: null
+
+      }
     }
   },
   created() {
-    this.initTable()
-    this.tableData.push({ name: 'hc' })
     var date = new Date()
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+    var list = []
+    var object = this.$route.query
+    console.log(object)
+    for (const key in object) {
+      if (object.hasOwnProperty(key)) {
+        const element = object[key]
+        list.push(element)
+      }
+    }
+    this.tableData = list
   },
   methods: {
-    initTable() {},
-    handleSizeChange(size) {
-      this.size = size
-      this.initTable()
-    },
-    handleCurrentChange(page) {
-      this.page = page
-      this.initTable()
-    },
-    toExcel() {
-      var list = this.tableData
-      const th = ['客户名称', '出货日期', '出货单号', '箱型', '出货数量', '单价', '金额', '回签状态']
-      const filterVal = ['code', 'name', 'limitPaperLength']
-      const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '箱类设定')
-    },
-    print() {
-      if (this.select.length === 0) {
-        this.select = this.tableData
-      }
-      this.$router.push({
-        path: '/noProductOrder',
-        query: this.select
-      })
-    },
-    handleSelectionChange(select) {
-      this.select = select
-    },
-    singlePrint(row) {
-      var list = []
-      list.push(row)
-      this.$router.push({
-        path: '/noProductOrder',
-        query: list
-      })
+    back() {
+      this.$router.push('/ordernotpay')
     }
   }
 }

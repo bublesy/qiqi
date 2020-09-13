@@ -2,13 +2,13 @@
   <div class="app-container">
     <el-select v-model="value" placeholder="请选择月份">
       <el-option
-        v-for="item in options"
+        v-for="item in month"
         :key="item.value"
         :label="item.label"
         :value="item.value"
       />
     </el-select>
-    <el-select v-model="value" placeholder="请选择客户">
+    <el-select v-model="valu" placeholder="请选择客户">
       <el-option
         v-for="item in options"
         :key="item.value"
@@ -16,80 +16,123 @@
         :value="item.value"
       />
     </el-select>
-    <el-button type="primary">确定</el-button>
-    <el-button type="primary">打印</el-button>
-    <el-button type="primary">导出</el-button>
-    <div>
-      <h2 style="text-align:center">海宁中奇纸箱包装厂</h2>
-      <p style="text-align:center;margin-top:-10px">地址：海宁市长安镇东陈村&nbsp;&nbsp;&nbsp;&nbsp;电话：15325300000</p>
-    </div>
-    <div class="jie">
-      <h2 style="text-align:center">2012年09月份月结对账单</h2>
-      <p>客户：平湖吉安</p>
-      <p>电话：87578878</p>
-      <p>传真：</p>
-      <p class="dy">打印日期：2020-09-11</p>
-    </div>
+    <el-button type="primary" @click="search">搜索</el-button>
+    <el-button v-print="'#printTest'" type="primary">打印</el-button>
+    <el-button type="primary" @click="toExcel">导出</el-button>
     <el-pagination
-      style="float:right;margin-top:-60px"
-      small
-      layout="prev, pager, next"
-      :total="50"
+      style="  position: fixed;top: 32%;right: 4%;"
+      :current-page="currentPage4"
+      :page-sizes="[10, 20, 30, 50]"
+      :page-size="1"
+      layout="prev, pager, next, jumper"
+      :total="10"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
     />
-    <table>
-      <tr>
-        <th>出货日期</th>
-        <th>出货单号</th>
-        <th>物品单号/款号</th>
-        <th>箱型</th>
-        <th>长x宽x高</th>
-        <th>数量</th>
-        <th>单价</th>
-        <th>金额</th>
-      </tr>
-      <tr>
-        <td>2020-09-11</td>
-        <td>202</td>
-        <td>五箱</td>
-        <td>780x670x430</td>
-        <td>90</td>
-        <td>13.08</td>
-        <td>6</td>
-        <td>550.6</td>
-      </tr>
-    </table>
+    <div id="printTest">
+      <div>
+        <h2 style="text-align:center">海宁中奇纸箱包装厂</h2>
+        <p style="text-align:center;margin-top:-10px">地址：海宁市长安镇东陈村&nbsp;&nbsp;&nbsp;&nbsp;电话：{{ 15325300000 }}</p>
+      </div>
+      <div class="jie">
+        <h2 style="text-align:center">2012年09月份月结对账单</h2>
+        <p>客户：平湖吉安</p>
+        <p>电话：87578878</p>
+        <p>传真：</p>
+        <p class="dy">打印日期：{{ data }}</p>
+      </div>
+      <table>
+        <tr>
+          <th>出货日期</th>
+          <th>出货单号</th>
+          <th>物品单号/款号</th>
+          <th>箱型</th>
+          <th>长x宽x高</th>
+          <th>数量</th>
+          <th>单价</th>
+          <th>金额</th>
+        </tr>
+        <tr v-for="item in form" :key="item.id">
+          <td>{{ item.goods }}</td>
+          <td>{{ item.shipment }}</td>
+          <td>{{ item.goods }}</td>
+          <td>{{ item.type }}</td>
+          <td>{{ item.long }}</td>
+          <td>{{ item.number }}</td>
+          <td>{{ item.price }}</td>
+          <td>{{ item.money }}</td>
+        </tr>
+      </table>
+    </div>
   </div>
 </template>
 
 <script>
-
+// 引入打印
+import { export2Excel } from '@/utils/common'
 export default window.$crudCommon({
   name: 'Verify',
   data() {
     return {
+      form: [
+        {
+          data: '2020-09-11',
+          shipment: 202,
+          goods: '五箱',
+          type: 780 * 670 * 430,
+          long: 90,
+          number: 13.09,
+          price: 7,
+          money: 856
+        }
+
+      ],
       a: [],
-      options: [{
+      month: [{
         value: '选项1',
-        label: '2020-02-02'
+        label: '2020-02-11'
       }, {
         value: '选项2',
-        label: '双皮奶'
+        label: '2018-06-11'
       }, {
         value: '选项3',
-        label: '蚵仔煎'
+        label: '2014-09-11'
       }, {
         value: '选项4',
-        label: '龙须面'
+        label: '2012-01-11'
       }, {
         value: '选项5',
-        label: '北京烤鸭'
+        label: '2013-02-11'
       }],
       value: ''
     }
   },
-  created() {
+  created: function() {
+    var aData = new Date()
+    console.log(aData) // Wed Aug 21 2019 10:00:58 GMT+0800 (中国标准时间)
+
+    this.data =
+      aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
+    console.log(this.data) // 2019-8-20
   },
   methods: {
+    search() {
+      this.$router.push('/finance/receivables')
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+    },
+    // 打印功能
+    toExcel() {
+      var list = this.form
+      const th = ['出货日期门', '出货单号', '物品单号/款号', '箱型', '长x宽x高', '数量', '单价', '金额']
+      const filterVal = ['data', 'shipment', 'goods', 'type', 'long', 'number', 'price', 'money']
+      const data = list.map(v => filterVal.map(k => v[k]))
+      export2Excel(th, data, this.value)
+    },
     onLoadTable({ page, value, data }, callback) {
       // 首次加载去查询对应的值
       if (value) {
@@ -193,7 +236,7 @@ export default window.$crudCommon({
   margin: -50px 0 0 45%  ;
 }
 table{
-  margin-top: 5px;
+  margin-p: 5px;
   width: 100%;
   color: black;
 

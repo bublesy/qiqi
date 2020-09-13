@@ -18,11 +18,21 @@
       />
     </el-select>
     <el-button type="primary">确定</el-button>
-    <el-button type="primary">打印</el-button>
-    <div class="biaoge">
+    <el-button v-print="'#printTest'" type="primary">打印</el-button>
+    <el-pagination
+      style="float:right;"
+      :current-page="currentPage4"
+      :page-sizes="[10, 20, 30, 50]"
+      :page-size="1"
+      layout="prev, pager, next, jumper"
+      :total="10"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
+    <div id="printTest" class="biaoge">
       <h2 style="text-align:center">供方月结对账单</h2>
       <p>供方:佳宏包装</p>
-      <p style="text-align:center;margin-top:-40px">打印日期:2020-09-10</p>
+      <p style="text-align:center;margin-top:-40px">打印日期:{{ value }}</p>
       <table>
         <tr>
           <th>任务编号</th>
@@ -64,7 +74,13 @@ export default window.$crudCommon({
       a: []
     }
   },
-  created() {
+  created: function() {
+    var aData = new Date()
+    console.log(aData) // Wed Aug 21 2019 10:00:58 GMT+0800 (中国标准时间)
+
+    this.value =
+      aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
+    console.log(this.value) // 2019-8-20
   },
   methods: {
     onLoadTable({ page, value, data }, callback) {
