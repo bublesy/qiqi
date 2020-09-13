@@ -3,7 +3,7 @@
     <div>
       <el-button type="primary" size="mini" @click="save">保存</el-button>
       <el-button type="primary" size="mini" @click="audit">审核</el-button>
-      <el-button type="primary" size="mini" @click="generate">生成施工单</el-button>
+
       <el-button type="primary" size="mini" @click="back">返回</el-button>
     </div><br>
     <p style="">订单信息</p>
@@ -260,13 +260,6 @@ export default {
     },
     audit() {
       this.dialog.show = false
-    },
-    generate() {
-      this.dialog.show = false
-      this.$router.push({
-        path: '/index',
-        query: { id: this.id }
-      })
     },
     back() {
       this.dialog.show = false

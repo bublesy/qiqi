@@ -11,7 +11,7 @@
       </el-form-item>
       <el-form-item label="">
         <el-button size="mini" type="primary">查询</el-button>
-        <el-button v-print="'#printTest'" type="warning" size="mini">批量打印</el-button>
+        <el-button type="warning" size="mini" @click="print">批量打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
       </el-form-item>
     </el-form>
@@ -36,6 +36,11 @@
       <el-table-column prop="name" label="单价" width="120" />
       <el-table-column prop="name" label="金额" width="120" />
       <el-table-column prop="name" label="交货日期" width="120" />
+      <el-table-column label="操作" width="250">
+        <template slot-scope="scope">
+          <el-button type="warning" size="mini" @click="singlePrint(scope.row)">打印</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       :current-page="form.page"
@@ -61,7 +66,8 @@ export default {
         page: 1,
         size: 10,
         date: null
-      }
+      },
+      select: []
     }
   },
   created() {
@@ -72,7 +78,6 @@ export default {
   },
   methods: {
     initTable() {},
-    handleSelectionChange() {},
     handleSizeChange(size) {
       this.size = size
       this.initTable()
@@ -87,6 +92,27 @@ export default {
       const filterVal = ['code', 'name', 'limitPaperLength']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '箱类设定')
+    },
+    print() {
+      console.log('aaa')
+      if (this.select.length === 0) {
+        this.select = this.tableData
+      }
+      this.$router.push({
+        path: '/dailyOrder',
+        query: this.select
+      })
+    },
+    handleSelectionChange(select) {
+      this.select = select
+    },
+    singlePrint(row) {
+      var list = []
+      list.push(row)
+      this.$router.push({
+        path: '/dailyOrder',
+        query: list
+      })
     }
   }
 

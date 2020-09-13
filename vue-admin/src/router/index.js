@@ -82,6 +82,22 @@ export const constantRoutes = [
   {
     path: '/prodailyOrder',
     component: () => import('@/views/order/prodaily/print')
+  },
+  {
+    path: '/dailyOrder',
+    component: () => import('@/views/order/daily/print')
+  },
+  {
+    path: '/noProductOrder',
+    component: () => import('@/views/order/ordernotproduct/print')
+  },
+  {
+    path: '/noPayOrder',
+    component: () => import('@/views/order/ordernotpay/print')
+  },
+  {
+    path: '/shipOrder',
+    component: () => import('@/views/order/shipdaily/print')
   }
 ]
 

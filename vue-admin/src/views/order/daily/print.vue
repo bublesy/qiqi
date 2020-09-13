@@ -1,8 +1,8 @@
 <template>
   <div id="printTest" style="margin:30px">
+    <p class="font">客户订单日报表</p>
     <el-button type="info" style="margin-left:84%" @click="back">返回</el-button>
     <el-button v-print="'#printTest'" type="success">打印</el-button>
-    <p class="font">生产日报表</p>
     <span style="margin-left:25%">制表:</span>
     <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
     <el-table
@@ -13,17 +13,16 @@
       border
       stripe
     >
-      <el-table-column type="index" width="55" />
+      <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
       <el-table-column prop="name" label="任务编号" width="120" />
       <el-table-column prop="name" label="款号" width="120" />
-      <el-table-column prop="name" label="箱型" width="120" />
+      <el-table-column prop="name" label="材质" width="120" />
       <el-table-column prop="name" label="订单尺寸" width="120" />
       <el-table-column prop="name" label="订单数量" width="120" />
-      <el-table-column prop="name" label="已产数量" width="120" />
       <el-table-column prop="name" label="单价" width="120" />
       <el-table-column prop="name" label="金额" width="120" />
-      <el-table-column prop="name" label="是否生产" width="120" />
+      <el-table-column prop="name" label="交货日期" width="120" />
     </el-table>
     <!-- <el-pagination
       :current-page="form.page"
@@ -40,15 +39,16 @@
 <script>
 // import { export2Excel } from '@/utils/common'
 export default {
-  name: 'ProDaily',
+  name: 'Daily',
   data() {
     return {
       tableData: [],
-      total: 0,
-      form: {
-        page: 1,
-        size: 10
-      },
+      // total: 0,
+      // form: {
+      //   page: 1,
+      //   size: 10,
+      //   date: null
+      // },
       now: null
     }
   },
@@ -68,9 +68,10 @@ export default {
   },
   methods: {
     back() {
-      this.$router.push('/prodaily')
+      this.$router.push('/daily')
     }
   }
+
 }
 </script>
 
@@ -86,4 +87,5 @@ export default {
   margin-left: 40%;
   margin-bottom: 0%;
 }
+
 </style>

@@ -51,13 +51,14 @@
         <el-table-column prop="making" label="制单人" width="120" />
         <el-table-column prop="auditTime" label="审核时间" width="120" />
         <el-table-column prop="audit" label="审核人" width="120" /> -->
-        <el-table-column label="操作" width="250">
+        <el-table-column label="操作" width="320">
           <template slot-scope="scope">
             <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
             <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
               <el-button slot="reference" type="danger" size="mini">删除</el-button>
             </el-popconfirm>
             <el-button type="success" size="mini" @click="singlePrint(scope.row)">打印</el-button>
+            <el-button type="primary" size="mini" @click="generate">生成施工单</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -113,6 +114,13 @@ export default {
   methods: {
     query() {
       this.initTable()
+    },
+    generate() {
+      // this.dialog.show = false
+      this.$router.push({
+        path: '/index',
+        query: { id: this.id }
+      })
     },
     initTable() {},
     handleSizeChange(size) {
