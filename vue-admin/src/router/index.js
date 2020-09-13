@@ -32,6 +32,10 @@ import Layout from '@/layout'
  */
 export const constantRoutes = [
   {
+    path: '/index2',
+    component: () => import('@/views/order/product/index2')
+  },
+  {
     path: '/redirect',
     component: Layout,
     hidden: true,

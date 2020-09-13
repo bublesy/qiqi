@@ -1,0 +1,147 @@
+<template>
+  <div class="app-container">
+    <avue-crud
+      v-model="form"
+      v-bind="bindVal"
+      :page.sync="page"
+      v-on="onEvent"
+    >
+      <template slot="menu" slot-scope="scope">
+        <el-popconfirm title="确认删除这条数据吗？" style="margin-left:10px;" @onConfirm="handleDel( scope.row, scope.index )">
+          <el-button slot="reference" type="text" icon="el-icon-delete" size="small">&nbsp;删除</el-button>
+        </el-popconfirm>
+      </template>
+    </avue-crud>
+  </div>
+</template>
+
+<script>
+import { removeRole } from '@/api/accessories/means'
+export default window.$crudCommon({
+  inject: ['reloadTag'],
+  data() {
+    return {
+      a: []
+    }
+  },
+  created() {
+  },
+  methods: {
+    handleDel(row, index) {
+      removeRole(row.id).then(response => {
+        if (response) {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+        } else {
+          this.$message.error('删除失败')
+        }
+      }).finally(() => {
+        this.reloadTag()
+      })
+    },
+    onLoadTable({ page, value, data }, callback) {
+      // 首次加载去查询对应的值
+      if (value) {
+        this.$message.success('首次查询' + value)
+        callback({
+          id: '0',
+          name: '张三',
+          sex: '男'
+        })
+        return
+      }
+      if (data) {
+        this.$message.success('搜索查询参数' + JSON.stringify(data))
+      }
+      if (page) {
+        this.$message.success('分页参数' + JSON.stringify(page))
+      }
+      // 分页查询信息
+      callback({
+        total: 2,
+        data: [{
+          id: '0',
+          name: '张三',
+          sex: '男'
+        }, {
+          id: '1',
+          name: '李四',
+          sex: '女'
+        }]
+      })
+    },
+    setVal() {
+      this.a = [{
+        label: '选项1',
+        value: 0
+      }, {
+        label: '选项2',
+        value: 1
+      }]
+    },
+
+    beforeOpen(done, type) {
+      this.setVal()
+      done()
+    },
+
+    // 列表前操作方法
+    listBefore() {
+    },
+
+    // 列表后操作方法
+    listAfter() {
+    },
+
+    // 新增前操作方法
+    addBefore() {
+      // this.form.createUser = 'small'
+    },
+    // 新增后操作方法
+    addAfter(val) {
+      if (val) {
+        this.$message.success('新增成功')
+      } else {
+        this.$message.error('新增失败')
+      }
+    },
+
+    // 修改前操作方法
+    updateBefore() {
+      // this.form.updateUser = 'small'
+    },
+
+    // 修改后操作方法
+    updateAfter(val) {
+      if (val) {
+        this.$message.success('修改成功')
+      } else {
+        this.$message.error('修改失败')
+      }
+    },
+
+    // 删除前操作方法
+    delBefore() {},
+
+    // 删除后操作方法
+    delAfter() {
+
+    }
+  }
+}, {
+  name: 'accessories/means', // 模块名字
+  list: 'getRoles', // 列表接口名字
+  update: 'editRole', // 更新接口名字
+  add: 'addRole', // 新增接口名字
+  del: 'removeRole', // 删除接口名字
+  rowKey: 'id', // 主键
+  pageNumber: 'pageNumber', // 页码
+  pageSize: 'pageSize', // 页数
+  total: 'total', // 总页数
+  data: 'list'// 列表属性
+})
+</script>
+<style lang="scss" scoped>
+</style>

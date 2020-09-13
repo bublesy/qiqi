@@ -98,7 +98,7 @@ export default window.$crudCommon({
     delAfter() {}
   }
 }, {
-  name: 'supplier/purchase', // 模块名字
+  name: 'finance/settlement', // 模块名字
   list: 'getRoles', // 列表接口名字
   update: 'editRole', // 更新接口名字
   add: 'addRole', // 新增接口名字
