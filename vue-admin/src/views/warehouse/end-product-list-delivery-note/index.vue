@@ -3,6 +3,7 @@
     <el-main>
       <div id="print">
         <p align="center">海宁市中奇纸箱包装厂</p>
+        <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#print'" type="primary">打印</el-button>
         <el-header align="center">定作送货单</el-header>
         <span style="margin-left:60px">收货单位:{{ }}</span>
@@ -87,17 +88,15 @@ export default {
   mixins: [initData],
   data() {
     return {
-      tableData: [{
-        taskNumber: '1',
-        material: '木头',
-        nickname: '10',
-        unitPrice: '10',
-        totalPrice: '100'
-      }],
+      tableData: [],
       form: {}
     }
   },
   methods: {
+    // 返回
+    toBack() {
+      this.$router.push('/end_product_list')
+    },
     /**
      * 表格合计
      */

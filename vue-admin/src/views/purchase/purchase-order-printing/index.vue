@@ -2,9 +2,10 @@
   <el-container>
     <el-main>
       <div id="print">
-        <p align="center">海宁市中奇纸箱包装厂</p>
+        <h3 align="center">名称:{{ }}</h3>
+        <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#print'" type="primary">打印</el-button>
-        <el-header align="center">采购订单</el-header>
+        <h1 align="center">采购订单</h1>
         <span style="margin-left:60px">供方:{{ }}</span>
         <br>
         <span style="margin-left:60px">电话:{{ }}</span>
@@ -76,6 +77,10 @@ export default {
     }
   },
   methods: {
+    // 返回
+    toBack() {
+      this.$router.push('/purchase_order')
+    },
     /**
      * 表格合计
      */

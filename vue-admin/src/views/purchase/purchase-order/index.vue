@@ -3,14 +3,20 @@
     <el-main>
       <h1 align="center">采购单管理</h1>
       <el-form :inline="true" :model="form" size="mini">
-        <el-form-item label="采购单号:">
-          <el-input v-model="form.documentsNo" />
+        <el-form-item label="客户名称:">
+          <el-input v-model="form.customerName" />
         </el-form-item>
 
-        <el-button type="warning" size="mini">查询</el-button>
+        <el-form-item label="采购未进过期:">
+          <el-select v-model="form.carryTo" :clearable="true">
+            <el-option label="已过期" value="已过期" />
+            <el-option label="未过期" value="未过期" />
+          </el-select>
+        </el-form-item>
+        <el-button type="primary" size="mini" @click="toQuery">查询</el-button>
         <el-button type="primary" size="mini" @click="purAdd">新增</el-button>
-        <el-button type="primary" size="mini" @click="selectPrinting">选择打印</el-button>
-        <el-button type="primary" size="mini" @click="printing">整页打印</el-button>
+        <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
+        <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
       </el-form>
       <div>
@@ -19,6 +25,7 @@
           :data="tableData"
           highlight-current-row
           style="width: 100%"
+          border=""
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" />
@@ -37,11 +44,11 @@
           <el-table-column v-show="true" prop="unitPrice" label="单价" width="140" />
           <el-table-column v-show="true" prop="amount" label="金额" width="140" />
           <el-table-column v-show="true" prop="unit" label="单位" width="140" />
-          <el-table-column label="操作" width="120">
+          <el-table-column label="操作" width="180">
             <template slot-scope="scope">
               <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
               <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
-              <el-link type="primary" size="small" @click="printing">打印</el-link>
+              <el-link type="warning" size="small" @click="printing">生成打印单</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -264,7 +271,6 @@ export default {
         taskNumber: '2',
         taskName: '就这a ?'
       }],
-      selectedTableData: [],
       currentRowTow: {},
       modifyTaskVisible: false,
       modifyTaskTable: [{
@@ -277,28 +283,47 @@ export default {
     }
   },
   methods: {
+    toQuery() {
+
+    },
     // 导出
     toExcel() {
       var list = this.tableData
       const th = ['编码', '名称', '限定最大纸长']
       const filterVal = ['code', 'name', 'limitPaperLength']
       const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '箱类设定')
+      export2Excel(th, data, '采购单导出')
     },
     // 选择打印
     selectPrinting() {
-      if (this.multipleSelection === null || this.multipleSelection === '') {
-        this.$message.error('请选择打印的内容！！！')
-        return
+      if (this.form.carryTo === '已过期') {
+        this.$router.push('/purchase_not_included_overdue')
+      } else if (this.form.carryTo === '未过期') {
+        this.$router.push('/purchase_not_included')
       } else {
-        console.log(this.multipleSelection)
+        if (this.multipleSelection.length === 0) {
+          this.$message.error('请选择打印的内容！！！')
+          return
+        } else {
+          this.$router.push('/purchase_order_printing')
+        }
+      }
+    },
+    // 整页打印
+    wholePrinting() {
+      if (this.form.carryTo === '已过期') {
+        this.$router.push('/purchase_not_included_overdue')
+      } else if (this.form.carryTo === '未过期') {
+        this.$router.push('/purchase_not_included')
+      } else {
+        this.$router.push('/purchase_order_printing')
       }
     },
     // 打印
     printing() {
       this.$router.push('/purchase_order_printing')
     },
-    handleCurrentChange(row) {
+    handleSelectionChange(row) {
       this.multipleSelection = row
     },
     // 删除
@@ -346,12 +371,6 @@ export default {
     modifyTaskChange(val) {
       this.currentRowTow = val
     },
-    /**
-     * 选中数据改变事件
-     */
-    selectionChange(val) {
-      this.selectedTableData = val
-    },
     tableRowClassName({ row, rowIndex }) {
       if (row.consignment) {
         return 'green-row'
@@ -362,27 +381,6 @@ export default {
      */
     getRowKeys(row) {
       return row.id
-    },
-    // 确定任务编号 回调
-    selectedConfirm() {
-      this.selectedTableData.forEach(x => {
-        var status = true
-        if (this.addTableData.length > 0) {
-          this.addTableData.forEach(y => {
-            if (x.taskNumber === y.taskNumber) {
-              status = false
-              this.$alert('任务编号【' + x.taskNumber + '】已存在，不能重复添加！', '提示', {
-                confirmButtonText: '确定',
-                callback: action => {}
-              })
-            }
-          })
-        }
-        if (status) {
-          this.addTableData.push(x)
-        }
-      })
-      this.taskNumberVisible = false
     },
 
     // 添加任务编号
@@ -426,6 +424,6 @@ export default {
 </script>
 <style scoped lang="scss">
   >>>.el-dialog__header {
-    border: 0;
+    border: 1px;
   }
 </style>
