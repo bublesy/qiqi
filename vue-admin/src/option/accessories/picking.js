@@ -91,7 +91,6 @@ export default (safe) => {
           trigger: 'blur'
         }]
       }
-
       // 树
       // {
       //   label: '描述',
