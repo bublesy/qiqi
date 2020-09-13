@@ -5,13 +5,6 @@
       <el-form-item label="部门名称:">
         <el-input v-model="form.name" />
       </el-form-item>
-      <el-form-item label="最后操作时间:" label-width="180">
-        <el-date-picker
-          v-model="form.lastmodifytime"
-          type="date"
-          placeholder="选择日期"
-        />
-      </el-form-item>
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
     <el-button size="mini" type="primary" @click="add">新增</el-button>
