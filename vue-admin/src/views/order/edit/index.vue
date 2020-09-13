@@ -1,39 +1,23 @@
 <template>
-  <div id="print" style="padding:10px">
+  <div style="padding:10px">
     <p class="font">客户订单</p>
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
-      <el-form-item label="客户单号:">
-        <el-input v-model="form.no" />
+      <el-form-item label="客户名称:">
+        <el-input v-model="form.name" />
       </el-form-item>
-      <el-form-item label="款号:">
-        <el-input v-model="form.modelNo" />
-      </el-form-item>
-      <!-- xlk -->
-      <el-form-item label="箱型:">
-        <el-select v-model="form.boxType" placeholder="请选择">
-          <el-option
-            v-for="item in boxTypeOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
+      <el-form-item label="仓库状态:">
+        <el-select v-model="form.wosState" placeholder="请选择">
+          <el-option label="已出货" value="已出货" />
+          <el-option label="纸板已入仓" value="纸板已入仓" />
+          <el-option label="入仓未出货" value="入仓未出货" />
+          <el-option label="新订单" value="新订单" />
         </el-select>
       </el-form-item>
       <!-- xlk -->
-      <el-form-item label="供方:">
-        <el-select v-model="form.supplier" placeholder="请选择">
-          <el-option
-            v-for="item in supplierOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
     <el-button size="mini" type="primary" @click="add">新增</el-button>
-    <el-button v-print="'#print'" size="mini" type="warning">打印</el-button>
+    <el-button size="mini" type="warning" @click="print">批量打印</el-button>
     <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
     <el-card>
       <el-table
@@ -41,27 +25,40 @@
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%"
+        border
+        stripe
+        @selection-change="handleSelectionChange"
       >
-        <el-table-column type="index" width="55" />
-        <el-table-column prop="no" label="客户单号" width="120" />
+        <el-table-column type="selection" width="55" />
+        <el-table-column prop="no" label="任务编号" width="120" />
+        <el-table-column prop="name" label="客户名称" width="120" />
+        <el-table-column prop="customerNo" label="客户单号" width="120" />
         <el-table-column prop="modelNo" label="款号" width="120" />
         <el-table-column prop="boxType" label="箱型" width="120" />
-        <el-table-column prop="unit" label="单位" width="120" />
         <el-table-column prop="material" label="材质" width="120" />
+        <el-table-column prop="cartonSize" label="纸箱尺寸(mm)" width="120" />
         <el-table-column prop="orderNum" label="订单数量" width="120" />
-        <el-table-column prop="perPrice" label="单价" width="120" />
-        <el-table-column prop="money" label="金额" width="120" />
-        <el-table-column prop="supplier" label="供方" width="120" />
-        <el-table-column prop="createdTime" label="制单时间" width="120" />
+        <el-table-column prop="incomeNum" label="纸板到货数量" width="120" />
+
+        <el-table-column prop="productNum" label="已产数量" width="120" />
+        <el-table-column prop="sendNum" label="已送数量" width="120" />
+        <el-table-column prop="orderDate" label="下单日期" width="120" />
+        <el-table-column prop="deliveryDate" label="交货日期" width="120" />
+
+        <!-- <el-table-column prop="money" label="金额" width="120" />
+        <el-table-column prop="supplier" label="供方" width="120" /> -->
+        <!-- <el-table-column prop="createdTime" label="制单时间" width="120" />
         <el-table-column prop="making" label="制单人" width="120" />
         <el-table-column prop="auditTime" label="审核时间" width="120" />
-        <el-table-column prop="audit" label="审核人" width="120" />
-        <el-table-column label="操作" width="150">
+        <el-table-column prop="audit" label="审核人" width="120" /> -->
+        <el-table-column label="操作" width="320">
           <template slot-scope="scope">
             <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
             <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
               <el-button slot="reference" type="danger" size="mini">删除</el-button>
             </el-popconfirm>
+            <el-button type="success" size="mini" @click="singlePrint(scope.row)">打印</el-button>
+            <el-button type="primary" size="mini" @click="generate">生成施工单</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -104,23 +101,28 @@ export default {
       value: '',
       options: [],
       boxTypeOptions: [],
-      supplierOptions: []
+      supplierOptions: [],
+      select: []
 
     }
   },
   created() {
     this.initTable()
-    var data = {
-      no: '22'
-    }
-    this.tableData.push(data)
+    var list = [{ no: '22' }, { no: '33' }]
+    this.tableData = list
   },
   methods: {
     query() {
       this.initTable()
     },
+    generate() {
+      // this.dialog.show = false
+      this.$router.push({
+        path: '/index',
+        query: { id: this.id }
+      })
+    },
     initTable() {},
-    handleSelectionChange() {},
     handleSizeChange(size) {
       this.form.size = size
       this.initTable()
@@ -145,6 +147,26 @@ export default {
       const filterVal = ['name', 'lastmodifytime']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '部门管理')
+    },
+    print() {
+      if (this.select.length === 0) {
+        this.select = this.tableData
+      }
+      this.$router.push({
+        path: '/customerOrder',
+        query: this.select
+      })
+    },
+    handleSelectionChange(select) {
+      this.select = select
+    },
+    singlePrint(row) {
+      var list = []
+      list.push(row)
+      this.$router.push({
+        path: '/customerOrder',
+        query: list
+      })
     }
   }
 

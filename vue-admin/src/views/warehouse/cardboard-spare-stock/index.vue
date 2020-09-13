@@ -1,14 +1,15 @@
 <template>
   <el-container>
     <el-main>
-      <el-form :inline="true" :model="form" size="mini" align="center">
+      <h1 align="center">仓库材料备用库存</h1>
+      <el-form :inline="true" :model="form" size="mini">
         <el-form-item label="供方:">
           <el-input v-model="form.supplier" />
         </el-form-item>
         <el-form-item label="材质:">
           <el-input v-model="form.material" />
         </el-form-item>
-        <el-button type="warning" size="mini">查询</el-button>
+        <el-button type="primary" size="mini">查询</el-button>
         <el-button type="primary" size="mini" @click="stockSpareAdd">新增</el-button>
         <!-- <el-button type="danger" size="mini" @click="drop">删除</el-button> -->
       </el-form>
@@ -19,7 +20,6 @@
         style="width: 100%"
         align="center"
       >
-        <el-table-column type="index" width="50" />
         <el-table-column property="supplier" label="供方" width="120" />
         <el-table-column property="material" label="材质" width="120" />
         <el-table-column property="ridgeType" label="楞型" width="120" />

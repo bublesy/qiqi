@@ -1,8 +1,8 @@
 <template>
   <div id="printTest" style="margin:30px">
-    <p class="font">生产日报表</p>
+    <p class="font">出货日报表</p>
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
-      <el-form-item label="创建日期:">
+      <el-form-item label="出货日期:">
         <el-date-picker
           v-model="form.date"
           type="date"
@@ -24,19 +24,16 @@
       style="width: 100%"
       border
       stripe
-      @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" />
+      <el-table-column type="index" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
-      <el-table-column prop="name" label="任务编号" width="120" />
-      <el-table-column prop="name" label="款号" width="120" />
+      <el-table-column prop="name" label="出货日期" width="120" />
+      <el-table-column prop="name" label="出货单号" width="120" />
       <el-table-column prop="name" label="箱型" width="120" />
-      <el-table-column prop="name" label="订单尺寸" width="120" />
-      <el-table-column prop="name" label="订单数量" width="120" />
-      <el-table-column prop="name" label="已产数量" width="120" />
+      <el-table-column prop="name" label="出货数量" width="120" />
       <el-table-column prop="name" label="单价" width="120" />
       <el-table-column prop="name" label="金额" width="120" />
-      <el-table-column prop="name" label="是否生产" width="120" />
+      <el-table-column prop="name" label="回签状态" width="120" />
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="singlePrint(scope.row)">打印</el-button>
@@ -67,8 +64,7 @@ export default {
         page: 1,
         size: 10
       },
-      select: [],
-      now: null
+      select: []
     }
   },
   created() {
@@ -99,7 +95,7 @@ export default {
         this.select = this.tableData
       }
       this.$router.push({
-        path: '/prodailyOrder',
+        path: '/shipOrder',
         query: this.select
       })
     },
@@ -110,7 +106,7 @@ export default {
       var list = []
       list.push(row)
       this.$router.push({
-        path: '/prodailyOrder',
+        path: '/shipOrder',
         query: list
       })
     }

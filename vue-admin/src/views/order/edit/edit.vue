@@ -3,7 +3,7 @@
     <div>
       <el-button type="primary" size="mini" @click="save">保存</el-button>
       <el-button type="primary" size="mini" @click="audit">审核</el-button>
-      <el-button type="primary" size="mini" @click="generate">生成施工单</el-button>
+
       <el-button type="primary" size="mini" @click="back">返回</el-button>
     </div><br>
     <p style="">订单信息</p>
@@ -191,6 +191,7 @@
           <el-input v-model="form2.remark" />
         </el-form-item>
       </el-form>
+      <p>添加样图:</p>
       <upload />
     </el-card>
   </el-dialog>
@@ -259,13 +260,6 @@ export default {
     },
     audit() {
       this.dialog.show = false
-    },
-    generate() {
-      this.dialog.show = false
-      this.$router.push({
-        path: '/product',
-        query: { id: this.id }
-      })
     },
     back() {
       this.dialog.show = false

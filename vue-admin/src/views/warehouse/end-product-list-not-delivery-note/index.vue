@@ -7,6 +7,7 @@
         <span style="margin-left:40%">打印日期:{{ }}</span>
         <br>
         <br>
+        <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#print'" type="primary">打印</el-button>
         <el-table
           ref="multipleTable"
@@ -65,6 +66,10 @@ export default {
     }
   },
   methods: {
+    // 返回
+    toBack() {
+      this.$router.push('/end_product_list')
+    },
     /**
      * 表格合计
      */
