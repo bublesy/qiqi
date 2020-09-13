@@ -42,11 +42,6 @@ export default (safe) => {
         }]
 
       },
-      // {
-      //   label: '描述',
-      //   prop: 'remark',
-      //   search: true
-      // }
       {
         label: '开单员',
         prop: 'jurisdiction',
@@ -67,14 +62,35 @@ export default (safe) => {
 
       },
       {
-        label: '',
-        labelWidth: '0px',
-        prop: 'Table',
+        label: '品名规格',
+        prop: 'c',
         hide: true,
-        formslot: true
-        // form '500px'
+        rules: [{
+          required: true,
+          message: '请输入品名规格',
+          trigger: 'blur'
+        }]
+      },
+      {
+        label: '单位',
+        prop: 'f',
+        hide: true,
+        rules: [{
+          required: true,
+          message: '请输入单位',
+          trigger: 'blur'
+        }]
+      },
+      {
+        label: '数量',
+        prop: 'e',
+        hide: true,
+        rules: [{
+          required: true,
+          message: '请输入数量',
+          trigger: 'blur'
+        }]
       }
-
       // 树
       // {
       //   label: '描述',

@@ -5,22 +5,14 @@
       v-bind="bindVal"
       :page.sync="page"
       v-on="onEvent"
-    >
-    <!-- 自定义菜单 -->
-      <!-- <template slot="menu" slot-scope="scope">
-        <el-popconfirm title="确认删除这条数据吗？" style="margin-left:10px;" @onConfirm="handleDel( scope.row, scope.index )">
-          <el-button slot="reference" type="text" icon="el-icon-delete" size="small">&nbsp;删除</el-button>
-        </el-popconfirm>
-      </template> -->
-    </avue-crud>
+    />
   </div>
 </template>
 
 <script>
-import { removeRole } from '@/api/accessories/means'
-import { export2Excel } from '@/utils/common'
+
 export default window.$crudCommon({
-  inject: ['reloadTag'],
+  name: 'Profit',
   data() {
     return {
       a: []
@@ -29,27 +21,6 @@ export default window.$crudCommon({
   created() {
   },
   methods: {
-    toExcel() {
-      var list = this.tableData
-      const th = ['编码', '名称', '限定最大纸长']
-      const filterVal = ['code', 'name', 'limitPaperLength']
-      const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '箱类设定')
-    },
-    handleDel(row, index) {
-      removeRole(row.id).then(response => {
-        if (response) {
-          this.$message({
-            message: '删除成功',
-            type: 'success'
-          })
-        } else {
-          this.$message.error('删除失败')
-        }
-      }).finally(() => {
-        this.reloadTag()
-      })
-    },
     onLoadTable({ page, value, data }, callback) {
       // 首次加载去查询对应的值
       if (value) {
@@ -109,12 +80,7 @@ export default window.$crudCommon({
       // this.form.createUser = 'small'
     },
     // 新增后操作方法
-    addAfter(val) {
-      if (val) {
-        this.$message.success('新增成功')
-      } else {
-        this.$message.error('新增失败')
-      }
+    addAfter() {
     },
 
     // 修改前操作方法
@@ -123,24 +89,16 @@ export default window.$crudCommon({
     },
 
     // 修改后操作方法
-    updateAfter(val) {
-      if (val) {
-        this.$message.success('修改成功')
-      } else {
-        this.$message.error('修改失败')
-      }
-    },
+    updateAfter() {},
 
     // 删除前操作方法
     delBefore() {},
 
     // 删除后操作方法
-    delAfter() {
-
-    }
+    delAfter() {}
   }
 }, {
-  name: 'accessories/means', // 模块名字
+  name: 'finance/profit', // 模块名字
   list: 'getRoles', // 列表接口名字
   update: 'editRole', // 更新接口名字
   add: 'addRole', // 新增接口名字
@@ -153,5 +111,4 @@ export default window.$crudCommon({
 })
 </script>
 <style lang="scss" scoped>
-
 </style>

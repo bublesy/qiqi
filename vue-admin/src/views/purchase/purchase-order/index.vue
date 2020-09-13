@@ -287,7 +287,7 @@ export default {
     },
     // 选择打印
     selectPrinting() {
-      if (this.multipleSelection === null || this.multipleSelection === '') {
+      if (this.multipleSelection.length === 0) {
         this.$message.error('请选择打印的内容！！！')
         return
       } else {
