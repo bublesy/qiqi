@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-main>
-      <h1 align="center">供应商管理</h1>
+      <h1 align="center">供应商纸板报价</h1>
       <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
         <el-form-item label="编码:">
           <el-input v-model="form.code" />
@@ -18,17 +18,15 @@
         :data="tableData"
         highlight-current-row
         style="width: 100%"
+        align="center"
       >
         <el-table-column type="index" width="50" />
         <el-table-column property="code" label="编码" width="120" />
         <el-table-column property="abbreviation" label="简称" width="120" />
         <el-table-column property="fullName" label="全称" width="120" />
-        <el-table-column property="telephone" label="电话" width="120" />
-        <el-table-column property="mobilePhone" label="手机" width="120" />
-        <el-table-column property="fax" label="传真" width="120" />
-        <el-table-column property="contacts" label="联系人" width="120" />
-        <el-table-column property="website" label="网址" width="120" />
-        <el-table-column property="address" label="地址" width="120" />
+        <el-table-column property="quotationUnit" label="报价单位" width="120" />
+        <el-table-column property="cardboardQuotation" label="纸板报价" width="120" />
+        <el-table-column property="preferentialSetting" label="优惠设定" width="120" />
         <el-table-column label="操作" width="180">
           <template slot-scope="scope">
             <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
@@ -47,43 +45,38 @@
         @current-change="pageChange"
       />
     </el-main>
-    <!-- 新增/编辑供应商 -->
-    <el-dialog :title="titleType+'供应商'" :visible.sync="supplierAddVisible">
+    <!-- 新增/编辑供应商纸板报价 -->
+    <el-dialog :title="titleType+'供应商纸板报价'" :visible.sync="supplierAddVisible">
       <el-form ref="supForm" :rules="supRules" :inline="true" :model="formAdd" size="mini" label-width="120px">
+        <el-form-item label="供应商名称" prop="supplierName">
+          <el-select v-model="formAdd.supplierName">
+            <el-option
+              v-for="item in supplierFor"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="编码" prop="code">
           <el-input v-model="formAdd.code" disabled />
         </el-form-item>
 
         <el-form-item label="简称" prop="abbreviation">
-          <el-input v-model="formAdd.abbreviation" @change="abbrevChange" />
+          <el-input v-model="formAdd.abbreviation" disabled />
         </el-form-item>
 
-        <el-form-item label="全称" prop="fullName">
-          <el-input v-model="formAdd.fullName" />
+        <el-form-item label="报价单位" prop="quotationUnit">
+          <el-input v-model="formAdd.quotationUnit" />
         </el-form-item>
 
-        <el-form-item label="电话" prop="telephone">
-          <el-input v-model="formAdd.telephone" />
+        <el-form-item label="纸板报价" prop="cardboardQuotation">
+          <el-input v-model="formAdd.cardboardQuotation" />
         </el-form-item>
 
-        <el-form-item label="手机" prop="mobilePhone">
-          <el-input v-model="formAdd.mobilePhone" />
-        </el-form-item>
-
-        <el-form-item label="传真">
-          <el-input v-model="formAdd.fax" />
-        </el-form-item>
-
-        <el-form-item label="联系人">
-          <el-input v-model="formAdd.contacts" />
-        </el-form-item>
-
-        <el-form-item label="网址">
-          <el-input v-model="formAdd.website" />
-        </el-form-item>
-
-        <el-form-item label="地址">
-          <el-input v-model="formAdd.address" />
+        <el-form-item label="优惠设定" prop="preferentialSetting">
+          <el-input v-model="formAdd.preferentialSetting" />
         </el-form-item>
 
       </el-form>
@@ -100,35 +93,22 @@ import initData from '@/mixins/initData'
 import pinyin from 'js-pinyin'
 import { export2Excel } from '@/utils/common'
 export default {
-  name: 'Supplier',
+  name: 'SupplierCardboardQuotation',
   mixins: [initData],
 
   data() {
-    var checkPhone = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('手机号不能为空'))
-      } else {
-        const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
-        console.log(reg.test(value))
-        if (reg.test(value)) {
-          callback()
-        } else {
-          return callback(new Error('请输入正确的手机号'))
-        }
-      }
-    }
     return {
       tableData: [],
       supplierAddVisible: false,
       formAdd: { code: '' },
       titleType: '',
       supRules: {
-        mobilePhone: [{ validator: checkPhone, trigger: 'change' }],
-        abbreviation: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        fullName: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        telephone: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        supplierName: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        quotationUnit: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        cardboardQuotation: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
-      form: {}
+      form: {},
+      supplierFor: []
     }
   },
 
@@ -141,11 +121,11 @@ export default {
       const th = ['编码', '名称']
       const filterVal = ['code', 'name']
       const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '供应商')
+      export2Excel(th, data, '纸板资料设定')
     },
     // 自动生成编码
     abbrevChange() {
-      this.formAdd.code = pinyin.getCamelChars(this.formAdd.abbreviation)
+      this.formAdd.code = pinyin.getCamelChars(this.formAdd.name)
     },
     // 删除
     drop() {
