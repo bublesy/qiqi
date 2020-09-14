@@ -1,69 +1,6 @@
 <template>
   <div class="app-container">
-    <el-select v-model="value" placeholder="请选择月份">
-      <el-option
-        v-for="item in month"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select>
-    <el-select v-model="valu" placeholder="请选择客户">
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select>
-    <el-button type="primary" @click="search">搜索</el-button>
-    <el-button v-print="'#printTest'" type="primary">打印</el-button>
-    <el-button type="primary" @click="toExcel">导出</el-button>
-    <el-pagination
-      style="  position: fixed;top: 32%;right: 4%;"
-      :current-page="currentPage4"
-      :page-sizes="[10, 20, 30, 50]"
-      :page-size="1"
-      layout="prev, pager, next, jumper"
-      :total="10"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
-    <div id="printTest">
-      <div>
-        <h2 style="text-align:center">海宁中奇纸箱包装厂</h2>
-        <p style="text-align:center;margin-top:-10px">地址：海宁市长安镇东陈村&nbsp;&nbsp;&nbsp;&nbsp;电话：{{ 15325300000 }}</p>
-      </div>
-      <div class="jie">
-        <h2 style="text-align:center">2012年09月份月结对账单</h2>
-        <p>客户：平湖吉安</p>
-        <p>电话：87578878</p>
-        <p>传真：</p>
-        <p class="dy">打印日期：{{ data }}</p>
-      </div>
-      <table>
-        <tr>
-          <th>出货日期</th>
-          <th>出货单号</th>
-          <th>物品单号/款号</th>
-          <th>箱型</th>
-          <th>长x宽x高</th>
-          <th>数量</th>
-          <th>单价</th>
-          <th>金额</th>
-        </tr>
-        <tr v-for="item in form" :key="item.id">
-          <td>{{ item.goods }}</td>
-          <td>{{ item.shipment }}</td>
-          <td>{{ item.goods }}</td>
-          <td>{{ item.type }}</td>
-          <td>{{ item.long }}</td>
-          <td>{{ item.number }}</td>
-          <td>{{ item.price }}</td>
-          <td>{{ item.money }}</td>
-        </tr>
-      </table>
-    </div>
+    对账打印单细
   </div>
 </template>
 
@@ -71,7 +8,7 @@
 // 引入打印
 import { export2Excel } from '@/utils/common'
 export default window.$crudCommon({
-  name: 'Verify',
+  name: 'Verify_printing',
   data() {
     return {
       form: [
@@ -214,7 +151,7 @@ export default window.$crudCommon({
     delAfter() {}
   }
 }, {
-  name: 'finance/verify', // 模块名字
+  name: 'finance/verify_printing', // 模块名字
   list: 'getRoles', // 列表接口名字
   update: 'editRole', // 更新接口名字
   add: 'addRole', // 新增接口名字
@@ -240,7 +177,7 @@ export default window.$crudCommon({
   margin: -50px 0 0 45%  ;
 }
 table{
-  margin-p: 5px;
+  margin-top: 5px;
   width: 100%;
   color: black;
 
