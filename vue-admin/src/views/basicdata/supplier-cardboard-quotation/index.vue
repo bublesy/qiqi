@@ -121,7 +121,7 @@ export default {
       const th = ['编码', '名称']
       const filterVal = ['code', 'name']
       const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '纸板资料设定')
+      export2Excel(th, data, '供应商纸板报价')
     },
     // 自动生成编码
     abbrevChange() {
