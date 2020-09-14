@@ -22,6 +22,7 @@ export default (safe) => {
         label: '领料人',
         prop: 'name',
         dicData: safe.a,
+        search: true,
         rules: [{
           required: true,
           message: '请输入领料人',
@@ -41,15 +42,9 @@ export default (safe) => {
         }]
 
       },
-      // {
-      //   label: '描述',
-      //   prop: 'remark',
-      //   search: true
-      // }
       {
         label: '开单员',
         prop: 'jurisdiction',
-        multiple: true,
         rules: [{
           required: true,
           message: '请输入开单员',
@@ -67,19 +62,34 @@ export default (safe) => {
 
       },
       {
-        label: '',
-        labelWidth: '0px',
-        prop: 'Table',
+        label: '品名规格',
+        prop: 'c',
         hide: true,
-        formslot: true
-        // formWidth: '500px'
+        rules: [{
+          required: true,
+          message: '请输入品名规格',
+          trigger: 'blur'
+        }]
       },
       {
-        label: '名称',
-        search: true,
+        label: '单位',
+        prop: 'f',
         hide: true,
-        addDisplay: false,
-        editDisplay: false
+        rules: [{
+          required: true,
+          message: '请输入单位',
+          trigger: 'blur'
+        }]
+      },
+      {
+        label: '数量',
+        prop: 'e',
+        hide: true,
+        rules: [{
+          required: true,
+          message: '请输入数量',
+          trigger: 'blur'
+        }]
       }
       // 树
       // {
