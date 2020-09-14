@@ -2,17 +2,27 @@
   <el-container>
     <el-main>
       <h1 align="center">供应商纸板报价</h1>
-      <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
+
+      <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true" align="center">
         <el-form-item label="编码:">
           <el-input v-model="form.code" />
         </el-form-item>
         <el-form-item label="简称:">
           <el-input v-model="form.abbreviation" />
         </el-form-item>
+        <el-form-item label="时间:">
+          <el-date-picker
+            v-model="form.time"
+            align="right"
+            type="date"
+            placeholder="选择日期"
+          />
+        </el-form-item>
+
+        <el-button size="mini" type="primary" @click="query">查询</el-button>
+        <el-button type="primary" size="mini" @click="supplierAdd">新增</el-button>
+        <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
       </el-form>
-      <el-button size="mini" type="primary" @click="query">查询</el-button>
-      <el-button type="primary" size="mini" @click="supplierAdd">新增</el-button>
-      <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
       <el-table
         ref="singleTable"
         :data="tableData"

@@ -2,12 +2,20 @@
   <el-container>
     <el-main>
       <h1 align="center">仓库材料备用库存</h1>
-      <el-form :inline="true" :model="form" size="mini">
+      <el-form :inline="true" :model="form" size="mini" align="center">
         <el-form-item label="供方:">
           <el-input v-model="form.supplier" />
         </el-form-item>
         <el-form-item label="材质:">
           <el-input v-model="form.material" />
+        </el-form-item>
+        <el-form-item label="时间:">
+          <el-date-picker
+            v-model="form.time"
+            align="right"
+            type="date"
+            placeholder="选择日期"
+          />
         </el-form-item>
         <el-button type="primary" size="mini">查询</el-button>
         <el-button type="primary" size="mini" @click="stockSpareAdd">新增</el-button>
