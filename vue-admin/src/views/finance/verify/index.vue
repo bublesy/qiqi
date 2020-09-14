@@ -116,6 +116,10 @@ export default window.$crudCommon({
     console.log(this.data) // 2019-8-20
   },
   methods: {
+    a() {
+      console.log(11)
+      this.$router.push('/finance/settlement')
+    },
     search() {
       this.$router.push('/finance/receivables')
     },

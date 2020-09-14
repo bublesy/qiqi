@@ -1,47 +1,78 @@
 <template>
   <div class="app-container">
-    <avue-crud
-      v-model="form"
-      v-bind="bindVal"
-      :page.sync="page"
-      v-on="onEvent"
-    />
+    对账打印单细
   </div>
 </template>
 
 <script>
-import { removeRole } from '@/api/accessories/means'
+// 引入打印
 import { export2Excel } from '@/utils/common'
 export default window.$crudCommon({
-  inject: ['reloadTag'],
+  name: 'Verify_printing',
   data() {
     return {
-      a: []
+      form: [
+        {
+          data: '2020-09-11',
+          shipment: 202,
+          goods: '五箱',
+          type: 780 * 670 * 430,
+          long: 90,
+          number: 13.09,
+          price: 7,
+          money: 856
+        }
+
+      ],
+      a: [],
+      month: [{
+        value: '选项1',
+        label: '2020-02-11'
+      }, {
+        value: '选项2',
+        label: '2018-06-11'
+      }, {
+        value: '选项3',
+        label: '2014-09-11'
+      }, {
+        value: '选项4',
+        label: '2012-01-11'
+      }, {
+        value: '选项5',
+        label: '2013-02-11'
+      }],
+      value: ''
     }
   },
-  created() {
+  created: function() {
+    var aData = new Date()
+    console.log(aData) // Wed Aug 21 2019 10:00:58 GMT+0800 (中国标准时间)
+
+    this.data =
+      aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
+    console.log(this.data) // 2019-8-20
   },
   methods: {
-    toExcel() {
-      var list = this.tableData
-      const th = ['编码', '名称', '限定最大纸长']
-      const filterVal = ['code', 'name', 'limitPaperLength']
-      const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '箱类设定')
+    a() {
+      console.log(11)
+      this.$router.push('/finance/settlement')
     },
-    handleDel(row, index) {
-      removeRole(row.id).then(response => {
-        if (response) {
-          this.$message({
-            message: '删除成功',
-            type: 'success'
-          })
-        } else {
-          this.$message.error('删除失败')
-        }
-      }).finally(() => {
-        this.reloadTag()
-      })
+    search() {
+      this.$router.push('/finance/receivables')
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+    },
+    // 打印功能
+    toExcel() {
+      var list = this.form
+      const th = ['出货日期门', '出货单号', '物品单号/款号', '箱型', '长x宽x高', '数量', '单价', '金额']
+      const filterVal = ['data', 'shipment', 'goods', 'type', 'long', 'number', 'price', 'money']
+      const data = list.map(v => filterVal.map(k => v[k]))
+      export2Excel(th, data, this.value)
     },
     onLoadTable({ page, value, data }, callback) {
       // 首次加载去查询对应的值
@@ -102,12 +133,7 @@ export default window.$crudCommon({
       // this.form.createUser = 'small'
     },
     // 新增后操作方法
-    addAfter(val) {
-      if (val) {
-        this.$message.success('新增成功')
-      } else {
-        this.$message.error('新增失败')
-      }
+    addAfter() {
     },
 
     // 修改前操作方法
@@ -116,24 +142,16 @@ export default window.$crudCommon({
     },
 
     // 修改后操作方法
-    updateAfter(val) {
-      if (val) {
-        this.$message.success('修改成功')
-      } else {
-        this.$message.error('修改失败')
-      }
-    },
+    updateAfter() {},
 
     // 删除前操作方法
     delBefore() {},
 
     // 删除后操作方法
-    delAfter() {
-
-    }
+    delAfter() {}
   }
 }, {
-  name: 'accessories/means', // 模块名字
+  name: 'finance/verify_printing', // 模块名字
   list: 'getRoles', // 列表接口名字
   update: 'editRole', // 更新接口名字
   add: 'addRole', // 新增接口名字
@@ -146,5 +164,32 @@ export default window.$crudCommon({
 })
 </script>
 <style lang="scss" scoped>
+.jie{
+  width: 100%;
+  height: 120px;
+  border-bottom:1px solid #717171;
+}
+.jie>p{
+  line-height: 10px;
+}
+.dy{
+  float: left;
+  margin: -50px 0 0 45%  ;
+}
+table{
+  margin-top: 5px;
+  width: 100%;
+  color: black;
 
+}
+tr{
+  width: 9%;
+  line-height: 25px;
+  text-align: center;
+}
+td{
+  width: 9%;
+  text-align: center;
+  height: 30px;
+}
 </style>

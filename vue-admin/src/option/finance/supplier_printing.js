@@ -1,16 +1,16 @@
 export default (safe) => {
   // safe => vue的this对象
   return {
-    columnBtn: false,
+    columnBtn: true,
     refreshBtn: true,
     saveBtn: true,
     updateBtn: true,
     cancelBtn: true,
     addBtn: true,
-    delBtn: false,
+    delBtn: true,
     editBtn: true,
-    viewBtn: false,
-    printBtn: false,
+    viewBtn: true,
+    printBtn: true,
     excelBtn: true,
     searchShow: false,
     page: true,
@@ -19,77 +19,25 @@ export default (safe) => {
     menuAlign: 'center',
     column: [
       {
-        label: '领料人aaaaa',
+        label: '名称',
         prop: 'name',
-        dicData: safe.a,
-        search: true,
-        rules: [{
-          required: true,
-          message: '请输入领料人',
-          trigger: 'blur'
-        }]
-
+        search: true
       },
       {
-        label: '日期',
-        prop: 'time',
-        type: 'datetime',
-        format: 'yyyy 年 MM 月 dd 日',
-        rules: [{
-          required: true,
-          message: '请输入日期',
-          trigger: 'blur'
-        }]
-
+        label: '编码',
+        prop: 'code'
       },
+      // {
+      //   label: '描述',
+      //   prop: 'remark',
+      //   search: true
+      // }
       {
-        label: '开单员',
-        prop: 'jurisdiction',
-        rules: [{
-          required: true,
-          message: '请输入开单员',
-          trigger: 'blur'
-        }]
-      },
-      {
-        label: '备注',
-        prop: 'remarks',
-        rules: [{
-          required: true,
-          message: '请输入备注',
-          trigger: 'blur'
-        }]
-
-      },
-      {
-        label: '品名规格',
-        prop: 'c',
-        hide: true,
-        rules: [{
-          required: true,
-          message: '请输入品名规格',
-          trigger: 'blur'
-        }]
-      },
-      {
-        label: '单位',
-        prop: 'f',
-        hide: true,
-        rules: [{
-          required: true,
-          message: '请输入单位',
-          trigger: 'blur'
-        }]
-      },
-      {
-        label: '数量',
-        prop: 'e',
-        hide: true,
-        rules: [{
-          required: true,
-          message: '请输入数量',
-          trigger: 'blur'
-        }]
+        label: '描述',
+        prop: 'remark',
+        type: 'select',
+        multiple: true,
+        dicData: safe.a
       }
       // 树
       // {

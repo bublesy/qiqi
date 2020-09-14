@@ -1,48 +1,27 @@
 <template>
   <div class="app-container">
-    <avue-crud
-      v-model="form"
-      v-bind="bindVal"
-      :page.sync="page"
-      v-on="onEvent"
-    />
+    供应商打印
   </div>
 </template>
 
 <script>
-import { removeRole } from '@/api/accessories/means'
-import { export2Excel } from '@/utils/common'
+
 export default window.$crudCommon({
-  inject: ['reloadTag'],
+  name: 'Supplier_printing',
   data() {
     return {
       a: []
     }
   },
-  created() {
+  created: function() {
+    var aData = new Date()
+    console.log(aData) // Wed Aug 21 2019 10:00:58 GMT+0800 (中国标准时间)
+
+    this.value =
+      aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
+    console.log(this.value) // 2019-8-20
   },
   methods: {
-    toExcel() {
-      var list = this.tableData
-      const th = ['编码', '名称', '限定最大纸长']
-      const filterVal = ['code', 'name', 'limitPaperLength']
-      const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '箱类设定')
-    },
-    handleDel(row, index) {
-      removeRole(row.id).then(response => {
-        if (response) {
-          this.$message({
-            message: '删除成功',
-            type: 'success'
-          })
-        } else {
-          this.$message.error('删除失败')
-        }
-      }).finally(() => {
-        this.reloadTag()
-      })
-    },
     onLoadTable({ page, value, data }, callback) {
       // 首次加载去查询对应的值
       if (value) {
@@ -102,12 +81,7 @@ export default window.$crudCommon({
       // this.form.createUser = 'small'
     },
     // 新增后操作方法
-    addAfter(val) {
-      if (val) {
-        this.$message.success('新增成功')
-      } else {
-        this.$message.error('新增失败')
-      }
+    addAfter() {
     },
 
     // 修改前操作方法
@@ -116,24 +90,16 @@ export default window.$crudCommon({
     },
 
     // 修改后操作方法
-    updateAfter(val) {
-      if (val) {
-        this.$message.success('修改成功')
-      } else {
-        this.$message.error('修改失败')
-      }
-    },
+    updateAfter() {},
 
     // 删除前操作方法
     delBefore() {},
 
     // 删除后操作方法
-    delAfter() {
-
-    }
+    delAfter() {}
   }
 }, {
-  name: 'accessories/means', // 模块名字
+  name: 'finance/supplier_printing', // 模块名字
   list: 'getRoles', // 列表接口名字
   update: 'editRole', // 更新接口名字
   add: 'addRole', // 新增接口名字
@@ -146,5 +112,24 @@ export default window.$crudCommon({
 })
 </script>
 <style lang="scss" scoped>
-
+.biaoge{
+  width: 100%;
+  height: 80px;
+  border-bottom:1px solid #717171;
+}
+table{
+  width: 100%;
+  color: black;
+  margin-top: 30px
+}
+tr{
+  width: 9%;
+  line-height: 25px;
+  text-align: center;
+}
+td{
+  width: 9%;
+  text-align: center;
+  height: 30px;
+}
 </style>
