@@ -179,42 +179,6 @@
         </span>
       </el-dialog>
 
-      <!-- 任务编号(带客户去查客户底下成品的任务编号) -->
-      <el-dialog title="请选择" :visible.sync="modifyTaskVisible" width="800px">
-        <el-table
-          :data="modifyTaskTable"
-          stripe
-          highlight-current-row
-          style="width: 100%"
-          @current-change="modifyTaskChange"
-        >
-          <el-table-column property="customerName" label="客户名称" />
-          <el-table-column property="taskNumber" label="任务编号" />
-          <el-table-column property="customerDocNo" label="客户单号" />
-          <el-table-column property="typeNo" label="款号" />
-          <el-table-column property="boxType" label="箱型" />
-          <el-table-column property="textureOfMaterial" label="材质" />
-          <el-table-column property="paperLength" label="纸长" />
-          <el-table-column property="paperWidth" label="纸宽" />
-          <el-table-column property="costDoorWidth" label="耗用门幅" />
-          <el-table-column property="orderQuantity" label="订单数量" />
-          <el-table-column property="cartonDelDate" label="纸箱交期" />
-        </el-table>
-        <el-pagination
-          background
-          layout="total, sizes, prev, pager, next"
-          :total="pagination.total"
-          :current-page="pagination.page"
-          :page-size="pagination.size"
-          align="center"
-          @size-change="sizeChange"
-          @current-change="pageChange"
-        />
-        <span slot="footer" class="dialog-footer">
-          <el-button size="small" @click="modifyTaskVisible = false">取 消</el-button>
-          <el-button size="small" type="primary" @click="modifyTaskConfirm">确 定</el-button>
-        </span>
-      </el-dialog>
     </el-main>
   </el-container>
 
@@ -271,8 +235,6 @@ export default {
         taskNumber: '2',
         taskName: '就这a ?'
       }],
-      currentRowTow: {},
-      modifyTaskVisible: false,
       modifyTaskTable: [{
         customerName: '张三',
         taskNumber: '2'
@@ -343,54 +305,6 @@ export default {
           message: '已取消删除'
         })
       })
-    },
-    delRule(val) {
-      if (this.addTableData.length !== 1) {
-        this.addTableData.splice(val.$index, 1)
-        return
-      }
-      if (this.addTableData.length === 1) {
-        var a = {
-          id: null,
-          less: 0,
-          thanEqual: 0,
-          discount: 0
-        }
-        this.addTableData = []
-        this.addTableData.push(a)
-      }
-    },
-    // 确定客户成品信息 回调
-    modifyTaskConfirm() {
-      this.$set(this.addTableData, this.indexId, this.currentRowTow)
-      this.modifyTaskVisible = false
-    },
-    /**
-     * 选中数据改变事件
-     */
-    modifyTaskChange(val) {
-      this.currentRowTow = val
-    },
-    tableRowClassName({ row, rowIndex }) {
-      if (row.consignment) {
-        return 'green-row'
-      }
-    },
-    /**
-     * 记忆选中
-     */
-    getRowKeys(row) {
-      return row.id
-    },
-
-    // 添加任务编号
-    addTaskNumber() {
-      this.taskNumberVisible = true
-    },
-    // 点击任务编号弹出弹窗
-    modifyTask(scope) {
-      this.indexId = scope.$index
-      this.modifyTaskVisible = true
     },
     // 编辑订单
     modifyPur(row) {
