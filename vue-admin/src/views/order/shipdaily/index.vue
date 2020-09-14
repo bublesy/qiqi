@@ -9,6 +9,12 @@
           placeholder="选择日期"
         />
       </el-form-item>
+      <el-form-item label="客户名称:">
+        <el-input v-model="form.name" />
+      </el-form-item>
+      <el-form-item label="任务编号:">
+        <el-input v-model="form.no" />
+      </el-form-item>
       <el-form-item label="">
         <el-button size="mini" type="primary">查询</el-button>
         <el-button type="warning" size="mini" @click="print">批量打印</el-button>
@@ -54,6 +60,7 @@
 
 <script>
 import { export2Excel } from '@/utils/common'
+import { getShipDaily } from '@/api/order/shipdaily'
 export default {
   name: 'ProDaily',
   data() {
@@ -74,7 +81,11 @@ export default {
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   },
   methods: {
-    initTable() {},
+    initTable() {
+      getShipDaily(this.form).then(res => {
+        console.log(res)
+      })
+    },
     handleSizeChange(size) {
       this.size = size
       this.initTable()

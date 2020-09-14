@@ -9,8 +9,14 @@
           placeholder="选择日期"
         />
       </el-form-item> -->
+      <el-form-item label="客户名称:">
+        <el-input v-model="form.name" />
+      </el-form-item>
+      <el-form-item label="任务编号:">
+        <el-input v-model="form.no" />
+      </el-form-item>
       <el-form-item label="">
-        <!-- <el-button size="mini" type="primary">查询</el-button> -->
+        <el-button size="mini" type="primary">查询</el-button>
         <el-button type="warning" size="mini" @click="print">批量打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
       </el-form-item>
@@ -59,6 +65,7 @@
 
 <script>
 import { export2Excel } from '@/utils/common'
+import { getOrderNotProduct } from '@/api/order/ordernotproduct'
 export default {
   name: 'ProDaily',
   data() {
@@ -80,7 +87,11 @@ export default {
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   },
   methods: {
-    initTable() {},
+    initTable() {
+      getOrderNotProduct(this.form).then(res => {
+        console.log(res)
+      })
+    },
     handleSizeChange(size) {
       this.size = size
       this.initTable()

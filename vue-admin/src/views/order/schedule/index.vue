@@ -74,6 +74,7 @@
 import { export2Excel } from '@/utils/common'
 import addDialog from '@/views/order/schedule/add'
 import editDialog from '@/views/order/schedule/edit'
+import { getSchedule } from '@/api/order/schedule'
 export default {
   components: { addDialog, editDialog },
   data() {
@@ -99,6 +100,11 @@ export default {
     this.tableData.push({ schedule: 'aa' })
   },
   methods: {
+    initTable() {
+      getSchedule(this.form).then(res => {
+        console.log(res)
+      })
+    },
     query() {
       this.initTable()
     },
@@ -110,7 +116,6 @@ export default {
       this.editDialog.show = true
     },
     deleted() {},
-    initTable() {},
     handleSizeChange(size) {
       this.form.count = size
       this.initTable()

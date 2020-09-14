@@ -2,12 +2,18 @@
   <div style="margin:30px">
     <p class="font">客户订单日报表</p>
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
-      <el-form-item label="创建日期:">
+      <!-- <el-form-item label="创建日期:">
         <el-date-picker
           v-model="form.date"
           type="date"
           placeholder="选择日期"
         />
+      </el-form-item> -->
+      <el-form-item label="客户名称:">
+        <el-input v-model="form.name" />
+      </el-form-item>
+      <el-form-item label="任务编号:">
+        <el-input v-model="form.no" />
       </el-form-item>
       <el-form-item label="">
         <el-button size="mini" type="primary">查询</el-button>
@@ -56,6 +62,7 @@
 
 <script>
 import { export2Excel } from '@/utils/common'
+import { getDaily } from '@/api/order/daily'
 export default {
   name: 'Daily',
   data() {
@@ -77,7 +84,11 @@ export default {
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   },
   methods: {
-    initTable() {},
+    initTable() {
+      getDaily(this.form).then(res => {
+        console.log(res)
+      })
+    },
     handleSizeChange(size) {
       this.size = size
       this.initTable()

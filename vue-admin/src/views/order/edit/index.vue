@@ -2,8 +2,20 @@
   <div style="padding:10px">
     <p class="font">客户订单</p>
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
+      <el-form-item label="任务编号:">
+        <el-input v-model="form.no" />
+      </el-form-item>
       <el-form-item label="客户名称:">
         <el-input v-model="form.name" />
+      </el-form-item>
+      <el-form-item label="客户单号:">
+        <el-input v-model="form.customerNo" />
+      </el-form-item>
+      <el-form-item label="下单日期:">
+        <el-input v-model="form.orderDate" />
+      </el-form-item>
+      <el-form-item label="交货日期:">
+        <el-input v-model="form.deliveryDate" />
       </el-form-item>
       <el-form-item label="仓库状态:">
         <el-select v-model="form.wosState" placeholder="请选择">
@@ -39,12 +51,14 @@
         <el-table-column prop="cartonSize" label="纸箱尺寸(mm)" width="120" />
         <el-table-column prop="orderNum" label="订单数量" width="120" />
         <el-table-column prop="incomeNum" label="纸板到货数量" width="120" />
-
+        <el-table-column prop="space" label="仓位" width="120" />
         <el-table-column prop="productNum" label="已产数量" width="120" />
+        <el-table-column prop="productSpace" label="成品仓位" width="120" />
         <el-table-column prop="sendNum" label="已送数量" width="120" />
+        <el-table-column prop="lossNum" label="损耗数量" width="120" />
         <el-table-column prop="orderDate" label="下单日期" width="120" />
         <el-table-column prop="deliveryDate" label="交货日期" width="120" />
-
+        <el-table-column prop="usedBox" label="常用箱" width="120" />
         <!-- <el-table-column prop="money" label="金额" width="120" />
         <el-table-column prop="supplier" label="供方" width="120" /> -->
         <!-- <el-table-column prop="createdTime" label="制单时间" width="120" />
@@ -79,6 +93,7 @@
 <script>
 import editDialog from '@/views/order/edit/edit'
 import { export2Excel } from '@/utils/common'
+import { getOrder, delOrder } from '@/api/order/customerOrder'
 export default {
   name: 'Edit',
   components: { editDialog },
@@ -116,13 +131,16 @@ export default {
       this.initTable()
     },
     generate() {
-      // this.dialog.show = false
       this.$router.push({
         path: '/index',
         query: { id: this.id }
       })
     },
-    initTable() {},
+    initTable() {
+      getOrder(this.form).then(res => {
+        console.log(res)
+      })
+    },
     handleSizeChange(size) {
       this.form.size = size
       this.initTable()
@@ -132,7 +150,13 @@ export default {
       this.initTable()
     },
     deleted(id) {
-
+      delOrder(id).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+        } else {
+          this.$message.error('删除失败')
+        }
+      })
     },
     add() {
       this.editDialog.show = true
