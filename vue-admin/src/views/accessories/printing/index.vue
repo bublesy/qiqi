@@ -2,6 +2,7 @@
   <div class="app-container">
     <div class="anniu">
       <el-row>
+        <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#printTest'" type="primary">打印</el-button>
         <el-button type="primary" @click="toExcel">导出</el-button>
         <!-- <el-pagination

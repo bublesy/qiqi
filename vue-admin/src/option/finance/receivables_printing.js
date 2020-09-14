@@ -7,32 +7,20 @@ export default (safe) => {
     updateBtn: true,
     cancelBtn: true,
     addBtn: true,
-    delBtn: false,
+    delBtn: true,
     editBtn: true,
-    viewBtn: false,
-    printBtn: false,
+    viewBtn: true,
+    printBtn: true,
     excelBtn: true,
     searchShow: false,
     page: true,
     border: true,
-    align: 'center',
     menuAlign: 'center',
     column: [
       {
-        label: '领料人aaaaa',
-        prop: 'name',
-        dicData: safe.a,
-        search: true,
-        rules: [{
-          required: true,
-          message: '请输入领料人',
-          trigger: 'blur'
-        }]
-
-      },
-      {
         label: '日期',
-        prop: 'time',
+        prop: 'name',
+        search: true,
         type: 'datetime',
         format: 'yyyy 年 MM 月 dd 日',
         rules: [{
@@ -40,56 +28,47 @@ export default (safe) => {
           message: '请输入日期',
           trigger: 'blur'
         }]
-
       },
       {
-        label: '开单员',
-        prop: 'jurisdiction',
+        label: '供方',
+        prop: 'code',
         rules: [{
           required: true,
-          message: '请输入开单员',
+          message: '请输入供方名称',
           trigger: 'blur'
+        }]
+      },
+      {
+        label: '原始编号',
+        prop: 'number',
+
+        multiple: true,
+        dicData: safe.a,
+        rules: [{
+          required: true,
+          message: '请输入原始编号',
+          trigger: 'blur',
+          pattern: /^\d{1,}$/
         }]
       },
       {
         label: '备注',
         prop: 'remarks',
+        multiple: true,
+        dicData: safe.a,
         rules: [{
           required: true,
           message: '请输入备注',
           trigger: 'blur'
         }]
-
       },
       {
-        label: '品名规格',
-        prop: 'c',
+        label: '',
+        labelWidth: '0px',
+        prop: 'myTable',
         hide: true,
-        rules: [{
-          required: true,
-          message: '请输入品名规格',
-          trigger: 'blur'
-        }]
-      },
-      {
-        label: '单位',
-        prop: 'f',
-        hide: true,
-        rules: [{
-          required: true,
-          message: '请输入单位',
-          trigger: 'blur'
-        }]
-      },
-      {
-        label: '数量',
-        prop: 'e',
-        hide: true,
-        rules: [{
-          required: true,
-          message: '请输入数量',
-          trigger: 'blur'
-        }]
+        formslot: true,
+        formWidth: '500px'
       }
       // 树
       // {
