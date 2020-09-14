@@ -2,17 +2,26 @@
   <el-container>
     <el-main>
       <h1 align="center">采购单管理</h1>
-      <el-form :inline="true" :model="form" size="mini">
+      <el-form :inline="true" :model="form" size="mini" align="center">
         <el-form-item label="客户名称:">
           <el-input v-model="form.customerName" />
         </el-form-item>
-
         <el-form-item label="采购未进过期:">
           <el-select v-model="form.carryTo" :clearable="true">
             <el-option label="已过期" value="已过期" />
             <el-option label="未过期" value="未过期" />
           </el-select>
         </el-form-item>
+
+        <el-form-item label="时间:">
+          <el-date-picker
+            v-model="form.time"
+            align="right"
+            type="date"
+            placeholder="选择日期"
+          />
+        </el-form-item>
+
         <el-button type="primary" size="mini" @click="toQuery">查询</el-button>
         <el-button type="primary" size="mini" @click="purAdd">新增</el-button>
         <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
@@ -26,6 +35,7 @@
           highlight-current-row
           style="width: 100%"
           border=""
+          align="center"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" />
@@ -151,10 +161,6 @@
             <el-input v-model="formAdd.squarePrice" />
           </el-form-item>
 
-          <el-form-item label="平方价">
-            <el-input v-model="formAdd.squarePrice" />
-          </el-form-item>
-
           <el-form-item label="单价">
             <el-input v-model="formAdd.unitPrice" />
           </el-form-item>
@@ -195,16 +201,9 @@ export default {
     return {
       form: {},
       formAdd: { },
-      tableData: [{
-        documentsNo: '1',
-        taskNumber: '1',
-        customerName: '迪迦'
-      }],
+      tableData: [],
       addTableData: [],
-      customerFor: [{
-        id: '1',
-        name: '迪迦'
-      }],
+      customerFor: [],
       purAddVisible: false,
       purRules: {
         supplier: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
@@ -212,35 +211,11 @@ export default {
         billingTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         deliveryTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
-      supplierFor: [{
-        id: '1',
-        name: '腾讯'
-      }, {
-        id: '2',
-        name: '阿里'
-      }],
-      pricingFor: [{
-        id: '1',
-        name: '净边'
-      }, {
-        id: '2',
-        name: '净宽'
-      }],
+      supplierFor: [],
+      pricingFor: [],
       titleType: '',
       taskNumberVisible: false,
-      taskNumberTable: [{
-        taskNumber: '1',
-        taskName: '就这?'
-      }, {
-        taskNumber: '2',
-        taskName: '就这a ?'
-      }],
-      modifyTaskTable: [{
-        customerName: '张三',
-        taskNumber: '2'
-      }],
-      multipleSelection: [],
-      indexId: {}
+      multipleSelection: []
 
     }
   },
