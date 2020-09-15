@@ -1,15 +1,15 @@
 <template>
   <div style="margin:30px">
     <p class="font">箱类设定</p>
-    <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
+    <el-form ref="form" :model="queryForm" label-width="80px" size="mini" :inline="true">
       <el-form-item label="编码:">
-        <el-input v-model="form.code" />
+        <el-input v-model="queryForm.code" />
       </el-form-item>
       <el-form-item label="名称:">
-        <el-input v-model="form.name" />
+        <el-input v-model="queryForm.name" />
       </el-form-item>
-      <el-form-item label="限定最大纸长:" label-width="180">
-        <el-checkbox v-model="form.limitPaperLength" />
+      <el-form-item label="是否限定最大纸长:" label-width="180">
+        <el-checkbox v-model="queryForm.limitPaperLength" />
       </el-form-item>
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
@@ -19,20 +19,21 @@
       ref="table"
       :data="tableData"
       tooltip-effect="dark"
-      style="width: 100%"
       border
+      style="width: 100%"
       stripe
     >
       <el-table-column type="index" width="55" />
       <!-- <el-table-column type="index" /> -->
       <el-table-column prop="code" label="编码" width="120" />
       <el-table-column prop="name" label="名称" width="120" />
-      <el-table-column label="限定最大纸长" width="120">
-        <template slot-scope="scope">
-          <el-checkbox v-model="scope.row.limitPaperLength" />
+      <el-table-column prop="limitPaperLength" label="限定最大纸长" width="120" />
+      <!-- <template slot-scope="scope">
+          <span v-if="scope.row.limitPaperLength===true">是</span>
+          <span v-else>否</span>
         </template>
-      </el-table-column>
-      <el-table-column label="操作" width="180">
+      </el-table-column> -->
+      <el-table-column label="操作" width="150px">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
           <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
@@ -42,15 +43,15 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      :current-page="page"
+      :current-page="queryForm.page"
       :page-sizes="[10, 20, 30, 40]"
-      :page-size="size"
+      :page-size="queryForm.count"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-    <addDialog :id="id" :dialog="addDialog" />
+    <addDialog :id="id" :dialog="addDialog" @init="initTable" />
   </div>
 </template>
 
@@ -63,7 +64,6 @@ export default {
   data() {
     return {
       id: '',
-      form: {},
       tableData: [],
       addDialog: {
         show: false
@@ -73,14 +73,14 @@ export default {
         count: 10,
         code: '',
         name: '',
-        limitPaperLength: false
-      }
+        limitPaperLength: true
+      },
+      total: 0
 
     }
   },
   created() {
     this.initTable()
-    this.tableData.push({ code: 1, name: 'aa', limitPaperLength: true })
   },
   methods: {
     handleSizeChange(size) {
@@ -92,13 +92,22 @@ export default {
       this.initTable()
     },
     initTable() {
-      getBoxClass().then(res => {
-
+      getBoxClass(this.queryForm).then(res => {
+        res.list.forEach(x => {
+          if (x.limitPaperLength === true) {
+            x.limitPaperLength = '是'
+          } else {
+            x.limitPaperLength = '否'
+          }
+        })
+        this.tableData = res.list
+        this.total = res.total
       })
     },
     deleted(id) {
       delBoxClass(id).then(res => {
         if (res) {
+          this.initTable()
           this.$message.success('删除成功')
         } else {
           this.$message.success('删除失败')
@@ -106,6 +115,7 @@ export default {
       })
     },
     add() {
+      this.id = ''
       this.addDialog.show = true
     },
     updated(id) {
@@ -113,7 +123,7 @@ export default {
       this.addDialog.show = true
     },
     query() {
-
+      this.initTable()
     },
     handleSelectionChange() {},
     toExcel() {

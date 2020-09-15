@@ -7,7 +7,7 @@
   >
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" size="mini" :inline="true">
       <el-form-item label="编码:" prop="code">
-        <el-input v-model="form.code" />
+        <el-input v-model="form.code" @input="code" />
       </el-form-item>
       <el-form-item label="名称:" prop="name">
         <el-input v-model="form.name" />
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { addOrUpdateBoxClass } from '@/api/basedata/boxclass'
+import { addOrUpdateBoxClass, getSingleBoxClass } from '@/api/basedata/boxclass'
 export default {
   props: {
     dialog: {
@@ -39,6 +39,7 @@ export default {
   data() {
     return {
       form: {
+        limitPaperLength: true
       },
       rules: {
         code: [
@@ -53,23 +54,41 @@ export default {
   watch: {
     'dialog.show': function(val) {
       if (val) {
+        console.log(this.id)
         if (this.id !== '' && this.id !== null) {
           // 编辑
-          console.log('aa')
+          console.log('编辑')
+          getSingleBoxClass(this.id).then(res => {
+            this.form = res
+          })
         } else {
           // 新增
-          this.form = Object.assign({}, this.$options.data().form)
+          console.log('新增')
+          // this.form = Object.assign({}, this.$options.data().form)
+          this.$refs.form.resetFields()
         }
       }
     }
   },
   methods: {
+    code(x) {
+      if (isNaN(x)) {
+        this.form.code = this.form.code.substring(0, this.form.code.length - 1)
+        if (isNaN(this.form.code)) {
+          this.form.code = ''
+        }
+      }
+    },
     sure() {
       this.$refs.form.validate(x => {
         if (x) {
-          var data = {}
+          var data = this.form
           addOrUpdateBoxClass(data).then(res => {
-
+            if (res) {
+              this.$message.success('保存成功')
+            }
+            this.dialog.show = false
+            this.$emit('init')
           })
         }
       })
