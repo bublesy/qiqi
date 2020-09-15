@@ -72,6 +72,10 @@ export default {
     // console.log(document.getElementById('da'))
   },
   methods: {
+    // 返回
+    toBack() {
+      this.$router.push('/accessories/stock')
+    },
     toExcel() {
       var list = this.form
       const th = ['编码', '品名规格', '单位', '数量', '领料人']

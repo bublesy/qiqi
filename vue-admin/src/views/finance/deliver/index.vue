@@ -62,7 +62,10 @@
         </el-select>
       </el-form-item>
       <el-form-item label="业务员:">
-        <el-input v-model="form.user" placeholder="请选择业务员" />
+        <el-select v-model="form.region" placeholder="请选择业务员">
+          <el-option label="区域一" value="shanghai" />
+          <el-option label="区域二" value="beijing" />
+        </el-select>
       </el-form-item>
     </el-form>
     <!-- <div class="bz">
@@ -72,12 +75,14 @@
     </div> -->
     <div class="xz">
       <el-radio v-model="radio" label="1">备选项</el-radio>
-      <el-radio v-model="radio" label="2">备选项</el-radio>
+      <el-radio v-model="radio" label="2">作废标记</el-radio>
     </div>
-    <div style="float:left;">备注</div>
+    <div style="float:left;margin-left: 95px;margin-bottom:20px">备注</div>
     <div class="bz">
       <el-input
         v-model="input"
+        tooltip-effect="dark"
+        size="small"
         style="foalt:left"
         placeholder="请输入内容"
         clearable
@@ -88,13 +93,20 @@
       :data="tableData"
       border
       style="width: 100%"
-      highlight-current-row
       height="600"
       @current-change="handleCurrentChange"
     >
       <el-table-column
+        type="selection"
+        width="55"
+      />
+      <el-table-column
+        label="#"
         type="index"
-        prop="date"
+        width="50"
+      />
+      <el-table-column
+        prop="name"
         label="客户名称"
         width="180"
       />

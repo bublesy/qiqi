@@ -1,16 +1,15 @@
 <template>
   <el-container>
     <el-main>
-      <h1 class="fu">辅料库存表</h1>
-      <el-form :inline="true" :model="form" size="mini" style="width: 80%;margin:0 auto">
+      <h1 align="center">辅料库存表</h1>
+      <el-form :inline="true" :model="form" size="mini">
         <el-form-item label="领料人:">
-          <el-input v-model="form.documentsNo" />
+          <el-input v-model="form.search" clearable @clear="getList" />
         </el-form-item>
-
-        <el-button type="primary" size="mini">查询</el-button>
-        <!-- <el-button type="primary" size="mini" @click="purAdd">新增</el-button>
-        <el-button type="primary" size="mini" @click="selectPrinting">选择打印</el-button>
-        <el-button type="primary" size="mini" @click="printing">整页打印</el-button>
+        <el-button type="primary" size="mini" @click="toQuery">查询</el-button>
+        <!-- <el-button type="primary" size="mini" @click="purAdd">新增</el-button> -->
+        <!-- <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
+        <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button> -->
       </el-form>
       <div>
@@ -18,20 +17,21 @@
           ref="singleTable"
           :data="form"
           highlight-current-row
-          style="width: 80%;margin:0 auto;"
+          style="width: 80%;margin-top:20px"
+          border=""
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" />
-          <el-table-column v-show="true" prop="code" label="编码" width="140" />
-          <el-table-column v-show="true" prop="specifications" label="品名规格" width="140" />
-          <el-table-column v-show="true" prop="company" label="单位" width="140" />
-          <el-table-column v-show="true" prop="number" label="数量" width="140" />
-          <el-table-column v-show="true" prop="collector" label="领料人" width="140" />
-          <el-table-column label="操作" width="140">
-            <template>
+          <el-table-column v-show="true" prop="code" label="编码" />
+          <el-table-column v-show="true" prop="specifications" label="品名规格" />
+          <el-table-column v-show="true" prop="company" label="单位" />
+          <el-table-column v-show="true" prop="number" label="数量" />
+          <el-table-column v-show="true" prop="collector" label="领料人" />
+          <el-table-column label="操作" width="213 ">
+            <template slot-scope="scope">
               <!-- <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link> -->
               <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
-              <el-link type="primary" size="small" @click="printing">打印</el-link>
+              <el-link type="warning" size="small" @click="printing">生成打印单</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -43,25 +43,17 @@
           :current-page="pagination.page"
           :page-size="pagination.size"
           align="center"
-          style="width:80%;margin-top:20px"
           @size-change="sizeChange"
           @current-change="pageChange"
         />
       </div>
-      <!-- 新增/编辑辅料库存表 -->
-      <el-dialog title="编辑辅料库存表" :visible.sync="purAddVisible">
+      <!-- 新增/编辑对账明细单 -->
+      <el-dialog :title="titleType+'对账明细表'" :visible.sync="purAddVisible" :close-on-click-modal="false">
         <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="120px">
-          <el-form-item label="编码" prop="supplier">
-            <el-select v-model="formAdd.supplier">
-              <el-option
-                v-for="item in supplierFor"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="品名规格" prop="pricing">
+          <el-form-item label="编码" prop="code">
+            <el-input v-model="formAdd.customerName" disabled>/>
+            </el-input></el-form-item>
+          <el-form-item label="品名规格" prop="specifications">
             <el-select v-model="formAdd.pricing">
               <el-option
                 v-for="item in pricingFor"
@@ -71,25 +63,30 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="单位">
-            <el-select v-model="formAdd.customerName" size="mini">
+          <el-form-item label="单位" prop="company">
+            <el-select v-model="formAdd.company">
               <el-option
-                v-for="item in customerFor"
+                v-for="item in pricingFor"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
               />
             </el-select>
           </el-form-item>
-
-          <el-form-item label="数量">
-            <el-input v-model="formAdd.ridgeType" />
+          <el-form-item
+            label="数量"
+            prop="number"
+            :rules="[
+              { required: true, message: '数量不能为空'},
+              { type: 'number', message: '数量必须为数字值'}
+            ]"
+          >
+            <el-input v-model.number="formAdd.number" />
           </el-form-item>
 
-          <el-form-item label="领料人">
-            <el-input v-model="formAdd.parPreSpe" />
+          <el-form-item label="领料人" prop="collector">
+            <el-input v-model="formAdd.collector" />
           </el-form-item>
-
         </el-form>
 
         <span slot="footer" class="dialog-footer">
@@ -97,6 +94,7 @@
           <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
         </span>
       </el-dialog>
+
     </el-main>
   </el-container>
 
@@ -116,15 +114,18 @@ export default {
           specifications: '传真纸',
           company: '卷',
           number: 24,
-          collector: '张三'
+          collector: '张三',
+          search: ''
         },
-        { code: 1,
-          specifications: '传真纸',
+        { code: 2,
+          specifications: '打印纸',
           company: '卷',
-          number: 24,
-          collector: '张三' }
+          number: 38,
+          collector: '李四' }
       ],
-      formAdd: { },
+      formAdd: {
+        number: ''
+      },
       tableData: [{
         documentsNo: '1',
         taskNumber: '1',
@@ -137,10 +138,7 @@ export default {
       }],
       purAddVisible: false,
       purRules: {
-        supplier: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        pricing: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        billingTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        deliveryTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        collector: [{ required: true, message: '该输入为必填项', trigger: 'blur' }]
       },
       supplierFor: [{
         id: '1',
@@ -150,7 +148,7 @@ export default {
         name: '阿里'
       }],
       pricingFor: [{
-        id: '1',
+        id: '1',  
         name: '净边'
       }, {
         id: '2',
@@ -178,6 +176,9 @@ export default {
     }
   },
   methods: {
+    toQuery() {
+      console.log(11)
+    },
     // 导出
     toExcel() {
       var list = this.form
