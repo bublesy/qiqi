@@ -1,93 +1,158 @@
 <template>
-  <div class="app-container">
-    <el-select v-model="value" placeholder="请选择月份">
-      <el-option
-        v-for="item in month"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select>
-    <el-select v-model="valu" placeholder="请选择客户">
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select>
-    <el-button type="primary" @click="search">搜索</el-button>
-    <el-button v-print="'#printTest'" type="primary">打印</el-button>
-    <el-button type="primary" @click="toExcel">导出</el-button>
-    <el-pagination
-      style="  position: fixed;top: 32%;right: 4%;"
-      :current-page="currentPage4"
-      :page-sizes="[10, 20, 30, 50]"
-      :page-size="1"
-      layout="prev, pager, next, jumper"
-      :total="10"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
-    <div id="printTest">
+  <el-container>
+    <el-main>
+      <h1 align="center">对账明细表管理</h1>
+      <el-form :inline="true" :model="form" size="mini">
+        <el-select v-model="value" placeholder="请选择月份" size="mini">
+          <el-option
+            v-for="item in month"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <el-select v-model="valu" placeholder="请选择客户" size="mini">
+          <el-option
+            v-for="item in customer"
+            :key="item.value"
+            :label="item.label"
+            :value="item.valu"
+          />
+        </el-select>
+        <el-button type="primary" size="mini" @click="toQuery">查询</el-button>
+        <!-- <el-button type="primary" size="mini" @click="purAdd">新增</el-button> -->
+        <!-- <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
+        <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
+        <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button> -->
+      </el-form>
       <div>
-        <h2 style="text-align:center">海宁中奇纸箱包装厂</h2>
-        <p style="text-align:center;margin-top:-10px">地址：海宁市长安镇东陈村&nbsp;&nbsp;&nbsp;&nbsp;电话：{{ 15325300000 }}</p>
+        <el-table
+          ref="singleTable"
+          :data="tableData"
+          highlight-current-row
+          style="width: 100%;margin-top:20px"
+          border=""
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55" />
+          <el-table-column v-show="true" prop="customerName" label="客户名称" width="140" />
+          <el-table-column v-show="true" prop="phone" label="客户电话" width="140" />
+          <el-table-column v-show="true" prop="data" label="出货日期" width="140" />
+          <el-table-column v-show="true" prop="shipment" label="出货单号" width="140" />
+          <el-table-column v-show="true" prop="goods" label="物品单号/款号" width="140" />
+          <el-table-column v-show="true" prop="type" label="箱型" width="140" />
+          <el-table-column v-show="true" prop="long" label="长x宽x高" width="140" />
+          <el-table-column v-show="true" prop="number" label="数量" width="140" />
+          <el-table-column v-show="true" prop="price" label="单价" width="140" />
+          <el-table-column v-show="true" prop="money" label="金额" width="140" />
+          <!-- <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" width="143" /> -->
+          <!-- <el-table-column v-show="true" prop="batching" label="配料面积" width="140" />
+          <el-table-column v-show="true" prop="squarePrice" label="平方价" width="140" />
+          <el-table-column v-show="true" prop="unitPrice" label="单价" width="140" />
+          <el-table-column v-show="true" prop="amount" label="金额" width="140" />
+          <el-table-column v-show="true" prop="unit" label="单位" width="140" /> -->
+          <el-table-column label="操作" width="213 ">
+            <template slot-scope="scope">
+              <!-- <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link> -->
+              <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
+              <el-link type="warning" size="small" @click="printing">生成打印单</el-link>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!--分页组件-->
+        <el-pagination
+          background
+          layout="total, sizes, prev, pager, next"
+          :total="pagination.total"
+          :current-page="pagination.page"
+          :page-size="pagination.size"
+          align="center"
+          @size-change="sizeChange"
+          @current-change="pageChange"
+        />
       </div>
-      <div class="jie">
-        <h2 style="text-align:center">2012年09月份月结对账单</h2>
-        <p>客户：平湖吉安</p>
-        <p>电话：87578878</p>
-        <p>传真：</p>
-        <p class="dy">打印日期：{{ data }}</p>
-      </div>
-      <table>
-        <tr>
-          <th>出货日期</th>
-          <th>出货单号</th>
-          <th>物品单号/款号</th>
-          <th>箱型</th>
-          <th>长x宽x高</th>
-          <th>数量</th>
-          <th>单价</th>
-          <th>金额</th>
-        </tr>
-        <tr v-for="item in form" :key="item.id">
-          <td>{{ item.goods }}</td>
-          <td>{{ item.shipment }}</td>
-          <td>{{ item.goods }}</td>
-          <td>{{ item.type }}</td>
-          <td>{{ item.long }}</td>
-          <td>{{ item.number }}</td>
-          <td>{{ item.price }}</td>
-          <td>{{ item.money }}</td>
-        </tr>
-      </table>
-    </div>
-  </div>
+      <!-- 新增/编辑对账明细单 -->
+      <el-dialog :title="titleType+'对账明细表'" :visible.sync="purAddVisible" :close-on-click-modal="false">
+        <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="120px">
+          <el-form-item label="客户名称" prop="supplier">
+            <el-input v-model="formAdd.customerName" disabled>/>
+            </el-input></el-form-item>
+          <el-form-item label="客户电话" prop="pricing">
+            <el-select v-model="formAdd.pricing">
+              <el-option
+                v-for="item in pricingFor"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="出货日期" prop="billingTime">
+            <el-date-picker
+              v-model="formAdd.billingTime"
+              align="right"
+              type="date"
+              placeholder="选择日期"
+            />
+          </el-form-item>
+          <el-form-item label="出货单号">
+            <el-select v-model="formAdd.customerName" size="mini">
+              <el-option
+                v-for="item in customerFor"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="物品单号/款号">
+            <el-input v-model="formAdd.ridgeType" />
+          </el-form-item>
+
+          <el-form-item label="箱型">
+            <el-input v-model="formAdd.parPreSpe" />
+          </el-form-item>
+
+          <el-form-item label="长x宽x高">
+            <el-input v-model="formAdd.material" />
+          </el-form-item>
+
+          <el-form-item label="数量">
+            <el-input v-model="formAdd.paperLength" />
+          </el-form-item>
+
+          <el-form-item label="单价">
+            <el-input v-model="formAdd.paperWidth" />
+          </el-form-item>
+
+          <el-form-item label="金额">
+            <el-input v-model="formAdd.orderQuantity" />
+          </el-form-item>
+
+        </el-form>
+
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" @click="purAddNo">取 消</el-button>
+          <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
+        </span>
+      </el-dialog>
+
+    </el-main>
+  </el-container>
+
 </template>
 
 <script>
-// 引入打印
+import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
-export default window.$crudCommon({
+
+export default {
   name: 'Verify',
+  mixins: [initData],
   data() {
     return {
-      form: [
-        {
-          data: '2020-09-11',
-          shipment: 202,
-          goods: '五箱',
-          type: 780 * 670 * 430,
-          long: 90,
-          number: 13.09,
-          price: 7,
-          money: 856
-        }
-
-      ],
-      a: [],
+      // 选择月份
       month: [{
         value: '选项1',
         label: '2020-02-11'
@@ -104,155 +169,178 @@ export default window.$crudCommon({
         value: '选项5',
         label: '2013-02-11'
       }],
-      value: ''
+      // 选择客户
+      value: '',
+      customer: [{
+        value: '选项1',
+        label: '平安'
+      }, {
+        value: '选项2',
+        label: '吉安'
+      }, {
+        value: '选项3',
+        label: '上海'
+      }, {
+        value: '选项4',
+        label: '沈阳'
+      }, {
+        value: '选项5',
+        label: '湖南'
+      }],
+      valu: '',
+      form: {},
+      formAdd: { },
+      // 表单数据
+      tableData: [{
+        customerName: '李四',
+        phone: '15993472323',
+        data: '2020-09-11',
+        shipment: 'JA00668',
+        goods: '466',
+        type: '五箱',
+        long: 780 * 670 * 430,
+        number: 80,
+        price: 7,
+        money: 856
+
+      }],
+      addTableData: [],
+      customerFor: [{
+        id: '1',
+        name: '迪迦'
+      }],
+      purAddVisible: false,
+      purRules: {
+        supplier: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        pricing: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        billingTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        deliveryTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+      },
+      supplierFor: [{
+        id: '1',
+        name: '腾讯'
+      }, {
+        id: '2',
+        name: '阿里'
+      }],
+      pricingFor: [{
+        id: '1',
+        name: '净边'
+      }, {
+        id: '2',
+        name: '净宽'
+      }],
+      titleType: '',
+      taskNumberVisible: false,
+      taskNumberTable: [{
+        taskNumber: '1',
+        taskName: '就这?'
+      }, {
+        taskNumber: '2',
+        taskName: '就这a ?'
+      }],
+      modifyTaskTable: [{
+        customerName: '张三',
+        taskNumber: '2'
+      }],
+      multipleSelection: [],
+      indexId: {}
+
     }
   },
-  created: function() {
-    var aData = new Date()
-    console.log(aData) // Wed Aug 21 2019 10:00:58 GMT+0800 (中国标准时间)
-
-    this.data =
-      aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
-    console.log(this.data) // 2019-8-20
-  },
   methods: {
-    a() {
-      console.log(11)
-      this.$router.push('/finance/settlement')
+    toQuery() {
+
     },
-    search() {
-      this.$router.push('/finance/receivables')
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
-    },
-    // 打印功能
+    // 导出
     toExcel() {
-      var list = this.form
-      const th = ['出货日期门', '出货单号', '物品单号/款号', '箱型', '长x宽x高', '数量', '单价', '金额']
-      const filterVal = ['data', 'shipment', 'goods', 'type', 'long', 'number', 'price', 'money']
+      var list = this.tableData
+      const th = ['编码', '名称', '限定最大纸长']
+      const filterVal = ['code', 'name', 'limitPaperLength']
       const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, this.value)
+      export2Excel(th, data, '采购单导出')
     },
-    onLoadTable({ page, value, data }, callback) {
-      // 首次加载去查询对应的值
-      if (value) {
-        this.$message.success('首次查询' + value)
-        callback({
-          id: '0',
-          name: '张三',
-          sex: '男'
+    // 选择打印
+    selectPrinting() {
+      if (this.form.carryTo === '已过期') {
+        this.$router.push('/purchase_not_included_overdue')
+      } else if (this.form.carryTo === '未过期') {
+        this.$router.push('/purchase_not_included')
+      } else {
+        if (this.multipleSelection.length === 0) {
+          this.$message.error('请选择打印的内容！！！')
+          return
+        } else {
+          this.$router.push('/purchase_order_printing')
+        }
+      }
+    },
+    // 整页打印
+    wholePrinting() {
+      if (this.form.carryTo === '已过期') {
+        this.$router.push('/purchase_not_included_overdue')
+      } else if (this.form.carryTo === '未过期') {
+        this.$router.push('/purchase_not_included')
+      } else {
+        this.$router.push('/purchase_order_printing')
+      }
+    },
+    // 打印
+    printing() {
+      this.$router.push('/finance/verify_printing')
+    },
+    handleSelectionChange(row) {
+      this.multipleSelection = row
+    },
+    // 删除
+    drop() {
+      this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功'
         })
-        return
-      }
-      if (data) {
-        this.$message.success('搜索查询参数' + JSON.stringify(data))
-      }
-      if (page) {
-        this.$message.success('分页参数' + JSON.stringify(page))
-      }
-      // 分页查询信息
-      callback({
-        total: 2,
-        data: [{
-          id: '0',
-          name: '张三',
-          sex: '男'
-        }, {
-          id: '1',
-          name: '李四',
-          sex: '女'
-        }]
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     },
-    setVal() {
-      this.a = [{
-        label: '选项1',
-        value: 0
-      }, {
-        label: '选项2',
-        value: 1
-      }]
+    // 编辑订单
+    modifyPur(row) {
+      this.purAddVisible = true
+      this.titleType = '编辑'
     },
-
-    beforeOpen(done, type) {
-      this.setVal()
-      done()
+    // 新增订单
+    purAdd() {
+      this.purAddVisible = true
+      this.titleType = '新增'
+      // 新增初始化数据
+      this.formAdd = {}
     },
-
-    // 列表前操作方法
-    listBefore() {
+    // 取消
+    purAddNo() {
+      this.purAddVisible = false
+      this.addTableData = []
     },
-
-    // 列表后操作方法
-    listAfter() {
-    },
-
-    // 新增前操作方法
-    addBefore() {
-      // this.form.createUser = 'small'
-    },
-    // 新增后操作方法
-    addAfter() {
-    },
-
-    // 修改前操作方法
-    updateBefore() {
-      // this.form.updateUser = 'small'
-    },
-
-    // 修改后操作方法
-    updateAfter() {},
-
-    // 删除前操作方法
-    delBefore() {},
-
-    // 删除后操作方法
-    delAfter() {}
+    purAddOk(purForm) {
+      this.$refs[purForm].validate((valid) => {
+        if (valid) {
+          this.purAddVisible = false
+        } else {
+          return false
+        }
+      })
+    }
   }
-}, {
-  name: 'finance/verify', // 模块名字
-  list: 'getRoles', // 列表接口名字
-  update: 'editRole', // 更新接口名字
-  add: 'addRole', // 新增接口名字
-  del: 'removeRole', // 删除接口名字
-  rowKey: 'id', // 主键
-  pageNumber: 'pageNumber', // 页码
-  pageSize: 'pageSize', // 页数
-  total: 'total', // 总页数
-  data: 'list'// 列表属性
-})
+}
 </script>
-<style lang="scss" scoped>
-.jie{
-  width: 100%;
-  height: 120px;
-  border-bottom:1px solid #717171;
-}
-.jie>p{
-  line-height: 10px;
-}
-.dy{
-  float: left;
-  margin: -50px 0 0 45%  ;
-}
-table{
-  margin-p: 5px;
-  width: 100%;
-  color: black;
-
-}
-tr{
-  width: 9%;
-  line-height: 25px;
-  text-align: center;
-}
-td{
-  width: 9%;
-  text-align: center;
-  height: 30px;
-}
+<style scoped lang="scss">
+  >>>.el-dialog__header {
+    border: 1px;
+  }
 </style>

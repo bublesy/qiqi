@@ -39,26 +39,26 @@ export default (safe) => {
           trigger: 'blur'
         }]
       },
-      {
-        label: '开单员',
-        prop: 'c',
-        addDisplay: false,
-        editDisplay: false,
-        rules: [{
-          required: true,
-          message: '请输入开单员 ',
-          trigger: 'blur'
-        }]
-      },
+      // {
+      //   label: '开单员',
+      //   prop: 'c',
+      //   addDisplay: false,
+      //   editDisplay: false,
+      //   rules: [{
+      //     required: true,
+      //     message: '请输入开单员 ',
+      //     trigger: 'blur'
+      //   }]
+      // },
       {
         label: '原始单号',
         prop: 'b',
         rules: [{
           required: true,
-          message: '请输入原始单号',
+          pattern: '^[0-9]*$ ',
+          message: '请输入存数字',
           trigger: 'blur'
-        }]
-      },
+        }] },
       {
         label: '备注',
         prop: 'cd',
@@ -67,57 +67,58 @@ export default (safe) => {
           message: '请输入备注',
           trigger: 'blur'
         }]
-      },
-      {
-        label: '品名规格',
-        prop: 'e',
-        hide: true,
-        rules: [{
-          required: true,
-          message: '请输入品名规格',
-          trigger: 'blur'
-        }]
-      },
-      {
-        label: '单位',
-        prop: 'f',
-        hide: true,
-        rules: [{
-          required: true,
-          message: '请输入单位',
-          trigger: 'blur'
-        }]
-      },
-      {
-        label: '数量',
-        prop: 'g',
-        hide: true,
-        rules: [{
-          required: true,
-          message: '请输入数量',
-          trigger: 'blur'
-        }]
-      },
-      {
-        label: '单价',
-        prop: 'h',
-        hide: true,
-        rules: [{
-          required: true,
-          message: '请输入单价',
-          trigger: 'blur'
-        }]
-      },
-      {
-        label: '金额',
-        prop: 'k',
-        hide: true,
-        rules: [{
-          required: true,
-          message: '请输入金额',
-          trigger: 'blur'
-        }]
-      }
+      }, // {
+      //   label: '品名规格',
+      //   prop: 'e',
+      //   hide: true,
+      //   rules: [{
+      //     required: true,
+      //     message: '请输入品名规格',
+      //     trigger: 'blur'
+      //   }]
+      // },
+      // {
+      //   label: '单位',
+      //   prop: 'f',
+      //   addDisabled: true,
+      //   editDisabled: true,
+      //   hide: true,
+      //   rules: [{
+      //     required: true,
+      //     message: '请输入单位',
+      //     trigger: 'blur'
+      //   }]
+      // },
+      // {
+      //   label: '数量',
+      //   prop: 'g',
+      //   hide: true,
+      //   rules: [{
+      //     required: true,
+      //     message: '请输入数量',
+      //     trigger: 'blur'
+      //   }]
+      // },
+      // {
+      //   label: '单价',
+      //   prop: 'h',
+      //   hide: true,
+      //   rules: [{
+      //     required: true,
+      //     message: '请输入单价',
+      //     trigger: 'blur'
+      //   }]
+      // },
+      // {
+      //   label: '金额',
+      //   prop: 'k',
+      //   hide: true,
+      //   rules: [{
+      //     required: true,
+      //     message: '请输入金额',
+      //     trigger: 'blur'
+      //   }]
+      // }
       // {
       //   label: '开单员',
       //   prop: 'code',
@@ -132,14 +133,14 @@ export default (safe) => {
       //   }]
       // },
 
-      // {
-      //   label: '',
-      //   labelWidth: '0px',
-      //   prop: 'myTable',
-      //   hide: true,
-      //   formslot: true,
-      //   formWidth: '500px'
-      // }
+      {
+        label: '',
+        labelWidth: '0px',
+        prop: 'myTable',
+        hide: true,
+        formslot: true,
+        formWidth: '500px'
+      }
       // 树
       // {
       //   label: '描述',
