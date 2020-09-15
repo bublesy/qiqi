@@ -29,12 +29,12 @@
         style="width: 100%"
         align="center"
       >
-        <el-table-column type="index" width="50" />
-        <el-table-column property="code" label="编码" width="120" />
-        <el-table-column property="name" label="名称" width="120" />
-        <el-table-column property="ridgeType" label="楞型" width="120" />
-        <el-table-column property="represent" label="描述" width="120" />
-        <el-table-column label="操作" width="180">
+        <el-table-column type="index" />
+        <el-table-column property="code" label="编码" />
+        <el-table-column property="name" label="名称" />
+        <el-table-column property="ridgeType" label="楞型" />
+        <el-table-column property="represent" label="描述" />
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <el-link type="danger" size="small" @click="drop(scope)">删除</el-link>
             <el-link type="primary" size="small" @click="modifyPur(scope)">编辑</el-link>
@@ -100,7 +100,7 @@ export default {
       formAdd: { code: '' },
       titleType: '',
       supRules: {
-        name: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        name: [{ required: true, message: '该输入为必填项', trigger: 'blur' }]
       },
       form: {
         code: '',
@@ -120,7 +120,6 @@ export default {
       if (this.queryParams.time === null) {
         this.$set(this.queryParams, 'time', '')
       }
-      console.log(this.queryParams)
       list(this.queryParams).then(res => {
         this.tableData = res.list
         this.pagination.total = res.total
