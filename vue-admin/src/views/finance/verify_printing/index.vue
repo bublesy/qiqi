@@ -1,6 +1,69 @@
 <template>
   <div class="app-container">
-    对账打印单细
+    <!-- <el-select v-model="value" placeholder="请选择月份">
+      <el-option
+        v-for="item in month"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      />
+    </el-select>
+    <el-select v-model="valu" placeholder="请选择客户">
+      <el-option
+        v-for="item in options"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      />
+    </el-select> -->
+    <el-button @click="toBack">返回</el-button>
+    <el-button v-print="'#printTest'" type="primary">打印</el-button>
+    <el-button type="primary" @click="toExcel">导出</el-button>
+    <!-- <el-pagination
+      style="  position: fixed;top: 32%;right: 4%;"
+      :current-page="currentPage4"
+      :page-sizes="[10, 20, 30, 50]"
+      :page-size="1"
+      layout="prev, pager, next, jumper"
+      :total="10"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    /> -->
+    <div v-for="item in tableData" id="printTest" :key="item.id">
+      <div>
+        <h2 style="text-align:center">海宁中奇纸箱包装厂</h2>
+        <p style="text-align:center;margin-top:-10px">地址：海宁市长安镇东陈村&nbsp;&nbsp;&nbsp;&nbsp;电话：{{ item.phone }}</p>
+      </div>
+      <div class="jie">
+        <h2 style="text-align:center">2012年09月份月结对账单</h2>
+        <p>客户：平湖吉安</p>
+        <p>电话：87578878</p>
+        <p>传真：</p>
+        <p class="dy">打印日期：{{ data }}</p>
+      </div>
+      <table>
+        <tr>
+          <th>出货日期</th>
+          <th>出货单号</th>
+          <th>物品单号/款号</th>
+          <th>箱型</th>
+          <th>长x宽x高</th>
+          <th>数量</th>
+          <th>单价</th>
+          <th>金额</th>
+        </tr>
+        <tr v-for="item2 in tableData" :key="item2.id">
+          <td>{{ item2.data }}</td>
+          <td>{{ item2.shipment }}</td>
+          <td>{{ item2.goods }}</td>
+          <td>{{ item2.type }}</td>
+          <td>{{ item2.long }}</td>
+          <td>{{ item2.number }}</td>
+          <td>{{ item2.price }}</td>
+          <td>{{ item2.money }}</td>
+        </tr>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -11,19 +74,20 @@ export default window.$crudCommon({
   name: 'Verify_printing',
   data() {
     return {
-      form: [
-        {
-          data: '2020-09-11',
-          shipment: 202,
-          goods: '五箱',
-          type: 780 * 670 * 430,
-          long: 90,
-          number: 13.09,
-          price: 7,
-          money: 856
-        }
+    // 表单数据
+      tableData: [{
+        customerName: '李四',
+        phone: '15993472323',
+        data: '2020-09-11',
+        shipment: 'JA00668',
+        goods: '466',
+        type: '五箱',
+        long: 780 * 670 * 430,
+        number: 80,
+        price: 7,
+        money: 856
 
-      ],
+      }],
       a: [],
       month: [{
         value: '选项1',
@@ -53,12 +117,9 @@ export default window.$crudCommon({
     console.log(this.data) // 2019-8-20
   },
   methods: {
-    a() {
-      console.log(11)
-      this.$router.push('/finance/settlement')
-    },
-    search() {
-      this.$router.push('/finance/receivables')
+    // 返回
+    toBack() {
+      this.$router.push('/finance/verify')
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
@@ -68,11 +129,11 @@ export default window.$crudCommon({
     },
     // 打印功能
     toExcel() {
-      var list = this.form
-      const th = ['出货日期门', '出货单号', '物品单号/款号', '箱型', '长x宽x高', '数量', '单价', '金额']
+      var list = this.tableData
+      const th = ['出货日期', '出货单号', '物品单号/款号', '箱型', '长x宽x高', '数量', '单价', '金额']
       const filterVal = ['data', 'shipment', 'goods', 'type', 'long', 'number', 'price', 'money']
       const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, this.value)
+      export2Excel(th, data, '对账明细打印单')
     },
     onLoadTable({ page, value, data }, callback) {
       // 首次加载去查询对应的值

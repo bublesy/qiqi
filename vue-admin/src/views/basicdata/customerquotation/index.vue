@@ -6,13 +6,10 @@
         <el-input v-model="form.code" />
       </el-form-item>
       <el-form-item label="简称:">
-        <el-input v-model="form.name" />
+        <el-input v-model="form.shorts" />
       </el-form-item>
       <el-form-item label="全称:">
-        <el-input v-model="form.code" />
-      </el-form-item>
-      <el-form-item label="名称:">
-        <el-input v-model="form.name" />
+        <el-input v-model="form.fullName" />
       </el-form-item>
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
@@ -27,15 +24,21 @@
       stripe
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" />
-      <!-- <el-table-column type="index" /> -->
+      <!-- <el-table-column type="selection" width="55" /> -->
+      <el-table-column type="index" />
       <el-table-column prop="code" label="编码" width="120" />
-      <el-table-column prop="name" label="名称" width="120" />
-      <el-table-column label="限定最大纸长" width="120">
-        <template slot-scope="scope">
-          <el-checkbox v-model="scope.row.limitPaperLength" />
+      <el-table-column prop="shorts" label="简称" width="120" />
+      <el-table-column prop="fullName" label="全称" width="120" />
+      <el-table-column prop="squaredPrice" label="销售平方价(元)" width="120" />
+      <!-- <template slot-scope="scope">
+          <el-input-number v-model="scope.row.squaredPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:90px" />
         </template>
-      </el-table-column>
+      </el-table-column> -->
+      <el-table-column prop="boxPrice" label="箱型计价(元)" width="120" />
+      <!-- <template slot-scope="scope">
+          <el-input-number v-model="scope.row.BoxPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:90px" />
+        </template>
+      </el-table-column> -->
       <el-table-column label="操作" width="180">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
@@ -46,33 +49,32 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      :current-page="page"
+      :current-page="form.page"
       :page-sizes="[10, 20, 30, 40]"
-      :page-size="size"
+      :page-size="form.count"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-    <addDialog :id="id" :dialog="addDialog" />
-  </div>
+    <addDialog :id="id" :dialog="addDialog" @init="initTable" /></div>
 </template>
 
 <script>
-import addDialog from '@/views/basicdata/boxclass/add'
-import { getBoxClass, delBoxClass } from '@/api/basedata/boxclass'
+import addDialog from '@/views/basicdata/customerquotation/add'
+import { getCustomerQuotation, delCustomerQuotation } from '@/api/basedata/customerquotation'
 import { export2Excel } from '@/utils/common'
 export default {
   components: { addDialog },
   data() {
     return {
       id: '',
-      form: {},
       tableData: [],
       addDialog: {
         show: false
       },
-      queryForm: {
+      total: 0,
+      form: {
         page: 1,
         count: 10,
         code: '',
@@ -84,25 +86,26 @@ export default {
   },
   created() {
     this.initTable()
-    this.tableData.push({ code: 1, name: 'aa', limitPaperLength: true })
   },
   methods: {
     handleSizeChange(size) {
-      this.size = this.queryForm.count
+      this.size = this.form.count
       this.initTable()
     },
     handleCurrentChange(page) {
-      this.page = this.queryForm.page
+      this.page = this.form.page
       this.initTable()
     },
     initTable() {
-      getBoxClass().then(res => {
-
+      getCustomerQuotation(this.form).then(res => {
+        this.tableData = res.list
+        this.total = res.total
       })
     },
     deleted(id) {
-      delBoxClass(id).then(res => {
+      delCustomerQuotation(id).then(res => {
         if (res) {
+          this.initTable()
           this.$message.success('删除成功')
         } else {
           this.$message.success('删除失败')
@@ -110,6 +113,7 @@ export default {
       })
     },
     add() {
+      this.id = ''
       this.addDialog.show = true
     },
     updated(id) {
@@ -117,15 +121,15 @@ export default {
       this.addDialog.show = true
     },
     query() {
-
+      this.initTable()
     },
     handleSelectionChange() {},
     toExcel() {
       var list = this.tableData
-      const th = ['编码', '名称', '限定最大纸长']
-      const filterVal = ['code', 'name', 'limitPaperLength']
+      const th = ['编码', '简称', '全称', '销售平方价', '箱型计价']
+      const filterVal = ['code', 'shorts', 'fullName', 'squaredPrice', 'boxPrice']
       const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '箱类设定')
+      export2Excel(th, data, '客户报价单管理')
     }
   }
 

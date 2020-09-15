@@ -19,9 +19,8 @@
       style="width: 100%"
       border
       stripe
-      @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" />
+      <el-table-column type="index" width="55" />
       <el-table-column prop="name" label="部门名称" width="120" />
       <el-table-column prop="lastmodifytime" label="最后操作时间" width="120" />
       <el-table-column label="操作" width="180">

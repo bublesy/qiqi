@@ -199,6 +199,7 @@
 
 <script>
 import upload from '@/views/order/edit/upload'
+import { addOrUpdateOrder } from '@/api/order/customerOrder'
 export default {
   components: { upload },
   props: {
@@ -256,6 +257,12 @@ export default {
   },
   methods: {
     save() {
+      var list = []
+      list.push(this.form)
+      list.push(this.form2)
+      addOrUpdateOrder(list).then(res => {
+        console.log(res)
+      })
       this.dialog.show = false
     },
     audit() {

@@ -19,7 +19,7 @@ export default (safe) => {
     menuAlign: 'center',
     column: [
       {
-        label: '领料人aaaaa',
+        label: '领料人',
         prop: 'name',
         dicData: safe.a,
         search: true,
@@ -62,34 +62,12 @@ export default (safe) => {
 
       },
       {
-        label: '品名规格',
-        prop: 'c',
+        label: '',
+        labelWidth: '0px',
+        prop: 'Table',
         hide: true,
-        rules: [{
-          required: true,
-          message: '请输入品名规格',
-          trigger: 'blur'
-        }]
-      },
-      {
-        label: '单位',
-        prop: 'f',
-        hide: true,
-        rules: [{
-          required: true,
-          message: '请输入单位',
-          trigger: 'blur'
-        }]
-      },
-      {
-        label: '数量',
-        prop: 'e',
-        hide: true,
-        rules: [{
-          required: true,
-          message: '请输入数量',
-          trigger: 'blur'
-        }]
+        formslot: true,
+        formWidth: '500px'
       }
       // 树
       // {

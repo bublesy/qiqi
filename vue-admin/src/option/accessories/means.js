@@ -7,7 +7,7 @@ export default (safe) => {
     updateBtn: true,
     cancelBtn: true,
     addBtn: true,
-    delBtn: false,
+    delBtn: true,
     editBtn: true,
     viewBtn: false,
     printBtn: false,
@@ -37,6 +37,15 @@ export default (safe) => {
           trigger: 'blur'
         }]
       }
+      //  {
+      //   label: '备注',
+      //   prop: 'cd',
+      //   rules: [{
+      //     required: true,
+      //     message: '请输入备注',
+      //     trigger: 'blur'
+      //   }]
+      // }
       // {
       //   label: '名称',
       //   search: true,
