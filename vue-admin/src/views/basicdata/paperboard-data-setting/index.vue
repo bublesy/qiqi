@@ -14,11 +14,12 @@
             v-model="form.time"
             align="right"
             type="date"
+            value-format="yyyy-MM-dd"
             placeholder="选择日期"
           />
         </el-form-item>
-        <el-button size="mini" type="primary" @click="query">查询</el-button>
-        <el-button type="primary" size="mini" @click="supplierAdd">新增</el-button>
+        <el-button size="mini" type="primary" @click="loadData()">查询</el-button>
+        <el-button type="primary" size="mini" @click="pagerAdd">新增</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
       </el-form>
       <el-table
@@ -32,11 +33,11 @@
         <el-table-column property="code" label="编码" width="120" />
         <el-table-column property="name" label="名称" width="120" />
         <el-table-column property="ridgeType" label="楞型" width="120" />
-        <el-table-column property="describe" label="描述" width="120" />
+        <el-table-column property="represent" label="描述" width="120" />
         <el-table-column label="操作" width="180">
           <template slot-scope="scope">
-            <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
-            <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
+            <el-link type="danger" size="small" @click="drop(scope)">删除</el-link>
+            <el-link type="primary" size="small" @click="modifyPur(scope)">编辑</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -52,7 +53,7 @@
       />
     </el-main>
     <!-- 新增/编辑纸板资料 -->
-    <el-dialog :title="titleType+'纸板资料'" :visible.sync="supplierAddVisible">
+    <el-dialog :title="titleType+'纸板资料'" :visible.sync="pagerAddVisible">
       <el-form ref="supForm" :rules="supRules" :inline="true" :model="formAdd" size="mini" label-width="120px">
         <el-form-item label="编码" prop="code">
           <el-input v-model="formAdd.code" disabled />
@@ -66,8 +67,8 @@
           <el-input v-model="formAdd.ridgeType" />
         </el-form-item>
 
-        <el-form-item label="描述" prop="describe">
-          <el-input v-model="formAdd.describe" />
+        <el-form-item label="描述" prop="represent">
+          <el-input v-model="formAdd.represent" />
         </el-form-item>
 
       </el-form>
@@ -83,6 +84,11 @@
 import initData from '@/mixins/initData'
 import pinyin from 'js-pinyin'
 import { export2Excel } from '@/utils/common'
+import { add } from '@/api/pager-setting/pager'
+import { list } from '@/api/pager-setting/pager'
+import { removeById } from '@/api/pager-setting/pager'
+import { getById } from '@/api/pager-setting/pager'
+
 export default {
   name: 'PaperboardDataSetting',
   mixins: [initData],
@@ -90,18 +96,35 @@ export default {
   data() {
     return {
       tableData: [],
-      supplierAddVisible: false,
+      pagerAddVisible: false,
       formAdd: { code: '' },
       titleType: '',
       supRules: {
         name: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
-      form: {}
+      form: {
+        code: '',
+        name: '',
+        time: ''
+      }
     }
   },
-
+  created() {
+    this.init()
+  },
   methods: {
-    query() {
+    loadData() {
+      this.queryParams.code = this.form.code
+      this.queryParams.name = this.form.name
+      this.queryParams.time = this.form.time
+      if (this.queryParams.time === null) {
+        this.$set(this.queryParams, 'time', '')
+      }
+      console.log(this.queryParams)
+      list(this.queryParams).then(res => {
+        this.tableData = res.list
+        this.pagination.total = res.total
+      })
     },
     // 导出
     toExcel() {
@@ -116,38 +139,45 @@ export default {
       this.formAdd.code = pinyin.getCamelChars(this.formAdd.name)
     },
     // 删除
-    drop() {
-      this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
+    drop(scope) {
+      removeById(scope.row.id).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+          this.loadData()
+        } else {
+          this.$message.error('删除失败')
+        }
       })
     },
     // 编辑供应商
-    modifyPur(row) {
-      this.supplierAddVisible = true
+    modifyPur(scope) {
+      console.log('id', scope)
+      console.log(scope.$index)
+      this.pagerAddVisible = true
       this.titleType = '编辑'
+      getById(scope.row.id).then(res => {
+        this.formAdd = res
+      })
     },
     // 新增供应商
-    supplierAdd() {
-      this.supplierAddVisible = true
+    pagerAdd() {
+      this.formAdd = {}
+      this.pagerAddVisible = true
       this.titleType = '新增'
     },
-    // 新增供应商保存
+    // 新增纸板资料保存
     supplierAddOk(supForm) {
       this.$refs[supForm].validate((valid) => {
         if (valid) {
-          this.supplierAddVisible = false
+          add(this.formAdd).then(res => {
+            if (res) {
+              this.$message.success(this.titleType + '成功')
+              this.loadData()
+            } else {
+              this.$message.error(this.titleType + '失败')
+            }
+          })
+          this.pagerAddVisible = false
         } else {
           return false
         }
@@ -155,7 +185,7 @@ export default {
     },
     // 新增供应商取消
     supplierAddNo() {
-      this.supplierAddVisible = false
+      this.pagerAddVisible = false
       this.formAdd = {}
     }
   }
