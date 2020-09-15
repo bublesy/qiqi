@@ -27,16 +27,7 @@ export default window.$crudCommon({
   data() {
     return {
       a: [],
-      mData: [{
-        id: 0,
-        name: '张三',
-        sex: 1,
-        $cellEdit: true
-      }, {
-        id: 1,
-        name: '李四',
-        sex: 0
-      }],
+      mData: [],
       mOption: {
         columnBtn: false,
         refreshBtn: false,
@@ -50,6 +41,14 @@ export default window.$crudCommon({
           label: '品名规格',
           prop: 'name',
           cell: true,
+          type: 'select',
+          dicData: [{
+            label: '选项1',
+            value: 0
+          }, {
+            label: '选项2',
+            value: 1
+          }],
           rules: [{
             required: true,
             message: '请输入规格名字',
@@ -60,6 +59,14 @@ export default window.$crudCommon({
           label: '单位',
           prop: 'unit',
           cell: true,
+          type: 'select',
+          dicData: [{
+            label: '选项1',
+            value: 0
+          }, {
+            label: '选项2',
+            value: 1
+          }],
           rules: [{
             required: true,
             message: '请输入单位名字',
@@ -76,15 +83,16 @@ export default window.$crudCommon({
             trigger: 'blur',
             pattern: /^\d{1,}$/
           }]
-        },
-        {
-          label: '',
-          labelWidth: '0px',
-          prop: 'Table',
-          hide: true,
-          formslot: true,
-          formWidth: '500px'
-        }]
+        }
+        // {
+        //   label: '',
+        //   labelWidth: '0px',
+        //   prop: 'Table',
+        //   hide: true,
+        //   formslot: true,
+        //   formWidth: '500px'
+        // }
+        ]
       }
     }
   },

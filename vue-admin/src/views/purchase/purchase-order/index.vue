@@ -2,15 +2,30 @@
   <el-container>
     <el-main>
       <h1 align="center">采购单管理</h1>
-      <el-form :inline="true" :model="form" size="mini">
-        <el-form-item label="采购单号:">
-          <el-input v-model="form.documentsNo" />
+      <el-form :inline="true" :model="form" size="mini" align="center">
+        <el-form-item label="客户名称:">
+          <el-input v-model="form.customerName" />
+        </el-form-item>
+        <el-form-item label="采购未进过期:">
+          <el-select v-model="form.carryTo" :clearable="true">
+            <el-option label="已过期" value="已过期" />
+            <el-option label="未过期" value="未过期" />
+          </el-select>
         </el-form-item>
 
-        <el-button type="warning" size="mini">查询</el-button>
+        <el-form-item label="时间:">
+          <el-date-picker
+            v-model="form.time"
+            align="right"
+            type="date"
+            placeholder="选择日期"
+          />
+        </el-form-item>
+
+        <el-button type="primary" size="mini" @click="toQuery">查询</el-button>
         <el-button type="primary" size="mini" @click="purAdd">新增</el-button>
-        <el-button type="primary" size="mini" @click="selectPrinting">选择打印</el-button>
-        <el-button type="primary" size="mini" @click="printing">整页打印</el-button>
+        <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
+        <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
       </el-form>
       <div>
@@ -19,6 +34,8 @@
           :data="tableData"
           highlight-current-row
           style="width: 100%"
+          border=""
+          align="center"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" />
@@ -37,11 +54,11 @@
           <el-table-column v-show="true" prop="unitPrice" label="单价" width="140" />
           <el-table-column v-show="true" prop="amount" label="金额" width="140" />
           <el-table-column v-show="true" prop="unit" label="单位" width="140" />
-          <el-table-column label="操作" width="120">
+          <el-table-column label="操作" width="180">
             <template slot-scope="scope">
               <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
               <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
-              <el-link type="primary" size="small" @click="printing">打印</el-link>
+              <el-link type="warning" size="small" @click="printing">生成打印单</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -144,10 +161,6 @@
             <el-input v-model="formAdd.squarePrice" />
           </el-form-item>
 
-          <el-form-item label="平方价">
-            <el-input v-model="formAdd.squarePrice" />
-          </el-form-item>
-
           <el-form-item label="单价">
             <el-input v-model="formAdd.unitPrice" />
           </el-form-item>
@@ -172,42 +185,6 @@
         </span>
       </el-dialog>
 
-      <!-- 任务编号(带客户去查客户底下成品的任务编号) -->
-      <el-dialog title="请选择" :visible.sync="modifyTaskVisible" width="800px">
-        <el-table
-          :data="modifyTaskTable"
-          stripe
-          highlight-current-row
-          style="width: 100%"
-          @current-change="modifyTaskChange"
-        >
-          <el-table-column property="customerName" label="客户名称" />
-          <el-table-column property="taskNumber" label="任务编号" />
-          <el-table-column property="customerDocNo" label="客户单号" />
-          <el-table-column property="typeNo" label="款号" />
-          <el-table-column property="boxType" label="箱型" />
-          <el-table-column property="textureOfMaterial" label="材质" />
-          <el-table-column property="paperLength" label="纸长" />
-          <el-table-column property="paperWidth" label="纸宽" />
-          <el-table-column property="costDoorWidth" label="耗用门幅" />
-          <el-table-column property="orderQuantity" label="订单数量" />
-          <el-table-column property="cartonDelDate" label="纸箱交期" />
-        </el-table>
-        <el-pagination
-          background
-          layout="total, sizes, prev, pager, next"
-          :total="pagination.total"
-          :current-page="pagination.page"
-          :page-size="pagination.size"
-          align="center"
-          @size-change="sizeChange"
-          @current-change="pageChange"
-        />
-        <span slot="footer" class="dialog-footer">
-          <el-button size="small" @click="modifyTaskVisible = false">取 消</el-button>
-          <el-button size="small" type="primary" @click="modifyTaskConfirm">确 定</el-button>
-        </span>
-      </el-dialog>
     </el-main>
   </el-container>
 
@@ -224,16 +201,9 @@ export default {
     return {
       form: {},
       formAdd: { },
-      tableData: [{
-        documentsNo: '1',
-        taskNumber: '1',
-        customerName: '迪迦'
-      }],
+      tableData: [],
       addTableData: [],
-      customerFor: [{
-        id: '1',
-        name: '迪迦'
-      }],
+      customerFor: [],
       purAddVisible: false,
       purRules: {
         supplier: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
@@ -241,64 +211,56 @@ export default {
         billingTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         deliveryTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
-      supplierFor: [{
-        id: '1',
-        name: '腾讯'
-      }, {
-        id: '2',
-        name: '阿里'
-      }],
-      pricingFor: [{
-        id: '1',
-        name: '净边'
-      }, {
-        id: '2',
-        name: '净宽'
-      }],
+      supplierFor: [],
+      pricingFor: [],
       titleType: '',
       taskNumberVisible: false,
-      taskNumberTable: [{
-        taskNumber: '1',
-        taskName: '就这?'
-      }, {
-        taskNumber: '2',
-        taskName: '就这a ?'
-      }],
-      selectedTableData: [],
-      currentRowTow: {},
-      modifyTaskVisible: false,
-      modifyTaskTable: [{
-        customerName: '张三',
-        taskNumber: '2'
-      }],
-      multipleSelection: [],
-      indexId: {}
+      multipleSelection: []
 
     }
   },
   methods: {
+    toQuery() {
+
+    },
     // 导出
     toExcel() {
       var list = this.tableData
       const th = ['编码', '名称', '限定最大纸长']
       const filterVal = ['code', 'name', 'limitPaperLength']
       const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '箱类设定')
+      export2Excel(th, data, '采购单导出')
     },
     // 选择打印
     selectPrinting() {
-      if (this.multipleSelection === null || this.multipleSelection === '') {
-        this.$message.error('请选择打印的内容！！！')
-        return
+      if (this.form.carryTo === '已过期') {
+        this.$router.push('/purchase_not_included_overdue')
+      } else if (this.form.carryTo === '未过期') {
+        this.$router.push('/purchase_not_included')
       } else {
-        console.log(this.multipleSelection)
+        if (this.multipleSelection.length === 0) {
+          this.$message.error('请选择打印的内容！！！')
+          return
+        } else {
+          this.$router.push('/purchase_order_printing')
+        }
+      }
+    },
+    // 整页打印
+    wholePrinting() {
+      if (this.form.carryTo === '已过期') {
+        this.$router.push('/purchase_not_included_overdue')
+      } else if (this.form.carryTo === '未过期') {
+        this.$router.push('/purchase_not_included')
+      } else {
+        this.$router.push('/purchase_order_printing')
       }
     },
     // 打印
     printing() {
       this.$router.push('/purchase_order_printing')
     },
-    handleCurrentChange(row) {
+    handleSelectionChange(row) {
       this.multipleSelection = row
     },
     // 删除
@@ -318,81 +280,6 @@ export default {
           message: '已取消删除'
         })
       })
-    },
-    delRule(val) {
-      if (this.addTableData.length !== 1) {
-        this.addTableData.splice(val.$index, 1)
-        return
-      }
-      if (this.addTableData.length === 1) {
-        var a = {
-          id: null,
-          less: 0,
-          thanEqual: 0,
-          discount: 0
-        }
-        this.addTableData = []
-        this.addTableData.push(a)
-      }
-    },
-    // 确定客户成品信息 回调
-    modifyTaskConfirm() {
-      this.$set(this.addTableData, this.indexId, this.currentRowTow)
-      this.modifyTaskVisible = false
-    },
-    /**
-     * 选中数据改变事件
-     */
-    modifyTaskChange(val) {
-      this.currentRowTow = val
-    },
-    /**
-     * 选中数据改变事件
-     */
-    selectionChange(val) {
-      this.selectedTableData = val
-    },
-    tableRowClassName({ row, rowIndex }) {
-      if (row.consignment) {
-        return 'green-row'
-      }
-    },
-    /**
-     * 记忆选中
-     */
-    getRowKeys(row) {
-      return row.id
-    },
-    // 确定任务编号 回调
-    selectedConfirm() {
-      this.selectedTableData.forEach(x => {
-        var status = true
-        if (this.addTableData.length > 0) {
-          this.addTableData.forEach(y => {
-            if (x.taskNumber === y.taskNumber) {
-              status = false
-              this.$alert('任务编号【' + x.taskNumber + '】已存在，不能重复添加！', '提示', {
-                confirmButtonText: '确定',
-                callback: action => {}
-              })
-            }
-          })
-        }
-        if (status) {
-          this.addTableData.push(x)
-        }
-      })
-      this.taskNumberVisible = false
-    },
-
-    // 添加任务编号
-    addTaskNumber() {
-      this.taskNumberVisible = true
-    },
-    // 点击任务编号弹出弹窗
-    modifyTask(scope) {
-      this.indexId = scope.$index
-      this.modifyTaskVisible = true
     },
     // 编辑订单
     modifyPur(row) {
@@ -426,6 +313,6 @@ export default {
 </script>
 <style scoped lang="scss">
   >>>.el-dialog__header {
-    border: 0;
+    border: 1px;
   }
 </style>

@@ -42,11 +42,6 @@ export default (safe) => {
         }]
 
       },
-      // {
-      //   label: '描述',
-      //   prop: 'remark',
-      //   search: true
-      // }
       {
         label: '开单员',
         prop: 'jurisdiction',
@@ -71,10 +66,9 @@ export default (safe) => {
         labelWidth: '0px',
         prop: 'Table',
         hide: true,
-        formslot: true
-        // form '500px'
+        formslot: true,
+        formWidth: '500px'
       }
-
       // 树
       // {
       //   label: '描述',

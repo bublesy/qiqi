@@ -2,11 +2,12 @@
   <el-container>
     <el-main>
       <div id="print">
-        <el-header align="center">采购未进一览表</el-header>
+        <h1 align="center">采购未进一览表</h1>
         <span style="margin-left:60px">制表人:{{ }}</span>
         <span style="margin-left:40%">打印日期:{{ }}</span>
         <br>
         <br>
+        <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#print'" type="primary">打印</el-button>
         <el-table
           ref="multipleTable"
@@ -61,6 +62,10 @@ export default {
     }
   },
   methods: {
+    // 返回
+    toBack() {
+      this.$router.push('/purchase_order')
+    },
     /**
      * 表格合计
      */

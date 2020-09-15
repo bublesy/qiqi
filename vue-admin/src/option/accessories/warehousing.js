@@ -39,38 +39,38 @@ export default (safe) => {
           trigger: 'blur'
         }]
       },
-      {
-        label: '开单员',
-        prop: 'code',
-        addDisplay: false,
-        editDisplay: false,
-        rules: [{
-          required: true,
-          message: '请输入开单员 ',
-          trigger: 'blur'
-        }]
-      },
+      // {
+      //   label: '开单员',
+      //   prop: 'c',
+      //   addDisplay: false,
+      //   editDisplay: false,
+      //   rules: [{
+      //     required: true,
+      //     message: '请输入开单员 ',
+      //     trigger: 'blur'
+      //   }]
+      // },
       {
         label: '原始单号',
-        prop: 'code',
+        prop: 'b',
         rules: [{
           required: true,
-          message: '请输入原始单号',
+          pattern: '^[0-9]*$ ',
+          message: '请输入存数字',
           trigger: 'blur'
-        }]
-      },
+        }] },
       {
         label: '备注',
-        prop: 'code',
+        prop: 'cd',
         rules: [{
           required: true,
           message: '请输入备注',
           trigger: 'blur'
         }]
-      },
-      // {
+      }, // {
       //   label: '品名规格',
-      //   prop: 'code',
+      //   prop: 'e',
+      //   hide: true,
       //   rules: [{
       //     required: true,
       //     message: '请输入品名规格',
@@ -79,7 +79,10 @@ export default (safe) => {
       // },
       // {
       //   label: '单位',
-      //   prop: 'code',
+      //   prop: 'f',
+      //   addDisabled: true,
+      //   editDisabled: true,
+      //   hide: true,
       //   rules: [{
       //     required: true,
       //     message: '请输入单位',
@@ -88,7 +91,8 @@ export default (safe) => {
       // },
       // {
       //   label: '数量',
-      //   prop: 'code',
+      //   prop: 'g',
+      //   hide: true,
       //   rules: [{
       //     required: true,
       //     message: '请输入数量',
@@ -97,7 +101,8 @@ export default (safe) => {
       // },
       // {
       //   label: '单价',
-      //   prop: 'code',
+      //   prop: 'h',
+      //   hide: true,
       //   rules: [{
       //     required: true,
       //     message: '请输入单价',
@@ -106,13 +111,14 @@ export default (safe) => {
       // },
       // {
       //   label: '金额',
-      //   prop: 'code',
+      //   prop: 'k',
+      //   hide: true,
       //   rules: [{
       //     required: true,
       //     message: '请输入金额',
       //     trigger: 'blur'
       //   }]
-      // },
+      // }
       // {
       //   label: '开单员',
       //   prop: 'code',

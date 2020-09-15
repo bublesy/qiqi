@@ -6,8 +6,9 @@
       :page.sync="page"
       v-on="onEvent"
     >
+      <!-- 自定义菜单 -->
       <template slot="myTableForm">
-        <avue-crud ref="crud" :option="myOption" :data="myData" style="width:1000px" @row-update="addUpdate" />
+        <avue-crud ref="crud" :option="myOption" :data="myData" style="width:1200px" @row-update="addUpdate" />
       </template>
       <template slot="menu" slot-scope="scope">
         <el-popconfirm title="确认删除这条数据吗？" style="margin-left:10px;" @onConfirm="handleDel( scope.row, scope.index )">
@@ -26,16 +27,7 @@ export default window.$crudCommon({
   data() {
     return {
       a: [],
-      myData: [{
-        id: 0,
-        name: '张三',
-        sex: 1,
-        $cellEdit: true
-      }, {
-        id: 1,
-        name: '李四',
-        sex: 0
-      }],
+      myData: [],
       myOption: {
         addBtn: false,
         refreshBtn: false,
@@ -49,59 +41,62 @@ export default window.$crudCommon({
           label: '品名规格',
           prop: 'name',
           cell: true,
+          width: 165,
+          type: 'select',
+          dicData: [{
+            label: '收据',
+            value: 0
+          }, {
+            label: '选项2',
+            value: 1
+          }],
           rules: [{
             required: true,
             message: '请输入规格名字',
             trigger: 'blur'
           }]
-          // {
-          //   label: '描述',
-          //   prop: 'remark',
-          //   type: 'radio',
-          //   dicData: [{
-          //     label: '选项1',
-          //     value: 0
-          //   }, {
-          //     label: '选项2',
-          //     value: 1
-          //   }]
-          // }
         },
         {
           label: '单位',
           prop: 'unit',
+          disabled: true,
+          width: 165,
           cell: true,
-          rules: [{
-            required: true,
-            message: '请输入单位名字',
-            trigger: 'blur'
-          }],
+          type: 'select',
           dicData: [{
             label: '选项1',
             value: 0
           }, {
             label: '选项2',
             value: 1
+          }],
+          rules: [{
+            required: true,
+            message: '请选择单位',
+            trigger: 'blur'
           }]
         },
         {
           label: '数量',
           prop: 'number',
+          width: 165,
           cell: true,
           rules: [{
             required: true,
-            message: '请输入原始编号',
+            message: '请输入数量',
             trigger: 'blur',
-            pattern: /^\d{1,}$/
+            pattern: '^[0-9]*$ '
           }]
         },
         {
           label: '单价',
           prop: 'univalent;',
+          width: 140,
           cell: true
         },
         {
           label: '金额',
+          width: 160,
           prop: 'money',
           cell: true
         }]
@@ -158,7 +153,7 @@ export default window.$crudCommon({
           sex: '男'
         }, {
           id: '1',
-          name: '李四',
+          name: '',
           sex: '女'
         }]
       })

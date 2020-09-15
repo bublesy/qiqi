@@ -2,9 +2,10 @@
   <div class="app-container">
     <div class="anniu">
       <el-row>
+        <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#printTest'" type="primary">打印</el-button>
         <el-button type="primary" @click="toExcel">导出</el-button>
-        <el-pagination
+        <!-- <el-pagination
           style="float:right;"
           :current-page="currentPage4"
           :page-sizes="[10, 20, 30, 50]"
@@ -13,7 +14,8 @@
           :total="10"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-        />
+        /> -->
+
       </el-row>
     </div>
     <div id="printTest" class="ful">
@@ -70,6 +72,10 @@ export default {
     // console.log(document.getElementById('da'))
   },
   methods: {
+    // 返回
+    toBack() {
+      this.$router.push('/accessories/stock')
+    },
     toExcel() {
       var list = this.form
       const th = ['编码', '品名规格', '单位', '数量', '领料人']

@@ -4,18 +4,14 @@
       v-model="form"
       v-bind="bindVal"
       :page.sync="page"
+      :close-on-click-modal="false"
       v-on="onEvent"
-    >
-      <template slot="menu" slot-scope="scope">
-        <el-popconfirm title="确认删除这条数据吗？" style="margin-left:10px;" @onConfirm="handleDel( scope.row, scope.index )">
-          <el-button slot="reference" type="text" icon="el-icon-delete" size="small">&nbsp;删除</el-button>
-        </el-popconfirm>
-      </template>
-    </avue-crud>
+    />
   </div>
 </template>
 
 <script>
+import { getUser } from '@/api/accessories/u'
 import { removeRole } from '@/api/accessories/means'
 import { export2Excel } from '@/utils/common'
 export default window.$crudCommon({
@@ -26,6 +22,9 @@ export default window.$crudCommon({
     }
   },
   created() {
+    getUser().then(res => {
+      console.log(res.list)
+    })
   },
   methods: {
     toExcel() {
@@ -55,7 +54,7 @@ export default window.$crudCommon({
         this.$message.success('首次查询' + value)
         callback({
           id: '0',
-          name: '张三',
+          name: '',
           sex: '男'
         })
         return
@@ -75,7 +74,7 @@ export default window.$crudCommon({
           sex: '男'
         }, {
           id: '1',
-          name: '李四',
+          name: '',
           sex: '女'
         }]
       })
