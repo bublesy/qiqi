@@ -14,11 +14,12 @@
             v-model="form.time"
             align="right"
             type="date"
+            value-format="yyyy-MM-dd"
             placeholder="选择日期"
           />
         </el-form-item>
 
-        <el-button size="mini" type="primary" @click="query">查询</el-button>
+        <el-button size="mini" type="primary" @click="loadData()">查询</el-button>
         <el-button type="primary" size="mini" @click="supplierAdd">新增</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
       </el-form>
@@ -41,8 +42,8 @@
         <el-table-column property="address" label="地址" width="120" />
         <el-table-column label="操作" width="180">
           <template slot-scope="scope">
-            <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
-            <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
+            <el-link type="danger" size="small" @click="drop(scope)">删除</el-link>
+            <el-link type="primary" size="small" @click="modifyPur(scope)">编辑</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -73,11 +74,11 @@
         </el-form-item>
 
         <el-form-item label="电话" prop="telephone">
-          <el-input v-model="formAdd.telephone" />
+          <el-input-number v-model="formAdd.telephone" :controls="false" />
         </el-form-item>
 
         <el-form-item label="手机" prop="mobilePhone">
-          <el-input v-model="formAdd.mobilePhone" />
+          <el-input-number v-model="formAdd.mobilePhone" :controls="false" />
         </el-form-item>
 
         <el-form-item label="传真">
@@ -109,6 +110,11 @@
 import initData from '@/mixins/initData'
 import pinyin from 'js-pinyin'
 import { export2Excel } from '@/utils/common'
+import { add } from '@/api/supplier/supplier'
+import { list } from '@/api/supplier/supplier'
+import { removeById } from '@/api/supplier/supplier'
+import { getById } from '@/api/supplier/supplier'
+
 export default {
   name: 'Supplier',
   mixins: [initData],
@@ -138,12 +144,28 @@ export default {
         fullName: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         telephone: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
-      form: {}
+      form: {
+        code: '',
+        abbreviation: '',
+        time: ''
+      }
     }
   },
-
+  created() {
+    this.init()
+  },
   methods: {
-    query() {
+    loadData() {
+      this.queryParams.code = this.form.code
+      this.queryParams.abbreviation = this.form.abbreviation
+      this.queryParams.time = this.form.time
+      if (this.queryParams.time === null) {
+        this.$set(this.queryParams, 'time', '')
+      }
+      list(this.queryParams).then(res => {
+        this.tableData = res.list
+        this.pagination.total = res.total
+      })
     },
     // 导出
     toExcel() {
@@ -158,30 +180,29 @@ export default {
       this.formAdd.code = pinyin.getCamelChars(this.formAdd.abbreviation)
     },
     // 删除
-    drop() {
-      this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
+    drop(scope) {
+      removeById(scope.row.id).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+          this.loadData()
+        } else {
+          this.$message.error('删除失败')
+        }
       })
     },
     // 编辑供应商
-    modifyPur(row) {
+    modifyPur(scope) {
+      console.log('id', scope)
+      console.log(scope.$index)
       this.supplierAddVisible = true
       this.titleType = '编辑'
+      getById(scope.row.id).then(res => {
+        this.formAdd = res
+      })
     },
     // 新增供应商
     supplierAdd() {
+      this.formAdd = {}
       this.supplierAddVisible = true
       this.titleType = '新增'
     },
@@ -189,6 +210,14 @@ export default {
     supplierAddOk(supForm) {
       this.$refs[supForm].validate((valid) => {
         if (valid) {
+          add(this.formAdd).then(res => {
+            if (res) {
+              this.$message.success(this.titleType + '成功')
+              this.loadData()
+            } else {
+              this.$message.error(this.titleType + '失败')
+            }
+          })
           this.supplierAddVisible = false
         } else {
           return false
