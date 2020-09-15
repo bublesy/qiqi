@@ -31,14 +31,14 @@
         style="width: 100%"
         align="center"
       >
-        <el-table-column type="index" width="50" />
-        <el-table-column property="code" label="编码" width="120" />
-        <el-table-column property="abbreviation" label="简称" width="120" />
-        <el-table-column property="fullName" label="全称" width="120" />
-        <el-table-column property="quotationUnit" label="报价单位" width="120" />
-        <el-table-column property="cardboardQuotation" label="纸板报价" width="120" />
-        <el-table-column property="preferentialSetting" label="优惠设定" width="120" />
-        <el-table-column label="操作" width="180">
+        <el-table-column type="index" />
+        <el-table-column property="code" label="编码" />
+        <el-table-column property="abbreviation" label="简称" />
+        <el-table-column property="fullName" label="全称" />
+        <el-table-column property="quotationUnit" label="报价单位" />
+        <el-table-column property="cardboardQuotation" label="纸板报价" />
+        <el-table-column property="preferentialSetting" label="优惠设定" />
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <el-link type="danger" size="small" @click="drop(scope)">删除</el-link>
             <el-link type="primary" size="small" @click="modifyPur(scope)">编辑</el-link>
@@ -93,7 +93,7 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="supplierAddNo">取 消</el-button>
+        <el-button size="small" @click="supplierAddNo('supForm')">取 消</el-button>
         <el-button size="small" type="primary" @click="suppCarQuoAddOk('supForm')">确 定</el-button>
       </span>
     </el-dialog>
@@ -117,12 +117,14 @@ export default {
     return {
       tableData: [],
       suppCarQuoAddVisible: false,
-      formAdd: { code: '' },
+      formAdd: {
+        code: '', supplierId: ''
+      },
       titleType: '',
       supRules: {
         supplierId: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        quotationUnit: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        cardboardQuotation: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        quotationUnit: [{ required: true, message: '该输入为必填项', trigger: 'blur' }],
+        cardboardQuotation: [{ required: true, message: '该输入为必填项', trigger: 'blur' }]
       },
       form: {
         code: '',
@@ -184,30 +186,30 @@ export default {
     modifyPur(scope) {
       this.suppCarQuoAddVisible = true
       this.titleType = '编辑'
-      // 加载供应商下拉框
-      supplierSelect().then(res => {
-        this.supplierFor = res
-        this.supplierFor.forEach(e => {
-          if (e.id !== null) {
+
+      getById(scope.row.id).then(res => {
+        // 加载供应商下拉框
+        supplierSelect().then(res => {
+          this.supplierFor = res
+          this.supplierFor.forEach(e => {
             if (e.id === this.formAdd.supplierId) {
               this.$set(this.formAdd, 'code', e.code)
               this.$set(this.formAdd, 'abbreviation', e.abbreviation)
             }
-          }
+          })
         })
-      })
-      getById(scope.row.id).then(res => {
         this.formAdd = res
       })
     },
     // 新增供应商
     supCarQuoAdd() {
+      this.suppCarQuoAddVisible = true
+      this.titleType = '新增'
+      this.formAdd = {}
       // 加载供应商下拉框
       supplierSelect().then(res => {
         this.supplierFor = res
       })
-      this.suppCarQuoAddVisible = true
-      this.titleType = '新增'
     },
     // 新增供应商保存
     suppCarQuoAddOk(supForm) {
@@ -216,6 +218,7 @@ export default {
           add(this.formAdd).then(res => {
             if (res) {
               this.$message.success(this.titleType + '成功')
+              this.$refs[supForm].resetFields()
               this.loadData()
             } else {
               this.$message.error(this.titleType + '失败')
@@ -228,9 +231,10 @@ export default {
       })
     },
     // 新增供应商取消
-    supplierAddNo() {
+    supplierAddNo(supForm) {
       this.suppCarQuoAddVisible = false
       this.formAdd = {}
+      this.$refs[supForm].resetFields()
     }
   }
 }
