@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import { getUser } from '@/api/accessories/u'
 import { removeRole } from '@/api/accessories/means'
 import { export2Excel } from '@/utils/common'
 export default window.$crudCommon({
@@ -22,9 +21,7 @@ export default window.$crudCommon({
     }
   },
   created() {
-    getUser().then(res => {
-      console.log(res.list)
-    })
+
   },
   methods: {
     toExcel() {
