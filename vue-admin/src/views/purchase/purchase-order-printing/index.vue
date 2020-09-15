@@ -2,7 +2,7 @@
   <el-container>
     <el-main>
       <div id="print">
-        <h3 align="center">名称:{{ }}</h3>
+        <h3 align="center">{{ }}</h3>
         <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#print'" type="primary">打印</el-button>
         <h1 align="center">采购订单</h1>
