@@ -16,9 +16,8 @@
       style="width: 100%"
       border
       stripe
-      @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" />
+      <el-table-column type="index" width="55" />
       <el-table-column prop="name" label="职位名称" width="120" />
       <el-table-column label="操作" width="180">
         <template slot-scope="scope">

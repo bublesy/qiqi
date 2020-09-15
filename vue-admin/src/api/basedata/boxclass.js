@@ -1,14 +1,18 @@
 import request from '@/utils/request'
 
 export function getBoxClass(data) {
-  return request({ url: '', method: 'post', data: data })
+  return request({ url: '/box/type/setting/list', method: 'post', data: data })
 }
 
 export function delBoxClass(id) {
-  return request({ url: '' + id, method: 'delete' })
+  return request({ url: '/box/type/setting/' + id, method: 'delete' })
 }
 
 export function addOrUpdateBoxClass(data) {
-  return request({ url: '', method: 'post', data: data })
+  return request({ url: '/box/type/setting', method: 'post', data: data })
+}
+
+export function getSingleBoxClass(id) {
+  return request({ url: '/box/type/setting/' + id, method: 'get' })
 }
 

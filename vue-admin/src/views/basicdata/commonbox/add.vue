@@ -7,13 +7,16 @@
   >
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" size="mini" :inline="true">
       <el-form-item label="编码:" prop="code">
-        <el-input v-model="form.code" />
+        <el-input v-model="form.code" @input="code" />
       </el-form-item>
-      <el-form-item label="简称:" prop="name">
-        <el-input v-model="form.as" />
+      <el-form-item label="简称:" prop="shorts">
+        <el-input v-model="form.shorts" />
       </el-form-item>
-      <el-form-item label="全称:">
+      <el-form-item label="全称:" prop="fullName">
         <el-input v-model="form.fullName" />
+      </el-form-item>
+      <el-form-item label="常用箱:" prop="commonBoxManagement">
+        <el-input v-model="form.commonBoxManagement" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -24,7 +27,7 @@
 </template>
 
 <script>
-import { addOrUpdateCommonBox } from '@/api/basedata/commonbox'
+import { addOrUpdateCommonBox, getSingleCommBox } from '@/api/basedata/commonbox'
 export default {
   props: {
     dialog: {
@@ -44,11 +47,14 @@ export default {
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' }
         ],
-        as: [
+        shorts: [
           { required: true, message: '请输入简称', trigger: 'blur' }
         ],
         fullName: [
           { required: true, message: '请输入全称', trigger: 'blur' }
+        ],
+        commonBoxManagement: [
+          { required: true, message: '请输入常用箱', trigger: 'blur' }
         ]
       }
     }
@@ -58,21 +64,39 @@ export default {
       if (val) {
         if (this.id !== '' && this.id !== null) {
           // 编辑
-          console.log('aa')
+          console.log(this.id)
+          getSingleCommBox(this.id).then(res => {
+            console.log(res)
+            this.form = res
+          })
         } else {
           // 新增
-          this.form = Object.assign({}, this.$options.data().form)
+          // this.form = Object.assign({}, this.$options.data().form)
+          this.$refs.form.resetFields()
         }
       }
     }
   },
   methods: {
+    code(x) {
+      if (isNaN(x)) {
+        this.form.code = this.form.code.substring(0, this.form.code.length - 1)
+        if (isNaN(this.form.code)) {
+          this.form.code = ''
+        }
+      }
+    },
     sure() {
       this.$refs.form.validate(x => {
         if (x) {
-          var data = {}
+          var data = this.form
+          console.log(data)
           addOrUpdateCommonBox(data).then(res => {
-
+            if (res) {
+              this.$message.success('保存成功')
+            }
+            this.$emit('init')
+            this.dialog.show = false
           })
         }
       })
