@@ -30,8 +30,9 @@
       style="width: 100%"
       border
       stripe
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column type="index" width="55" />
+      <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
       <el-table-column prop="name" label="出货日期" width="120" />
       <el-table-column prop="name" label="出货单号" width="120" />

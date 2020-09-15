@@ -12,10 +12,18 @@
         <el-input v-model="form.customerNo" />
       </el-form-item>
       <el-form-item label="下单日期:">
-        <el-input v-model="form.orderDate" />
+        <el-date-picker
+          v-model="form.orderDate"
+          type="date"
+          placeholder="选择日期"
+        />
       </el-form-item>
       <el-form-item label="交货日期:">
-        <el-input v-model="form.deliveryDate" />
+        <el-date-picker
+          v-model="form.payDate"
+          type="date"
+          placeholder="选择日期"
+        />
       </el-form-item>
       <el-form-item label="仓库状态:">
         <el-select v-model="form.wosState" placeholder="请选择">
@@ -65,13 +73,14 @@
         <el-table-column prop="making" label="制单人" width="120" />
         <el-table-column prop="auditTime" label="审核时间" width="120" />
         <el-table-column prop="audit" label="审核人" width="120" /> -->
-        <el-table-column label="操作" width="320">
+        <el-table-column label="操作" width="420">
           <template slot-scope="scope">
             <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
             <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
               <el-button slot="reference" type="danger" size="mini">删除</el-button>
             </el-popconfirm>
             <el-button type="success" size="mini" @click="singlePrint(scope.row)">打印</el-button>
+            <el-button type="warning" size="mini" @click="orderAgain(scope.row)">再次下单</el-button>
             <el-button type="primary" size="mini" @click="generate">生成施工单</el-button>
           </template>
         </el-table-column>
@@ -135,6 +144,9 @@ export default {
         path: '/index',
         query: { id: this.id }
       })
+    },
+    orderAgain() {
+      this.editDialog.show = true
     },
     initTable() {
       getOrder(this.form).then(res => {

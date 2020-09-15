@@ -2,13 +2,13 @@
   <div id="printTest" style="margin:30px">
     <p class="font">订单未交总表</p>
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
-      <!-- <el-form-item label="出货日期:">
+      <el-form-item label="交货日期:">
         <el-date-picker
           v-model="form.date"
           type="date"
           placeholder="选择日期"
         />
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item label="客户名称:">
         <el-input v-model="form.name" />
       </el-form-item>
@@ -30,8 +30,9 @@
       style="width: 100%"
       border
       stripe
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column type="index" width="55" />
+      <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
       <el-table-column prop="name" label="任务编号" width="120" />
       <el-table-column prop="name" label="客户单号" width="120" />

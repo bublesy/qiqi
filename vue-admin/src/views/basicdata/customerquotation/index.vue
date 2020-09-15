@@ -6,13 +6,10 @@
         <el-input v-model="form.code" />
       </el-form-item>
       <el-form-item label="简称:">
-        <el-input v-model="form.name" />
+        <el-input v-model="form.as" />
       </el-form-item>
       <el-form-item label="全称:">
-        <el-input v-model="form.code" />
-      </el-form-item>
-      <el-form-item label="名称:">
-        <el-input v-model="form.name" />
+        <el-input v-model="form.fullName" />
       </el-form-item>
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
@@ -27,18 +24,24 @@
       stripe
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" />
-      <!-- <el-table-column type="index" /> -->
+      <!-- <el-table-column type="selection" width="55" /> -->
+      <el-table-column type="index" />
       <el-table-column prop="code" label="编码" width="120" />
-      <el-table-column prop="name" label="名称" width="120" />
-      <el-table-column label="限定最大纸长" width="120">
+      <el-table-column prop="name" label="简称" width="120" />
+      <el-table-column prop="code" label="全称" width="120" />
+      <el-table-column prop="squaredPrice" label="销售平方价" width="120">
         <template slot-scope="scope">
-          <el-checkbox v-model="scope.row.limitPaperLength" />
+          <el-input-number v-model="scope.row.squaredPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:90px" />
+        </template>
+      </el-table-column>
+      <el-table-column prop="BoxPrice" label="箱型计价" width="120">
+        <template slot-scope="scope">
+          <el-input-number v-model="scope.row.BoxPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:90px" />
         </template>
       </el-table-column>
       <el-table-column label="操作" width="180">
         <template slot-scope="scope">
-          <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
+          <!-- <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button> -->
           <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
             <el-button slot="reference" type="danger" size="mini">删除</el-button>
           </el-popconfirm>
@@ -59,7 +62,7 @@
 </template>
 
 <script>
-import addDialog from '@/views/basicdata/boxclass/add'
+import addDialog from '@/views/basicdata/customerquotation/add'
 import { getBoxClass, delBoxClass } from '@/api/basedata/boxclass'
 import { export2Excel } from '@/utils/common'
 export default {
@@ -122,10 +125,10 @@ export default {
     handleSelectionChange() {},
     toExcel() {
       var list = this.tableData
-      const th = ['编码', '名称', '限定最大纸长']
-      const filterVal = ['code', 'name', 'limitPaperLength']
+      const th = ['编码', '简称', '全称', '销售平方价', '箱型计价']
+      const filterVal = ['code', 'name', 'fullName', 'squaredPrice', 'BoxPrice']
       const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '箱类设定')
+      export2Excel(th, data, '客户报价单管理')
     }
   }
 

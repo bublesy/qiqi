@@ -15,6 +15,9 @@
       <el-form-item label="任务编号:">
         <el-input v-model="form.no" />
       </el-form-item>
+      <el-form-item label="是否生产:">
+        <el-checkbox v-model="form.isPro" />
+      </el-form-item>
       <el-form-item label="">
         <el-button size="mini" type="primary">查询</el-button>
         <el-button type="warning" size="mini" @click="print">批量打印</el-button>

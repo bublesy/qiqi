@@ -17,7 +17,7 @@
       </el-form-item>
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
-    <el-button size="mini" type="primary" @click="add">新增</el-button>
+    <!-- <el-button size="mini" type="primary" @click="add">新增</el-button> -->
     <el-button type="warning" size="mini" @click="print">批量打印</el-button>
     <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
     <el-table
@@ -32,6 +32,7 @@
     >
       <el-table-column type="selection" width="55" />
       <el-table-column prop="schedule" label="排期日期" width="120" />
+      <el-table-column prop="productDay" label="生产天数" width="120" />
       <el-table-column prop="taskNo" label="任务编号" width="120" />
       <el-table-column prop="customerInfo" label="客户简介" width="120" />
       <el-table-column prop="boxType" label="箱型" width="120" />
@@ -108,9 +109,9 @@ export default {
     query() {
       this.initTable()
     },
-    add() {
-      this.addDialog.show = true
-    },
+    // add() {
+    //   this.addDialog.show = true
+    // },
     updated(id) {
       this.id = id
       this.editDialog.show = true
@@ -150,6 +151,9 @@ export default {
         path: '/scheduleOrder',
         query: list
       })
+    },
+    orderAgain() {
+
     }
   }
 }
