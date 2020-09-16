@@ -30,17 +30,17 @@
         style="width: 100%"
         align="center"
       >
-        <el-table-column type="index" width="50" />
-        <el-table-column property="code" label="编码" width="120" />
-        <el-table-column property="abbreviation" label="简称" width="120" />
-        <el-table-column property="fullName" label="全称" width="120" />
-        <el-table-column property="telephone" label="电话" width="120" />
-        <el-table-column property="mobilePhone" label="手机" width="120" />
-        <el-table-column property="fax" label="传真" width="120" />
-        <el-table-column property="contacts" label="联系人" width="120" />
-        <el-table-column property="website" label="网址" width="120" />
-        <el-table-column property="address" label="地址" width="120" />
-        <el-table-column label="操作" width="180">
+        <el-table-column type="index" />
+        <el-table-column property="code" label="编码" />
+        <el-table-column property="abbreviation" label="简称" />
+        <el-table-column property="fullName" label="全称" />
+        <el-table-column property="telephone" label="电话" />
+        <el-table-column property="mobilePhone" label="手机" />
+        <el-table-column property="fax" label="传真" />
+        <el-table-column property="contacts" label="联系人" />
+        <el-table-column property="website" label="网址" />
+        <el-table-column property="address" label="地址" />
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <el-link type="danger" size="small" @click="drop(scope)">删除</el-link>
             <el-link type="primary" size="small" @click="modifyPur(scope)">编辑</el-link>
@@ -139,10 +139,10 @@ export default {
       formAdd: { code: '' },
       titleType: '',
       supRules: {
-        mobilePhone: [{ validator: checkPhone, trigger: 'change' }],
-        abbreviation: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        fullName: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        telephone: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        mobilePhone: [{ validator: checkPhone, trigger: 'blur' }],
+        abbreviation: [{ required: true, message: '该输入为必填项', trigger: 'blur' }],
+        fullName: [{ required: true, message: '该输入为必填项', trigger: 'blur' }],
+        telephone: [{ required: true, message: '该输入为必填项', trigger: 'blur' }]
       },
       form: {
         code: '',

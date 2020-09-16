@@ -56,8 +56,8 @@
           <el-table-column v-show="true" prop="unit" label="单位" width="140" />
           <el-table-column label="操作" width="180">
             <template slot-scope="scope">
-              <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
-              <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
+              <el-link type="danger" size="small" @click="drop(scope)">删除</el-link>
+              <el-link type="primary" size="small" @click="modifyPur(scope)">编辑</el-link>
               <el-link type="warning" size="small" @click="printing">生成打印单</el-link>
             </template>
           </el-table-column>
@@ -77,24 +77,20 @@
       <!-- 新增/编辑采购单 -->
       <el-dialog :title="titleType+'采购单'" :visible.sync="purAddVisible">
         <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="120px">
-          <el-form-item label="供方" prop="supplier">
-            <el-select v-model="formAdd.supplier">
+          <el-form-item label="供方" prop="supplierId">
+            <el-select v-model="formAdd.supplierId">
               <el-option
                 v-for="item in supplierFor"
                 :key="item.id"
-                :label="item.name"
+                :label="item.fullName"
                 :value="item.id"
               />
             </el-select>
           </el-form-item>
           <el-form-item label="计价方式" prop="pricing">
             <el-select v-model="formAdd.pricing">
-              <el-option
-                v-for="item in pricingFor"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
+              <el-option label="净边" value="净边" />
+              <el-option label="净宽" value="净宽" />
             </el-select>
           </el-form-item>
           <el-form-item label="开单日期" prop="billingTime">
@@ -193,6 +189,7 @@
 <script>
 import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
+import { supplierSelect } from '@/api/supplier-cardboard-quotation/cardboard'
 
 export default {
   name: 'PurchaseOrder',
@@ -206,7 +203,7 @@ export default {
       customerFor: [],
       purAddVisible: false,
       purRules: {
-        supplier: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        supplierId: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         pricing: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         billingTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         deliveryTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
@@ -292,6 +289,10 @@ export default {
       this.titleType = '新增'
       // 新增初始化数据
       this.formAdd = {}
+      // 加载供应商下拉框
+      supplierSelect().then(res => {
+        this.supplierFor = res
+      })
     },
     // 取消
     purAddNo() {
