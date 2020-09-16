@@ -29,7 +29,7 @@
       <el-table-column type="index" width="55" />
       <el-table-column prop="code" label="编码" width="120" />
       <el-table-column prop="shorts" label="客户简称" width="120" />
-      <el-table-column prop="fullName" label="客户全称" width="120" />
+      <el-table-column prop="fullName" label="客户名称" width="120" />
       <el-table-column prop="phone" label="电话" width="120" />
       <el-table-column prop="mobilePhone" label="手机" width="120" />
       <el-table-column prop="fax" label="传真" width="120" />

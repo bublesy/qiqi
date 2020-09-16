@@ -31,7 +31,7 @@
       <el-table-column type="index" />
       <el-table-column prop="code" label="编码" width="120" />
       <el-table-column prop="shorts" label="客户简称" width="120" />
-      <el-table-column prop="fullName" label="客户全称" width="120" />
+      <el-table-column prop="fullName" label="客户名称" width="120" />
       <el-table-column prop="paperName" label="纸板名称" width="120" />
       <el-table-column prop="boxType" label="箱型" width="120" />
       <el-table-column prop="squaredPrice" label="销售平方价(元)" width="120" />
