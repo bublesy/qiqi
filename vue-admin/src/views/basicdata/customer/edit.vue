@@ -9,8 +9,8 @@
       <el-form-item label="编码:" prop="code">
         <el-input v-model="form.code" />
       </el-form-item>
-      <el-form-item label="简称:" prop="as">
-        <el-input v-model="form.as" />
+      <el-form-item label="简称:" prop="shorts">
+        <el-input v-model="form.shorts" />
       </el-form-item>
       <el-form-item label="全称:" prop="fullName">
         <el-input v-model="form.fullName" />
@@ -37,12 +37,12 @@
         <el-input v-model="form.bank" />
       </el-form-item>
       <el-form-item label="指定业务员:">
-        <el-select v-model="form.salesmanId" placeholder="请选择">
+        <el-select v-model="form.salesman" placeholder="请选择">
           <el-option
             v-for="item in salesmanOptions"
             :key="item.id"
-            :label="item.name"
-            :value="item.id"
+            :label="item.nickname"
+            :value="item.nickname"
           />
         </el-select>
       </el-form-item>
@@ -56,14 +56,7 @@
         <el-input v-model="form.payment" />
       </el-form-item>
       <el-form-item label="币种:">
-        <el-select v-model="form.currency" placeholder="请选择">
-          <el-option
-            v-for="item in currencyOptions"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
-        </el-select>
+        <el-input v-model="form.currency" readonly />
       </el-form-item>
       <el-form-item label="期初应收:">
         <el-input-number v-model="form.beginReceive" :controls="false" :precision="decimal" :min="0.00" />
@@ -80,7 +73,7 @@
 </template>
 
 <script>
-import { addOrUpdateCustomer } from '@/api/basedata/customer'
+import { addOrUpdateCustomer, getSingleCustomer, getSalesman } from '@/api/basedata/customer'
 export default {
   props: {
     dialog: {
@@ -94,7 +87,9 @@ export default {
   },
   data() {
     return {
-      form: {},
+      form: {
+        currency: '人民币'
+      },
       rules: {
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' }
@@ -123,12 +118,17 @@ export default {
   },
   watch: {
     'dialog.show': function(val) {
-      console.log(val)
       if (val) {
         if (this.id === '' || this.id === null) {
-          this.addForm = Object.assign({}, this.$options.data().addForm)
+          // this.addForm = Object.assign({}, this.$options.data().addForm)
+          getSalesman().then(res => {
+            this.salesmanOptions = res.list
+          })
+          this.$refs.form.resetFields()
         } else {
-          console.log('aa')
+          getSingleCustomer(this.id).then(res => {
+            this.form = res
+          })
         }
       }
     }
@@ -140,14 +140,18 @@ export default {
           return
         }
         var data = {}
+        data = this.form
         addOrUpdateCustomer(data).then(res => {
-
+          if (res) {
+            this.$message.success('保存成功')
+          }
+          this.$emit('init')
+          this.dialog.show = false
         })
         // 业务逻辑
       })
     },
     phone(x) {
-      console.log('aaa')
       if (isNaN(x)) {
         this.form.phone = this.form.phone.substring(0, this.form.phone.length - 1)
         if (isNaN(this.form.phone)) {
@@ -166,9 +170,6 @@ export default {
         }
       }
     }
-    // beginReceive() {
-
-    // }
   }
 }
 </script>

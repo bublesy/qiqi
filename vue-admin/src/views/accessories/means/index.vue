@@ -21,6 +21,7 @@ export default window.$crudCommon({
     }
   },
   created() {
+
   },
   methods: {
     toExcel() {

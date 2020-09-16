@@ -4,7 +4,7 @@
       <h1 align="center">辅料库存表</h1>
       <el-form :inline="true" :model="form" size="mini">
         <el-form-item label="领料人:">
-          <el-input v-model="form.search" clearable @clear="getList" />
+          <el-input v-model="form.collector" clearable @clear="getList" />
         </el-form-item>
         <el-button type="primary" size="mini" @click="toQuery">查询</el-button>
         <!-- <el-button type="primary" size="mini" @click="purAdd">新增</el-button> -->
@@ -15,19 +15,20 @@
       <div>
         <el-table
           ref="singleTable"
-          :data="form"
+          :data="tableData"
           highlight-current-row
-          style="width: 80%;margin-top:20px"
+          style="width: 70%;margin-top:20px"
           border=""
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" width="55" />
+          <!-- 复选框是否开启 -->
+          <!-- <el-table-column type="selection" /> -->
           <el-table-column v-show="true" prop="code" label="编码" />
           <el-table-column v-show="true" prop="specifications" label="品名规格" />
           <el-table-column v-show="true" prop="company" label="单位" />
           <el-table-column v-show="true" prop="number" label="数量" />
           <el-table-column v-show="true" prop="collector" label="领料人" />
-          <el-table-column label="操作" width="213 ">
+          <el-table-column label="操作">
             <template slot-scope="scope">
               <!-- <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link> -->
               <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
@@ -109,7 +110,12 @@ export default {
   mixins: [initData],
   data() {
     return {
-      form: [
+      form: { collector: '' },
+      formAdd: {
+        number: ''
+      },
+      // 表格数据
+      tableData: [
         { code: 1,
           specifications: '传真纸',
           company: '卷',
@@ -123,14 +129,6 @@ export default {
           number: 38,
           collector: '李四' }
       ],
-      formAdd: {
-        number: ''
-      },
-      tableData: [{
-        documentsNo: '1',
-        taskNumber: '1',
-        customerName: '迪迦'
-      }],
       addTableData: [],
       customerFor: [{
         id: '1',
@@ -148,7 +146,7 @@ export default {
         name: '阿里'
       }],
       pricingFor: [{
-        id: '1',  
+        id: '1',
         name: '净边'
       }, {
         id: '2',

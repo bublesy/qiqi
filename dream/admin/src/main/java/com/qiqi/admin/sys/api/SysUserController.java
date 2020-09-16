@@ -46,6 +46,12 @@ public class SysUserController {
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<SysUserDO>>() {}, iPage.getRecords()));
     }
 
+    @ApiOperation(value = "获取业务员")
+    @GetMapping("/salesman")
+    public List<SysUserDO> getSalesman(){
+        return sysUserService.list();
+    }
+
     @ApiOperation(value = "获取系统用户(单个)")
     @GetMapping("/{id}")
     public SysUserDO getSysUser(@PathVariable Long id) {
