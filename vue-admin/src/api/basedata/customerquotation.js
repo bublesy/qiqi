@@ -16,3 +16,7 @@ export function getSingleCustomerQuotation(id) {
   return request({ url: '/customer/quotation/' + id, method: 'get' })
 }
 
+export function getPaper() {
+  return request({ url: '/customer/quotation/paper', method: 'get' })
+}
+

@@ -16,3 +16,7 @@ export function getSingleBoxClass(id) {
   return request({ url: '/box/type/setting/' + id, method: 'get' })
 }
 
+export function getBoxClassList() {
+  return request({ url: '/box/type/setting/list', method: 'get' })
+}
+

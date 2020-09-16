@@ -2,6 +2,7 @@ package com.qiqi.admin.supplier.api;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.qiqi.admin.supplier.model.PaperboardDataSettingVO;
+import com.qiqi.basicdata.service.BoxTypeSettingService;
 import com.qiqi.supplier.entity.PaperboardDataSettingDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
@@ -32,6 +33,7 @@ public class PaperboardDataSettingController {
 
     @Resource
     private PaperboardDataSettingService paperboardDataSettingService;
+
 
     @ApiOperation(value = "获取纸板资料设定(列表)")
     @ApiImplicitParams({

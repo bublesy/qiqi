@@ -120,13 +120,16 @@ export default {
     'dialog.show': function(val) {
       if (val) {
         if (this.id === '' || this.id === null) {
-          // this.addForm = Object.assign({}, this.$options.data().addForm)
+          this.addForm = Object.assign({}, this.$options.data().addForm)
+          // this.$refs.form.resetFields()
           getSalesman().then(res => {
             this.salesmanOptions = res.list
           })
-          this.$refs.form.resetFields()
         } else {
           getSingleCustomer(this.id).then(res => {
+            getSalesman().then(res => {
+              this.salesmanOptions = res.list
+            })
             this.form = res
           })
         }
@@ -144,9 +147,11 @@ export default {
         addOrUpdateCustomer(data).then(res => {
           if (res) {
             this.$message.success('保存成功')
+            this.$emit('init')
+            this.dialog.show = false
+          } else {
+            this.$message.info('手机号已存在')
           }
-          this.dialog.show = false
-          this.$emit('init')
         })
         // 业务逻辑
       })
