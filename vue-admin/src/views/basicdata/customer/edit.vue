@@ -120,13 +120,16 @@ export default {
     'dialog.show': function(val) {
       if (val) {
         if (this.id === '' || this.id === null) {
-          // this.addForm = Object.assign({}, this.$options.data().addForm)
+          this.addForm = Object.assign({}, this.$options.data().addForm)
+          // this.$refs.form.resetFields()
           getSalesman().then(res => {
             this.salesmanOptions = res.list
           })
-          this.$refs.form.resetFields()
         } else {
           getSingleCustomer(this.id).then(res => {
+            getSalesman().then(res => {
+              this.salesmanOptions = res.list
+            })
             this.form = res
           })
         }
