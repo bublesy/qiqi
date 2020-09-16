@@ -9,11 +9,23 @@ import lombok.Data;
 @Data
 public class SupplierCardboardQuotationVO {
     private Long id;
-    /**
-     * 供应商id
-     */
-    private String supplierId;
 
+    private String ridgeType;
+
+    private String name;
+
+    /**
+     * code
+     */
+    private String code;
+    /**
+     * totalPrice
+     */
+    private String totalPrice;
+    /**
+     * pagerId
+     */
+    private String pagerId;
     /**
      * 报价单位
      */
@@ -28,10 +40,6 @@ public class SupplierCardboardQuotationVO {
      */
     private String preferentialSetting;
 
-    /**
-     * 编码
-     */
-    private String code;
     /**
      * 简称
      */

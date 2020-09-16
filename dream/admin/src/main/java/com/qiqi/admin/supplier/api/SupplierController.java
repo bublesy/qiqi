@@ -2,13 +2,16 @@ package com.qiqi.admin.supplier.api;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.qiqi.admin.supplier.model.SupplierVO;
+import com.qiqi.supplier.entity.SupplierCardboardQuotationDO;
 import com.qiqi.supplier.entity.SupplierDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.supplier.service.SupplierCardboardQuotationService;
 import io.swagger.annotations.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.qiqi.supplier.service.SupplierService;
@@ -32,6 +35,8 @@ public class SupplierController {
 
     @Resource
     private SupplierService supplierService;
+    @Resource
+    private SupplierCardboardQuotationService supplierCardboardQuotationService;
 
     @ApiOperation(value = "获取供应商(列表)")
     @ApiImplicitParams({
@@ -70,7 +75,11 @@ public class SupplierController {
     @ApiOperation(value = "新增供应商")
     @PostMapping("/add")
     public Boolean saveSupplier(@RequestBody SupplierDO supplierDO) {
-        return supplierService.saveOrUpdate(supplierDO);
+        boolean b = supplierService.saveOrUpdate(supplierDO);
+        SupplierCardboardQuotationDO supplierCardboardQuotationDO = new SupplierCardboardQuotationDO();
+        BeanUtils.copyProperties(supplierDO,supplierCardboardQuotationDO);
+        supplierCardboardQuotationService.save(supplierCardboardQuotationDO);
+        return b;
     }
 
     @ApiOperation(value = "删除供应商(批量))")

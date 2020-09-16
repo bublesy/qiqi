@@ -3,13 +3,13 @@
 <mapper namespace="com.qiqi.supplier.mapper.SupplierCardboardQuotationMapper">
 
     <select id="findList" resultType="com.qiqi.admin.supplier.model.SupplierCardboardQuotationVO">
-        select scq.*,s.code,s.full_name,s.abbreviation from supplier_cardboard_quotation scq left join supplier s on scq.supplier_Id = s.id
+        select scq.*,pds.ridgeType,pds.`name` from supplier_cardboard_quotation scq left join paperboard_data_setting pds on scq.pager_Id = pds.id
         where scq.is_deleted =0
             <if test=" code != null and code != '' ">
-                and  s.code like concat('%', #{code} , '%')
+                and  scq.code like concat('%', #{code} , '%')
             </if>
             <if test="abbreviation != null and abbreviation != ''  ">
-                and  s.abbreviation like concat('%', #{abbreviation} , '%')
+                and  scq.abbreviation like concat('%', #{abbreviation} , '%')
             </if>
             <if test="time != null and time != '' ">
                 and  scq.created_time like concat('%', #{time} , '%')
