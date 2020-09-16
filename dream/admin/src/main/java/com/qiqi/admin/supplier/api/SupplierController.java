@@ -45,10 +45,10 @@ public class SupplierController {
                                                     @RequestParam(value = "abbreviation") String abbreviation,
                                                     @RequestParam(value = "time") String time) {
         //todo: 需要转Vo
-        LambdaQueryWrapper<SupplierDO> wrapper = new LambdaQueryWrapper<SupplierDO>()
-                .eq(!ObjectUtils.isEmpty(code), SupplierDO::getCode,code)
-                .eq(!ObjectUtils.isEmpty(abbreviation), SupplierDO::getAbbreviation,abbreviation);
+        LambdaQueryWrapper<SupplierDO> wrapper = new LambdaQueryWrapper<SupplierDO>();
+        wrapper.like(!ObjectUtils.isEmpty(code),SupplierDO::getCode,code);
         wrapper.like(!ObjectUtils.isEmpty(time),SupplierDO::getCreatedTime,time);
+        wrapper.like(!ObjectUtils.isEmpty(abbreviation),SupplierDO::getAbbreviation,abbreviation);
         IPage<SupplierDO> iPage = supplierService.page(new Page<>(page,size),wrapper);
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<SupplierVO>>() {}, iPage.getRecords()));
     }
