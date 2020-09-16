@@ -31,7 +31,7 @@
           <th>开单员</th>
           <th>备注</th> -->
         </tr>
-        <tr v-for="item in form" :key="item.id">
+        <tr v-for="item in tableData" :key="item.id">
           <th>{{ item.code }}</th>
           <th>{{ item.specifications }}</th>
           <th>{{ item.company }}</th>
@@ -59,7 +59,7 @@ export default {
   name: 'Printing',
   data() {
     return {
-      form: [
+      tableData: [
         { code: 1,
           specifications: '传真纸',
           company: '卷',
@@ -77,7 +77,7 @@ export default {
       this.$router.push('/accessories/stock')
     },
     toExcel() {
-      var list = this.form
+      var list = this.tableData
       const th = ['编码', '品名规格', '单位', '数量', '领料人']
       const filterVal = ['code', 'specifications', 'company', 'number', 'collector']
       const data = list.map(v => filterVal.map(k => v[k]))
