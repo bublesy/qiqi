@@ -145,8 +145,8 @@ export default {
           if (res) {
             this.$message.success('保存成功')
           }
-          this.dialog.show = false
           this.$emit('init')
+          this.dialog.show = false
         })
         // 业务逻辑
       })
