@@ -45,10 +45,10 @@ public class PaperboardDataSettingController {
                                                                             @RequestParam(value = "name") String name,
                                                                             @RequestParam(value = "time") String time) {
         //todo: 需要转Vo
-        LambdaQueryWrapper<PaperboardDataSettingDO> wrapper = new LambdaQueryWrapper<PaperboardDataSettingDO>()
-                .eq(!ObjectUtils.isEmpty(code), PaperboardDataSettingDO::getCode,code)
-                .eq(!ObjectUtils.isEmpty(name), PaperboardDataSettingDO::getName,name);
+        LambdaQueryWrapper<PaperboardDataSettingDO> wrapper = new LambdaQueryWrapper<PaperboardDataSettingDO>();
         wrapper.like(!ObjectUtils.isEmpty(time),PaperboardDataSettingDO::getCreatedTime,time);
+        wrapper.like(!ObjectUtils.isEmpty(name),PaperboardDataSettingDO::getName,name);
+        wrapper.like(!ObjectUtils.isEmpty(code),PaperboardDataSettingDO::getCode,code);
         IPage<PaperboardDataSettingDO> iPage = paperboardDataSettingService.page(new Page<>(page,size),wrapper);
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<PaperboardDataSettingVO>>() {}, iPage.getRecords()));
     }
