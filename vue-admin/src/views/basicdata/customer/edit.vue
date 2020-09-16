@@ -144,9 +144,11 @@ export default {
         addOrUpdateCustomer(data).then(res => {
           if (res) {
             this.$message.success('保存成功')
+            this.$emit('init')
+            this.dialog.show = false
+          } else {
+            this.$message.info('手机号已存在')
           }
-          this.$emit('init')
-          this.dialog.show = false
         })
         // 业务逻辑
       })

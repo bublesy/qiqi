@@ -148,7 +148,7 @@ export default {
         name: '阿里'
       }],
       pricingFor: [{
-        id: '1',  
+        id: '1',
         name: '净边'
       }, {
         id: '2',
