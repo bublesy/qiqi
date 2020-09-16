@@ -16,7 +16,14 @@
         <el-input v-model="form.fullName" />
       </el-form-item>
       <el-form-item label="常用箱:" prop="commonBoxManagement">
-        <el-input v-model="form.commonBoxManagement" />
+        <el-select v-model="form.commonBoxManagement" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.id"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -28,6 +35,7 @@
 
 <script>
 import { addOrUpdateCommonBox, getSingleCommBox } from '@/api/basedata/commonbox'
+import { getBoxClassList } from '@/api/basedata/boxclass'
 export default {
   props: {
     dialog: {
@@ -41,6 +49,7 @@ export default {
   },
   data() {
     return {
+      options: [],
       form: {
       },
       rules: {
@@ -71,8 +80,12 @@ export default {
           })
         } else {
           // 新增
-          // this.form = Object.assign({}, this.$options.data().form)
-          this.$refs.form.resetFields()
+          this.form = Object.assign({}, this.$options.data().form)
+          // this.$refs.form.resetFields()
+          getBoxClassList().then(res => {
+            console.log(res)
+            this.options = res
+          })
         }
       }
     }

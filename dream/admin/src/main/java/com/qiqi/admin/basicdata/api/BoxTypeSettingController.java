@@ -34,10 +34,6 @@ public class BoxTypeSettingController {
     private BoxTypeSettingService boxTypeSettingService;
 
     @ApiOperation(value = "获取箱型设定(列表)")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query",name = "page",value = "当前页",required = true,dataType = "Long"),
-            @ApiImplicitParam(paramType = "query", name = "count", value = "当前页个数",required = true,dataType = "Long")
-    })
     @PostMapping("/list")
     public PageEntity<BoxTypeSettingDO> getBoxTypeSettingPage(@RequestBody BoxTypeSettingDTO query) {
         QueryWrapper<BoxTypeSettingDO> queryWrapper = new QueryWrapper<BoxTypeSettingDO>()
@@ -49,6 +45,12 @@ public class BoxTypeSettingController {
         //todo: 需要转Vo
 
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<BoxTypeSettingDO>>() {}, iPage.getRecords()));
+    }
+
+    @ApiOperation(value = "不分页")
+    @GetMapping("/list")
+    public List<BoxTypeSettingDO> getList(){
+        return boxTypeSettingService.list();
     }
 
     @ApiOperation(value = "获取箱型设定(单个)")

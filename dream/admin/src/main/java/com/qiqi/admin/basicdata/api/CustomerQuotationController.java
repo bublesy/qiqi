@@ -8,6 +8,8 @@ import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.supplier.entity.PaperboardDataSettingDO;
+import com.qiqi.supplier.service.PaperboardDataSettingService;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +35,10 @@ public class CustomerQuotationController {
     @Resource
     private CustomerQuotationService customerQuotationService;
 
+    @Resource
+    private PaperboardDataSettingService paperboardDataSettingService;
 
+    @ApiOperation(value = "报价单列表分页")
     @PostMapping("/list")
     public PageEntity<CustomerQuotationDO> getCustomerQuotationPage(@RequestBody CustomerQuotationDTO query) {
         QueryWrapper<CustomerQuotationDO> queryWrapper = new QueryWrapper<>();
@@ -44,6 +49,12 @@ public class CustomerQuotationController {
         //todo: 需要转Vo
 
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<CustomerQuotationDO>>() {}, iPage.getRecords()));
+    }
+
+    @ApiOperation(value = "纸板资料列表")
+    @GetMapping("/paper")
+    public List<PaperboardDataSettingDO> getPaper(){
+        return paperboardDataSettingService.list();
     }
 
     @ApiOperation(value = "获取客户报价单(单个)")

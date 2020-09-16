@@ -7,8 +7,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.basicdata.dto.customerDTO;
 import com.qiqi.basicdata.entity.CustomerInformationDO;
+import com.qiqi.basicdata.entity.CustomerQuotationDO;
+import com.qiqi.basicdata.service.CustomerQuotationService;
 import com.qiqi.common.entity.PageEntity;
 import io.swagger.annotations.*;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.qiqi.basicdata.service.CustomerInformationService;
@@ -33,10 +36,12 @@ public class CustomerInformationController {
     @Resource
     private CustomerInformationService customerInformationService;
 
+    @Resource
+    private CustomerQuotationService customerQuotationService;
+
     @ApiOperation(value = "获取客户资料(列表)")
     @PostMapping("/list")
     public PageEntity<CustomerInformationDO> getCustomerInformationPage(@RequestBody customerDTO query) {
-        boolean a = StringUtils.isNotBlank(query.getCode());
         QueryWrapper queryWrapper = new QueryWrapper<CustomerInformationDO>()
                 .like(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
                 .like(StringUtils.isNotBlank(query.getShorts()),"shorts",query.getShorts())
@@ -66,7 +71,23 @@ public class CustomerInformationController {
     @PostMapping("")
     public Boolean saveCustomerInformation(@RequestBody CustomerInformationDO customerInformationDO) {
         try {
-            return customerInformationService.saveOrUpdate(customerInformationDO);
+            if(customerInformationDO.getId() == null){
+                CustomerQuotationDO customerQuotationDO = new CustomerQuotationDO();
+                if(StringUtils.isNoneBlank(customerInformationDO.getCode())){
+                    customerQuotationDO.setCode(customerInformationDO.getCode());
+                }
+                if(StringUtils.isNoneBlank(customerInformationDO.getShorts())){
+                    customerQuotationDO.setShorts(customerInformationDO.getShorts());
+                }
+                if(StringUtils.isNoneBlank(customerInformationDO.getFullName())){
+                    customerQuotationDO.setFullName(customerInformationDO.getFullName());
+                }
+                if(!ObjectUtils.isEmpty(customerQuotationDO)){
+                    customerQuotationService.save(customerQuotationDO);
+                }
+            }
+            customerInformationService.saveOrUpdate(customerInformationDO);
+            return true;
         }catch (Exception e){
             e.printStackTrace();
             return false;

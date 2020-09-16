@@ -2,7 +2,7 @@
   <el-dialog
     title="客户纸板报价管理"
     :visible.sync="dialog.show"
-    width="20%"
+    width="35%"
     :close-on-click-modal="false"
   >
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" size="mini" :inline="true">
@@ -15,10 +15,21 @@
       <el-form-item label="全称:" prop="fullName">
         <el-input v-model="form.fullName" />
       </el-form-item>
-      <el-form-item label="销售平方价:" prop="squaredPrice">
+      <el-form-item label="纸板名称:" prop="fullName" label-width="100px">
+        <!-- <el-input v-model="form.paperName" /> -->
+        <el-select v-model="form.paperName" multiple placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.id"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="销售平方价:" prop="squaredPrice" label-width="100px">
         <el-input-number v-model="form.squaredPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:180px" />
       </el-form-item>
-      <el-form-item label="箱型计价:" prop="boxPrice">
+      <el-form-item label="箱型计价:" prop="boxPrice" label-width="100px">
         <el-input-number v-model="form.boxPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:180px" />
       </el-form-item>
     </el-form>
@@ -57,7 +68,7 @@
 </template>
 
 <script>
-import { addOrUpdateCustomerQuotation, getSingleCustomerQuotation } from '@/api/basedata/customerquotation'
+import { addOrUpdateCustomerQuotation, getSingleCustomerQuotation, getPaper } from '@/api/basedata/customerquotation'
 export default {
   props: {
     dialog: {
@@ -71,6 +82,7 @@ export default {
   },
   data() {
     return {
+      options: [],
       form: {
       },
       rules: {
@@ -95,6 +107,9 @@ export default {
   watch: {
     'dialog.show': function(val) {
       if (val) {
+        getPaper().then(res => {
+          this.options = res
+        })
         if (this.id !== '' && this.id !== null) {
           // 编辑
           getSingleCustomerQuotation(this.id).then(res => {
@@ -102,8 +117,8 @@ export default {
           })
         } else {
           // 新增
-          // this.form = Object.assign({}, this.$options.data().form)
-          this.$refs.form.resetFields()
+          this.form = Object.assign({}, this.$options.data().form)
+          // this.$refs.form.resetFields()
         }
       }
     }

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.basicdata.dto.CommonBoxDTO;
 import com.qiqi.basicdata.entity.CommonBoxDO;
+import com.qiqi.basicdata.service.BoxTypeSettingService;
 import com.qiqi.basicdata.service.CommonBoxService;
 import com.qiqi.common.entity.PageEntity;
 import io.swagger.annotations.*;
@@ -34,6 +35,8 @@ public class CommonBoxController {
 
     @Resource
     private CommonBoxService commonBoxService;
+
+
 
     @ApiOperation(value = "获取常用箱资料管理(列表)")
     @PostMapping("/list")
