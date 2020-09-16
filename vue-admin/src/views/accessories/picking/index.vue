@@ -6,9 +6,10 @@
       :page.sync="page"
       v-on="onEvent"
     >
-      <template slot="TableForm">
+      <!-- 自定义菜单 -->
+      <!-- <template slot="TableForm">
         <avue-crud ref="crud" :option="mOption" :data="mData" style="width:1000px" @row-update="addUpdate" />
-      </template>
+      </template> -->
       <template slot="menu" slot-scope="scope">
         <el-popconfirm title="确认删除这条数据吗？" style="margin-left:10px;" @onConfirm="handleDel( scope.row, scope.index )">
           <el-button slot="reference" type="text" icon="el-icon-delete" size="small">&nbsp;删除</el-button>
@@ -27,73 +28,65 @@ export default window.$crudCommon({
   data() {
     return {
       a: [],
-      mData: [],
-      mOption: {
-        columnBtn: false,
-        refreshBtn: false,
-        addBtn: false,
-        editBtn: false,
-        addRowBtn: true,
-        cellBtn: true,
-        searchShow: false,
-        menuWidth: 380,
-        column: [{
-          label: '品名规格',
-          prop: 'name',
-          cell: true,
-          type: 'select',
-          dicData: [{
-            label: '选项1',
-            value: 0
-          }, {
-            label: '选项2',
-            value: 1
-          }],
-          rules: [{
-            required: true,
-            message: '请输入规格名字',
-            trigger: 'blur'
-          }]
-        },
-        {
-          label: '单位',
-          prop: 'unit',
-          cell: true,
-          type: 'select',
-          dicData: [{
-            label: '选项1',
-            value: 0
-          }, {
-            label: '选项2',
-            value: 1
-          }],
-          rules: [{
-            required: true,
-            message: '请输入单位名字',
-            trigger: 'blur'
-          }]
-        },
-        {
-          label: '数量',
-          prop: 'number',
-          cell: true,
-          rules: [{
-            required: true,
-            message: '请输入原始编号',
-            trigger: 'blur',
-            pattern: /^\d{1,}$/
-          }]
-        }
-        // {
-        //   label: '',
-        //   labelWidth: '0px',
-        //   prop: 'Table',
-        //   hide: true,
-        //   formslot: true,
-        //   formWidth: '500px'
-        // }
-        ]
-      }
+      mData: []
+      // mOption: {
+      //   columnBtn: false,
+      //   refreshBtn: false,
+      //   addBtn: false,
+      //   editBtn: false,
+      //   addRowBtn: true,
+      //   cellBtn: true,
+      //   searchShow: false,
+      //   menuWidth: 380,
+      //   column: [{
+      //     label: '品名规格',
+      //     prop: 'name',
+      //     cell: true,
+      //     type: 'select',
+      //     dicData: [{
+      //       label: '选项1',
+      //       value: 0
+      //     }, {
+      //       label: '选项2',
+      //       value: 1
+      //     }],
+      //     rules: [{
+      //       required: true,
+      //       message: '请输入规格名字',
+      //       trigger: 'blur'
+      //     }]
+      //   },
+      //   {
+      //     label: '单位',
+      //     prop: 'unit',
+      //     cell: true,
+      //     type: 'select',
+      //     dicData: [{
+      //       label: '选项1',
+      //       value: 0
+      //     }, {
+      //       label: '选项2',
+      //       value: 1
+      //     }],
+      //     rules: [{
+      //       required: true,
+      //       message: '请输入单位名字',
+      //       trigger: 'blur'
+      //     }]
+      //   },
+      //   {
+      //     label: '数量',
+      //     prop: 'number',
+      //     cell: true,
+      //     rules: [{
+      //       required: true,
+      //       message: '请输入原始编号',
+      //       trigger: 'blur',
+      //       pattern: /^\d{1,}$/
+      //     }]
+      //   }
+      //   ]
+      // }
     }
   },
   created() {
