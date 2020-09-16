@@ -6,7 +6,7 @@
     :close-on-click-modal="false"
   >
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" size="mini" :inline="true">
-      <el-form-item label="编码:" prop="code">
+      <!-- <el-form-item label="编码:" prop="code">
         <el-input v-model="form.code" @input="code" />
       </el-form-item>
       <el-form-item label="简称:" prop="shorts">
@@ -14,12 +14,23 @@
       </el-form-item>
       <el-form-item label="全称:" prop="fullName">
         <el-input v-model="form.fullName" />
-      </el-form-item>
-      <el-form-item label="纸板名称:" prop="fullName" label-width="100px">
+      </el-form-item> -->
+      <el-form-item label="纸板名称:" prop="paperName" label-width="100px">
         <!-- <el-input v-model="form.paperName" /> -->
         <el-select v-model="form.paperName" multiple placeholder="请选择">
           <el-option
             v-for="item in options"
+            :key="item.id"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="箱型:" prop="boxType" label-width="100px">
+        <!-- <el-input v-model="form.paperName" /> -->
+        <el-select v-model="form.boxType" placeholder="请选择">
+          <el-option
+            v-for="item in boxTypeOptions"
             :key="item.id"
             :label="item.name"
             :value="item.name"
@@ -31,6 +42,9 @@
       </el-form-item>
       <el-form-item label="箱型计价:" prop="boxPrice" label-width="100px">
         <el-input-number v-model="form.boxPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:180px" />
+      </el-form-item>
+      <el-form-item label="总价:" prop="totalPrice" label-width="100px">
+        <el-input-number v-model="form.totalPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:180px" />
       </el-form-item>
     </el-form>
     <!-- <el-table
@@ -69,6 +83,7 @@
 
 <script>
 import { addOrUpdateCustomerQuotation, getSingleCustomerQuotation, getPaper } from '@/api/basedata/customerquotation'
+import { getBoxClassList } from '@/api/basedata/boxclass'
 export default {
   props: {
     dialog: {
@@ -78,28 +93,43 @@ export default {
     id: {
       type: String,
       default: ''
+    },
+    flag: {
+      type: String,
+      default: ''
     }
+
   },
   data() {
     return {
+      boxTypeOptions: [],
       options: [],
       form: {
       },
       rules: {
-        code: [
-          { required: true, message: '请输入编码', trigger: 'blur' }
-        ],
-        shorts: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
-        ],
-        fullName: [
-          { required: true, message: '请输入全称', trigger: 'blur' }
-        ],
+        // code: [
+        //   { required: true, message: '请输入编码', trigger: 'blur' }
+        // ],
+        // shorts: [
+        //   { required: true, message: '请输入名称', trigger: 'blur' }
+        // ],
+        // fullName: [
+        //   { required: true, message: '请输入全称', trigger: 'blur' }
+        // ],
         squaredPrice: [
           { required: true, message: '请输入平方价', trigger: 'blur' }
         ],
         boxPrice: [
           { required: true, message: '请输入箱型计价', trigger: 'blur' }
+        ],
+        paperName: [
+          { required: true, message: '纸板名称不能为空', trigger: 'blur' }
+        ],
+        boxType: [
+          { required: true, message: '箱型不能为空', trigger: 'blur' }
+        ],
+        totalPrice: [
+          { required: true, message: '总价不能为空', trigger: 'blur' }
         ]
       }
     }
@@ -107,19 +137,41 @@ export default {
   watch: {
     'dialog.show': function(val) {
       if (val) {
-        getPaper().then(res => {
-          this.options = res
-        })
         if (this.id !== '' && this.id !== null) {
           // 编辑
           getSingleCustomerQuotation(this.id).then(res => {
+            if (this.flag === 'add') {
+              this.form = Object.assign({}, this.$options.data().form)
+              this.form.id = res.id
+              getPaper().then(res => {
+                this.options = res
+              })
+              getBoxClassList().then(res => {
+                this.boxTypeOptions = res
+              })
+              return
+            }
             this.form = res
+            getPaper().then(res => {
+              this.options = res
+            })
+            getBoxClassList().then(res => {
+              this.boxTypeOptions = res
+            })
           })
-        } else {
-          // 新增
-          this.form = Object.assign({}, this.$options.data().form)
-          // this.$refs.form.resetFields()
         }
+        // } else {
+        //   // 新增
+        //   this.form = Object.assign({}, this.$options.data().form)
+        //   // this.$refs.form.resetFields()
+        //   getPaper().then(res => {
+        //     this.options = res
+        //   })
+        //   getBoxClassList().then(res => {
+        //     console.log(res)
+        //     this.boxTypeOptions = res
+        //   })
+        // }
       }
     }
   },

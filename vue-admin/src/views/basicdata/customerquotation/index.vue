@@ -5,7 +5,7 @@
       <el-form-item label="编码:">
         <el-input v-model="form.code" />
       </el-form-item>
-      <el-form-item label="简称:">
+      <el-form-item label="客户名称:">
         <el-input v-model="form.shorts" />
       </el-form-item>
       <el-form-item label="全称:">
@@ -30,21 +30,24 @@
       <!-- <el-table-column type="selection" width="55" /> -->
       <el-table-column type="index" />
       <el-table-column prop="code" label="编码" width="120" />
-      <el-table-column prop="shorts" label="简称" width="120" />
-      <el-table-column prop="fullName" label="全称" width="120" />
+      <el-table-column prop="shorts" label="客户简称" width="120" />
+      <el-table-column prop="fullName" label="客户全称" width="120" />
       <el-table-column prop="paperName" label="纸板名称" width="120" />
+      <el-table-column prop="boxType" label="箱型" width="120" />
       <el-table-column prop="squaredPrice" label="销售平方价(元)" width="120" />
       <!-- <template slot-scope="scope">
           <el-input-number v-model="scope.row.squaredPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:90px" />
         </template>
       </el-table-column> -->
       <el-table-column prop="boxPrice" label="箱型计价(元)" width="120" />
+      <el-table-column prop="totalPrice" label="总价(元)" width="120" />
       <!-- <template slot-scope="scope">
           <el-input-number v-model="scope.row.BoxPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:90px" />
         </template>
       </el-table-column> -->
-      <el-table-column label="操作" width="180">
+      <el-table-column label="操作" width="250">
         <template slot-scope="scope">
+          <el-button type="primary" size="mini" @click="add(scope.row.id)">新增报价单</el-button>
           <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
           <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
             <el-button slot="reference" type="danger" size="mini">删除</el-button>
@@ -61,7 +64,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-    <addDialog :id="id" :dialog="addDialog" @init="initTable" /></div>
+    <addDialog :id="id" :dialog="addDialog" :flag="flag" @init="initTable" /></div>
 </template>
 
 <script>
@@ -72,6 +75,7 @@ export default {
   components: { addDialog },
   data() {
     return {
+      flag: '',
       id: '',
       tableData: [],
       addDialog: {
@@ -118,11 +122,13 @@ export default {
         }
       })
     },
-    // add() {
-    //   this.id = ''
-    //   this.addDialog.show = true
-    // },
+    add(id) {
+      this.flag = 'add'
+      this.id = id
+      this.addDialog.show = true
+    },
     updated(id) {
+      this.flag = 'updated'
       this.id = id
       this.addDialog.show = true
     },

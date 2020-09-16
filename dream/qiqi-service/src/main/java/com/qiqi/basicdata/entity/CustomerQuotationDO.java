@@ -25,6 +25,10 @@ public class CustomerQuotationDO extends BaseModel {
 
     private static final long serialVersionUID=1L;
 
+    private String boxType;
+
+    private BigDecimal totalPrice;
+
     /**
      * 编码
      */
