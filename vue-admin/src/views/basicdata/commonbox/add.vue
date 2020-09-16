@@ -73,17 +73,17 @@ export default {
       if (val) {
         if (this.id !== '' && this.id !== null) {
           // 编辑
-          console.log(this.id)
           getSingleCommBox(this.id).then(res => {
-            console.log(res)
             this.form = res
+            getBoxClassList().then(res => {
+              this.options = res
+            })
           })
         } else {
           // 新增
           this.form = Object.assign({}, this.$options.data().form)
           // this.$refs.form.resetFields()
           getBoxClassList().then(res => {
-            console.log(res)
             this.options = res
           })
         }
