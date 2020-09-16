@@ -21,9 +21,28 @@ public class SupplierCardboardQuotationDO extends BaseModel {
     private static final long serialVersionUID=1L;
 
     /**
-     * 供应商id
+     * code
      */
-    private String supplierId;
+    private String code;
+    /**
+     * totalPrice
+     */
+    private String totalPrice;
+    /**
+     * pagerId
+     */
+    private String pagerId;
+
+    /**
+     * 简称
+     */
+    private String abbreviation;
+
+    /**
+     * 全称
+     */
+    private String fullName;
+
 
     /**
      * 报价单位

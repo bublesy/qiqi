@@ -8,6 +8,7 @@ import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.supplier.service.PaperboardDataSettingService;
 import com.qiqi.supplier.service.SupplierService;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +36,8 @@ public class SupplierCardboardQuotationController {
     private SupplierCardboardQuotationService supplierCardboardQuotationService;
     @Resource
     private SupplierService supplierService;
+    @Resource
+    private PaperboardDataSettingService paperboardDataSettingService;
 
     @ApiOperation(value = "获取供应商纸板报价(列表)")
     @ApiImplicitParams({
@@ -85,14 +88,14 @@ public class SupplierCardboardQuotationController {
     }
 
     /**
-     * 供应商下拉框
+     * 下拉框
      * @param
      * @return {@link List}
      * @author sun
      * @time 2020/9/15 14:15
      */
-    @GetMapping("/supplierSelect")
-    public List supplierSelect(){
-        return supplierService.list();
+    @GetMapping("/pagerSelect")
+    public List pagerSelect(){
+        return paperboardDataSettingService.list();
     }
 }
