@@ -11,9 +11,12 @@
       <el-form-item label="全称:">
         <el-input v-model="form.fullName" />
       </el-form-item>
+      <!-- <el-form-item label="纸板名称:">
+        <el-input v-model="form.paperName" />
+      </el-form-item> -->
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
-    <el-button size="mini" type="primary" @click="add">新增</el-button>
+    <!-- <el-button size="mini" type="primary" @click="add">新增</el-button> -->
     <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
     <el-table
       ref="table"
@@ -29,6 +32,7 @@
       <el-table-column prop="code" label="编码" width="120" />
       <el-table-column prop="shorts" label="简称" width="120" />
       <el-table-column prop="fullName" label="全称" width="120" />
+      <el-table-column prop="paperName" label="纸板名称" width="120" />
       <el-table-column prop="squaredPrice" label="销售平方价(元)" width="120" />
       <!-- <template slot-scope="scope">
           <el-input-number v-model="scope.row.squaredPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:90px" />
@@ -77,8 +81,6 @@ export default {
       form: {
         page: 1,
         count: 10,
-        code: '',
-        name: '',
         limitPaperLength: false
       }
 
@@ -99,6 +101,10 @@ export default {
     initTable() {
       getCustomerQuotation(this.form).then(res => {
         this.tableData = res.list
+        this.tableData.forEach(x => {
+          var res = this.duplicate(x.paperName)
+          x.paperName = res.join(',')
+        })
         this.total = res.total
       })
     },
@@ -112,10 +118,10 @@ export default {
         }
       })
     },
-    add() {
-      this.id = ''
-      this.addDialog.show = true
-    },
+    // add() {
+    //   this.id = ''
+    //   this.addDialog.show = true
+    // },
     updated(id) {
       this.id = id
       this.addDialog.show = true
@@ -130,6 +136,16 @@ export default {
       const filterVal = ['code', 'shorts', 'fullName', 'squaredPrice', 'boxPrice']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '客户报价单管理')
+    },
+    duplicate(arr) {
+      var json = {}; var res = []
+      for (var i = 0; i < arr.length; i++) {
+        if (!json[arr[i]]) {
+          json[arr[i]] = true
+          res.push(arr[i])
+        }
+      }
+      return res
     }
   }
 
