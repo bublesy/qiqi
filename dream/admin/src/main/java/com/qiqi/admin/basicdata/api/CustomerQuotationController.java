@@ -37,9 +37,9 @@ public class CustomerQuotationController {
     @PostMapping("/list")
     public PageEntity<CustomerQuotationDO> getCustomerQuotationPage(@RequestBody CustomerQuotationDTO query) {
         QueryWrapper<CustomerQuotationDO> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
-                .eq(StringUtils.isNotBlank(query.getShorts()),"shorts",query.getShorts())
-                .eq(StringUtils.isNotBlank(query.getFullName()),"full_name",query.getFullName());
+        queryWrapper.like(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
+                .like(StringUtils.isNotBlank(query.getShorts()),"shorts",query.getShorts())
+                .like(StringUtils.isNotBlank(query.getFullName()),"full_name",query.getFullName());
         IPage<CustomerQuotationDO> iPage = customerQuotationService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
         //todo: 需要转Vo
 

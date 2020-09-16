@@ -41,8 +41,8 @@ public class BoxTypeSettingController {
     @PostMapping("/list")
     public PageEntity<BoxTypeSettingDO> getBoxTypeSettingPage(@RequestBody BoxTypeSettingDTO query) {
         QueryWrapper<BoxTypeSettingDO> queryWrapper = new QueryWrapper<BoxTypeSettingDO>()
-                .eq(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
-                .eq(StringUtils.isNotBlank(query.getName()),"name",query.getName())
+                .like(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
+                .like(StringUtils.isNotBlank(query.getName()),"name",query.getName())
                 .eq("limit_paper_length",query.getLimitPaperLength());
 
         IPage<BoxTypeSettingDO> iPage = boxTypeSettingService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);

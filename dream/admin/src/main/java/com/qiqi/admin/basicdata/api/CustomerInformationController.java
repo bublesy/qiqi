@@ -34,18 +34,14 @@ public class CustomerInformationController {
     private CustomerInformationService customerInformationService;
 
     @ApiOperation(value = "获取客户资料(列表)")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query",name = "page",value = "当前页",required = true,dataType = "Long"),
-            @ApiImplicitParam(paramType = "query", name = "count", value = "当前页个数",required = true,dataType = "Long")
-    })
     @PostMapping("/list")
     public PageEntity<CustomerInformationDO> getCustomerInformationPage(@RequestBody customerDTO query) {
         boolean a = StringUtils.isNotBlank(query.getCode());
         QueryWrapper queryWrapper = new QueryWrapper<CustomerInformationDO>()
-                .eq(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
-                .eq(StringUtils.isNotBlank(query.getShorts()),"shorts",query.getShorts())
-                .eq(StringUtils.isNotBlank(query.getPhone()),"phone",query.getPhone())
-                .eq(StringUtils.isNotBlank(query.getMobilePhone()),"mobile_phone",query.getMobilePhone());
+                .like(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
+                .like(StringUtils.isNotBlank(query.getShorts()),"shorts",query.getShorts())
+                .like(StringUtils.isNotBlank(query.getPhone()),"phone",query.getPhone())
+                .like(StringUtils.isNotBlank(query.getMobilePhone()),"mobile_phone",query.getMobilePhone());
         IPage<CustomerInformationDO> iPage = customerInformationService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
         //todo: 需要转Vo
 
@@ -69,7 +65,12 @@ public class CustomerInformationController {
     @ApiOperation(value = "新增客户资料")
     @PostMapping("")
     public Boolean saveCustomerInformation(@RequestBody CustomerInformationDO customerInformationDO) {
-        return customerInformationService.saveOrUpdate(customerInformationDO);
+        try {
+            return customerInformationService.saveOrUpdate(customerInformationDO);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @ApiOperation(value = "删除客户资料(批量))")

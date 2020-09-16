@@ -39,10 +39,10 @@ public class CommonBoxController {
     @PostMapping("/list")
     public PageEntity<CommonBoxDO> getCommonBoxPage(@RequestBody CommonBoxDTO query) {
         QueryWrapper<CommonBoxDO> queryWrapper = new QueryWrapper<CommonBoxDO>()
-                .eq(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
-                .eq(StringUtils.isNotBlank(query.getShorts()),"shorts",query.getShorts())
-                .eq(StringUtils.isNotBlank(query.getFullName()),"full_name",query.getFullName())
-                .eq(StringUtils.isNotBlank(query.getCommonBoxManagement()),"common_box_management",query.getCommonBoxManagement());
+                .like(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
+                .like(StringUtils.isNotBlank(query.getShorts()),"shorts",query.getShorts())
+                .like(StringUtils.isNotBlank(query.getFullName()),"full_name",query.getFullName())
+                .like(StringUtils.isNotBlank(query.getCommonBoxManagement()),"common_box_management",query.getCommonBoxManagement());
         IPage<CommonBoxDO> iPage = commonBoxService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
         //todo: 需要转Vo
 
