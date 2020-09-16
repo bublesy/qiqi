@@ -47,7 +47,7 @@
       </el-table-column> -->
       <el-table-column label="操作" width="250">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="add(scope.row.id)">新增报价单</el-button>
+          <el-button type="primary" size="mini" :disabled="scope.row.totalPrice===null?false:true" @click="add(scope.row.id)">新增报价单</el-button>
           <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
           <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
             <el-button slot="reference" type="danger" size="mini">删除</el-button>
@@ -86,7 +86,8 @@ export default {
         page: 1,
         count: 10,
         limitPaperLength: false
-      }
+      },
+      disable: false
 
     }
   },
@@ -104,6 +105,11 @@ export default {
     },
     initTable() {
       getCustomerQuotation(this.form).then(res => {
+        if (res.totalPrice !== null && res.boxType !== null) {
+          this.disable = true
+        } else {
+          this.disable = false
+        }
         this.tableData = res.list
         this.tableData.forEach(x => {
           var res = this.duplicate(x.paperName)
