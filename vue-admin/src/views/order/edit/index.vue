@@ -20,7 +20,7 @@
       </el-form-item>
       <el-form-item label="交货日期:">
         <el-date-picker
-          v-model="form.payDate"
+          v-model="form.deliveryDate"
           type="date"
           placeholder="选择日期"
         />
@@ -80,7 +80,7 @@
               <el-button slot="reference" type="danger" size="mini">删除</el-button>
             </el-popconfirm>
             <el-button type="success" size="mini" @click="singlePrint(scope.row)">打印</el-button>
-            <el-button type="warning" size="mini" @click="orderAgain(scope.row)">再次下单</el-button>
+            <el-button type="warning" size="mini" @click="orderAgain(scope.row.id)">再次下单</el-button>
             <el-button type="primary" size="mini" @click="generate">生成施工单</el-button>
           </template>
         </el-table-column>
@@ -95,7 +95,7 @@
         @current-change="handleCurrentChange"
       />
     </el-card>
-    <editDialog :id="id" :dialog="editDialog" />
+    <editDialog :id="id" :dialog="editDialog" :flag="flag" @init="initTable" />
   </div>
 </template>
 
@@ -108,6 +108,7 @@ export default {
   components: { editDialog },
   data() {
     return {
+      flag: false,
       id: '测试施工单id',
       total: 0,
       form: {
@@ -132,8 +133,6 @@ export default {
   },
   created() {
     this.initTable()
-    var list = [{ no: '22' }, { no: '33' }]
-    this.tableData = list
   },
   methods: {
     query() {
@@ -145,12 +144,25 @@ export default {
         query: { id: this.id }
       })
     },
-    orderAgain() {
+    orderAgain(id) {
+      this.flag = true
+      this.id = id
+      this.editDialog.show = true
+    },
+    add() {
+      this.flag = true
+      this.id = ''
+      this.editDialog.show = true
+    },
+    updated(id) {
+      this.flag = false
+      this.id = id
       this.editDialog.show = true
     },
     initTable() {
       getOrder(this.form).then(res => {
-        console.log(res)
+        this.tableData = res.list
+        this.total = res.total
       })
     },
     handleSizeChange(size) {
@@ -164,18 +176,12 @@ export default {
     deleted(id) {
       delOrder(id).then(res => {
         if (res) {
+          this.initTable()
           this.$message.success('删除成功')
         } else {
           this.$message.error('删除失败')
         }
       })
-    },
-    add() {
-      this.editDialog.show = true
-    },
-    updated(id) {
-      this.id = id
-      this.editDialog.show = true
     },
     toExcel() {
       var list = this.tableData

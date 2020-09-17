@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 export function getDaily(data) {
-  return request({ url: '', method: 'post', data: data })
+  return request({ url: '/daily/list', method: 'post', data: data })
 }
 
 export function delDaily(id) {

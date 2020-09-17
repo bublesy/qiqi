@@ -2,16 +2,24 @@ package com.qiqi.admin.order.api;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
-import com.qiqi.generator.entity.OrderDO;
-import com.qiqi.generator.service.OrderService;
+import com.qiqi.order.dto.OrderDTO;
+import com.qiqi.order.entity.OrderDO;
+import com.qiqi.order.entity.ScheduleDO;
+import com.qiqi.order.service.OrderService;
+import com.qiqi.order.service.ScheduleService;
+import com.qiqi.supplier.entity.SupplierDO;
+import com.qiqi.supplier.service.SupplierService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
+import sun.awt.SunHints;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -22,7 +30,7 @@ import java.util.List;
  * </p>
  *
  * @author QiQiDream
- * @since 2020-09-16
+ * @since 2020-09-17
  */
 @Api("相关接口")
 @RestController
@@ -32,16 +40,23 @@ public class OrderController {
     @Resource
     private OrderService orderService;
 
+    @Resource
+    private SupplierService supplierService;
+
+    @Resource
+    private ScheduleService scheduleService;
+
     @ApiOperation(value = "获取(列表)")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query",name = "page",value = "当前页",required = true,dataType = "Long"),
-            @ApiImplicitParam(paramType = "query", name = "count", value = "当前页个数",required = true,dataType = "Long")
-    })
-    @GetMapping("")
-    public PageEntity<OrderDO> getOrderPage(@RequestParam(value = "page",defaultValue = "1") Long page,
-                                        @RequestParam(value = "count",defaultValue = "10") Long count) {
-        IPage<OrderDO> iPage = orderService.page(new Page<>(page,count));
-        //todo: 需要转Vo
+    @PostMapping("/list")
+    public PageEntity<OrderDO> getOrderPage(@RequestBody OrderDTO query) {
+        QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like(StringUtils.isNotBlank(query.getNo()),"no",query.getNo())
+                .like(StringUtils.isNotBlank(query.getName()),"name",query.getName())
+                .like(StringUtils.isNotBlank(query.getCustomerNo()),"customer_no",query.getCustomerNo())
+                .eq(!ObjectUtils.isEmpty(query.getOrderDate()),"order_date",query.getOrderDate())
+                .eq(!ObjectUtils.isEmpty(query.getDeliveryDate()),"delivery_date",query.getDeliveryDate())
+                .eq(!ObjectUtils.isEmpty(query.getWosState()),"wos_state",query.getWosState());
+        IPage<OrderDO> iPage = orderService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
 
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<OrderDO>>() {}, iPage.getRecords()));
     }
@@ -63,7 +78,13 @@ public class OrderController {
     @ApiOperation(value = "新增")
     @PostMapping("")
     public Boolean saveOrder(@RequestBody OrderDO orderDO) {
-        return orderService.save(orderDO);
+        if(orderDO.getId() == null){
+            ScheduleDO scheduleDO = new ScheduleDO();
+            BeanUtils.copyProperties(orderDO,scheduleDO);
+            scheduleDO.setDate(orderDO.getDeliveryDate());
+            scheduleService.save(scheduleDO);
+        }
+        return orderService.saveOrUpdate(orderDO);
     }
 
     @ApiOperation(value = "删除(批量))")
@@ -76,5 +97,10 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public Boolean deleteOrderById(@PathVariable Long id) {
         return orderService.removeById(id);
+    }
+
+    @GetMapping("/supplier")
+    public List<SupplierDO> getSupplier(){
+        return supplierService.list();
     }
 }
