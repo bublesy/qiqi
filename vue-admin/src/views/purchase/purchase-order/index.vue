@@ -22,7 +22,7 @@
           />
         </el-form-item>
 
-        <el-button type="primary" size="mini" @click="toQuery">查询</el-button>
+        <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
         <el-button type="primary" size="mini" @click="purAdd">新增</el-button>
         <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
         <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
@@ -87,38 +87,39 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="计价方式" prop="pricing">
-            <el-select v-model="formAdd.pricing">
+          <el-form-item label="计价方式" prop="pricingMethod">
+            <el-select v-model="formAdd.pricingMethod">
               <el-option label="净边" value="净边" />
               <el-option label="净宽" value="净宽" />
             </el-select>
           </el-form-item>
-          <el-form-item label="开单日期" prop="billingTime">
+          <el-form-item label="开单日期" prop="billingDate">
             <el-date-picker
-              v-model="formAdd.billingTime"
+              v-model="formAdd.billingDate"
               align="right"
               type="date"
               placeholder="选择日期"
             />
           </el-form-item>
-          <el-form-item label="交货日期" prop="deliveryTime">
+          <el-form-item label="交货日期" prop="deliveryDate">
             <el-date-picker
-              v-model="formAdd.deliveryTime"
+              v-model="formAdd.deliveryDate"
               align="right"
               type="date"
               placeholder="选择日期"
             />
           </el-form-item>
 
-          <el-form-item label="客户名称">
-            <el-select v-model="formAdd.customerName" size="mini">
+          <el-form-item label="客户名称" prop="customerId">
+            <!-- <el-select v-model="formAdd.customerName" size="mini">
               <el-option
                 v-for="item in customerFor"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
               />
-            </el-select>
+            </el-select> -->
+               <el-input v-model="formAdd.customerId" />
           </el-form-item>
 
           <el-form-item label="楞型">
@@ -176,7 +177,7 @@
         </el-form>
 
         <span slot="footer" class="dialog-footer">
-          <el-button size="small" @click="purAddNo">取 消</el-button>
+          <el-button size="small" @click="purAddNo('purForm')">取 消</el-button>
           <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
         </span>
       </el-dialog>
@@ -190,13 +191,13 @@
 import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
 import { supplierSelect } from '@/api/supplier-cardboard-quotation/cardboard'
+import { add } from '@/api/purchase/purchase'
 
 export default {
   name: 'PurchaseOrder',
   mixins: [initData],
   data() {
     return {
-      form: {},
       formAdd: { },
       tableData: [],
       addTableData: [],
@@ -204,21 +205,35 @@ export default {
       purAddVisible: false,
       purRules: {
         supplierId: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        pricing: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        billingTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        deliveryTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        pricingMethod: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        billingDate: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        deliveryDate: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        customerId: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
       supplierFor: [],
       pricingFor: [],
       titleType: '',
       taskNumberVisible: false,
-      multipleSelection: []
+      multipleSelection: [],
+      form: {},
 
     }
   },
+  created(){
+    this.init()
+  },
   methods: {
-    toQuery() {
-
+    loadData(){
+      this.queryParams.code = this.form.code
+      this.queryParams.abbreviation = this.form.abbreviation
+      this.queryParams.time = this.form.time
+      if (this.queryParams.time === null) {
+        this.$set(this.queryParams, 'time', '')
+      }
+      list(this.queryParams).then(res => {
+        this.tableData = res.list
+        this.pagination.total = res.total
+      })
     },
     // 导出
     toExcel() {
@@ -295,13 +310,24 @@ export default {
       })
     },
     // 取消
-    purAddNo() {
+    purAddNo(purForm) {
       this.purAddVisible = false
       this.addTableData = []
+      this.$refs[purForm].resetFields()
     },
+    //保存
     purAddOk(purForm) {
       this.$refs[purForm].validate((valid) => {
         if (valid) {
+           add(this.formAdd).then(res => {
+            if (res) {
+              this.$message.success(this.titleType + '成功')
+              this.$refs[purForm].resetFields()
+              this.loadData()
+            } else {
+              this.$message.error(this.titleType + '失败')
+            }
+          })
           this.purAddVisible = false
         } else {
           return false

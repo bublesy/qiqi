@@ -97,4 +97,16 @@ public class SupplierCardboardQuotationController {
     public List pagerSelect(){
         return paperboardDataSettingService.list();
     }
+
+    /**
+     * 下拉框
+     * @param
+     * @return {@link List}
+     * @author sun
+     * @time 2020/9/15 14:15
+     */
+    @GetMapping("/supplierSelect")
+    public List supplierSelect(){
+        return supplierService.list();
+    }
 }
