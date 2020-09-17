@@ -16,7 +16,7 @@ export function getById(id) {
   return request({ url: '/supplier/cardboard/quotation/' + id, method: 'get' })
 }
 
-export function supplierSelect() {
-  return request({ url: '/supplier/cardboard/quotation/supplierSelect', method: 'get' })
+export function pagerSelect() {
+  return request({ url: '/supplier/cardboard/quotation/pagerSelect', method: 'get' })
 }
 
