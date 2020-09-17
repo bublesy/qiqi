@@ -62,14 +62,41 @@ export default (safe) => {
 
       },
       {
-        label: '',
-        labelWidth: '0px',
-        prop: 'Table',
+        label: '品名规格',
+        prop: 'reark',
+        type: 'select',
         hide: true,
-        formslot: true,
-        formWidth: '500px'
-      }
-      // 树
+        dicData: [{
+          label: '选项1',
+          value: 0
+        }, {
+          label: '选项2',
+          value: 1
+        }]
+      },
+      {
+        label: '单位',
+        prop: 'f',
+        addDisabled: true,
+        editDisabled: true,
+        hide: true,
+        rules: [{
+          required: true,
+          message: '请输入单位',
+          trigger: 'blur'
+        }]
+      },
+      {
+        label: '数量',
+        prop: 'g',
+        hide: true,
+        rules: [{
+          required: true,
+          message: '请输入非零的正整数',
+          trigger: 'blur',
+          pattern: /^\+?[1-9][0-9]*$/
+        }]
+      } // 树
       // {
       //   label: '描述',
       //   prop: 'remark',
