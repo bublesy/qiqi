@@ -1,20 +1,20 @@
-package com.qiqi.admin.supplier.api;
+package com.qiqi.admin.basicdata.api;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.qiqi.admin.supplier.model.SupplierVO;
-import com.qiqi.supplier.entity.SupplierCardboardQuotationDO;
-import com.qiqi.supplier.entity.SupplierDO;
+import com.qiqi.admin.basicdata.model.SupplierVO;
+import com.qiqi.basicdata.entity.SupplierCardboardQuotationDO;
+import com.qiqi.basicdata.entity.SupplierDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
-import com.qiqi.supplier.service.SupplierCardboardQuotationService;
+import com.qiqi.basicdata.service.SupplierCardboardQuotationService;
 import io.swagger.annotations.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.qiqi.supplier.service.SupplierService;
+import com.qiqi.basicdata.service.SupplierService;
 
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
@@ -75,11 +75,14 @@ public class SupplierController {
     @ApiOperation(value = "新增供应商")
     @PostMapping("/add")
     public Boolean saveSupplier(@RequestBody SupplierDO supplierDO) {
-        boolean b = supplierService.saveOrUpdate(supplierDO);
         SupplierCardboardQuotationDO supplierCardboardQuotationDO = new SupplierCardboardQuotationDO();
         BeanUtils.copyProperties(supplierDO,supplierCardboardQuotationDO);
-        supplierCardboardQuotationService.save(supplierCardboardQuotationDO);
-        return b;
+        if (supplierDO.getId()==null ){
+            supplierCardboardQuotationService.save(supplierCardboardQuotationDO);
+        }else{
+            supplierCardboardQuotationService.update();
+        }
+        return supplierService.saveOrUpdate(supplierDO);
     }
 
     @ApiOperation(value = "删除供应商(批量))")

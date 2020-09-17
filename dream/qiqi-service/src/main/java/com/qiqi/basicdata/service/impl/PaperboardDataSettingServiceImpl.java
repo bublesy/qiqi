@@ -1,8 +1,8 @@
-package com.qiqi.supplier.service.impl;
+package com.qiqi.basicdata.service.impl;
 
-import com.qiqi.supplier.entity.PaperboardDataSettingDO;
-import com.qiqi.supplier.mapper.PaperboardDataSettingMapper;
-import com.qiqi.supplier.service.PaperboardDataSettingService;
+import com.qiqi.basicdata.entity.PaperboardDataSettingDO;
+import com.qiqi.basicdata.mapper.PaperboardDataSettingMapper;
+import com.qiqi.basicdata.service.PaperboardDataSettingService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

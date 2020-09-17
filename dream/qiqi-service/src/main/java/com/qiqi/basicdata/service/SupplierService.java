@@ -1,6 +1,6 @@
-package com.qiqi.supplier.service;
+package com.qiqi.basicdata.service;
 
-import com.qiqi.supplier.entity.SupplierDO;
+import com.qiqi.basicdata.entity.SupplierDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

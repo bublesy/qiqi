@@ -1,10 +1,10 @@
-package com.qiqi.supplier.service.impl;
+package com.qiqi.basicdata.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.qiqi.supplier.entity.SupplierCardboardQuotationDO;
-import com.qiqi.supplier.mapper.SupplierCardboardQuotationMapper;
-import com.qiqi.supplier.service.SupplierCardboardQuotationService;
+import com.qiqi.basicdata.entity.SupplierCardboardQuotationDO;
+import com.qiqi.basicdata.mapper.SupplierCardboardQuotationMapper;
+import com.qiqi.basicdata.service.SupplierCardboardQuotationService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

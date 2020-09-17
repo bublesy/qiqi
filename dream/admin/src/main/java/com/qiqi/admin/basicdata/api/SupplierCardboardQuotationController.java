@@ -1,18 +1,17 @@
-package com.qiqi.admin.supplier.api;
+package com.qiqi.admin.basicdata.api;
 
-import com.qiqi.admin.supplier.model.SupplierCardboardQuotationVO;
-import com.qiqi.admin.supplier.model.SupplierVO;
-import com.qiqi.supplier.entity.SupplierCardboardQuotationDO;
+import com.qiqi.admin.basicdata.model.SupplierCardboardQuotationVO;
+import com.qiqi.basicdata.entity.SupplierCardboardQuotationDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
-import com.qiqi.supplier.service.PaperboardDataSettingService;
-import com.qiqi.supplier.service.SupplierService;
+import com.qiqi.basicdata.service.PaperboardDataSettingService;
+import com.qiqi.basicdata.service.SupplierService;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.qiqi.supplier.service.SupplierCardboardQuotationService;
+import com.qiqi.basicdata.service.SupplierCardboardQuotationService;
 
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
