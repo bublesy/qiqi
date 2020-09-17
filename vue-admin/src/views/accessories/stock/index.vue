@@ -4,7 +4,7 @@
       <h1 align="center">辅料库存表</h1>
       <el-form :inline="true" :model="form" size="mini">
         <el-form-item label="领料人:">
-          <el-input v-model="form.collector" clearable @clear="getList" />
+          <el-input v-model="form.query" clearable @clear="getList" />
         </el-form-item>
         <el-button type="primary" size="mini" @click="toQuery">查询</el-button>
         <!-- <el-button type="primary" size="mini" @click="purAdd">新增</el-button> -->
@@ -110,7 +110,7 @@ export default {
   mixins: [initData],
   data() {
     return {
-      form: { collector: '' },
+      form: { query: '' },
       formAdd: {
         number: ''
       },
@@ -173,7 +173,14 @@ export default {
 
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
+    // 请求数据
+    getList() {
+      this.$http.get()
+    },
     toQuery() {
       console.log(11)
     },

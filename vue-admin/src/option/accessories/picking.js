@@ -63,12 +63,15 @@ export default (safe) => {
       },
       {
         label: '品名规格',
-        prop: 'e',
+        prop: 'reark',
+        type: 'select',
         hide: true,
-        rules: [{
-          required: true,
-          message: '请输入品名规格',
-          trigger: 'blur'
+        dicData: [{
+          label: '选项1',
+          value: 0
+        }, {
+          label: '选项2',
+          value: 1
         }]
       },
       {
@@ -89,8 +92,9 @@ export default (safe) => {
         hide: true,
         rules: [{
           required: true,
-          message: '请输入数量',
-          trigger: 'blur'
+          message: '请输入非零的正整数',
+          trigger: 'blur',
+          pattern: /^\+?[1-9][0-9]*$/
         }]
       } // 树
       // {

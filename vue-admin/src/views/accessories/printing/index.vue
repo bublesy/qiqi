@@ -15,7 +15,6 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         /> -->
-
       </el-row>
     </div>
     <div id="printTest" class="ful">

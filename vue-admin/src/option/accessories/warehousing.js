@@ -41,7 +41,8 @@ export default (safe) => {
       },
       {
         label: '原始单号',
-        prop: 'b',
+        prop: 'name',
+        editDisabled: true,
         rules: [{
           required: true,
           pattern: '^[0-9]*$ ',
@@ -59,13 +60,10 @@ export default (safe) => {
       },
       {
         label: '品名规格',
-        prop: 'e',
+        prop: 'nam',
+        type: 'select',
         hide: true,
-        rules: [{
-          required: true,
-          message: '请输入品名规格',
-          trigger: 'blur'
-        }]
+        dicData: safe.abc
       },
       {
         label: '单位',
@@ -85,8 +83,9 @@ export default (safe) => {
         hide: true,
         rules: [{
           required: true,
-          message: '请输入数量',
-          trigger: 'blur'
+          message: '请输入非零的正整数',
+          trigger: 'blur',
+          pattern: /^\+?[1-9][0-9]*$/
         }]
       },
       {
@@ -96,7 +95,8 @@ export default (safe) => {
         rules: [{
           required: true,
           message: '请输入单价',
-          trigger: 'blur'
+          trigger: 'blur',
+          pattern: /(^[1-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)/
         }]
       },
       {
@@ -106,7 +106,8 @@ export default (safe) => {
         rules: [{
           required: true,
           message: '请输入金额',
-          trigger: 'blur'
+          trigger: 'blur',
+          pattern: /(^[1-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)/
         }]
       }, // {
       //   label: '开单员',

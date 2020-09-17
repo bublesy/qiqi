@@ -26,8 +26,17 @@ export default window.$crudCommon({
   inject: ['reloadTag'],
   data() {
     return {
-      a: [],
-      myData: []
+      abc: [],
+      a: [
+        {
+          label: '选项1',
+          value: 0
+        }, {
+          label: '选项2',
+          value: 1
+        }
+      ]
+      // myData: []
       // myOption: {
       //   addBtn: false,
       //   refreshBtn: false,
@@ -104,6 +113,17 @@ export default window.$crudCommon({
     }
   },
   created() {
+    // 请求数据，赋值
+    this.abc = [{
+      label: '选项1',
+      value: 0
+    }, {
+      label: '选项2',
+      value: 1
+    }, {
+      label: '选项3',
+      value: 2
+    }]
   },
   methods: {
     // 删除方法

@@ -5,29 +5,29 @@
       <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
       <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
       <div class="dh">
-        <p>订货单：<span style="  font-weight: bolder;">百味林</span></p>
-        <p>任务编号：<span style="  font-weight: bolder;font-size: 20px;">12090032</span></p>
+        <p>订货单：<span style="  font-weight: bolder;">{{ tableData.name }}</span></p>
+        <p>任务编号：<span style="  font-weight: bolder;font-size: 20px;">{{ tableData.no }}</span></p>
       </div>
       <table>
         <tr>
           <td>款号:</td>
-          <td colspan="2">客户的箱号或者款号</td>
+          <td colspan="2">{{ tableData.modelNo }}</td>
           <td>箱型：</td>
-          <td colspan="2">五层箱     </td>
+          <td colspan="2">{{ tableData.boxType }}    </td>
           <td>纸箱尺寸:</td>
-          <td colspan="2">600x3000x400</td>
+          <td colspan="2">{{ tableData.length }}*{{ +tableData.width }}*{{ tableData.length }}</td>
           <td>订单数量：</td>
-          <td colspan="2">560</td>
+          <td colspan="2">{{ tableData.orderNum }}</td>
         </tr>
         <tr>
           <td>材质:</td>
-          <td colspan="2">美卡+120+110+120</td>
+          <td colspan="2">{{ tableData.material }}</td>
           <td>愣型</td>
-          <td colspan="2">AB    </td>
-          <td>纸箱尺寸:</td>
-          <td colspan="2">1838x704</td>
-          <td>订单数量：</td>
-          <td colspan="2">0.68</td>
+          <td colspan="2">{{ tableData.stare }}</td>
+          <td>纸片尺寸:</td>
+          <td colspan="2">{{ tableData.paperLength }}*{{ +tableData.paperWidth }}</td>
+          <td>纸箱面积：</td>
+          <td colspan="2">{{ tableData.paperArea }}</td>
         </tr>
         <tr>
           <td colspan="3" class="center">印刷</td>
@@ -44,6 +44,13 @@
           <td>打钉数</td>
         </tr>
         <tr>
+          <td colspan="2">{{ tableData.color }}</td>
+          <td>{{ tableData.printSurface }}</td>
+          <td>{{ tableData.combine }}</td>
+          <td>{{ tableData.NailClass }}</td>
+          <td>{{ tableData.nailingNumber }}</td>
+        </tr>
+        <tr>
           <td>工序</td>
           <td>数量</td>
           <td>操作</td>
@@ -52,7 +59,7 @@
           <td>备注</td>
         </tr>
         <tr>
-          <td><input type="checkbox"> 分压</td>
+          <td><input type="checkbox" :checked="tableData.partialPressure"> 分压</td>
           <td />
           <td />
           <td />
@@ -60,7 +67,7 @@
           <td />
         </tr>
         <tr>
-          <td><input type="checkbox"> 裱糊</td>
+          <td><input type="checkbox" :checked="tableData.pasting"> 裱糊</td>
           <td />
           <td />
           <td />
@@ -68,7 +75,7 @@
           <td />
         </tr>
         <tr>
-          <td><input type="checkbox" checked="checked"> 印刷</td>
+          <td><input type="checkbox" :checked="tableData.printing"> 印刷</td>
           <td />
           <td />
           <td />
@@ -78,17 +85,17 @@
           <td>总面积</td>
         </tr>
         <tr>
-          <td><input type="checkbox" checked="checked"> 开槽</td>
+          <td><input type="checkbox" :checked="tableData.grooving"> 开槽</td>
           <td />
           <td />
           <td />
           <td />
           <td />
           <td colspan="5" rowspan="4" style="vertical-align:top;">生产时注意的内容写在这里!显示在生产单上!</td>
-          <td>373.744</td>
+          <td>{{ tableData.total_area }}</td>
         </tr>
         <tr>
-          <td><input type="checkbox"> 模切</td>
+          <td><input type="checkbox" :checked="tableData.dieCutting"> 模切</td>
           <td />
           <td />
           <td />
@@ -96,22 +103,22 @@
           <td />
           <td>是否常规</td>
         </tr>
-        <td><input type="checkbox" checked="checked"> 结合</td>
+        <td><input type="checkbox" :checked="tableData.partialPressure"> 结合</td>
         <td />
         <td />
         <td />
         <td />
         <td />
         <td>
-          <input type="checkbox"> 是<input type="checkbox">
-          <input type="checkbox" checked="checked"> 否<input type="checkbox" checked="checked">
+          <input type="checkbox"> 是
+          <input type="checkbox" :checked="conventional"> 否
         </td>
       </table>
       <div class="footer">
         <p>制单:管理</p>
         <p>复核：</p>
-        <p>制单日期：2020-09-11 13:55</p>
-        <p>交货日期：2020-09-11</p>
+        <p>制单日期：{{ tableData.preparation }}</p>
+        <p>交货日期：{{ tableData.delivery }}</p>
       </div>
     </div>
   </div>
@@ -124,7 +131,36 @@ export default {
   data() {
     return {
       // my: '这是测试文本'
+      tableData: {
+        name: '百味林',
+        no: '120',
+        modelNo: '客户的箱号或者款号',
+        boxType: '五层箱',
+        length: 600,
+        width: 300,
+        height: 400,
+        orderNum: 256,
+        material: '美卡',
+        color: '红色',
+        stare: 'AB',
+        paperLength: '1880',
+        paperWidth: '704',
+        paperArea: '0.66',
+        printSurface: '按样箱',
+        combine: '粘胶',
+        NailClass: 1,
+        nailingNumber: '打钉数',
+        combineOptions: '',
+        total_area: '373.54',
+        partialPressure: true,
+        pasting: true,
+        printing: true,
+        grooving: true,
+        dieCutting: true,
+        preparation: '2020-5',
+        delivery: '250'
 
+      }
     }
   },
   created() {
@@ -153,7 +189,6 @@ export default {
 .dh{
   display: flex;
   justify-content: space-between;
-  padding: 0 10px;
   width: 1000px;
   margin: 0 auto;
 }
