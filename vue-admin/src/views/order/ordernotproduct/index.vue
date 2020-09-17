@@ -34,12 +34,12 @@
     >
       <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
-      <el-table-column prop="name" label="任务编号" width="120" />
-      <el-table-column prop="name" label="客户单号" width="120" />
-      <el-table-column prop="name" label="款号" width="120" />
-      <el-table-column prop="name" label="箱型" width="120" />
-      <el-table-column prop="name" label="纸质" width="120" />
-      <el-table-column prop="name" label="供方" width="120" />
+      <el-table-column prop="no" label="任务编号" width="120" />
+      <el-table-column prop="customer_no" label="客户单号" width="120" />
+      <el-table-column prop="model_no" label="款号" width="120" />
+      <el-table-column prop="box_type" label="箱型" width="120" />
+      <el-table-column prop="material" label="材质" width="120" />
+      <el-table-column prop="supplier" label="供方" width="120" />
       <el-table-column prop="name" label="来料数量" width="120" />
       <el-table-column prop="name" label="尺寸" width="120" />
       <el-table-column prop="name" label="订单数量" width="120" />
