@@ -27,7 +27,7 @@
           <el-table-column prop="taskNumber" label="任务编号" />
           <el-table-column prop="material" label="材质" />
           <el-table-column prop="ridgeType" label="楞型" />
-          <el-table-column prop="paperSize" label="纸片尺寸(MM)纸长 X 纸宽"/>
+          <el-table-column prop="paperSize" label="纸片尺寸(MM)纸长 X 纸宽" />
           <el-table-column prop="parPreSpe" label="分压规格(MM)" />
           <el-table-column prop="batching" label="纸板面积" />
           <el-table-column prop="squarePrice" label="平方价" />
@@ -72,40 +72,33 @@ export default {
     return {
       tableData: [],
       form: {},
-      fullName:"",
-      billingDate:"",
-      mobilePhone:"",
-      documentsNo:"",
-      fax:"",
-      billingDate:"",
-      remark:"",
-      data:[]
+      fullName: '',
+      billingDate: '',
+      mobilePhone: '',
+      documentsNo: '',
+      fax: '',
+      remark: '',
+      data: []
     }
   },
-  created(){
-    //  this.$route.query.ids
-
-    //  this.ids = this.$route.query.ids
-     console.log("b",this.$route.query.data);
-     this.data=this.$route.query.data
-     console.log(this.data);
-    //  this.ids = JSON.parse(this.$route.query.ids)
-     this.getList()
+  created() {
+    this.data = this.$route.query.data
+    console.log(this.data)
+    this.getList()
   },
   methods: {
-    getList(){
-    this.tableData=this.data
-    console.log(this.tableData);
-     this.tableData.forEach(a=>{
-          a.totalPrice=a.unitPrice*a.purchaseQuantity
-          a.paperSize = a.paperWidth*a.paperLength
-          this.fullName = a.fullName
-          this.billingDate=a.billingDate
-          this.mobilePhone=a.mobilePhone
-          this.documentsNo=a.documentsNo
-          this.fax=a.fax
-          this.remark=a.remark
-        })
+    getList() {
+      this.tableData = this.data
+      this.tableData.forEach(a => {
+        a.totalPrice = a.unitPrice * a.purchaseQuantity
+        a.paperSize = a.paperWidth * a.paperLength
+        this.fullName = a.fullName
+        this.billingDate = a.billingDate
+        this.mobilePhone = a.mobilePhone
+        this.documentsNo = a.documentsNo
+        this.fax = a.fax
+        this.remark = a.remark
+      })
     },
 
     // //加载页面的值
@@ -128,7 +121,7 @@ export default {
     // 返回
     toBack() {
       this.$router.push('/purchase_order')
-    },
+    }
 
   }
 }

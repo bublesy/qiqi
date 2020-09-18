@@ -107,7 +107,7 @@
             <el-date-picker
               v-model="formAdd.deliveryDate"
               align="right"
-               value-format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
               type="date"
               placeholder="选择日期"
               disabled
@@ -134,11 +134,11 @@
           </el-form-item>
 
           <el-form-item label="分压规格">
-            <el-input v-model="formAdd.parPreSpe" disabled/>
+            <el-input v-model="formAdd.parPreSpe" disabled />
           </el-form-item>
 
           <el-form-item label="材质">
-            <el-input v-model="formAdd.material" disabled/>
+            <el-input v-model="formAdd.material" disabled />
           </el-form-item>
 
           <el-form-item label="纸长">
@@ -146,11 +146,11 @@
           </el-form-item>
 
           <el-form-item label="纸宽">
-            <el-input v-model="formAdd.paperWidth"  disabled/>
+            <el-input v-model="formAdd.paperWidth" disabled />
           </el-form-item>
 
           <el-form-item label="订单数量">
-            <el-input v-model="formAdd.orderQuantity" disabled/>
+            <el-input v-model="formAdd.orderQuantity" disabled />
           </el-form-item>
 
           <el-form-item label="采购数量">
@@ -158,7 +158,7 @@
           </el-form-item>
 
           <el-form-item label="配料面积">
-            <el-input v-model="formAdd.batching" disabled/>
+            <el-input v-model="formAdd.batching" disabled />
           </el-form-item>
 
           <el-form-item label="平方价">
@@ -166,15 +166,15 @@
           </el-form-item>
 
           <el-form-item label="单价">
-            <el-input v-model="formAdd.unitPrice" disabled/>
+            <el-input v-model="formAdd.unitPrice" disabled />
           </el-form-item>
 
           <el-form-item label="金额">
-            <el-input-number v-model="formAdd.amount" :controls="false" disabled/>
+            <el-input-number v-model="formAdd.amount" :controls="false" disabled />
           </el-form-item>
 
           <el-form-item label="单位">
-            <el-input v-model="formAdd.unit" disabled/>
+            <el-input v-model="formAdd.unit" disabled />
           </el-form-item>
 
           <el-form-item label="备注">
@@ -227,47 +227,45 @@ export default {
       taskNumberVisible: false,
       multipleSelection: [],
       form: {
-        customerName:"",
-        quantityOverdue:"",
-        time:""
+        customerName: '',
+        quantityOverdue: '',
+        time: ''
       }
     }
   },
-  created(){
+  created() {
     this.init()
   },
   methods: {
-    //采购数量改变金额改变
-    purchaseSelect(){
-      this.formAdd.amount = this.formAdd.unitPrice*this.formAdd.purchaseQuantity
+    // 采购数量改变金额改变
+    purchaseSelect() {
+      this.formAdd.amount = this.formAdd.unitPrice * this.formAdd.purchaseQuantity
     },
-    //选完客户名称 回掉信息
-    customerSelect(){
-        this.customerFor.forEach(a => {
-          console.log("a",a);
+    // 选完客户名称 回掉信息
+    customerSelect() {
+      this.customerFor.forEach(a => {
         if (a.id === this.formAdd.customerName) {
-               this.formAdd.deliveryDate = a.deliveryDate
-               this.formAdd.taskNumber = a.no
-               this.formAdd.ridgeType = a.stare
-               this.formAdd.parPreSpe = a.pressureSpecification
-               this.formAdd.material = a.material
-               this.formAdd.batching = a.paperArea
-               this.formAdd.paperLength = a.paperLength
-               this.formAdd.paperWidth = a.paperWidth
-               this.formAdd.orderQuantity = a.orderNum
-               this.formAdd.unitPrice = a.perPrice
-               this.formAdd.unit = a.unit
+          this.formAdd.deliveryDate = a.deliveryDate
+          this.formAdd.taskNumber = a.no
+          this.formAdd.ridgeType = a.stare
+          this.formAdd.parPreSpe = a.pressureSpecification
+          this.formAdd.material = a.material
+          this.formAdd.batching = a.paperArea
+          this.formAdd.paperLength = a.paperLength
+          this.formAdd.paperWidth = a.paperWidth
+          this.formAdd.orderQuantity = a.orderNum
+          this.formAdd.unitPrice = a.perPrice
+          this.formAdd.unit = a.unit
         }
       })
     },
-    loadData(){
+    loadData() {
       this.queryParams.customerName = this.form.customerName
       this.queryParams.quantityOverdue = this.form.quantityOverdue
       this.queryParams.time = this.form.time
       if (this.queryParams.time === null) {
         this.$set(this.queryParams, 'time', '')
       }
-      console.log(this.queryParams);
       list(this.queryParams).then(res => {
         this.tableData = res.list
         this.pagination.total = res.total
@@ -285,10 +283,11 @@ export default {
     selectPrinting() {
       if (this.form.quantityOverdue === '已过期') {
         // this.$router.push('/purchase_not_included_overdue')
-        console.log(this.multipleSelection);
-         this.$router.push({
-         path: '/purchase_not_included_overdue', 
-         query: { 'ids': this.multipleSelection}
+        this.$router.push({
+          // eslint-disable-next-line no-irregular-whitespace
+          path: '/purchase_not_included_overdue',
+          // eslint-disable-next-line no-irregular-whitespace
+          query: { 'ids': this.multipleSelection }
         })
       } else if (this.form.quantityOverdue === '未过期') {
         this.$router.push('/purchase_not_included')
@@ -297,13 +296,12 @@ export default {
           this.$message.error('请选择打印的内容！！！')
           return
         } else {
-            // this.multipleSelection.forEach(a=>{
-            //   this.ids.push(a.id)
-            // })
           this.$router.push({
-          path: '/purchase_order_printing', 
-           query: { 'data': this.multipleSelection}
-        })
+            // eslint-disable-next-line no-irregular-whitespace
+            path: '/purchase_order_printing',
+            // eslint-disable-next-line no-irregular-whitespace
+            query: { 'data': this.multipleSelection }
+          })
         }
       }
     },
@@ -319,23 +317,28 @@ export default {
     },
     // 打印
     printing(scope) {
-       if (this.form.quantityOverdue === '已过期') {
-            this.$router.push({
-            path: '/purchase_not_included_overdue', 
-            query: { 'ids': scope.row.id }
+      if (this.form.quantityOverdue === '已过期') {
+        this.$router.push({
+          // eslint-disable-next-line no-irregular-whitespace
+          path: '/purchase_not_included_overdue',
+          // eslint-disable-next-line no-irregular-whitespace
+          query: { 'ids': scope.row.id }
         })
       } else if (this.form.quantityOverdue === '未过期') {
-            this.$router.push({
-            path: '/purchase_not_included', 
-            query: { 'ids': scope.row.id }
+        this.$router.push({
+          // eslint-disable-next-line no-irregular-whitespace
+          path: '/purchase_not_included',
+          // eslint-disable-next-line no-irregular-whitespace
+          query: { 'ids': scope.row.id }
         })
       } else {
-        console.log("a",scope.row);
-            this.multipleSelection.push(scope.row)
-            this.$router.push({
-            path: '/purchase_order_printing', 
-            query: { 'data':   this.multipleSelection}
-            })
+        this.multipleSelection.push(scope.row)
+        this.$router.push({
+          // eslint-disable-next-line no-irregular-whitespace
+          path: '/purchase_order_printing',
+          // eslint-disable-next-line no-irregular-whitespace
+          query: { 'data': this.multipleSelection }
+        })
       }
     },
     handleSelectionChange(row) {
@@ -358,9 +361,9 @@ export default {
       this.titleType = '编辑'
       getById(scope.row.id).then(res => {
       // 加载供应商下拉框
-      supplierSelect().then(res => {
-        this.supplierFor = res
-      })
+        supplierSelect().then(res => {
+          this.supplierFor = res
+        })
         this.formAdd = res
       })
     },
@@ -374,10 +377,10 @@ export default {
       supplierSelect().then(res => {
         this.supplierFor = res
       })
-      //加载客户名称下拉框
-      customerSelect().then(res=>{
-        this.customerFor=res
-        console.log(res);
+      // 加载客户名称下拉框
+      customerSelect().then(res => {
+        this.customerFor = res
+        console.log(res)
       })
     },
     // 取消
@@ -386,12 +389,11 @@ export default {
       this.addTableData = []
       this.$refs[purForm].resetFields()
     },
-    //保存
+    // 保存
     purAddOk(purForm) {
       this.$refs[purForm].validate((valid) => {
         if (valid) {
-          console.log(this.formAdd);
-           add(this.formAdd).then(res => {
+          add(this.formAdd).then(res => {
             if (res) {
               this.$message.success(this.titleType + '成功')
               this.$refs[purForm].resetFields()
