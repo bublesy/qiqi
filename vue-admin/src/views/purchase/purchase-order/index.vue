@@ -154,7 +154,7 @@
           </el-form-item>
 
           <el-form-item label="采购数量">
-            <el-input v-model="formAdd.purchaseQuantity" />
+            <el-input v-model="formAdd.purchaseQuantity" @change="purchaseSelect" />
           </el-form-item>
 
           <el-form-item label="配料面积">
@@ -237,16 +237,19 @@ export default {
     this.init()
   },
   methods: {
+    //采购数量改变金额改变
+    purchaseSelect(){
+      this.formAdd.amount = this.formAdd.unitPrice*this.formAdd.purchaseQuantity
+    },
     //选完客户名称 回掉信息
     customerSelect(){
         this.customerFor.forEach(a => {
-          console.log("a",this.formAdd.customerName);
-          console.log(a.id );
+          console.log("a",a);
         if (a.id === this.formAdd.customerName) {
-          this.formAdd.deliveryDate = a.deliveryDate
-            this.formAdd.taskNumber = a.no
+               this.formAdd.deliveryDate = a.deliveryDate
+               this.formAdd.taskNumber = a.no
                this.formAdd.ridgeType = a.stare
-               this.formAdd.parPreSpe = a.partialPressure
+               this.formAdd.parPreSpe = a.pressureSpecification
                this.formAdd.material = a.material
                this.formAdd.batching = a.paperArea
                this.formAdd.paperLength = a.paperLength
