@@ -331,9 +331,10 @@ export default {
         })
       } else {
         console.log("a",scope.row);
+            this.multipleSelection.push(scope.row)
             this.$router.push({
             path: '/purchase_order_printing', 
-            query: { 'data': scope.row}
+            query: { 'data':   this.multipleSelection}
             })
       }
     },
