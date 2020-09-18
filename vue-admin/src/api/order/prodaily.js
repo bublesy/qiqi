@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 export function getProDaily(data) {
-  return request({ url: '', method: 'post', data: data })
+  return request({ url: '/productDaily/list', method: 'post', data: data })
 }
 
 export function delProDaily(id) {

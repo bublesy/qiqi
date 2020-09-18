@@ -20,31 +20,32 @@
           <el-select v-model="form.boxType" placeholder="请选择">
             <el-option
               v-for="item in boxTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
             />
           </el-select>
         </el-form-item>
         <!-- xlk -->
         <el-form-item label="单位:">
-          <el-select v-model="form.unit" placeholder="请选择">
+          <el-input v-model="form.unit" />
+          <!-- <el-select v-model="form.unit" placeholder="请选择">
             <el-option
               v-for="item in unitOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
             />
-          </el-select>
+          </el-select> -->
         </el-form-item>
         <!-- xlk -->
         <el-form-item label="材质:" prop="material">
           <el-select v-model="form.material" placeholder="请选择">
             <el-option
               v-for="item in materialOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
             />
           </el-select>
         </el-form-item>
@@ -55,19 +56,19 @@
         </el-form-item>
         <!-- xlk -->
         <el-form-item label="组合:">
-          <el-select v-model="form.group" placeholder="请选择">
+          <el-select v-model="form.groups" placeholder="请选择">
             <el-option
               v-for="item in groupOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
             />
           </el-select>
         </el-form-item>
         <!-- 2020 9 9 -->
         <el-form-item label="交货日期:">
           <el-date-picker
-            v-model="form.delivery"
+            v-model="form.deliveryDate"
             style="width:190px"
             type="date"
             placeholder="选择日期"
@@ -88,9 +89,9 @@
           <el-select v-model="form.supplier" placeholder="请选择">
             <el-option
               v-for="item in supplierOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.id"
+              :label="item.fullName"
+              :value="item.fullName"
             />
           </el-select>
         </el-form-item>
@@ -98,97 +99,121 @@
     </el-card>
     <p>生产单信息</p>
     <el-card>
-      <el-form :model="form2" :inline="true" size="mini">
+      <el-form :model="form" :inline="true" size="mini">
         <el-form-item label="纸长X纸宽:">
-          <el-input v-model="form2.length" style="width:50px" />X
+          <el-input v-model="form.paperLength" style="width:50px" />X
+          <el-input v-model="form.paperWidth" style="width:50px" />
           <!-- xlk -->
-          <el-select v-model="form2.width" placeholder="请选择">
+          <!-- <el-select v-model="form.paperWidth" placeholder="请选择">
             <el-option
               v-for="item in widthOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
             />
-          </el-select>
+          </el-select> -->
         </el-form-item>
         <el-form-item label="纸片数量:">
-          <el-input v-model="form2.paperNum" @input="paperNum" />
+          <el-input v-model="form.paperNum" @input="paperNum" />
         </el-form-item>
         <!-- fxk -->
         <el-form-item label="">
-          <el-checkbox v-model="form2.noLinePress">无压线</el-checkbox>
+          <el-checkbox v-model="form.noLinePress">无压线</el-checkbox>
         </el-form-item>
         <!-- fxk -->
         <el-form-item label="">
-          <el-checkbox v-model="form2.materialStock">存料</el-checkbox>
+          <el-checkbox v-model="form.materialStock">存料</el-checkbox>
         </el-form-item>
         <el-form-item label="耗用门幅:">
-          <el-input v-model="form2.fabric" />
+          <el-input v-model="form.fabric" />
         </el-form-item>
         <el-form-item label="门幅倍数:">
-          <el-input v-model="form2.ratio" @input="ratio" />
+          <el-input v-model="form.ratio" @input="ratio" />
         </el-form-item>
         <el-form-item label="打包:">
-          <el-input v-model="form2.pack" />
+          <el-input v-model="form.pack" />
         </el-form-item>
         <el-form-item label="打钉数:">
-          <el-input v-model="form2.pack" @input="pack" />
+          <el-input v-model="form.nailingNumber" @input="pack" />
+        </el-form-item>
+        <el-form-item label="楞型:">
+          <el-input v-model="form.stare" />
+        </el-form-item>
+        <el-form-item label="分压规格:">
+          <el-input v-model="form.pressureSpecification" />
         </el-form-item>
         <!-- xlk -->
         <el-form-item label="钉类:">
-          <el-input v-model="form2.NailClass" />
+          <!-- <el-input v-model="form.NailClass" /> -->
+          <el-select v-model="form.nailClass" placeholder="请选择">
+            <el-option
+              v-for="item in NailClassOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="总面积:">
+          <el-input v-model="form.totalArea" />
+        </el-form-item>
+        <el-form-item label="纸箱面积:">
+          <el-input v-model="form.paperArea" />
+        </el-form-item>
+        <el-form-item label="是否常规:">
+          <el-input v-model="form.conventional" />
         </el-form-item>
         <!-- xlk -->
         <el-form-item label="颜色:">
-          <el-select v-model="form2.color" placeholder="请选择">
+          <el-select v-model="form.color" placeholder="请选择">
             <el-option
               v-for="item in colorOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
             />
           </el-select>
         </el-form-item>
         <!-- xlk -->
         <el-form-item label="印刷版面:">
-          <el-select v-model="form2.printSurface" placeholder="请选择">
+          <el-select v-model="form.printSurface" placeholder="请选择">
             <el-option
               v-for="item in printSurfaceOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
             />
           </el-select>
         </el-form-item>
         <!-- fxk -->
         <el-form-item label="">
-          <el-checkbox v-model="form2.partialPressure">分压</el-checkbox>
+          <el-checkbox v-model="form.partialPressure">分压</el-checkbox>
         </el-form-item>
         <el-form-item label="">
-          <el-checkbox v-model="form2.pasting">裱糊</el-checkbox>
+          <el-checkbox v-model="form.pasting">裱糊</el-checkbox>
         </el-form-item>
         <el-form-item label="">
-          <el-checkbox v-model="form2.printing">印刷</el-checkbox>
+          <el-checkbox v-model="form.printing">印刷</el-checkbox>
         </el-form-item>
         <el-form-item label="">
-          <el-checkbox v-model="form2.grooving">开槽</el-checkbox>
+          <el-checkbox v-model="form.grooving">开槽</el-checkbox>
         </el-form-item>
         <el-form-item label="">
-          <el-checkbox v-model="form2.dieCutting">模切</el-checkbox>
+          <el-checkbox v-model="form.dieCutting">模切</el-checkbox>
         </el-form-item>
         <!-- xlk -->
         <el-form-item label="结合:">
-          <el-select v-model="form2.combine" placeholder="请选择">
+          <el-select v-model="form.combine" placeholder="请选择">
             <el-option
               v-for="item in combineOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
             />
           </el-select>
         </el-form-item>
         <el-form-item label="备注:">
-          <el-input v-model="form2.remark" />
+          <el-input v-model="form.remark" />
         </el-form-item>
       </el-form>
       <p>添加样图:</p>
@@ -199,7 +224,9 @@
 
 <script>
 import upload from '@/views/order/edit/upload'
-import { addOrUpdateOrder } from '@/api/order/customerOrder'
+import { addOrUpdateOrder, getSupplier, getMaterial, getUnite, getColor, getNails,
+  getCombination, getPrintLayout, getSingleOrder } from '@/api/order/customerOrder'
+import { getBoxClassList } from '@/api/basedata/boxclass'
 export default {
   components: { upload },
   props: {
@@ -210,14 +237,15 @@ export default {
     id: {
       type: String,
       default: ''
+    },
+    flag: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       form: {
-
-      },
-      form2: {
 
       },
       rules: {
@@ -239,15 +267,50 @@ export default {
       widthOptions: [],
       colorOptions: [],
       printSurfaceOptions: [],
-      combineOptions: []
+      combineOptions: [],
+      NailClassOptions: []
     }
   },
   watch: {
     'dialog.show': function(val) {
       if (val) {
+        getBoxClassList().then(res => {
+          this.boxTypeOptions = res
+        })
+
+        getSupplier().then(res => {
+          this.supplierOptions = res
+        })
+
+        getMaterial().then(res => {
+          this.materialOptions = res
+        })
+
+        getUnite().then(res => {
+          this.combineOptions = res
+        })
+
+        getCombination().then(res => {
+          this.groupOptions = res
+        })
+
+        getColor().then(res => {
+          this.colorOptions = res
+        })
+        getNails().then(res => {
+          this.NailClassOptions = res
+        })
+        getPrintLayout().then(res => {
+          this.printSurfaceOptions = res
+        })
         if (this.id !== '' && this.id !== null) {
           // 编辑
-          console.log('aa')
+          console.log('aaa')
+          console.log(this.id)
+          getSingleOrder(this.id).then(res => {
+            console.log(res)
+            this.form = res
+          })
         } else {
           // 新增
           this.form = Object.assign({}, this.$options.data().form)
@@ -257,11 +320,16 @@ export default {
   },
   methods: {
     save() {
-      var list = []
-      list.push(this.form)
-      list.push(this.form2)
-      addOrUpdateOrder(list).then(res => {
-        console.log(res)
+      // var list = []
+      // list.push(this.form)
+      // list.push(this.form)
+      if (this.flag) {
+        this.form.id = null
+      }
+      addOrUpdateOrder(this.form).then(res => {
+        if (res) {
+          this.$emit('init')
+        }
       })
       this.dialog.show = false
     },
@@ -281,25 +349,25 @@ export default {
     },
     paperNum(x) {
       if (isNaN(x)) {
-        this.form2.paperNum = this.form2.paperNum.substring(0, this.form2.paperNum.length - 1)
-        if (isNaN(this.form2.paperNum)) {
-          this.form2.paperNum = ''
+        this.form.paperNum = this.form.paperNum.substring(0, this.form.paperNum.length - 1)
+        if (isNaN(this.form.paperNum)) {
+          this.form.paperNum = ''
         }
       }
     },
     ratio(x) {
       if (isNaN(x)) {
-        this.form2.ratio = this.form2.ratio.substring(0, this.form2.ratio.length - 1)
-        if (isNaN(this.form2.ratio)) {
-          this.form2.ratio = ''
+        this.form.ratio = this.form.ratio.substring(0, this.form.ratio.length - 1)
+        if (isNaN(this.form.ratio)) {
+          this.form.ratio = ''
         }
       }
     },
     pack(x) {
       if (isNaN(x)) {
-        this.form2.pack = this.form2.pack.substring(0, this.form2.pack.length - 1)
-        if (isNaN(this.form2.pack)) {
-          this.form2.pack = ''
+        this.form.pack = this.form.pack.substring(0, this.form.pack.length - 1)
+        if (isNaN(this.form.pack)) {
+          this.form.pack = ''
         }
       }
     }
