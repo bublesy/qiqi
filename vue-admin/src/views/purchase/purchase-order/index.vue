@@ -154,7 +154,7 @@
           </el-form-item>
 
           <el-form-item label="采购数量">
-            <el-input v-model="formAdd.purchaseQuantity" />
+            <el-input v-model="formAdd.purchaseQuantity" @change="purchaseSelect" />
           </el-form-item>
 
           <el-form-item label="配料面积">
@@ -237,16 +237,18 @@ export default {
     this.init()
   },
   methods: {
+    // 采购数量改变金额改变
+    purchaseSelect() {
+      this.formAdd.amount = this.formAdd.unitPrice * this.formAdd.purchaseQuantity
+    },
     // 选完客户名称 回掉信息
     customerSelect() {
       this.customerFor.forEach(a => {
-        console.log('a', this.formAdd.customerName)
-        console.log(a.id)
         if (a.id === this.formAdd.customerName) {
           this.formAdd.deliveryDate = a.deliveryDate
           this.formAdd.taskNumber = a.no
           this.formAdd.ridgeType = a.stare
-          this.formAdd.parPreSpe = a.partialPressure
+          this.formAdd.parPreSpe = a.pressureSpecification
           this.formAdd.material = a.material
           this.formAdd.batching = a.paperArea
           this.formAdd.paperLength = a.paperLength
@@ -264,7 +266,6 @@ export default {
       if (this.queryParams.time === null) {
         this.$set(this.queryParams, 'time', '')
       }
-      console.log(this.queryParams)
       list(this.queryParams).then(res => {
         this.tableData = res.list
         this.pagination.total = res.total
@@ -282,9 +283,10 @@ export default {
     selectPrinting() {
       if (this.form.quantityOverdue === '已过期') {
         // this.$router.push('/purchase_not_included_overdue')
-        console.log(this.multipleSelection)
         this.$router.push({
+          // eslint-disable-next-line no-irregular-whitespace
           path: '/purchase_not_included_overdue',
+          // eslint-disable-next-line no-irregular-whitespace
           query: { 'ids': this.multipleSelection }
         })
       } else if (this.form.quantityOverdue === '未过期') {
@@ -294,11 +296,10 @@ export default {
           this.$message.error('请选择打印的内容！！！')
           return
         } else {
-          // this.multipleSelection.forEach(a=>{
-          //   this.ids.push(a.id)
-          // })
           this.$router.push({
+            // eslint-disable-next-line no-irregular-whitespace
             path: '/purchase_order_printing',
+            // eslint-disable-next-line no-irregular-whitespace
             query: { 'data': this.multipleSelection }
           })
         }
@@ -318,19 +319,25 @@ export default {
     printing(scope) {
       if (this.form.quantityOverdue === '已过期') {
         this.$router.push({
+          // eslint-disable-next-line no-irregular-whitespace
           path: '/purchase_not_included_overdue',
+          // eslint-disable-next-line no-irregular-whitespace
           query: { 'ids': scope.row.id }
         })
       } else if (this.form.quantityOverdue === '未过期') {
         this.$router.push({
+          // eslint-disable-next-line no-irregular-whitespace
           path: '/purchase_not_included',
+          // eslint-disable-next-line no-irregular-whitespace
           query: { 'ids': scope.row.id }
         })
       } else {
-        console.log('a', scope.row)
+        this.multipleSelection.push(scope.row)
         this.$router.push({
+          // eslint-disable-next-line no-irregular-whitespace
           path: '/purchase_order_printing',
-          query: { 'data': scope.row }
+          // eslint-disable-next-line no-irregular-whitespace
+          query: { 'data': this.multipleSelection }
         })
       }
     },
@@ -386,7 +393,6 @@ export default {
     purAddOk(purForm) {
       this.$refs[purForm].validate((valid) => {
         if (valid) {
-          console.log(this.formAdd)
           add(this.formAdd).then(res => {
             if (res) {
               this.$message.success(this.titleType + '成功')
