@@ -119,7 +119,7 @@
                 v-for="item in customerFor"
                 :key="item.id"
                 :label="item.name"
-                :value="item.id"
+                :value="item.name"
               />
             </el-select>
           </el-form-item>
