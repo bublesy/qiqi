@@ -26,6 +26,8 @@ public class OrderDO extends BaseModel {
 
     private static final long serialVersionUID=1L;
 
+    private Boolean isProduct;
+
     private String wosState;
 
     private String stare;

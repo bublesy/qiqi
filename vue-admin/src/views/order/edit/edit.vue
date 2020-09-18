@@ -9,8 +9,18 @@
     <p style="">订单信息</p>
     <el-card>
       <el-form ref="form" :model="form" label-width="80px" size="mini" :rules="rules" :inline="true">
+        <el-form-item label="选择客户:">
+          <el-select v-model="form.name" placeholder="请选择">
+            <el-option
+              v-for="item in customerOptions"
+              :key="item.id"
+              :label="item.fullName"
+              :value="item.fullName"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="客户单号:">
-          <el-input v-model="form.no" />
+          <el-input v-model="form.customerNo" />
         </el-form-item>
         <el-form-item label="款号:">
           <el-input v-model="form.modelNo" />
@@ -95,6 +105,9 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="是否成品:">
+          <el-checkbox v-model="form.isProduct" />
+        </el-form-item>
       </el-form>
     </el-card>
     <p>生产单信息</p>
@@ -161,7 +174,7 @@
           <el-input v-model="form.paperArea" />
         </el-form-item>
         <el-form-item label="是否常规:">
-          <el-input v-model="form.conventional" />
+          <el-checkbox v-model="form.conventional" />
         </el-form-item>
         <!-- xlk -->
         <el-form-item label="颜色:">
@@ -225,7 +238,7 @@
 <script>
 import upload from '@/views/order/edit/upload'
 import { addOrUpdateOrder, getSupplier, getMaterial, getUnite, getColor, getNails,
-  getCombination, getPrintLayout, getSingleOrder } from '@/api/order/customerOrder'
+  getCombination, getPrintLayout, getSingleOrder, getCustomer } from '@/api/order/customerOrder'
 import { getBoxClassList } from '@/api/basedata/boxclass'
 export default {
   components: { upload },
@@ -268,7 +281,8 @@ export default {
       colorOptions: [],
       printSurfaceOptions: [],
       combineOptions: [],
-      NailClassOptions: []
+      NailClassOptions: [],
+      customerOptions: []
     }
   },
   watch: {
@@ -302,6 +316,9 @@ export default {
         })
         getPrintLayout().then(res => {
           this.printSurfaceOptions = res
+        })
+        getCustomer().then(res => {
+          this.customerOptions = res
         })
         if (this.id !== '' && this.id !== null) {
           // 编辑
