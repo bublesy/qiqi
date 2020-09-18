@@ -35,17 +35,21 @@
       <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
       <el-table-column prop="no" label="任务编号" width="120" />
-      <el-table-column prop="customer_no" label="客户单号" width="120" />
-      <el-table-column prop="model_no" label="款号" width="120" />
-      <el-table-column prop="box_type" label="箱型" width="120" />
+      <el-table-column prop="customerNo" label="客户单号" width="120" />
+      <el-table-column prop="modelNo" label="款号" width="120" />
+      <el-table-column prop="boxType" label="箱型" width="120" />
       <el-table-column prop="material" label="材质" width="120" />
       <el-table-column prop="supplier" label="供方" width="120" />
-      <el-table-column prop="name" label="来料数量" width="120" />
-      <el-table-column prop="name" label="尺寸" width="120" />
-      <el-table-column prop="name" label="订单数量" width="120" />
-      <el-table-column prop="name" label="已产数量" width="120" />
-      <el-table-column prop="name" label="未产数量" width="120" />
-      <el-table-column prop="name" label="交货日期" width="120" />
+      <el-table-column prop="" label="来料数量" width="120" />
+      <el-table-column prop="" label="尺寸" width="120">
+        <template slot-scope="scope">
+          {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="orderNum" label="订单数量" width="120" />
+      <el-table-column prop="" label="已产数量" width="120" />
+      <el-table-column prop="" label="未产数量" width="120" />
+      <el-table-column prop="deliveryDate" label="交货日期" width="120" />
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="singlePrint(scope.row)">打印</el-button>
@@ -75,7 +79,7 @@ export default {
       total: 0,
       form: {
         page: 1,
-        size: 10
+        count: 10
       },
       select: [],
       now: null
@@ -83,22 +87,22 @@ export default {
   },
   created() {
     this.initTable()
-    this.tableData.push({ name: 'hc' })
     var date = new Date()
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   },
   methods: {
     initTable() {
       getOrderNotProduct(this.form).then(res => {
-        console.log(res)
+        this.tableData = res.list
+        this.total = res.total
       })
     },
     handleSizeChange(size) {
-      this.size = size
+      this.form.count = size
       this.initTable()
     },
     handleCurrentChange(page) {
-      this.page = page
+      this.form.page = page
       this.initTable()
     },
     toExcel() {

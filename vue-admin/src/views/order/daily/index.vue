@@ -37,7 +37,11 @@
       <el-table-column prop="no" label="任务编号" width="120" />
       <el-table-column prop="modelNo" label="款号" width="120" />
       <el-table-column prop="material" label="材质" width="120" />
-      <el-table-column prop="name" label="订单尺寸" width="120" />
+      <el-table-column prop="name" label="订单尺寸" width="120">
+        <template slot-scope="scope">
+          {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
+        </template>
+      </el-table-column>
       <el-table-column prop="orderNum" label="订单数量" width="120" />
       <el-table-column prop="perPrice" label="单价" width="120" />
       <el-table-column prop="money" label="金额" width="120" />

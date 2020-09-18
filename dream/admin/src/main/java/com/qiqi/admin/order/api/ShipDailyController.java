@@ -23,10 +23,10 @@ import java.util.List;
  * @author hc
  * @since 2020-09-17
  */
-@Api("订单未产接口")
+@Api("出货日报表接口")
 @RestController
-@RequestMapping("/notProduct")
-public class NotProductController {
+@RequestMapping("/ship")
+public class ShipDailyController {
 
     @Resource
     private OrderService orderService;

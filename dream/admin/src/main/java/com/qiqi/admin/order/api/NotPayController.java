@@ -25,8 +25,8 @@ import java.util.List;
  */
 @Api("订单未产接口")
 @RestController
-@RequestMapping("/notProduct")
-public class NotProductController {
+@RequestMapping("/notPay")
+public class NotPayController {
 
     @Resource
     private OrderService orderService;
