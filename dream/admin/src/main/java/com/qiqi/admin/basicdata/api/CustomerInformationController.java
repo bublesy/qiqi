@@ -11,8 +11,8 @@ import com.qiqi.basicdata.entity.CustomerQuotationDO;
 import com.qiqi.basicdata.service.CustomerQuotationService;
 import com.qiqi.common.entity.PageEntity;
 import io.swagger.annotations.*;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.qiqi.basicdata.service.CustomerInformationService;
 

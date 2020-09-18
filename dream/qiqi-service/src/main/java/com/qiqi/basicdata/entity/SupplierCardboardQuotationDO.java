@@ -1,4 +1,4 @@
-package com.qiqi.supplier.entity;
+package com.qiqi.basicdata.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.qiqi.common.base.BaseModel;

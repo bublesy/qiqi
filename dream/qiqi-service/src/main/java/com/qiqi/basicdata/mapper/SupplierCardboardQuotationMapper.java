@@ -1,8 +1,8 @@
-package com.qiqi.supplier.mapper;
+package com.qiqi.basicdata.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.qiqi.supplier.entity.SupplierCardboardQuotationDO;
+import com.qiqi.basicdata.entity.SupplierCardboardQuotationDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
