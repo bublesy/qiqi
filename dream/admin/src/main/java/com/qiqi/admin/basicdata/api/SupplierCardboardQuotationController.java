@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.basicdata.service.PaperboardDataSettingService;
 import com.qiqi.basicdata.service.SupplierService;
+import com.qiqi.order.service.OrderService;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.qiqi.basicdata.service.SupplierCardboardQuotationService;
@@ -38,7 +39,7 @@ public class SupplierCardboardQuotationController {
     @Resource
     private PaperboardDataSettingService paperboardDataSettingService;
     @Resource
-
+    private OrderService orderService;
 
     @ApiOperation(value = "获取供应商纸板报价(列表)")
     @ApiImplicitParams({
@@ -121,7 +122,7 @@ public class SupplierCardboardQuotationController {
      */
     @GetMapping("/customerSelect")
     public List customerSelect(){
-        return supplierService.list();
+        return orderService.list();
     }
 
 
