@@ -24,3 +24,7 @@ export function supplierSelect() {
   return request({ url: '/supplier/cardboard/quotation/supplierSelect', method: 'get' })
 }
 
+export function customerSelect() {
+  return request({ url: '/supplier/cardboard/quotation/customerSelect', method: 'get' })
+}
+

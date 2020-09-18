@@ -197,6 +197,7 @@
 import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
 import { supplierSelect } from '@/api/supplier-cardboard-quotation/cardboard'
+import { customerSelect } from '@/api/supplier-cardboard-quotation/cardboard'
 import { add } from '@/api/purchase/purchase'
 import { list } from '@/api/purchase/purchase'
 import { getById } from '@/api/purchase/purchase'
