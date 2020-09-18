@@ -7,9 +7,9 @@
       v-on="onEvent"
     >
       <!-- 自定义菜单 -->
-      <template slot="myTableForm">
+      <!-- <template slot="myTableForm">
         <avue-crud ref="crud" :option="myOption" :data="myData" style="width:1200px" @row-update="addUpdate" />
-      </template>
+      </template> -->
       <template slot="menu" slot-scope="scope">
         <el-popconfirm title="确认删除这条数据吗？" style="margin-left:10px;" @onConfirm="handleDel( scope.row, scope.index )">
           <el-button slot="reference" type="text" icon="el-icon-delete" size="small">&nbsp;删除</el-button>
@@ -26,84 +26,104 @@ export default window.$crudCommon({
   inject: ['reloadTag'],
   data() {
     return {
-      a: [],
-      myData: [],
-      myOption: {
-        addBtn: false,
-        refreshBtn: false,
-        columnBtn: false,
-        editBtn: false,
-        addRowBtn: true,
-        cellBtn: true,
-        searchShow: false,
-        menuWidth: 380,
-        column: [{
-          label: '品名规格',
-          prop: 'name',
-          cell: true,
-          width: 165,
-          type: 'select',
-          dicData: [{
-            label: '收据',
-            value: 0
-          }, {
-            label: '选项2',
-            value: 1
-          }],
-          rules: [{
-            required: true,
-            message: '请输入规格名字',
-            trigger: 'blur'
-          }]
-        },
+      abc: [],
+      a: [
         {
-          label: '单位',
-          prop: 'unit',
-          disabled: true,
-          width: 165,
-          cell: true,
-          type: 'select',
-          dicData: [{
-            label: '选项1',
-            value: 0
-          }, {
-            label: '选项2',
-            value: 1
-          }],
-          rules: [{
-            required: true,
-            message: '请选择单位',
-            trigger: 'blur'
-          }]
-        },
-        {
-          label: '数量',
-          prop: 'number',
-          width: 165,
-          cell: true,
-          rules: [{
-            required: true,
-            message: '请输入数量',
-            trigger: 'blur',
-            pattern: '^[0-9]*$ '
-          }]
-        },
-        {
-          label: '单价',
-          prop: 'univalent;',
-          width: 140,
-          cell: true
-        },
-        {
-          label: '金额',
-          width: 160,
-          prop: 'money',
-          cell: true
-        }]
-      }
+          label: '选项1',
+          value: 0
+        }, {
+          label: '选项2',
+          value: 1
+        }
+      ]
+      // myData: []
+      // myOption: {
+      //   addBtn: false,
+      //   refreshBtn: false,
+      //   columnBtn: false,
+      //   editBtn: false,
+      //   addRowBtn: true,
+      //   cellBtn: true,
+      //   searchShow: false,
+      //   menuWidth: 380,
+      //   column: [{
+      //     label: '品名规格',
+      //     prop: 'name',
+      //     cell: true,
+      //     width: 165,
+      //     type: 'select',
+      //     dicData: [{
+      //       label: '收据',
+      //       value: 0
+      //     }, {
+      //       label: '选项2',
+      //       value: 1
+      //     }],
+      //     rules: [{
+      //       required: true,
+      //       message: '请输入规格名字',
+      //       trigger: 'blur'
+      //     }]
+      //   },
+      //   {
+      //     label: '单位',
+      //     prop: 'unit',
+      //     disabled: true,
+      //     width: 165,
+      //     cell: true,
+      //     type: 'select',
+      //     dicData: [{
+      //       label: '选项1',
+      //       value: 0
+      //     }, {
+      //       label: '选项2',
+      //       value: 1
+      //     }],
+      //     rules: [{
+      //       required: true,
+      //       message: '请选择单位',
+      //       trigger: 'blur'
+      //     }]
+      //   },
+      //   {
+      //     label: '数量',
+      //     prop: 'number',
+      //     width: 165,
+      //     cell: true,
+      //     rules: [{
+      //       required: true,
+      //       message: '请输入数量',
+      //       trigger: 'blur',
+      //       pattern: '^[0-9]*$ '
+      //     }]
+      //   },
+      //   {
+      //     label: '单价',
+      //     prop: 'univalent;',
+      //     width: 140,
+      //     cell: true
+      //   },
+      //   {
+      //     label: '金额',
+      //     width: 160,
+      //     prop: 'money',
+      //     cell: true
+      //   }]
+      // }
     }
   },
   created() {
+    // 请求数据，赋值
+    this.abc = [{
+      label: '选项1',
+      value: 0
+    }, {
+      label: '选项2',
+      value: 1
+    }, {
+      label: '选项3',
+      value: 2
+    }]
   },
   methods: {
     // 删除方法

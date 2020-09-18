@@ -118,7 +118,13 @@
             <el-input v-model="formAdd.material" />
           </el-form-item>
 
-          <el-form-item label="数量">
+          <el-form-item
+            label="数量"
+            :rules="[
+              { required: true, message: '数量不能为空'},
+              { type: 'number', message: '数量必须为数字值'}
+            ]"
+          >
             <el-input v-model="formAdd.paperLength" />
           </el-form-item>
 
