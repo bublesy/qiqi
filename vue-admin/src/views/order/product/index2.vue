@@ -5,53 +5,52 @@
     <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
     <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
     <div class="dh">
-      <p>订货单：<span style="  font-weight: bolder;">百味林</span></p>
+      <p>订货单：<span style="  font-weight: bolder;">{{ tableData.name }}</span></p>
       <div>
-        <p>任务编号：<span style="  font-weight: bolder;font-size: 20px;">12090032</span></p>
-        <p style="margin-top:-10px">交货日期：2020-09-12</p>
+        <p>任务编号：<span style="  font-weight: bolder;font-size: 20px;">{{ tableData.no }}</span></p>
+        <p style="margin-top:-10px">交货日期：{{ tableData.delivery }}</p>
       </div>
     </div>
     <table>
       <tr>
         <td>客户单号</td>
-        <td class="center">客户订单号</td>
+        <td class="center">{{ tableData.no }}</td>
         <td>产品名称</td>
-        <td class="center">五层箱     </td>
+        <td class="center">{{ tableData.boxType }}   </td>
         <td>纸箱尺寸</td>
-        <td>600x3000x400</td>
+        <td>{{ tableData.length }}*{{ +tableData.width }}*{{ tableData.length }}</td>
         <td class="center">订单数量</td>
-        <td class="center">560</td>
+        <td class="center">{{ tableData.orderNum }}</td>
         <td class="center">纸箱面积</td>
-        <td class="center">0.6674</td>
+        <td class="center">{{ tableData.paperArea }}</td>
       </tr>
       <tr>
         <td>款号/型号</td>
-        <td class="center">客户的箱号或者款号</td>
+        <td class="center">{{ tableData.modelNo }}</td>
         <td>愣&nbsp;&nbsp;&nbsp;&nbsp;型</td>
-        <td class="center">AB</td>
+        <td class="center">{{ tableData.stare }} </td>
         <td>纸箱尺寸</td>
         <td class="center">600x3000</td>
         <td class="center">颜色</td>
-        <td class="center">黑色</td>
+        <td class="center">{{ tableData.color }}</td>
         <td>总面积：</td>
-        <td class="center">373.744</td>
+        <td class="center">{{ tableData.totalArea }}</td>
       </tr>
       <tr>
         <td>材质</td>
-        <td class="center">美卡+120+110+120</td>
+        <td class="center">{{ tableData.material }}</td>
         <td>生产类型</td>
-        <td class="center" colspan="3">印刷&nbsp;&nbsp;开槽</td>
+        <td class="center" colspan="3"><span v-if="show">印刷</span>&nbsp;&nbsp;</td>
         <td>结合</td>
-        <td class="center">粘胶</td>
+        <td class="center">{{ tableData.partialPressure }}</td>
         <td>是否常规</td>
         <td>
-          <input type="checkbox"> 是<input type="checkbox">
-          <input type="checkbox" checked="checked"> 否<input type="checkbox" checked="checked">
-        </td>
-      </tr>
+          <input type="checkbox" :checked="tableData.conventional"> 是
+          <input type="checkbox" :checked="tableData.partialPressure"> 否
+        </td> </tr>
       <tr>
         <td class="center">备注</td>
-        <td colspan="10">生产时注意的内容写在这里！显示生产单上！</td>
+        <td colspan="10">{{ tableData.remark }}</td>
       </tr>
     </table>
     <!-- <div class="img" /> -->
@@ -63,6 +62,37 @@
 export default window.$crudCommon({
   data() {
     return {
+      // my: '这是测试文本'
+      tableData: {
+        name: '百味林',
+        no: '120',
+        modelNo: '客户的箱号或者款号',
+        boxType: '五层箱',
+        length: 600,
+        width: 300,
+        height: 400,
+        orderNum: 256,
+        material: '美卡',
+        color: '红色',
+        stare: 'AB',
+        paperLength: '1880',
+        paperWidth: '704',
+        paperArea: '0.66',
+        printSurface: '按样箱',
+        combine: '粘胶',
+        NailClass: 1,
+        nailingNumber: '打钉数',
+        combineOptions: '',
+        totalArea: '373.54',
+        conventional: true,
+        partialPressure: true,
+        pasting: true,
+        printing: true,
+        grooving: true,
+        dieCutting: true,
+        delivery: '250',
+        remark: '备注'
+      },
       a: []
     }
   },

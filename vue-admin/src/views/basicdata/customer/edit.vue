@@ -9,10 +9,10 @@
       <el-form-item label="编码:" prop="code">
         <el-input v-model="form.code" />
       </el-form-item>
-      <el-form-item label="简称:" prop="shorts">
+      <el-form-item label="客户简称:" prop="shorts">
         <el-input v-model="form.shorts" />
       </el-form-item>
-      <el-form-item label="全称:" prop="fullName">
+      <el-form-item label="客户名称:" prop="fullName">
         <el-input v-model="form.fullName" />
       </el-form-item>
       <el-form-item label="电话:" prop="phone">
@@ -120,13 +120,16 @@ export default {
     'dialog.show': function(val) {
       if (val) {
         if (this.id === '' || this.id === null) {
-          // this.addForm = Object.assign({}, this.$options.data().addForm)
+          this.addForm = Object.assign({}, this.$options.data().addForm)
+          // this.$refs.form.resetFields()
           getSalesman().then(res => {
             this.salesmanOptions = res.list
           })
-          this.$refs.form.resetFields()
         } else {
           getSingleCustomer(this.id).then(res => {
+            getSalesman().then(res => {
+              this.salesmanOptions = res.list
+            })
             this.form = res
           })
         }

@@ -1,6 +1,9 @@
 package com.qiqi.basicdata.entity;
 
+import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.qiqi.common.base.BaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,10 +20,14 @@ import java.math.BigDecimal;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("customer_quotation")
+@TableName(autoResultMap = true, value = "customer_quotation")
 public class CustomerQuotationDO extends BaseModel {
 
     private static final long serialVersionUID=1L;
+
+    private String boxType;
+
+    private BigDecimal totalPrice;
 
     /**
      * 编码
@@ -46,6 +53,9 @@ public class CustomerQuotationDO extends BaseModel {
      * 箱价
      */
     private BigDecimal BoxPrice;
+
+    @TableField(typeHandler = FastjsonTypeHandler.class)
+    private JSONArray paperName;
 
 
 }

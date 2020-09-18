@@ -100,7 +100,7 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="supplierAddNo">取 消</el-button>
+        <el-button size="small" @click="supplierAddNo('supForm')">取 消</el-button>
         <el-button size="small" type="primary" @click="supplierAddOk('supForm')">确 定</el-button>
       </span>
     </el-dialog>
@@ -196,6 +196,7 @@ export default {
       console.log(scope.$index)
       this.supplierAddVisible = true
       this.titleType = '编辑'
+      this.formAdd.id = scope.row.id
       getById(scope.row.id).then(res => {
         this.formAdd = res
       })
@@ -213,6 +214,7 @@ export default {
           add(this.formAdd).then(res => {
             if (res) {
               this.$message.success(this.titleType + '成功')
+              this.$refs[supForm].resetFields()
               this.loadData()
             } else {
               this.$message.error(this.titleType + '失败')
@@ -225,9 +227,10 @@ export default {
       })
     },
     // 新增供应商取消
-    supplierAddNo() {
+    supplierAddNo(supForm) {
       this.supplierAddVisible = false
       this.formAdd = {}
+      this.$refs[supForm].resetFields()
     }
   }
 }

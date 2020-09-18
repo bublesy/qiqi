@@ -8,6 +8,8 @@ import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.basicdata.entity.PaperboardDataSettingDO;
+import com.qiqi.basicdata.service.PaperboardDataSettingService;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,17 +35,26 @@ public class CustomerQuotationController {
     @Resource
     private CustomerQuotationService customerQuotationService;
 
+    @Resource
+    private PaperboardDataSettingService paperboardDataSettingService;
 
+    @ApiOperation(value = "报价单列表分页")
     @PostMapping("/list")
     public PageEntity<CustomerQuotationDO> getCustomerQuotationPage(@RequestBody CustomerQuotationDTO query) {
         QueryWrapper<CustomerQuotationDO> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
-                .eq(StringUtils.isNotBlank(query.getShorts()),"shorts",query.getShorts())
-                .eq(StringUtils.isNotBlank(query.getFullName()),"full_name",query.getFullName());
+        queryWrapper.like(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
+                .like(StringUtils.isNotBlank(query.getShorts()),"shorts",query.getShorts())
+                .like(StringUtils.isNotBlank(query.getFullName()),"full_name",query.getFullName());
         IPage<CustomerQuotationDO> iPage = customerQuotationService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
         //todo: 需要转Vo
 
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<CustomerQuotationDO>>() {}, iPage.getRecords()));
+    }
+
+    @ApiOperation(value = "纸板资料列表")
+    @GetMapping("/paper")
+    public List<PaperboardDataSettingDO> getPaper(){
+        return paperboardDataSettingService.list();
     }
 
     @ApiOperation(value = "获取客户报价单(单个)")

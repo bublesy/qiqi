@@ -6,23 +6,24 @@
         <el-form-item label="客户名称:">
           <el-input v-model="form.customerName" />
         </el-form-item>
-        <el-form-item label="采购未进过期:">
-          <el-select v-model="form.carryTo" :clearable="true">
+        <el-form-item label="采购未进数量是否过期:">
+          <el-select v-model="form.quantityOverdue" :clearable="true">
             <el-option label="已过期" value="已过期" />
             <el-option label="未过期" value="未过期" />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="时间:">
+        <el-form-item label="开单时间:">
           <el-date-picker
             v-model="form.time"
             align="right"
             type="date"
             placeholder="选择日期"
+            value-format="yyyy-MM-dd"
           />
         </el-form-item>
 
-        <el-button type="primary" size="mini" @click="toQuery">查询</el-button>
+        <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
         <el-button type="primary" size="mini" @click="purAdd">新增</el-button>
         <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
         <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
@@ -58,7 +59,7 @@
             <template slot-scope="scope">
               <el-link type="danger" size="small" @click="drop(scope)">删除</el-link>
               <el-link type="primary" size="small" @click="modifyPur(scope)">编辑</el-link>
-              <el-link type="warning" size="small" @click="printing">生成打印单</el-link>
+              <el-link type="warning" size="small" @click="printing(scope)">生成打印单</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -87,38 +88,44 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="计价方式" prop="pricing">
-            <el-select v-model="formAdd.pricing">
+          <el-form-item label="计价方式" prop="pricingMethod">
+            <el-select v-model="formAdd.pricingMethod">
               <el-option label="净边" value="净边" />
               <el-option label="净宽" value="净宽" />
             </el-select>
           </el-form-item>
-          <el-form-item label="开单日期" prop="billingTime">
+          <el-form-item label="开单日期" prop="billingDate">
             <el-date-picker
-              v-model="formAdd.billingTime"
+              v-model="formAdd.billingDate"
               align="right"
               type="date"
+              value-format="yyyy-MM-dd"
               placeholder="选择日期"
             />
           </el-form-item>
-          <el-form-item label="交货日期" prop="deliveryTime">
+          <el-form-item label="交货日期" prop="deliveryDate">
             <el-date-picker
-              v-model="formAdd.deliveryTime"
+              v-model="formAdd.deliveryDate"
               align="right"
+               value-format="yyyy-MM-dd"
               type="date"
               placeholder="选择日期"
             />
           </el-form-item>
 
-          <el-form-item label="客户名称">
+          <el-form-item label="客户名称" prop="customerName">
             <el-select v-model="formAdd.customerName" size="mini">
               <el-option
                 v-for="item in customerFor"
                 :key="item.id"
                 :label="item.name"
-                :value="item.id"
+                :value="item.name"
               />
             </el-select>
+          </el-form-item>
+
+          <el-form-item label="任务编号">
+            <el-input v-model="formAdd.taskNumber" />
           </el-form-item>
 
           <el-form-item label="楞型">
@@ -176,7 +183,7 @@
         </el-form>
 
         <span slot="footer" class="dialog-footer">
-          <el-button size="small" @click="purAddNo">取 消</el-button>
+          <el-button size="small" @click="purAddNo('purForm')">取 消</el-button>
           <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
         </span>
       </el-dialog>
@@ -190,13 +197,17 @@
 import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
 import { supplierSelect } from '@/api/supplier-cardboard-quotation/cardboard'
+import { customerSelect } from '@/api/supplier-cardboard-quotation/cardboard'
+import { add } from '@/api/purchase/purchase'
+import { list } from '@/api/purchase/purchase'
+import { getById } from '@/api/purchase/purchase'
+import { removeById } from '@/api/purchase/purchase'
 
 export default {
   name: 'PurchaseOrder',
   mixins: [initData],
   data() {
     return {
-      form: {},
       formAdd: { },
       tableData: [],
       addTableData: [],
@@ -204,21 +215,39 @@ export default {
       purAddVisible: false,
       purRules: {
         supplierId: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        pricing: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        billingTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        deliveryTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        pricingMethod: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        billingDate: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        deliveryDate: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        customerName: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
       supplierFor: [],
       pricingFor: [],
       titleType: '',
       taskNumberVisible: false,
-      multipleSelection: []
-
+      multipleSelection: [],
+      form: {
+        customerName:"",
+        quantityOverdue:"",
+        time:""
+      }
     }
   },
+  created(){
+    this.init()
+  },
   methods: {
-    toQuery() {
-
+    loadData(){
+      this.queryParams.customerName = this.form.customerName
+      this.queryParams.quantityOverdue = this.form.quantityOverdue
+      this.queryParams.time = this.form.time
+      if (this.queryParams.time === null) {
+        this.$set(this.queryParams, 'time', '')
+      }
+      console.log(this.queryParams);
+      list(this.queryParams).then(res => {
+        this.tableData = res.list
+        this.pagination.total = res.total
+      })
     },
     // 导出
     toExcel() {
@@ -230,58 +259,85 @@ export default {
     },
     // 选择打印
     selectPrinting() {
-      if (this.form.carryTo === '已过期') {
-        this.$router.push('/purchase_not_included_overdue')
-      } else if (this.form.carryTo === '未过期') {
+      if (this.form.quantityOverdue === '已过期') {
+        // this.$router.push('/purchase_not_included_overdue')
+        console.log(this.multipleSelection);
+         this.$router.push({
+         path: '/purchase_not_included_overdue', 
+         query: { 'ids': this.multipleSelection}
+        })
+      } else if (this.form.quantityOverdue === '未过期') {
         this.$router.push('/purchase_not_included')
       } else {
         if (this.multipleSelection.length === 0) {
           this.$message.error('请选择打印的内容！！！')
           return
         } else {
-          this.$router.push('/purchase_order_printing')
+            // this.multipleSelection.forEach(a=>{
+            //   this.ids.push(a.id)
+            // })
+          this.$router.push({
+          path: '/purchase_order_printing', 
+           query: { 'data': this.multipleSelection}
+        })
         }
       }
     },
     // 整页打印
     wholePrinting() {
-      if (this.form.carryTo === '已过期') {
+      if (this.form.quantityOverdue === '已过期') {
         this.$router.push('/purchase_not_included_overdue')
-      } else if (this.form.carryTo === '未过期') {
+      } else if (this.form.quantityOverdue === '未过期') {
         this.$router.push('/purchase_not_included')
       } else {
         this.$router.push('/purchase_order_printing')
       }
     },
     // 打印
-    printing() {
-      this.$router.push('/purchase_order_printing')
+    printing(scope) {
+       if (this.form.quantityOverdue === '已过期') {
+            this.$router.push({
+            path: '/purchase_not_included_overdue', 
+            query: { 'ids': scope.row.id }
+        })
+      } else if (this.form.quantityOverdue === '未过期') {
+            this.$router.push({
+            path: '/purchase_not_included', 
+            query: { 'ids': scope.row.id }
+        })
+      } else {
+        console.log("a",scope.row);
+            this.$router.push({
+            path: '/purchase_order_printing', 
+            query: { 'data': scope.row}
+            })
+      }
     },
     handleSelectionChange(row) {
       this.multipleSelection = row
     },
     // 删除
-    drop() {
-      this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
+    drop(scope) {
+      removeById(scope.row.id).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+          this.loadData()
+        } else {
+          this.$message.error('删除失败')
+        }
       })
     },
     // 编辑订单
-    modifyPur(row) {
+    modifyPur(scope) {
       this.purAddVisible = true
       this.titleType = '编辑'
+      getById(scope.row.id).then(res => {
+      // 加载供应商下拉框
+      supplierSelect().then(res => {
+        this.supplierFor = res
+      })
+        this.formAdd = res
+      })
     },
     // 新增订单
     purAdd() {
@@ -293,15 +349,31 @@ export default {
       supplierSelect().then(res => {
         this.supplierFor = res
       })
+      //加载客户名称下拉框
+      customerSelect().then(res=>{
+        this.customerFor=res
+      })
     },
     // 取消
-    purAddNo() {
+    purAddNo(purForm) {
       this.purAddVisible = false
       this.addTableData = []
+      this.$refs[purForm].resetFields()
     },
+    //保存
     purAddOk(purForm) {
       this.$refs[purForm].validate((valid) => {
         if (valid) {
+          console.log(this.formAdd);
+           add(this.formAdd).then(res => {
+            if (res) {
+              this.$message.success(this.titleType + '成功')
+              this.$refs[purForm].resetFields()
+              this.loadData()
+            } else {
+              this.$message.error(this.titleType + '失败')
+            }
+          })
           this.purAddVisible = false
         } else {
           return false

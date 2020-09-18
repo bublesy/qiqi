@@ -24,6 +24,6 @@ public class MysqlGenerator extends SuperGenerator {
 
     public static void main(String[] args) {
         MysqlGenerator aa = new MysqlGenerator();
-        aa.generator("supplier,supplier_cardboard_quotation,paperboard_data_setting");
+        aa.generator("purchase_order");
     }
 }

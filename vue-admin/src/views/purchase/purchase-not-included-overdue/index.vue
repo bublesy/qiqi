@@ -58,44 +58,20 @@ export default {
       tableData: [{
         taskNumber: '1'
       }],
-      form: {}
+      form: {},
+       ids:[],
     }
+  },
+  created(){
+     this.$route.query.ids
+     this.ids = this.$route.query.ids
+     this.getList()
   },
   methods: {
     // 返回
     toBack() {
       this.$router.push('/purchase_order')
     },
-    /**
-     * 表格合计
-     */
-    getSummaries(param) {
-      const { columns, data } = param
-      const sums = []
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '总计'
-          return
-        }
-        if (index === 2 || index === 3 || index === 4 || index === 5) {
-          const values = data.map(item => Number(item[column.property]))
-          if (!values.every(value => isNaN(value))) {
-            sums[index] = values.reduce((prev, curr) => {
-              const value = Number(curr)
-              if (!isNaN(value)) {
-                return prev + curr
-              } else {
-                return prev
-              }
-            }, 0)
-            sums[index] = parseFloat(sums[index] / 100).toFixed(2)
-          } else {
-            sums[index] = ''
-          }
-        }
-      })
-      return sums
-    }
   }
 }
 </script>

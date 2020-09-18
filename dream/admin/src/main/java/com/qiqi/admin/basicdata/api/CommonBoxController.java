@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.basicdata.dto.CommonBoxDTO;
 import com.qiqi.basicdata.entity.CommonBoxDO;
+import com.qiqi.basicdata.service.BoxTypeSettingService;
 import com.qiqi.basicdata.service.CommonBoxService;
 import com.qiqi.common.entity.PageEntity;
 import io.swagger.annotations.*;
@@ -35,14 +36,16 @@ public class CommonBoxController {
     @Resource
     private CommonBoxService commonBoxService;
 
+
+
     @ApiOperation(value = "获取常用箱资料管理(列表)")
     @PostMapping("/list")
     public PageEntity<CommonBoxDO> getCommonBoxPage(@RequestBody CommonBoxDTO query) {
         QueryWrapper<CommonBoxDO> queryWrapper = new QueryWrapper<CommonBoxDO>()
-                .eq(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
-                .eq(StringUtils.isNotBlank(query.getShorts()),"shorts",query.getShorts())
-                .eq(StringUtils.isNotBlank(query.getFullName()),"full_name",query.getFullName())
-                .eq(StringUtils.isNotBlank(query.getCommonBoxManagement()),"common_box_management",query.getCommonBoxManagement());
+                .like(StringUtils.isNotBlank(query.getCode()),"code",query.getCode())
+                .like(StringUtils.isNotBlank(query.getShorts()),"shorts",query.getShorts())
+                .like(StringUtils.isNotBlank(query.getFullName()),"full_name",query.getFullName())
+                .like(StringUtils.isNotBlank(query.getCommonBoxManagement()),"common_box_management",query.getCommonBoxManagement());
         IPage<CommonBoxDO> iPage = commonBoxService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
         //todo: 需要转Vo
 

@@ -21,7 +21,6 @@
         </el-form-item>
 
         <el-button size="mini" type="primary" @click="loadData()">查询</el-button>
-        <el-button type="primary" size="mini" @click="supCarQuoAdd">新增</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
       </el-form>
       <el-table
@@ -29,6 +28,7 @@
         :data="tableData"
         highlight-current-row
         style="width: 100%"
+        border=""
         align="center"
       >
         <el-table-column type="index" />
@@ -36,12 +36,16 @@
         <el-table-column property="abbreviation" label="简称" />
         <el-table-column property="fullName" label="全称" />
         <el-table-column property="quotationUnit" label="报价单位" />
+        <el-table-column property="name" label="纸板名称" />
+        <el-table-column property="ridgeType" label="楞型" />
         <el-table-column property="cardboardQuotation" label="纸板报价" />
         <el-table-column property="preferentialSetting" label="优惠设定" />
-        <el-table-column label="操作">
+        <el-table-column property="totalPrice" label="总价" />
+        <el-table-column label="操作" width="200px">
           <template slot-scope="scope">
+            <el-link type="primary" size="small" :disabled="scope.row.name!==null ?true : false" @click="supCarQuoAdd(scope)">新增纸板报价单</el-link>
+            <el-link type="primary" size="small" :disabled="scope.row.name!==null ?false : true" @click="modifyPur(scope)">编辑</el-link>
             <el-link type="danger" size="small" @click="drop(scope)">删除</el-link>
-            <el-link type="primary" size="small" @click="modifyPur(scope)">编辑</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -59,23 +63,16 @@
     <!-- 新增/编辑供应商纸板报价 -->
     <el-dialog :title="titleType+'供应商纸板报价'" :visible.sync="suppCarQuoAddVisible">
       <el-form ref="supForm" :rules="supRules" :inline="true" :model="formAdd" size="mini" label-width="120px">
-        <el-form-item label="供应商名称" prop="supplierId">
-          <el-select v-model="formAdd.supplierId" @change="supplierChange">
+
+        <el-form-item label="纸板资料" prop="pagerId">
+          <el-select v-model="formAdd.pagerId" size="mini">
             <el-option
-              v-for="item in supplierFor"
+              v-for="item in pagerFor"
               :key="item.id"
-              :label="item.fullName"
+              :label="item.name"
               :value="item.id"
             />
           </el-select>
-        </el-form-item>
-
-        <el-form-item label="编码" prop="code">
-          <el-input v-model="formAdd.code" disabled />
-        </el-form-item>
-
-        <el-form-item label="简称" prop="abbreviation">
-          <el-input v-model="formAdd.abbreviation" disabled />
         </el-form-item>
 
         <el-form-item label="报价单位" prop="quotationUnit">
@@ -88,6 +85,10 @@
 
         <el-form-item label="优惠设定" prop="preferentialSetting">
           <el-input v-model="formAdd.preferentialSetting" />
+        </el-form-item>
+
+        <el-form-item label="总价" prop="totalPrice">
+          <el-input v-model="formAdd.totalPrice" />
         </el-form-item>
 
       </el-form>
@@ -103,11 +104,11 @@
 import initData from '@/mixins/initData'
 import pinyin from 'js-pinyin'
 import { export2Excel } from '@/utils/common'
-import { supplierSelect } from '@/api/supplier-cardboard-quotation/cardboard'
 import { add } from '@/api/supplier-cardboard-quotation/cardboard'
 import { list } from '@/api/supplier-cardboard-quotation/cardboard'
 import { removeById } from '@/api/supplier-cardboard-quotation/cardboard'
 import { getById } from '@/api/supplier-cardboard-quotation/cardboard'
+import { pagerSelect } from '@/api/supplier-cardboard-quotation/cardboard'
 
 export default {
   name: 'SupplierCardboardQuotation',
@@ -122,7 +123,7 @@ export default {
       },
       titleType: '',
       supRules: {
-        supplierId: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        pagerId: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         quotationUnit: [{ required: true, message: '该输入为必填项', trigger: 'blur' }],
         cardboardQuotation: [{ required: true, message: '该输入为必填项', trigger: 'blur' }]
       },
@@ -131,22 +132,13 @@ export default {
         abbreviation: '',
         time: ''
       },
-      supplierFor: []
+      pagerFor: []
     }
   },
   created() {
     this.init()
   },
   methods: {
-    // 供应商改变 对应的编码和全称也改变
-    supplierChange() {
-      this.supplierFor.forEach(e => {
-        if (e.id === this.formAdd.supplierId) {
-          this.formAdd.code = e.code
-          this.formAdd.abbreviation = e.abbreviation
-        }
-      })
-    },
     loadData() {
       this.queryParams.code = this.form.code
       this.queryParams.abbreviation = this.form.abbreviation
@@ -186,32 +178,25 @@ export default {
     modifyPur(scope) {
       this.suppCarQuoAddVisible = true
       this.titleType = '编辑'
-
       getById(scope.row.id).then(res => {
-        // 加载供应商下拉框
-        supplierSelect().then(res => {
-          this.supplierFor = res
-          this.supplierFor.forEach(e => {
-            if (e.id === this.formAdd.supplierId) {
-              this.$set(this.formAdd, 'code', e.code)
-              this.$set(this.formAdd, 'abbreviation', e.abbreviation)
-            }
-          })
+        // 加载下拉框
+        pagerSelect().then(res => {
+          this.pagerFor = res
         })
         this.formAdd = res
       })
     },
     // 新增供应商
-    supCarQuoAdd() {
+    supCarQuoAdd(scope) {
       this.suppCarQuoAddVisible = true
       this.titleType = '新增'
       this.formAdd = {}
-      // 加载供应商下拉框
-      supplierSelect().then(res => {
-        this.supplierFor = res
+      this.formAdd.id = scope.row.id
+      pagerSelect().then(res => {
+        this.pagerFor = res
       })
     },
-    // 新增供应商保存
+    // 新增编辑/供应商保存
     suppCarQuoAddOk(supForm) {
       this.$refs[supForm].validate((valid) => {
         if (valid) {
