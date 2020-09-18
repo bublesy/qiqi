@@ -12,11 +12,11 @@
       <el-form-item label="客户名称:">
         <el-input v-model="form.name" />
       </el-form-item>
-      <el-form-item label="任务编号:">
+      <el-form-item label="出货单号:">
         <el-input v-model="form.no" />
       </el-form-item>
       <el-form-item label="">
-        <el-button size="mini" type="primary">查询</el-button>
+        <el-button size="mini" type="primary" @click="query">查询</el-button>
         <el-button type="warning" size="mini" @click="print">批量打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
       </el-form-item>
@@ -34,13 +34,13 @@
     >
       <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
-      <el-table-column prop="name" label="出货日期" width="120" />
-      <el-table-column prop="name" label="出货单号" width="120" />
+      <el-table-column prop="" label="出货日期" width="120" />
+      <el-table-column prop="" label="出货单号" width="120" />
       <el-table-column prop="name" label="箱型" width="120" />
-      <el-table-column prop="name" label="出货数量" width="120" />
-      <el-table-column prop="name" label="单价" width="120" />
-      <el-table-column prop="name" label="金额" width="120" />
-      <el-table-column prop="name" label="回签状态" width="120" />
+      <el-table-column prop="" label="出货数量" width="120" />
+      <el-table-column prop="perPrice" label="单价" width="120" />
+      <el-table-column prop="money" label="金额" width="120" />
+      <el-table-column prop="" label="回签状态" width="120" />
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="singlePrint(scope.row)">打印</el-button>
@@ -50,7 +50,7 @@
     <el-pagination
       :current-page="form.page"
       :page-sizes="[10, 20, 30, 40]"
-      :page-size="form.size"
+      :page-size="form.count"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
       @size-change="handleSizeChange"
@@ -70,29 +70,32 @@ export default {
       total: 0,
       form: {
         page: 1,
-        size: 10
+        count: 10
       },
       select: []
     }
   },
   created() {
     this.initTable()
-    this.tableData.push({ name: 'hc' })
     var date = new Date()
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   },
   methods: {
+    query() {
+      this.initTable()
+    },
     initTable() {
       getShipDaily(this.form).then(res => {
-        console.log(res)
+        this.tableData = res.list
+        this.total = res.total
       })
     },
     handleSizeChange(size) {
-      this.size = size
+      this.form.count = size
       this.initTable()
     },
     handleCurrentChange(page) {
-      this.page = page
+      this.form.page = page
       this.initTable()
     },
     toExcel() {
