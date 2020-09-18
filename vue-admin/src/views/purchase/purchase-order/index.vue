@@ -110,46 +110,47 @@
                value-format="yyyy-MM-dd"
               type="date"
               placeholder="选择日期"
+              disabled
             />
           </el-form-item>
 
           <el-form-item label="客户名称" prop="customerName">
-            <el-select v-model="formAdd.customerName" size="mini">
+            <el-select v-model="formAdd.customerName" size="mini" @change="customerSelect">
               <el-option
                 v-for="item in customerFor"
                 :key="item.id"
                 :label="item.name"
-                :value="item.name"
+                :value="item.id"
               />
             </el-select>
           </el-form-item>
 
           <el-form-item label="任务编号">
-            <el-input v-model="formAdd.taskNumber" />
+            <el-input v-model="formAdd.taskNumber" disabled />
           </el-form-item>
 
           <el-form-item label="楞型">
-            <el-input v-model="formAdd.ridgeType" />
+            <el-input v-model="formAdd.ridgeType" disabled />
           </el-form-item>
 
           <el-form-item label="分压规格">
-            <el-input v-model="formAdd.parPreSpe" />
+            <el-input v-model="formAdd.parPreSpe" disabled/>
           </el-form-item>
 
           <el-form-item label="材质">
-            <el-input v-model="formAdd.material" />
+            <el-input v-model="formAdd.material" disabled/>
           </el-form-item>
 
           <el-form-item label="纸长">
-            <el-input v-model="formAdd.paperLength" />
+            <el-input v-model="formAdd.paperLength" disabled />
           </el-form-item>
 
           <el-form-item label="纸宽">
-            <el-input v-model="formAdd.paperWidth" />
+            <el-input v-model="formAdd.paperWidth"  disabled/>
           </el-form-item>
 
           <el-form-item label="订单数量">
-            <el-input v-model="formAdd.orderQuantity" />
+            <el-input v-model="formAdd.orderQuantity" disabled/>
           </el-form-item>
 
           <el-form-item label="采购数量">
@@ -157,7 +158,7 @@
           </el-form-item>
 
           <el-form-item label="配料面积">
-            <el-input v-model="formAdd.batching" />
+            <el-input v-model="formAdd.batching" disabled/>
           </el-form-item>
 
           <el-form-item label="平方价">
@@ -165,15 +166,15 @@
           </el-form-item>
 
           <el-form-item label="单价">
-            <el-input v-model="formAdd.unitPrice" />
+            <el-input v-model="formAdd.unitPrice" disabled/>
           </el-form-item>
 
           <el-form-item label="金额">
-            <el-input v-model="formAdd.amount" />
+            <el-input-number v-model="formAdd.amount" :controls="false" disabled/>
           </el-form-item>
 
           <el-form-item label="单位">
-            <el-input v-model="formAdd.unit" />
+            <el-input v-model="formAdd.unit" disabled/>
           </el-form-item>
 
           <el-form-item label="备注">
@@ -236,6 +237,26 @@ export default {
     this.init()
   },
   methods: {
+    //选完客户名称 回掉信息
+    customerSelect(){
+        this.customerFor.forEach(a => {
+          console.log("a",this.formAdd.customerName);
+          console.log(a.id );
+        if (a.id === this.formAdd.customerName) {
+          this.formAdd.deliveryDate = a.deliveryDate
+            this.formAdd.taskNumber = a.no
+               this.formAdd.ridgeType = a.stare
+               this.formAdd.parPreSpe = a.partialPressure
+               this.formAdd.material = a.material
+               this.formAdd.batching = a.paperArea
+               this.formAdd.paperLength = a.paperLength
+               this.formAdd.paperWidth = a.paperWidth
+               this.formAdd.orderQuantity = a.orderNum
+               this.formAdd.unitPrice = a.perPrice
+               this.formAdd.unit = a.unit
+        }
+      })
+    },
     loadData(){
       this.queryParams.customerName = this.form.customerName
       this.queryParams.quantityOverdue = this.form.quantityOverdue
@@ -352,6 +373,7 @@ export default {
       //加载客户名称下拉框
       customerSelect().then(res=>{
         this.customerFor=res
+        console.log(res);
       })
     },
     // 取消
