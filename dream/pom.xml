@@ -36,11 +36,12 @@
 
     <dependencies>
 
-<!--        <dependency>-->
-<!--            <groupId>org.csource</groupId>-->
-<!--            <artifactId>fastdfs-client-java</artifactId>-->
-<!--            <version>1.29-SNAPSHOT</version>-->
-<!--        </dependency>-->
+        <!-- FastDFS依赖 -->
+        <dependency>
+            <groupId>com.github.tobato</groupId>
+            <artifactId>fastdfs-client</artifactId>
+            <version>1.26.5</version>
+        </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
