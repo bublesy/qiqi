@@ -1,9 +1,8 @@
-package com.qiqi.admin.supplier.api;
+package com.qiqi.admin.basicdata.api;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.qiqi.admin.supplier.model.PaperboardDataSettingVO;
-import com.qiqi.basicdata.service.BoxTypeSettingService;
-import com.qiqi.supplier.entity.PaperboardDataSettingDO;
+import com.qiqi.admin.basicdata.model.PaperboardDataSettingVO;
+import com.qiqi.basicdata.entity.PaperboardDataSettingDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -12,7 +11,7 @@ import com.qiqi.common.entity.PageEntity;
 import io.swagger.annotations.*;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.qiqi.supplier.service.PaperboardDataSettingService;
+import com.qiqi.basicdata.service.PaperboardDataSettingService;
 
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;

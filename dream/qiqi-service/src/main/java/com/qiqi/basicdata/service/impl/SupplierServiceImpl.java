@@ -1,8 +1,8 @@
-package com.qiqi.supplier.service.impl;
+package com.qiqi.basicdata.service.impl;
 
-import com.qiqi.supplier.entity.SupplierDO;
-import com.qiqi.supplier.mapper.SupplierMapper;
-import com.qiqi.supplier.service.SupplierService;
+import com.qiqi.basicdata.entity.SupplierDO;
+import com.qiqi.basicdata.mapper.SupplierMapper;
+import com.qiqi.basicdata.service.SupplierService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

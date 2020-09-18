@@ -196,6 +196,7 @@ export default {
       console.log(scope.$index)
       this.supplierAddVisible = true
       this.titleType = '编辑'
+      this.formAdd.id = scope.row.id
       getById(scope.row.id).then(res => {
         this.formAdd = res
       })

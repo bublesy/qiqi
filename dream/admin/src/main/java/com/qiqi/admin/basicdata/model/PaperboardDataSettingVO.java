@@ -1,4 +1,4 @@
-package com.qiqi.admin.supplier.model;
+package com.qiqi.admin.basicdata.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;

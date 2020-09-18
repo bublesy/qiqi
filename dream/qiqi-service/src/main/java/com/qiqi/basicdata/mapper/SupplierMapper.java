@@ -1,6 +1,6 @@
-package com.qiqi.supplier.mapper;
+package com.qiqi.basicdata.mapper;
 
-import com.qiqi.supplier.entity.SupplierDO;
+import com.qiqi.basicdata.entity.SupplierDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
