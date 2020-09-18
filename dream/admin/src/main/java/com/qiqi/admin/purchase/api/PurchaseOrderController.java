@@ -1,5 +1,6 @@
 package com.qiqi.admin.purchase.api;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.qiqi.admin.basicdata.model.SupplierCardboardQuotationVO;
 import com.qiqi.admin.basicdata.model.SupplierVO;
@@ -11,6 +12,10 @@ import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.sys.entity.SysUserDO;
+import com.qiqi.sys.service.SysUserService;
+import com.qiqi.warehouse.entity.WarehouseDO;
+import com.qiqi.warehouse.service.WarehouseService;
 import io.swagger.annotations.*;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +42,10 @@ public class PurchaseOrderController {
 
     @Resource
     private PurchaseOrderService purchaseOrderService;
+    @Resource
+    private SysUserService sysUserService;
+    @Resource
+    private WarehouseService warehouseService;
 
     @ApiOperation(value = "获取采购单(列表)")
     @ApiImplicitParams({
@@ -55,12 +64,12 @@ public class PurchaseOrderController {
         wrapper.like(!ObjectUtils.isEmpty(time),PurchaseOrderDO::getCreatedTime,time);
         //设置日期格式
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        // new Date()为获取当前系统时间，也可使用当前时间戳
+        // new Date()为获取前系统时间，也可使用当前时间戳
         String date = df.format(new Date());
         if (quantityOverdue.equals("已过期")){
-            wrapper.lt(!ObjectUtils.isEmpty(quantityOverdue),PurchaseOrderDO::getDeliveryDate,date);
+            wrapper.le(!ObjectUtils.isEmpty(quantityOverdue),PurchaseOrderDO::getDeliveryDate,date);
         }else{
-            wrapper.gt(!ObjectUtils.isEmpty(quantityOverdue),PurchaseOrderDO::getDeliveryDate,date);
+            wrapper.ge(!ObjectUtils.isEmpty(quantityOverdue),PurchaseOrderDO::getDeliveryDate,date);
         }
         IPage<PurchaseOrderDO> iPage = purchaseOrderService.page(new Page<>(page,size),wrapper);
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<PurchaseOrderVO>>() {}, iPage.getRecords()));
@@ -84,6 +93,17 @@ public class PurchaseOrderController {
         return purchaseOrderService.getById(id);
     }
 
+    @ApiOperation(value = "获取名字(单个)")
+    @GetMapping("/getNameById/{id}")
+    public String getNameById(@PathVariable Long id) {
+        PurchaseOrderDO byId = purchaseOrderService.getById(id);
+        Long ids = byId.getCreatedBy();
+        SysUserDO users = sysUserService.getById(ids);
+        String nickname = users.getNickname();
+        return nickname;
+    }
+
+
     @ApiOperation(value = "修改采购单")
     @PutMapping("")
     public Boolean updatePurchaseOrder(@RequestBody PurchaseOrderDO purchaseOrderDO) {
@@ -93,11 +113,18 @@ public class PurchaseOrderController {
     @ApiOperation(value = "新增采购单")
     @PostMapping("/add")
     public Boolean savePurchaseOrder(@RequestBody PurchaseOrderDO purchaseOrderDO) {
+        WarehouseDO warehouseDO = new WarehouseDO();
+        BeanUtil.copyProperties(purchaseOrderDO,warehouseDO);
         //设置日期格式
         SimpleDateFormat df = new SimpleDateFormat("yyMMddHHmmssms");
         // new Date()为获取当前系统时间，也可使用当前时间戳
         String no = df.format(new Date());
+        SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd MM:ss");
         purchaseOrderDO.setDocumentsNo(no);
+        warehouseDO.setWarehouseNo(purchaseOrderDO.getDocumentsNo());
+        warehouseDO.setWarehousingDate(df2.format(new Date()));
+        warehouseDO.setDrawerId(purchaseOrderDO.getCreatedBy());
+        warehouseService.saveOrUpdate(warehouseDO);
         return purchaseOrderService.saveOrUpdate(purchaseOrderDO);
     }
 

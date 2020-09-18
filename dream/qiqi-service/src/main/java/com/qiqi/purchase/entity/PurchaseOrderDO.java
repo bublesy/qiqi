@@ -29,6 +29,8 @@ public class PurchaseOrderDO extends BaseModel {
 
     private String taskNumber;
 
+    private Boolean product;
+
     /**
      * 计价方式
      */

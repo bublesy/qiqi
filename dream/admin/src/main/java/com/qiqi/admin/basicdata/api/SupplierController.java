@@ -10,14 +10,21 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.basicdata.service.SupplierCardboardQuotationService;
+import com.qiqi.security.util.JwtTokenUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.qiqi.basicdata.service.SupplierService;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -37,6 +44,8 @@ public class SupplierController {
     private SupplierService supplierService;
     @Resource
     private SupplierCardboardQuotationService supplierCardboardQuotationService;
+    @Resource
+    private JwtTokenUtil jwtTokenUtil;
 
     @ApiOperation(value = "获取供应商(列表)")
     @ApiImplicitParams({
@@ -96,4 +105,6 @@ public class SupplierController {
     public Boolean deleteSupplierById(@PathVariable Long id) {
         return supplierService.removeById(id);
     }
+
+
 }
