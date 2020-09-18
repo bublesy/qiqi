@@ -40,7 +40,7 @@ public class PrintLayoutController {
     }
 
     @ApiOperation(value = "获取印刷版面(列表)")
-    @PostMapping("")
+    @PostMapping("all")
     public PageEntity<PrintLayoutDO> getPrintLayoutPage(@RequestBody PrintLayoutDTO query) {
         QueryWrapper<PrintLayoutDO> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtils.isNoneBlank(query.getName()),"name",query.getName());

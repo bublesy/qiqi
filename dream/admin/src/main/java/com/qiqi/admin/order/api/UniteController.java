@@ -39,7 +39,7 @@ public class UniteController {
     }
 
     @ApiOperation(value = "获取结合(列表)")
-    @PostMapping("")
+    @PostMapping("all")
     public PageEntity<UniteDO> getUnitePage(@RequestBody UniteDTO query) {
         QueryWrapper<UniteDO> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtils.isNotBlank(query.getName()),"name",query.getName());

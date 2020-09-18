@@ -40,7 +40,7 @@ public class CombinationController {
     }
 
     @ApiOperation(value = "获取组合(列表)")
-    @PostMapping("All")
+    @PostMapping("all")
     public PageEntity<CombinationDO> getCombinationPage(@RequestBody CombinationDTO query) {
         QueryWrapper<CombinationDO> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtils.isNotBlank(query.getName()),"name",query.getName());

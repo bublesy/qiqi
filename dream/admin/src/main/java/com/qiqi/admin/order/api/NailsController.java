@@ -35,7 +35,7 @@ public class NailsController {
     private NailsService nailsService;
 
     @ApiOperation(value = "获取钉类(列表)")
-    @PostMapping("")
+    @PostMapping("all")
     public PageEntity<NailsDO> getNailsPage(@RequestBody NailsDTO query) {
         IPage<NailsDO> iPage = nailsService.page(new Page<>(query.getPage(),query.getCount()));
         //todo: 需要转Vo

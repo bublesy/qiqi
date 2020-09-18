@@ -39,7 +39,7 @@ public class ColourController {
     }
 
     @ApiOperation(value = "获取颜色(列表)")
-    @PostMapping("/All")
+    @PostMapping("/all")
     public PageEntity<ColourDO> getColourPage(@RequestBody ColourDTO query) {
         QueryWrapper<ColourDO> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtils.isNoneBlank(query.getName()),"name",query.getName());

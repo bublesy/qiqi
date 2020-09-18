@@ -41,7 +41,7 @@ public class TextureOfMaterialController {
     }
 
     @ApiOperation(value = "获取材质(列表)")
-    @PostMapping("")
+    @PostMapping("all")
     public PageEntity<TextureOfMaterialDO> getTextureOfMaterialPage(@RequestBody TextureOfMaterialDTO query) {
         QueryWrapper<TextureOfMaterialDO> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtils.isNoneBlank(query.getName()),"name",query.getName());
