@@ -59,14 +59,14 @@ export default {
         taskNumber: '1'
       }],
       form: {},
-       ids:[],
+      ids: []
     }
   },
   methods: {
     // 返回
     toBack() {
       this.$router.push('/purchase_order')
-    },
+    }
   }
 }
 </script>
