@@ -1,5 +1,9 @@
 package com.qiqi.admin.order.api;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.qiqi.order.dto.ColourDTO;
+import com.qiqi.order.dto.TextureOfMaterialDTO;
+import com.qiqi.order.entity.ColourDO;
 import com.qiqi.order.entity.TextureOfMaterialDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
@@ -7,6 +11,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
 import io.swagger.annotations.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.qiqi.order.service.TextureOfMaterialService;
 
@@ -36,16 +41,11 @@ public class TextureOfMaterialController {
     }
 
     @ApiOperation(value = "获取材质(列表)")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query",name = "page",value = "当前页",required = true,dataType = "Long"),
-            @ApiImplicitParam(paramType = "query", name = "count", value = "当前页个数",required = true,dataType = "Long")
-    })
-    @GetMapping("")
-    public PageEntity<TextureOfMaterialDO> getTextureOfMaterialPage(@RequestParam(value = "page",defaultValue = "1") Long page,
-                                        @RequestParam(value = "count",defaultValue = "10") Long count) {
-        IPage<TextureOfMaterialDO> iPage = textureOfMaterialService.page(new Page<>(page,count));
-        //todo: 需要转Vo
-
+    @PostMapping("")
+    public PageEntity<TextureOfMaterialDO> getTextureOfMaterialPage(@RequestBody TextureOfMaterialDTO query) {
+        QueryWrapper<TextureOfMaterialDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like(StringUtils.isNoneBlank(query.getName()),"name",query.getName());
+        IPage<TextureOfMaterialDO> iPage = textureOfMaterialService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<TextureOfMaterialDO>>() {}, iPage.getRecords()));
     }
 

@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -77,7 +78,8 @@ public class DreamSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         //核心过滤器配置
         web.ignoring().antMatchers(
-                "/swagger-ui.html", "/webjars/springfox-swagger-ui/**", "/v2/api-docs/**", "/swagger-resources/**"
+                "/swagger-ui.html", "/webjars/springfox-swagger-ui/**", "/v2/api-docs/**", "/swagger-resources/**",
+                "/test"
         );
     }
 
@@ -91,6 +93,11 @@ public class DreamSecurityConfig extends WebSecurityConfigurerAdapter {
         //这句很关键，重用WebSecurityConfigurerAdapter配置的AuthenticationManager，不然要自己组装AuthenticationManager
         filter.setAuthenticationManager(authenticationManagerBean());
         return filter;
+    }
+
+    @Bean
+    public BCryptPasswordEncoder encoding(){
+        return new BCryptPasswordEncoder();
     }
 
 }
