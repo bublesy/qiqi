@@ -37,6 +37,8 @@ public class SupplierCardboardQuotationController {
     private SupplierService supplierService;
     @Resource
     private PaperboardDataSettingService paperboardDataSettingService;
+    @Resource
+
 
     @ApiOperation(value = "获取供应商纸板报价(列表)")
     @ApiImplicitParams({
@@ -109,4 +111,18 @@ public class SupplierCardboardQuotationController {
     public List supplierSelect(){
         return supplierService.list();
     }
+
+    /**
+     * 下拉框
+     * @param
+     * @return {@link List}
+     * @author sun
+     * @time 2020/9/15 14:15
+     */
+    @GetMapping("/customerSelect")
+    public List customerSelect(){
+        return supplierService.list();
+    }
+
+
 }

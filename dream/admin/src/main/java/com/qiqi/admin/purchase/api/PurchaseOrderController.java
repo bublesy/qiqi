@@ -1,5 +1,10 @@
 package com.qiqi.admin.purchase.api;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.qiqi.admin.basicdata.model.SupplierCardboardQuotationVO;
+import com.qiqi.admin.basicdata.model.SupplierVO;
+import com.qiqi.admin.purchase.model.PurchaseOrderVO;
+import com.qiqi.basicdata.entity.SupplierDO;
 import com.qiqi.purchase.entity.PurchaseOrderDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
@@ -7,11 +12,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
 import io.swagger.annotations.*;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.qiqi.purchase.service.PurchaseOrderService;
 
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,14 +43,38 @@ public class PurchaseOrderController {
             @ApiImplicitParam(paramType = "query",name = "page",value = "当前页",required = true,dataType = "Long"),
             @ApiImplicitParam(paramType = "query", name = "count", value = "当前页个数",required = true,dataType = "Long")
     })
-    @GetMapping("")
-    public PageEntity<PurchaseOrderDO> getPurchaseOrderPage(@RequestParam(value = "page",defaultValue = "1") Long page,
-                                        @RequestParam(value = "count",defaultValue = "10") Long count) {
-        IPage<PurchaseOrderDO> iPage = purchaseOrderService.page(new Page<>(page,count));
+    @GetMapping("/list")
+    public PageEntity<PurchaseOrderVO> getPurchaseOrderPage(@RequestParam(value = "page",defaultValue = "1") Long page,
+                                                            @RequestParam(value = "size",defaultValue = "10") Long size,
+                                                            @RequestParam(value = "customerName") String customerName,
+                                                            @RequestParam(value = "quantityOverdue") String quantityOverdue,
+                                                            @RequestParam(value = "time") String time) {
         //todo: 需要转Vo
-
-        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<PurchaseOrderDO>>() {}, iPage.getRecords()));
+        LambdaQueryWrapper<PurchaseOrderDO> wrapper = new LambdaQueryWrapper<PurchaseOrderDO>();
+        wrapper.like(!ObjectUtils.isEmpty(customerName),PurchaseOrderDO::getCustomerName,customerName);
+        wrapper.like(!ObjectUtils.isEmpty(time),PurchaseOrderDO::getCreatedTime,time);
+        //设置日期格式
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        // new Date()为获取当前系统时间，也可使用当前时间戳
+        String date = df.format(new Date());
+        if (quantityOverdue.equals("已过期")){
+            wrapper.lt(!ObjectUtils.isEmpty(quantityOverdue),PurchaseOrderDO::getDeliveryDate,date);
+        }else{
+            wrapper.gt(!ObjectUtils.isEmpty(quantityOverdue),PurchaseOrderDO::getDeliveryDate,date);
+        }
+        IPage<PurchaseOrderDO> iPage = purchaseOrderService.page(new Page<>(page,size),wrapper);
+        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<PurchaseOrderVO>>() {}, iPage.getRecords()));
     }
+
+    @PostMapping("/listByIds")
+    public PageEntity<PurchaseOrderVO> listByIds(@RequestParam(value = "page",defaultValue = "1") Long page,
+                                                 @RequestParam(value = "size",defaultValue = "10") Long size,
+                                                 @RequestParam(value = "ids") List<Long> ids) {
+        //todo: 需要转Vo
+        IPage iPage = purchaseOrderService.SuppAndPurList(new Page<>(page,size),ids);
+        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<PurchaseOrderVO>>() {}, iPage.getRecords()));
+    }
+
 
     @ApiOperation(value = "获取采购单(单个)")
     @GetMapping("/{id}")
@@ -61,6 +93,11 @@ public class PurchaseOrderController {
     @ApiOperation(value = "新增采购单")
     @PostMapping("/add")
     public Boolean savePurchaseOrder(@RequestBody PurchaseOrderDO purchaseOrderDO) {
+        //设置日期格式
+        SimpleDateFormat df = new SimpleDateFormat("yyMMddHHmmssms");
+        // new Date()为获取当前系统时间，也可使用当前时间戳
+        String no = df.format(new Date());
+        purchaseOrderDO.setDocumentsNo(no);
         return purchaseOrderService.saveOrUpdate(purchaseOrderDO);
     }
 

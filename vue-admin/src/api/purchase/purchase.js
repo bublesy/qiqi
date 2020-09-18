@@ -5,14 +5,18 @@ export function add(data) {
 }
 
 export function list(params) {
-  return request({ url: '/supplier/list', method: 'get', params: params })
+  return request({ url: '/purchase/order/list', method: 'get', params: params })
+}
+
+export function listByIds(params) {
+  return request({ url: '/purchase/order/listByIds', method: 'post', params: params })
 }
 
 export function removeById(id) {
-  return request({ url: '/supplier/' + id, method: 'delete' })
+  return request({ url: '/purchase/order/' + id, method: 'delete' })
 }
 
 export function getById(id) {
-  return request({ url: '/supplier/' + id, method: 'get' })
+  return request({ url: '/purchase/order/' + id, method: 'get' })
 }
 

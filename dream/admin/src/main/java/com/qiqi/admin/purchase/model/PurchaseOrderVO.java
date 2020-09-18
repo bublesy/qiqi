@@ -1,34 +1,26 @@
-package com.qiqi.purchase.entity;
+package com.qiqi.admin.purchase.model;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.qiqi.common.base.BaseModel;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.time.LocalDateTime;
 
 /**
- * <p>
- * 采购单
- * </p>
- *
- * @author QiQiDream
- * @since 2020-09-17
+ * @author sun
+ * @time 2020/9/15 11:45
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@TableName("purchase_order")
-public class PurchaseOrderDO extends BaseModel {
-
-    private static final long serialVersionUID=1L;
-
+public class PurchaseOrderVO {
+    private String fullName;
+    private String fax;
+    private String mobilePhone;
     /**
      * 供应商id
      */
     private String supplierId;
 
-    private String taskNumber;
 
+    private String taskNumber;
     /**
      * 计价方式
      */
@@ -39,16 +31,16 @@ public class PurchaseOrderDO extends BaseModel {
      * 开单日期
      */
     @TableField("billingDate")
-    private String billingDate;
+    private LocalDateTime billingDate;
 
     /**
      * 交货日期
      */
     @TableField("deliveryDate")
-    private String deliveryDate;
+    private LocalDateTime deliveryDate;
 
     /**
-     * 客户名称
+     * 客户id
      */
     private String customerName;
 
@@ -62,6 +54,8 @@ public class PurchaseOrderDO extends BaseModel {
      * 材质
      */
     private String material;
+
+    private String documentsNo;
 
     /**
      * 分压规格
@@ -119,12 +113,11 @@ public class PurchaseOrderDO extends BaseModel {
      * 单位
      */
     private String unit;
-    private String documentsNo;
 
     /**
      * 备注
      */
     private String remark;
 
-
+    private Long id;
 }
