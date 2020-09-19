@@ -129,6 +129,18 @@
             <el-input v-model="formAdd.taskNumber" disabled />
           </el-form-item>
 
+          <el-form-item label="是否成品">
+            <el-checkbox v-model="formAdd.isProduct" disabled />
+          </el-form-item>
+
+          <el-form-item v-if="!formAdd.isProduct" label="仓位">
+            <el-input v-model="formAdd.position" />
+          </el-form-item>
+
+          <el-form-item v-if="formAdd.isProduct" label="成品仓位">
+            <el-input v-model="formAdd.endProductPos" />
+          </el-form-item>
+
           <el-form-item label="楞型">
             <el-input v-model="formAdd.ridgeType" disabled />
           </el-form-item>
@@ -149,8 +161,16 @@
             <el-input v-model="formAdd.paperWidth" disabled />
           </el-form-item>
 
+          <el-form-item label="高">
+            <el-input v-model="formAdd.paperHeight" disabled />
+          </el-form-item>
+
           <el-form-item label="订单数量">
             <el-input v-model="formAdd.orderQuantity" disabled />
+          </el-form-item>
+
+          <el-form-item label="箱型">
+            <el-input v-model="formAdd.boxType" disabled />
           </el-form-item>
 
           <el-form-item label="采购数量">
@@ -161,12 +181,16 @@
             <el-input v-model="formAdd.batching" disabled />
           </el-form-item>
 
+          <el-form-item label="款号">
+            <el-input v-model="formAdd.modelNo" disabled />
+          </el-form-item>
+
           <el-form-item label="平方价">
             <el-input v-model="formAdd.squarePrice" />
           </el-form-item>
 
           <el-form-item label="单价">
-            <el-input v-model="formAdd.unitPrice" disabled />
+            <el-input v-model="formAdd.unitPrice" />
           </el-form-item>
 
           <el-form-item label="金额">
@@ -203,6 +227,7 @@ import { add } from '@/api/purchase/purchase'
 import { list } from '@/api/purchase/purchase'
 import { getById } from '@/api/purchase/purchase'
 import { removeById } from '@/api/purchase/purchase'
+import { getCustomerById } from '@/api/basedata/customer'
 
 export default {
   name: 'PurchaseOrder',
@@ -230,7 +255,8 @@ export default {
         customerName: '',
         quantityOverdue: '',
         time: ''
-      }
+      },
+      orderDate: ''
     }
   },
   created() {
@@ -241,10 +267,11 @@ export default {
     purchaseSelect() {
       this.formAdd.amount = this.formAdd.unitPrice * this.formAdd.purchaseQuantity
     },
-    // 选完客户名称 回掉信息
+    // 选完客户名称 回调信息
     customerSelect() {
       this.customerFor.forEach(a => {
         if (a.id === this.formAdd.customerName) {
+          console.log(a)
           this.formAdd.deliveryDate = a.deliveryDate
           this.formAdd.taskNumber = a.no
           this.formAdd.ridgeType = a.stare
@@ -254,8 +281,14 @@ export default {
           this.formAdd.paperLength = a.paperLength
           this.formAdd.paperWidth = a.paperWidth
           this.formAdd.orderQuantity = a.orderNum
-          this.formAdd.unitPrice = a.perPrice
           this.formAdd.unit = a.unit
+          this.orderDate = a.orderDate
+          this.formAdd.modelNo = a.modelNo
+          this.formAdd.isProduct = a.isProduct
+          this.formAdd.modelNo = a.modelNo
+          this.formAdd.paperHeight = a.height
+          this.formAdd.boxType = a.boxType
+          this.formAdd.orderId = a.id
         }
       })
     },
@@ -269,6 +302,12 @@ export default {
       list(this.queryParams).then(res => {
         this.tableData = res.list
         this.pagination.total = res.total
+        this.tableData.forEach(a => {
+          getCustomerById(a.customerName).then(data => {
+            // a.customerName = data.name
+            this.$set(a, 'customerName', data.name)
+          })
+        })
       })
     },
     // 导出
@@ -282,25 +321,23 @@ export default {
     // 选择打印
     selectPrinting() {
       if (this.form.quantityOverdue === '已过期') {
-        // this.$router.push('/purchase_not_included_overdue')
         this.$router.push({
-          // eslint-disable-next-line no-irregular-whitespace
-          path: '/purchase_not_included_overdue',
-          // eslint-disable-next-line no-irregular-whitespace
-          query: { 'ids': this.multipleSelection }
+          path: '/purchase_not_included_overdue',
+          query: { 'data': this.multipleSelection }
         })
       } else if (this.form.quantityOverdue === '未过期') {
-        this.$router.push('/purchase_not_included')
+        this.$router.push({
+          path: '/purchase_not_included',
+          query: { 'data': this.multipleSelection }
+        })
       } else {
         if (this.multipleSelection.length === 0) {
           this.$message.error('请选择打印的内容！！！')
           return
         } else {
           this.$router.push({
-            // eslint-disable-next-line no-irregular-whitespace
-            path: '/purchase_order_printing',
-            // eslint-disable-next-line no-irregular-whitespace
-            query: { 'data': this.multipleSelection }
+            path: '/purchase_order_printing',
+            query: { 'data': this.multipleSelection }
           })
         }
       }
@@ -308,36 +345,43 @@ export default {
     // 整页打印
     wholePrinting() {
       if (this.form.quantityOverdue === '已过期') {
-        this.$router.push('/purchase_not_included_overdue')
+        this.$router.push({
+          path: '/purchase_not_included_overdue',
+          query: { 'data': this.tableData }
+        })
       } else if (this.form.quantityOverdue === '未过期') {
-        this.$router.push('/purchase_not_included')
+        this.$router.push({
+          path: '/purchase_not_included',
+          query: { 'data': this.tableData }
+        })
       } else {
-        this.$router.push('/purchase_order_printing')
+        this.$router.push({
+          path: '/purchase_order_printing',
+          query: { 'data': this.tableData }
+        })
       }
     },
     // 打印
     printing(scope) {
       if (this.form.quantityOverdue === '已过期') {
+        scope.row.orderDate = this.orderDate
+        this.multipleSelection.push(scope.row)
         this.$router.push({
-          // eslint-disable-next-line no-irregular-whitespace
-          path: '/purchase_not_included_overdue',
-          // eslint-disable-next-line no-irregular-whitespace
-          query: { 'ids': scope.row.id }
+          path: '/purchase_not_included_overdue',
+          query: { 'data': this.multipleSelection }
         })
       } else if (this.form.quantityOverdue === '未过期') {
+        scope.row.orderDate = this.orderDate
+        this.multipleSelection.push(scope.row)
         this.$router.push({
-          // eslint-disable-next-line no-irregular-whitespace
-          path: '/purchase_not_included',
-          // eslint-disable-next-line no-irregular-whitespace
-          query: { 'ids': scope.row.id }
+          path: '/purchase_not_included',
+          query: { 'data': this.multipleSelection }
         })
       } else {
         this.multipleSelection.push(scope.row)
         this.$router.push({
-          // eslint-disable-next-line no-irregular-whitespace
-          path: '/purchase_order_printing',
-          // eslint-disable-next-line no-irregular-whitespace
-          query: { 'data': this.multipleSelection }
+          path: '/purchase_order_printing',
+          query: { 'data': this.multipleSelection }
         })
       }
     },
@@ -380,7 +424,6 @@ export default {
       // 加载客户名称下拉框
       customerSelect().then(res => {
         this.customerFor = res
-        console.log(res)
       })
     },
     // 取消

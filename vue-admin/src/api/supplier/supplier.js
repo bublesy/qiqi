@@ -16,3 +16,7 @@ export function getById(id) {
   return request({ url: '/supplier/' + id, method: 'get' })
 }
 
+export function getSupplierById(id) {
+  return request({ url: '/supplier/' + id, method: 'get' })
+}
+

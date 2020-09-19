@@ -20,3 +20,11 @@ export function getById(id) {
   return request({ url: '/purchase/order/' + id, method: 'get' })
 }
 
+export function getNameById(id) {
+  return request({ url: '/purchase/order/getNameById/' + id, method: 'get' })
+}
+
+export function getNamesById(id) {
+  return request({ url: '/purchase/order/getNamesById/' + id, method: 'get' })
+}
+

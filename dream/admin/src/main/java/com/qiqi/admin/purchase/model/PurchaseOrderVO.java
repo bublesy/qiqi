@@ -19,6 +19,7 @@ public class PurchaseOrderVO {
      */
     private String supplierId;
 
+    private Boolean isProduct;
 
     private String taskNumber;
     /**
