@@ -40,10 +40,16 @@
       <el-table-column prop="sendNum" label="出货数量" width="120" />
       <el-table-column prop="perPrice" label="单价" width="120" />
       <el-table-column prop="money" label="金额" width="120" />
-      <el-table-column prop="" label="回签状态" width="120" />
-      <el-table-column label="操作" width="100">
+      <el-table-column prop="sign" label="回签状态" width="120" />
+      <!-- <template slot-scope="scope">
+          <span v-if="scope.row.sign === true">已回签</span>
+          <span v-else>未回签</span>
+        </template>
+      </el-table-column> -->
+      <el-table-column label="操作" width="150">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="singlePrint(scope.row)">打印</el-button>
+          <el-button type="success" size="mini" @click="updated(scope.row.id)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -56,6 +62,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
+    <edItDialog :id="id" :dialog="edItDialog" @init="initTable" />
   </div>
 </template>
 
@@ -63,10 +70,15 @@
 import { export2Excel } from '@/utils/common'
 import { getShipDaily } from '@/api/order/shipdaily'
 import { getUser } from '@/api/order/customerOrder'
+import edItDialog from '@/views/order/shipdaily/edit'
 export default {
   name: 'ProDaily',
+  components: { edItDialog },
   data() {
     return {
+      edItDialog: {
+        show: false
+      },
       tableData: [],
       total: 0,
       form: {
@@ -74,7 +86,8 @@ export default {
         count: 10
       },
       select: [],
-      name: ''
+      name: '',
+      id: ''
     }
   },
   created() {
@@ -86,12 +99,19 @@ export default {
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   },
   methods: {
+    updated(id) {
+      this.edItDialog.show = true
+      this.id = id
+    },
     query() {
       this.initTable()
     },
     initTable() {
       getShipDaily(this.form).then(res => {
         this.tableData = res.list
+        this.tableData.forEach(x => {
+          x.sign = x.sign === true ? '已回签' : '未回签'
+        })
         this.total = res.total
       })
     },
@@ -106,7 +126,7 @@ export default {
     toExcel() {
       var list = this.tableData
       const th = ['客户名称', '出货日期', '出货单号', '箱型', '出货数量', '单价', '金额', '回签状态']
-      const filterVal = ['code', 'name', 'limitPaperLength']
+      const filterVal = ['name', 'deliveryDate', 'outNo', 'boxType', 'sendNum', 'perPrice', 'money', 'sign']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '箱类设定')
     },

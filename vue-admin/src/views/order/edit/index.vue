@@ -120,11 +120,12 @@ export default {
       total: 0,
       form: {
         page: 1,
-        count: 10
+        count: 10,
         // no: '',
         // modelNo: '',
         // boxType: '',
         // supplier: ''
+        isProduct: false
       },
       editDialog: {
         show: false

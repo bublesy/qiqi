@@ -48,7 +48,7 @@
           <td colspan="2">{{ tableData.color }}</td>
           <td>{{ tableData.printSurface }}</td>
           <td>{{ tableData.combine }}</td>
-          <td>{{ tableData.NailClass }}</td>
+          <td>{{ tableData.nailClass }}</td>
           <td>{{ tableData.nailingNumber }}</td>
         </tr>
         <tr>
@@ -116,7 +116,7 @@
         </td>
       </table>
       <div class="footer">
-        <p>制单:</p>
+        <p>制单:{{ name }}</p>
         <p>复核：</p>
         <p>制单日期：{{ tableData.orderDate }}</p>
         <p>交货日期：{{ tableData.deliveryDate }}</p>
@@ -126,16 +126,21 @@
 </template>
 
 <script>
+import { getUser } from '@/api/order/customerOrder'
 export default {
   name: 'TagMethods',
   inject: ['closeTag', 'reloadTag', 'refreshTag'],
   data() {
     return {
       tableData: {},
-      row: {}
+      row: {},
+      name: ''
     }
   },
   created() {
+    getUser().then(res => {
+      this.name = res.nickname
+    })
     var row = this.$route.query.row
     this.row = row
     console.log(row.img)

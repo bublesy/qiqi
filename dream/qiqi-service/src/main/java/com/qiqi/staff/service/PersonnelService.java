@@ -1,7 +1,7 @@
-package com.qiqi.generator.service;
+package com.qiqi.staff.service;
 
-import com.qiqi.generator.entity.PersonnelDO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qiqi.staff.entity.PersonnelDO;
 
 /**
  * <p>

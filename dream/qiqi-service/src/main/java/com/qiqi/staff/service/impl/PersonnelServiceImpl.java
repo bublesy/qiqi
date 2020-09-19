@@ -1,9 +1,9 @@
-package com.qiqi.generator.service.impl;
+package com.qiqi.staff.service.impl;
 
-import com.qiqi.generator.entity.PersonnelDO;
-import com.qiqi.generator.mapper.PersonnelMapper;
-import com.qiqi.generator.service.PersonnelService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qiqi.staff.entity.PersonnelDO;
+import com.qiqi.staff.mapper.PersonnelMapper;
+import com.qiqi.staff.service.PersonnelService;
 import org.springframework.stereotype.Service;
 
 /**

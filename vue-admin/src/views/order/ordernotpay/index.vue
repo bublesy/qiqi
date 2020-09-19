@@ -38,17 +38,17 @@
       <el-table-column prop="customerNo" label="客户单号" width="120" />
       <el-table-column prop="modelNo" label="款号" width="120" />
       <el-table-column prop="boxType" label="箱型" width="120" />
-      <el-table-column prop="material" label="纸质" width="120" />
+      <el-table-column prop="material" label="材质" width="120" />
       <el-table-column prop="supplier" label="供方" width="120" />
       <el-table-column prop="incomeNum" label="来料数量" width="120" />
-      <el-table-column prop="" label="尺寸" width="120">
+      <el-table-column prop="cartonSize" label="尺寸" width="120">
         <template slot-scope="scope">
           {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
         </template>
       </el-table-column>
       <el-table-column prop="orderNum" label="订单数量" width="120" />
       <el-table-column prop="productNum" label="已产数量" width="120" />
-      <el-table-column prop="" label="未产数量" width="120">
+      <el-table-column prop="notProduct" label="未产数量" width="120">
         <template slot-scope="scope">
           {{ scope.row.orderNum - scope.row.productNum }}
         </template>
@@ -107,6 +107,10 @@ export default {
     initTable() {
       getOrderNotPay(this.form).then(res => {
         this.tableData = res.list
+        this.tableData.forEach(x => {
+          x.cartonSize = x.length + 'X' + x.width + 'X' + x.height
+          x.notProduct = x.orderNum - x.productNum
+        })
         this.total = res.total
       })
     },
@@ -120,8 +124,8 @@ export default {
     },
     toExcel() {
       var list = this.tableData
-      const th = ['客户名称', '出货日期', '出货单号', '箱型', '出货数量', '单价', '金额', '回签状态']
-      const filterVal = ['code', 'name', 'limitPaperLength']
+      const th = ['客户名称', '任务编号', '客户单号', '款号', '箱型', '材质', '供方', '来料数量', '尺寸', '订单数量', '已产数量', '未产数量', '交货日期']
+      const filterVal = ['name', 'no', 'customerNo', 'modelNo', 'boxType', 'material', 'supplier', 'incomeNum', 'cartonSize', 'orderNum', 'productNum', 'notProduct', 'deliveryDate']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '箱类设定')
     },

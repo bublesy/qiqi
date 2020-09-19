@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @author QiQiDream
  */
 @SpringBootApplication
-@MapperScan("com.qiqi.**.mapper")
+@MapperScan("com.qiqi.*.mapper")
 @ComponentScan(basePackages = {"com.qiqi.*"})
 public class AdminApplication {
 

@@ -1,7 +1,7 @@
-package com.qiqi.generator.service;
+package com.qiqi.staff.service;
 
-import com.qiqi.generator.entity.PositionDO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qiqi.staff.entity.PositionDO;
 
 /**
  * <p>

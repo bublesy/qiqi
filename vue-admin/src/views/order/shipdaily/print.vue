@@ -35,7 +35,7 @@
       <el-table-column prop="sendNum" label="出货数量" width="120" />
       <el-table-column prop="perPrice" label="单价" width="120" />
       <el-table-column prop="money" label="金额" width="120" />
-      <el-table-column prop="" label="回签状态" width="120" />
+      <el-table-column prop="sign" label="回签状态" width="120" />
     </el-table>
     <!-- <el-pagination
       :current-page="form.page"

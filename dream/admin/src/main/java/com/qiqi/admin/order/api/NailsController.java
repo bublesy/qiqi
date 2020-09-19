@@ -37,10 +37,10 @@ public class NailsController {
     @ApiOperation(value = "获取钉类(列表)")
     @PostMapping("all")
     public PageEntity<NailsDO> getNailsPage(@RequestBody NailsDTO query) {
-        IPage<NailsDO> iPage = nailsService.page(new Page<>(query.getPage(),query.getCount()));
         //todo: 需要转Vo
         QueryWrapper<NailsDO> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtils.isNoneBlank(query.getName()),"name",query.getName());
+        IPage<NailsDO> iPage = nailsService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<NailsDO>>() {}, iPage.getRecords()));
     }
 

@@ -1,7 +1,7 @@
-package com.qiqi.generator.mapper;
+package com.qiqi.staff.mapper;
 
-import com.qiqi.generator.entity.DeptDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.qiqi.staff.entity.DeptDO;
 
 /**
  * <p>

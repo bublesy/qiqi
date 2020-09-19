@@ -50,12 +50,12 @@
       <el-table-column prop="orderNum" label="订单数量" width="120" />
       <el-table-column prop="productNum" label="成品数量" width="120" />
       <el-table-column prop="deliveryDate" label="交货日期" width="180" />
-      <el-table-column prop="isSchedule" label="是否排期" width="120">
-        <template slot-scope="scope">
-          <span v-if="scope.row.isSchedule === true">是</span>
+      <el-table-column prop="isSchedule" label="是否排期" width="120" />
+      <!-- <template slot-scope="scope">
+          <span v-if="scope.row.isSchedule">是</span>
           <span v-else>否</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="操作" width="250">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
@@ -114,7 +114,8 @@ export default {
         this.tableData = res.list
         this.tableData.forEach(x => {
           x.cartonSize = x.length + 'X' + x.width + 'X' + x.height
-          x.isSchedule = x.isSchedule === true ? '是' : '否'
+          x.isSchedule = (x.isSchedule === true ? '是' : '否')
+          console.log(x.isSchedule)
         })
         this.total = res.total
       })

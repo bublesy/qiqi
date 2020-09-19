@@ -260,7 +260,7 @@ export default {
     return {
       imageUrl: '',
       form: {
-
+        isProduct: false
       },
       rules: {
         material: [

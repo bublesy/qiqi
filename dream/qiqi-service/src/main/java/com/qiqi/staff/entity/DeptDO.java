@@ -1,10 +1,11 @@
-package com.qiqi.generator.entity;
+package com.qiqi.staff.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.util.Date;
 import com.qiqi.common.base.BaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.Date;
 
 /**
  * <p>

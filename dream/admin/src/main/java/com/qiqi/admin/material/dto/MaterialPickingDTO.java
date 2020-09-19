@@ -8,7 +8,7 @@ import lombok.Data;
  * @since 2020-09-19
  */
 @Data
-public class MaterialPicking extends MaterialPickingDO {
+public class MaterialPickingDTO extends MaterialPickingDO {
 
     private Long page;
     private Long count;

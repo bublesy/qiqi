@@ -1,9 +1,9 @@
-package com.qiqi.generator.service.impl;
+package com.qiqi.staff.service.impl;
 
-import com.qiqi.generator.entity.PositionDO;
-import com.qiqi.generator.mapper.PositionMapper;
-import com.qiqi.generator.service.PositionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qiqi.staff.entity.PositionDO;
+import com.qiqi.staff.mapper.PositionMapper;
+import com.qiqi.staff.service.PositionService;
 import org.springframework.stereotype.Service;
 
 /**

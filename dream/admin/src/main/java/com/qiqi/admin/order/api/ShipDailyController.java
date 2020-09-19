@@ -41,7 +41,8 @@ public class ShipDailyController {
         queryWrapper
                 .eq(!ObjectUtils.isEmpty(query.getDeliveryDate()),"delivery_date",query.getDeliveryDate())
                 .like(StringUtils.isNotBlank(query.getName()),"name",query.getName())
-                .like(StringUtils.isNotBlank(query.getNo()),"no",query.getNo());
+                .like(StringUtils.isNotBlank(query.getNo()),"no",query.getNo())
+                .like(StringUtils.isNotBlank(query.getOutNo()),"out_no",query.getOutNo());
         Page<OrderDO> iPage = orderService.page(new Page<OrderDO>(query.getPage(), query.getCount()), queryWrapper);
         return new PageEntity<>(iPage.getTotal(), Convert.convert(new TypeReference<List<OrderDO>>() {}, iPage.getRecords()));
 
