@@ -6,19 +6,11 @@
         <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#print'" type="primary">打印</el-button>
         <el-header align="center">定作送货单</el-header>
-        <span style="margin-left:60px">收货单位:{{ }}</span>
-        <span style="margin-left:80%">No:{{ }}</span>
+        <span style="margin-left:60px">收货单位:{{ fullName }}</span>
         <br>
-        <span style="margin-left:60px">电话:{{ }}</span>
-        <span style="margin-left:80%">送货日期:{{ }}</span>
-
         <br>
-        <span style="margin-left:60px">地址-:{{ }}</span>
-        <span style="margin-left:80%">车号:{{ }}</span>
-
         <el-table
           ref="multipleTable"
-          :summary-method="getSummaries"
           :data="tableData"
           stripe
           highlight-current-row
@@ -27,29 +19,25 @@
         >
           <el-table-column width="50px" align="center" />
           <el-table-column prop="taskNumber" label="订单编号" />
-          <el-table-column prop="serialNumber" label="物品编号" />
           <el-table-column prop="typeNo" label="款号" />
-          <el-table-column prop="serialName" label="物品名称" />
           <el-table-column prop="specifications" label="规格(mm)">
             <template slot-scope="scope">
               {{ scope.row.paperLength }} x {{ scope.row.paperWidth }} x {{ scope.row.paperHeight }}
             </template>
           </el-table-column>
           <el-table-column prop="orderQuantity" label="订单量" />
-          <el-table-column prop="deliveryVolume" label="送货量" />
+          <el-table-column prop="deliveryQuantity" label="送货量" />
           <el-table-column prop="unitPrice" label="单价" />
           <el-table-column prop="amount" label="金额" />
           <el-table-column prop="remark" label="备注" />
         </el-table>
         <br>
-        <span style="margin-left:60px">备注:{{ }}</span>
+        <span style="margin-left:60px">备注:{{ remark }}</span>
         <br>
         <Br />
-        <span style="margin-left:60px">制单:{{ }}<br>
-          <span style="margin-left:444px">送单人:{{ }}</span>
-          <span style="margin-left:385px">收货单位(签章):{{ }}</span>
-          <span style="margin-left:888px">经手人:{{ }}</span>
-        </span>
+        <span style="margin-left:444px">送单人:{{ nickname }}</span>
+        <span style="margin-left:385px">收货单位(签章):{{ }}</span>
+        <span style="margin-left:888px">经手人:{{ }}</span>
         <br>
         <Br />
         <span style="margin-left:60px">
@@ -83,48 +71,62 @@
 
 <script scope>
 import initData from '@/mixins/initData'
+import { getCustomerById } from '@/api/basedata/customer'
+import { getNamesById } from '@/api/purchase/purchase'
+
 export default {
   name: 'EndProductListDeliveryNote',
   mixins: [initData],
   data() {
     return {
       tableData: [],
-      form: {}
+      form: {},
+      data: [],
+      billingDate: '',
+      customerId: '',
+      fullName: '',
+      remark: '',
+      createdBy: '',
+      nickname: ''
     }
   },
+  created() {
+    this.data = this.$route.query.data
+    console.log(this.data)
+    this.getList()
+  },
   methods: {
+    getList() {
+      this.tableData = this.data
+      this.tableData.forEach(a => {
+        a.amount = a.unitPrice * a.deliveryQuantity
+        this.billingDate = a.billingDate
+        this.documentsNo = a.documentsNo
+        this.remark = a.remark
+        this.customerId = a.customerId
+        this.createdBy = a.createdBy
+      })
+      this.pagination.total = this.tableData.length
+      this.getCustomer()
+      this.getName()
+    },
+    // 加载客户
+    getCustomer() {
+      getCustomerById(this.customerId).then(res => {
+        this.fullName = res.name
+        this.remark = res.remark
+      })
+    },
+    // 价值名称
+    getName() {
+      getNamesById(this.createdBy).then(res => {
+        console.log(res)
+        this.nickname = res
+      })
+    },
     // 返回
     toBack() {
       this.$router.push('/end_product_list')
-    },
-    /**
-     * 表格合计
-     */
-    getSummaries(param) {
-      const { columns, data } = param
-      const sums = []
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '总价'
-          return
-        }
-        const values = data.map(item => Number(item[column.property]))
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr)
-            if (!isNaN(value)) {
-              return prev + curr
-            } else {
-              return prev
-            }
-          }, 0)
-          sums[index] += ' 元'
-        } else {
-          sums[index] = 'N/A'
-        }
-      })
-
-      return sums
     }
   }
 }

@@ -22,12 +22,24 @@ public class PurchaseOrderDO extends BaseModel {
 
     private static final long serialVersionUID=1L;
 
+    private String position;
+    private String endProductPos;
+
+    private String orderId;
+
+
     /**
      * 供应商id
      */
     private String supplierId;
 
+    private String boxType;
+    private String modelNo;
     private String taskNumber;
+
+    private String paperHeight;
+
+    private Boolean isProduct;
 
     /**
      * 计价方式

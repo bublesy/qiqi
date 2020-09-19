@@ -2,18 +2,16 @@
   <el-container>
     <el-main>
       <div id="print">
-        <h3 align="center">{{ }}</h3>
         <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#print'" type="primary">打印</el-button>
         <h1 align="center">采购订单</h1>
         <span style="margin-left:60px">供方:{{ fullName }}</span>
-        <br>
         <span style="margin-left:60px">电话:{{ mobilePhone }}</span>
         <span style="margin-left:86%">No:{{ documentsNo }}</span>
-        <br>
         <span style="margin-left:60px">传真:{{ fax }}</span>
         <span style="margin-left:80%">日期:{{ billingDate }}</span>
-
+        <p />
+        <br>
         <el-table
           ref="multipleTable"
           :data="tableData"
@@ -63,7 +61,8 @@
 
 <script scope>
 import initData from '@/mixins/initData'
-// import { listByIds } from '@/api/purchase/purchase'
+import { getById } from '@/api/supplier/supplier'
+
 export default {
   name: 'PurchaseOrderPrinting',
   mixins: [initData],
@@ -78,7 +77,8 @@ export default {
       documentsNo: '',
       fax: '',
       remark: '',
-      data: []
+      data: [],
+      spplierId: ''
     }
   },
   created() {
@@ -92,32 +92,23 @@ export default {
       this.tableData.forEach(a => {
         a.totalPrice = a.unitPrice * a.purchaseQuantity
         a.paperSize = a.paperWidth * a.paperLength
-        this.fullName = a.fullName
         this.billingDate = a.billingDate
-        this.mobilePhone = a.mobilePhone
         this.documentsNo = a.documentsNo
-        this.fax = a.fax
         this.remark = a.remark
+        this.spplierId = a.supplierId
       })
+      this.pagination.total = this.tableData.length
+      this.getSupplier()
     },
 
-    // //加载页面的值
-    // getList(){
-    //   listByIds({ids:this.ids}).then(res=>{
-    //     this.tableData=res.list
-    //     this.tableData.forEach(a=>{
-    //       a.totalPrice=a.unitPrice*a.purchaseQuantity
-    //       a.paperSize = a.paperWidth*a.paperLength
-    //       this.fullName = a.fullName
-    //       this.billingDate=a.billingDate
-    //       this.mobilePhone=a.mobilePhone
-    //       this.documentsNo=a.documentsNo
-    //       this.fax=a.fax
-    //       this.remark=a.remark
-    //     })
-    //     this.pagination.total = res.total
-    //   })
-    // },
+    // 加载供应商
+    getSupplier() {
+      getById(this.spplierId).then(res => {
+        this.fullName = res.fullName
+        this.mobilePhone = res.mobilePhone
+        this.fax = res.fax
+      })
+    },
     // 返回
     toBack() {
       this.$router.push('/purchase_order')

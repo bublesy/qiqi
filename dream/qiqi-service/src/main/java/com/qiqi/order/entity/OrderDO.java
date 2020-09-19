@@ -1,6 +1,7 @@
 package com.qiqi.order.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.qiqi.common.base.BaseModel;
@@ -34,7 +35,11 @@ public class OrderDO extends BaseModel {
 
     private String pressureSpecification;
 
+    private String outNo;
+
     private BigDecimal totalArea;
+
+    private Boolean isProduct;
 
     private BigDecimal paperArea;
 

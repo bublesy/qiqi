@@ -3,24 +3,16 @@
     <el-main>
       <h1 align="center">仓库管理</h1>
       <el-form :inline="true" :model="form" size="mini" align="center">
-        <el-form-item label="供应商名称:">
-          <el-input v-model="form.supplierName" />
-        </el-form-item>
-        <el-form-item label="开单人">
-          <el-input v-model="form.drawer" />
-        </el-form-item>
         <el-form-item label="时间:">
           <el-date-picker
             v-model="form.time"
             align="right"
             type="date"
+            value-format="yyyy-MM-dd"
             placeholder="选择日期"
           />
         </el-form-item>
-        <el-button type="primary" size="mini">查询</el-button>
-        <el-button type="primary" size="mini" @click="purAdd">新增</el-button>
-
-        <!-- <el-button type="danger" size="mini" @click="drop">删除</el-button> -->
+        <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
       </el-form>
       <div>
         <el-table
@@ -30,24 +22,24 @@
           style="width: 100%"
           @current-change="handleCurrentChange"
         >
-          <el-table-column v-show="true" prop="documentsNo" label="入仓单号" width="140" />
+          <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" width="140" />
           <el-table-column v-show="true" prop="taskNumber" label="任务编号" width="140" />
-          <el-table-column v-show="true" prop="customerName" label="供应商名称" width="140" />
+          <el-table-column v-show="true" prop="supplierName" label="供应商名称" width="140" />
           <el-table-column v-show="true" prop="material" label="材质" width="140" />
           <el-table-column v-show="true" prop="paperLength" label="纸长" width="140" />
           <el-table-column v-show="true" prop="paperWidth" label="纸宽" width="140" />
           <el-table-column v-show="true" prop="unitPrice" label="单价" width="140" />
           <el-table-column v-show="true" prop="carryTo" label="过账" width="140" />
           <el-table-column v-show="true" prop="purchaseQuantity" label="购入数量" width="140" />
-          <el-table-column v-show="true" prop="quantityNotEntered" label="入仓日期" width="140" />
+          <el-table-column v-show="true" prop="warehousingDate" label="入仓日期" width="140" />
           <el-table-column v-show="true" prop="position" label="仓位" width="140" />
 
-          <el-table-column label="操作" width="120">
+          <!-- <el-table-column label="操作" width="120">
             <template slot-scope="scope">
               <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
               <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
         <!--分页组件-->
         <el-pagination
@@ -113,10 +105,6 @@
               placeholder="选择日期"
             />
           </el-form-item>
-          <el-form-item label="原始单号:">
-            <el-input v-model="formAdd.oldDocumentsNo" />
-          </el-form-item>
-
           <el-form-item label="材质">
             <el-input v-model="formAdd.material" />
           </el-form-item>
@@ -156,12 +144,17 @@
 
 <script>
 import initData from '@/mixins/initData'
+import { list } from '@/api/cardboard/cardboard'
+import { getById } from '@/api/supplier/supplier'
+
 export default {
   name: 'CardboardList',
   mixins: [initData],
   data() {
     return {
-      form: {},
+      form: {
+        time: ''
+      },
       formAdd: { },
       tableData: [],
       addTableData: [],
@@ -177,40 +170,58 @@ export default {
       drawerFor: []
     }
   },
+  created() {
+    this.init()
+  },
   methods: {
+    loadData() {
+      this.queryParams.time = this.form.time
+      if (this.queryParams.time === null) {
+        this.$set(this.queryParams, 'time', '')
+      }
+      list(this.queryParams).then(res => {
+        this.tableData = res.list
+        this.tableData.forEach(a => {
+          getById(a.supplierId).then(data => {
+            a.supplierName = data.fullName
+          })
+        })
+        this.pagination.total = res.total
+      })
+    },
     handleCurrentChange(row) {
       this.dropRow = row
     },
-    // 删除
-    drop() {
-      this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      })
-    },
-    // 编辑订单
-    modifyPur(row) {
-      this.purAddVisible = true
-      this.titleType = '编辑'
-    },
-    // 新增订单
-    purAdd() {
-      this.purAddVisible = true
-      this.titleType = '新增'
-      // 新增初始化数据
-      this.formAdd = {}
-    },
+    // // 删除
+    // drop() {
+    //   this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     type: 'warning'
+    //   }).then(() => {
+    //     this.$message({
+    //       type: 'success',
+    //       message: '删除成功'
+    //     })
+    //   }).catch(() => {
+    //     this.$message({
+    //       type: 'info',
+    //       message: '已取消删除'
+    //     })
+    //   })
+    // },
+    // // 编辑订单
+    // modifyPur(row) {
+    //   this.purAddVisible = true
+    //   this.titleType = '编辑'
+    // },
+    // // 新增订单
+    // purAdd() {
+    //   this.purAddVisible = true
+    //   this.titleType = '新增'
+    //   // 新增初始化数据
+    //   this.formAdd = {}
+    // },
     // 取消
     purAddNo() {
       this.purAddVisible = false

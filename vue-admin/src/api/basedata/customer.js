@@ -20,3 +20,7 @@ export function getSalesman() {
   return request({ url: '/sys/user', method: 'get' })
 }
 
+export function getCustomerById(id) {
+  return request({ url: '/order/' + id, method: 'get' })
+}
+
