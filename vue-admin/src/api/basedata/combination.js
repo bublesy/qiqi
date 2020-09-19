@@ -12,8 +12,8 @@ export function removeById(id) {
   return request({ url: '/combination/' + id, method: 'delete' })
 }
 
-export function getById(data) {
-  return request({ url: '/combination', data: data, method: 'put' })
+export function getById(id) {
+  return request({ url: '/combination/' + id, method: 'get' })
 }
 
 export function id(id) {

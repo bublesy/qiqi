@@ -12,8 +12,8 @@ export function removeById(id) {
   return request({ url: '/colour/' + id, method: 'delete' })
 }
 
-export function getById(data) {
-  return request({ url: '/texture/of/material', data: data, method: 'put' })
+export function getById(id) {
+  return request({ url: '/colour/' + id, method: 'get' })
 }
 
 export function id(id) {
