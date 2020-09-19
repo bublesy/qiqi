@@ -55,3 +55,7 @@ export function getCustomer() {
   return request({ url: '/order/customer', method: 'get' })
 }
 
+export function getUser() {
+  return request({ url: 'userInfo', method: 'get' })
+}
+

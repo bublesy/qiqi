@@ -15,7 +15,7 @@
         <el-button size="mini" type="primary">查询</el-button>
       </el-form-item>
     </el-form> -->
-    <span style="margin-left:25%">制表:</span>
+    <span style="margin-left:25%">制表:{{ name }}</span>
     <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
     <el-table
       ref="multipleTable"
@@ -33,7 +33,7 @@
       <el-table-column prop="boxType" label="箱型" width="120" />
       <el-table-column prop="material" label="材质" width="120" />
       <el-table-column prop="supplier" label="供方" width="120" />
-      <el-table-column prop="" label="来料数量" width="120" />
+      <el-table-column prop="incomeNum" label="来料数量" width="120" />
       <el-table-column prop="" label="尺寸" width="120">
         <template slot-scope="scope">
           {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
@@ -62,6 +62,7 @@
 
 <script>
 // import { export2Excel } from '@/utils/common'
+import { getUser } from '@/api/order/customerOrder'
 export default {
   name: 'ProDaily',
   data() {
@@ -72,10 +73,14 @@ export default {
         page: 1,
         size: 10
       },
-      now: null
+      now: null,
+      name: ''
     }
   },
   created() {
+    getUser().then(res => {
+      this.name = res.nickname
+    })
     var date = new Date()
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
     var list = []

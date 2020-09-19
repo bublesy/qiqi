@@ -2,10 +2,11 @@
   <el-card>
     <el-upload
       class="avatar-uploader"
-      action="https://jsonplaceholder.typicode.com/posts/"
+      action="http://192.168.1.150:8080/api/admin/file/upload"
       :show-file-list="false"
       :on-success="handleAvatarSuccess"
       :before-upload="beforeAvatarUpload"
+      :headers="headers"
     >
       <img v-if="imageUrl" :src="imageUrl" class="avatar">
       <i v-else class="el-icon-plus avatar-uploader-icon" />
@@ -14,16 +15,42 @@
 </template>
 
 <script>
+import { getToken } from '@/utils/auth'
 export default {
+  // props: {
+  //   imageUrl: {
+  //     type: String,
+  //     default: ''
+  //   }
+  // },
   data() {
     return {
-      imageUrl: ''
+      imageUrl: '',
+      headers: {
+        Authorization: getToken()
+      }
 
     }
   },
+
   methods: {
-    handleAvatarSuccess() {},
-    beforeAvatarUpload() {}
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw)
+      console.log(this.imageUrl)
+      localStorage.setItem('imageUrl', this.imageUrl)
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
+    }
   }
 }
 </script>

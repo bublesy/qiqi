@@ -6,7 +6,7 @@
       <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
       <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
       <div class="dh">
-        <p>订货单：<span style="  font-weight: bolder;">{{ tableData.name }}</span></p>
+        <p>订货单位：<span style="  font-weight: bolder;">{{ tableData.name }}</span></p>
         <p>任务编号：<span style="  font-weight: bolder;font-size: 20px;">{{ tableData.no }}</span></p>
       </div>
       <table>
@@ -34,7 +34,7 @@
           <td colspan="3" class="center">印刷</td>
           <td colspan="3" class="center">结合</td>
           <td colspan="6" rowspan="5" class="xx"><span>箱型展开图: </span>
-            <!-- <img src="./1.jpg" alt="" style="width:400px;height:200px" class="xx_img"> -->
+            <img v-if="tableData.img" src="D:\hc\Carton\dream\admin\target\classes\upload\2020\09\19\file.jpg" class="avatar">
           </td>
         </tr>
         <tr>
@@ -133,42 +133,13 @@ export default {
     return {
       tableData: {},
       row: {}
-      // my: '这是测试文本'
-      // tableData: {
-      //   name: '百味林',
-      //   no: '120',
-      //   modelNo: '客户的箱号或者款号',
-      //   boxType: '五层箱',
-      //   length: 600,
-      //   width: 300,
-      //   height: 400,
-      //   orderNum: 256,
-      //   material: '美卡',
-      //   color: '红色',
-      //   stare: 'AB',
-      //   paperLength: '1880',
-      //   paperWidth: '704',
-      //   paperArea: '0.66',
-      //   printSurface: '按样箱',
-      //   combine: '粘胶',
-      //   NailClass: 1,
-      //   nailingNumber: '打钉数',
-      //   combineOptions: '',
-      //   total_area: '373.54',
-      //   partialPressure: true,
-      //   pasting: true,
-      //   printing: true,
-      //   grooving: true,
-      //   dieCutting: true,
-      //   preparation: '2020-5',
-      //   delivery: '250'
-
-      // }
     }
   },
   created() {
     var row = this.$route.query.row
     this.row = row
+    console.log(row.img)
+    // row.img = row.img.substring(5, row.img.length)
     this.tableData = row
   },
   methods: {

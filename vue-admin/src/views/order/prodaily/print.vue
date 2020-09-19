@@ -3,7 +3,7 @@
     <el-button type="info" style="margin-left:84%" @click="back">返回</el-button>
     <el-button v-print="'#printTest'" type="success">打印</el-button>
     <p class="font">生产日报表</p>
-    <span style="margin-left:25%">制表:</span>
+    <span style="margin-left:25%">制表:{{ name }}</span>
     <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
     <el-table
       ref="multipleTable"
@@ -42,6 +42,7 @@
 
 <script>
 // import { export2Excel } from '@/utils/common'
+import { getUser } from '@/api/order/customerOrder'
 export default {
   name: 'ProDaily',
   data() {
@@ -52,10 +53,14 @@ export default {
         page: 1,
         size: 10
       },
-      now: null
+      now: null,
+      name: ''
     }
   },
   created() {
+    getUser().then(res => {
+      this.name = res.nickname
+    })
     var date = new Date()
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
     var list = []

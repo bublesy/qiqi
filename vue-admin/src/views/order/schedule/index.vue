@@ -112,6 +112,10 @@ export default {
     initTable() {
       getSchedule(this.form).then(res => {
         this.tableData = res.list
+        this.tableData.forEach(x => {
+          x.cartonSize = x.length + 'X' + x.width + 'X' + x.height
+          x.isSchedule = x.isSchedule === true ? '是' : '否'
+        })
         this.total = res.total
       })
     },
@@ -142,10 +146,10 @@ export default {
     },
     toExcel() {
       var list = this.tableData
-      const th = ['客户名称', '出货日期', '出货单号', '箱型', '出货数量', '单价', '金额', '回签状态']
-      const filterVal = ['code', 'name', 'limitPaperLength']
+      const th = ['排期日期', '生产天数', '任务编号', '客户简介', '箱型', '材质', '楞型', '纸箱尺寸', '纸长', '纸宽', '分压规格', '单位', '订单数量', '成品数量', '交货日期', '是否排期']
+      const filterVal = ['date', 'productDay', 'no', 'name', 'boxType', 'material', 'stare', 'cartonSize', 'paperLength', 'paperWidth', 'pressureSpecification', 'unit', 'orderNum', 'productNum', 'deliveryDate', 'isSchedule']
       const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '箱类设定')
+      export2Excel(th, data, '生产排期表')
     },
     print() {
       if (this.select.length === 0) {

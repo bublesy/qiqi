@@ -4,7 +4,7 @@
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
       <el-form-item label="出货日期:">
         <el-date-picker
-          v-model="form.date"
+          v-model="form.deliveryDate"
           type="date"
           placeholder="选择日期"
         />
@@ -13,7 +13,7 @@
         <el-input v-model="form.name" />
       </el-form-item>
       <el-form-item label="出货单号:">
-        <el-input v-model="form.no" />
+        <el-input v-model="form.outNo" />
       </el-form-item>
       <el-form-item label="">
         <el-button size="mini" type="primary" @click="query">查询</el-button>
@@ -21,7 +21,7 @@
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
       </el-form-item>
     </el-form>
-    <span style="margin-left:25%">制表:</span>
+    <span style="margin-left:25%">制表:{{ name }}</span>
     <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
     <el-table
       ref="multipleTable"
@@ -34,10 +34,10 @@
     >
       <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
-      <el-table-column prop="" label="出货日期" width="120" />
-      <el-table-column prop="" label="出货单号" width="120" />
-      <el-table-column prop="name" label="箱型" width="120" />
-      <el-table-column prop="" label="出货数量" width="120" />
+      <el-table-column prop="deliveryDate" label="出货日期" width="120" />
+      <el-table-column prop="outNo" label="出货单号" width="120" />
+      <el-table-column prop="boxType" label="箱型" width="120" />
+      <el-table-column prop="sendNum" label="出货数量" width="120" />
       <el-table-column prop="perPrice" label="单价" width="120" />
       <el-table-column prop="money" label="金额" width="120" />
       <el-table-column prop="" label="回签状态" width="120" />
@@ -62,6 +62,7 @@
 <script>
 import { export2Excel } from '@/utils/common'
 import { getShipDaily } from '@/api/order/shipdaily'
+import { getUser } from '@/api/order/customerOrder'
 export default {
   name: 'ProDaily',
   data() {
@@ -72,10 +73,14 @@ export default {
         page: 1,
         count: 10
       },
-      select: []
+      select: [],
+      name: ''
     }
   },
   created() {
+    getUser().then(res => {
+      this.name = res.nickname
+    })
     this.initTable()
     var date = new Date()
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()

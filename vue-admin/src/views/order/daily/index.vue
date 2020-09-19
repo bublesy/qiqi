@@ -4,7 +4,7 @@
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
       <el-form-item label="交货日期:">
         <el-date-picker
-          v-model="form.date"
+          v-model="form.deliveryDate"
           type="date"
           placeholder="选择日期"
         />
@@ -21,7 +21,7 @@
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
       </el-form-item>
     </el-form>
-    <span style="margin-left:25%">制表:</span>
+    <span style="margin-left:25%">制表:{{ name }}</span>
     <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
     <el-table
       ref="multipleTable"
@@ -67,6 +67,7 @@
 <script>
 import { export2Excel } from '@/utils/common'
 import { getDaily } from '@/api/order/daily'
+import { getUser } from '@/api/order/customerOrder'
 export default {
   name: 'Daily',
   data() {
@@ -78,10 +79,14 @@ export default {
         count: 10,
         date: null
       },
-      select: []
+      select: [],
+      name: ''
     }
   },
   created() {
+    getUser().then(res => {
+      this.name = res.nickname
+    })
     this.initTable()
     var date = new Date()
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()

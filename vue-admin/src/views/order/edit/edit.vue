@@ -229,7 +229,7 @@
           <el-input v-model="form.remark" />
         </el-form-item>
       </el-form>
-      <p>添加样图:</p>
+      <p :imageUrl="imageUrl">添加样图:</p>
       <upload />
     </el-card>
   </el-dialog>
@@ -258,6 +258,7 @@ export default {
   },
   data() {
     return {
+      imageUrl: '',
       form: {
 
       },
@@ -322,11 +323,11 @@ export default {
         })
         if (this.id !== '' && this.id !== null) {
           // 编辑
-          console.log('aaa')
           console.log(this.id)
           getSingleOrder(this.id).then(res => {
             console.log(res)
             this.form = res
+            this.imageUrl = res.img
           })
         } else {
           // 新增
@@ -343,6 +344,7 @@ export default {
       if (this.flag) {
         this.form.id = null
       }
+      this.form.img = localStorage.getItem('imageUrl')
       addOrUpdateOrder(this.form).then(res => {
         if (res) {
           this.$emit('init')
