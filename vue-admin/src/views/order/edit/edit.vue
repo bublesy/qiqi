@@ -89,7 +89,7 @@
         </el-form-item>
         <!-- 1.00 -->
         <el-form-item label="单价:">
-          <el-input v-model="form.perPrice" />
+          <el-input v-model="form.perPrice" @input="perPrice" />
         </el-form-item>
         <el-form-item label="金额:">
           <el-input v-model="form.money" />
@@ -336,6 +336,13 @@ export default {
     }
   },
   methods: {
+    perPrice() {
+      this.form.money = parseFloat(this.form.orderNum) * parseFloat(this.form.perPrice)
+      this.form.money = parseFloat(this.form.money)
+      if (isNaN(this.form.money)) {
+        this.form.money = 0
+      }
+    },
     save() {
       // var list = []
       // list.push(this.form)
@@ -362,6 +369,11 @@ export default {
         if (isNaN(this.form.orderNum)) {
           this.form.orderNum = ''
         }
+      }
+      this.form.money = parseFloat(this.form.orderNum) * parseFloat(this.form.perPrice)
+      this.form.money = parseFloat(this.form.money)
+      if (isNaN(this.form.money)) {
+        this.form.money = 0
       }
     },
     paperNum(x) {

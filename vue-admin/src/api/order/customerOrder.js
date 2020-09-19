@@ -51,3 +51,7 @@ export function getPrintLayout() {
   return request({ url: '/print/layout/list', method: 'get' })
 }
 
+export function getCustomer() {
+  return request({ url: '/order/customer', method: 'get' })
+}
+

@@ -8,7 +8,7 @@
       <p>订货单：<span style="  font-weight: bolder;">{{ tableData.name }}</span></p>
       <div>
         <p>任务编号：<span style="  font-weight: bolder;font-size: 20px;">{{ tableData.no }}</span></p>
-        <p style="margin-top:-10px">交货日期：{{ tableData.delivery }}</p>
+        <p style="margin-top:-10px">交货日期：{{ tableData.deliveryDate }}</p>
       </div>
     </div>
     <table>
@@ -29,24 +29,29 @@
         <td class="center">{{ tableData.modelNo }}</td>
         <td>愣&nbsp;&nbsp;&nbsp;&nbsp;型</td>
         <td class="center">{{ tableData.stare }} </td>
-        <td>纸箱尺寸</td>
-        <td class="center">600x3000</td>
+        <td>纸片尺寸</td>
+        <td class="center">{{ tableData.paperLength }}*{{ +tableData.paperWidth }}</td>
         <td class="center">颜色</td>
         <td class="center">{{ tableData.color }}</td>
-        <td>总面积：</td>
+        <td>总面积:</td>
         <td class="center">{{ tableData.totalArea }}</td>
       </tr>
       <tr>
         <td>材质</td>
         <td class="center">{{ tableData.material }}</td>
-        <td>生产类型</td>
-        <td class="center" colspan="3"><span v-if="show">印刷</span>&nbsp;&nbsp;</td>
+        <td>生产流程</td>
+        <td class="center" colspan="3"><span v-if="tableData.partialPressure">分压</span>&nbsp;&nbsp;
+          <span v-if="tableData.pasting">裱糊</span>&nbsp;&nbsp;
+          <span v-if="tableData.printing">印刷</span>&nbsp;&nbsp;
+          <span v-if="tableData.grooving">开槽</span>&nbsp;&nbsp;
+          <span v-if="tableData.dieCutting">模切</span>&nbsp;&nbsp;
+        </td>
         <td>结合</td>
-        <td class="center">{{ tableData.partialPressure }}</td>
+        <td class="center">{{ tableData.combine }}</td>
         <td>是否常规</td>
         <td>
           <input type="checkbox" :checked="tableData.conventional"> 是
-          <input type="checkbox" :checked="tableData.partialPressure"> 否
+          <!-- <input type="checkbox" :checked="tableData.partialPressure"> 否 -->
         </td> </tr>
       <tr>
         <td class="center">备注</td>
@@ -62,41 +67,46 @@
 export default window.$crudCommon({
   data() {
     return {
-      // my: '这是测试文本'
-      tableData: {
-        name: '百味林',
-        no: '120',
-        modelNo: '客户的箱号或者款号',
-        boxType: '五层箱',
-        length: 600,
-        width: 300,
-        height: 400,
-        orderNum: 256,
-        material: '美卡',
-        color: '红色',
-        stare: 'AB',
-        paperLength: '1880',
-        paperWidth: '704',
-        paperArea: '0.66',
-        printSurface: '按样箱',
-        combine: '粘胶',
-        NailClass: 1,
-        nailingNumber: '打钉数',
-        combineOptions: '',
-        totalArea: '373.54',
-        conventional: true,
-        partialPressure: true,
-        pasting: true,
-        printing: true,
-        grooving: true,
-        dieCutting: true,
-        delivery: '250',
-        remark: '备注'
-      },
+      tableData: {},
       a: []
+      // my: '这是测试文本'
+      // tableData: {
+      //   name: '百味林',
+      //   no: '120',
+      //   modelNo: '客户的箱号或者款号',
+      //   boxType: '五层箱',
+      //   length: 600,
+      //   width: 300,
+      //   height: 400,
+      //   orderNum: 256,
+      //   material: '美卡',
+      //   color: '红色',
+      //   stare: 'AB',
+      //   paperLength: '1880',
+      //   paperWidth: '704',
+      //   paperArea: '0.66',
+      //   printSurface: '按样箱',
+      //   combine: '粘胶',
+      //   NailClass: 1,
+      //   nailingNumber: '打钉数',
+      //   combineOptions: '',
+      //   totalArea: '373.54',
+      //   conventional: true,
+      //   partialPressure: true,
+      //   pasting: true,
+      //   printing: true,
+      //   grooving: true,
+      //   dieCutting: true,
+      //   delivery: '250',
+      //   remark: '备注'
+      // },
+
     }
   },
   created() {
+    var row = this.$route.query.row
+    this.row = row
+    this.tableData = row
   },
   methods: {
     back() {

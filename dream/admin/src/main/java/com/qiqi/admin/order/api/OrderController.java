@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.admin.order.util.IdGeneratorUtils;
+import com.qiqi.admin.order.util.TimeAddEight;
 import com.qiqi.basicdata.entity.CustomerInformationDO;
 import com.qiqi.basicdata.entity.SupplierDO;
 import com.qiqi.basicdata.service.CustomerInformationService;
@@ -57,6 +58,12 @@ public class OrderController {
     @ApiOperation(value = "获取(列表)")
     @PostMapping("/list")
     public PageEntity<OrderDO> getOrderPage(@RequestBody OrderDTO query) {
+        if(query.getOrderDate() != null){
+            query.setOrderDate(TimeAddEight.formatTimeEight(query.getOrderDate()));
+        }
+        if(query.getDeliveryDate() != null){
+            query.setDeliveryDate(TimeAddEight.formatTimeEight(query.getDeliveryDate()));
+        }
         QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtils.isNotBlank(query.getNo()),"no",query.getNo())
                 .like(StringUtils.isNotBlank(query.getName()),"name",query.getName())
@@ -96,6 +103,7 @@ public class OrderController {
         orderDO.setOrderDate(new Date());
         IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
         orderDO.setNo(idGeneratorUtils.nextId());
+        orderDO.setDeliveryDate(TimeAddEight.formatTimeEight(orderDO.getDeliveryDate()));
         return orderService.saveOrUpdate(orderDO);
     }
 

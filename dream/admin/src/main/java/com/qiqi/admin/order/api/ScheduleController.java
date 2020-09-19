@@ -1,6 +1,7 @@
 package com.qiqi.admin.order.api;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.qiqi.admin.order.util.TimeAddEight;
 import com.qiqi.order.dto.ScheduleDTO;
 import com.qiqi.order.entity.ScheduleDO;
 import cn.hutool.core.convert.Convert;
@@ -38,6 +39,9 @@ public class ScheduleController {
     @PostMapping("/list")
     public PageEntity<ScheduleDO> getSchedulePage(@RequestBody ScheduleDTO query) {
         QueryWrapper<ScheduleDO> queryWrapper = new QueryWrapper<>();
+        if(query.getDate() != null){
+            query.setDate(TimeAddEight.formatTimeEight(query.getDate()));
+        }
         queryWrapper.eq(!ObjectUtils.isEmpty(query.getDate()),"date",query.getDate())
                 .like(StringUtils.isNotBlank(query.getNo()),"no",query.getNo())
                 .like(StringUtils.isNotBlank(query.getName()),"name",query.getName());
