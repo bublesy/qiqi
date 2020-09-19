@@ -66,7 +66,7 @@ public class UniteController {
     @ApiOperation(value = "新增结合")
     @PostMapping("")
     public Boolean saveUnite(@RequestBody UniteDO uniteDO) {
-        return uniteService.save(uniteDO);
+        return uniteService.saveOrUpdate(uniteDO);
     }
 
     @ApiOperation(value = "删除结合(批量))")

@@ -66,7 +66,7 @@ public class ColourController {
     @ApiOperation(value = "新增颜色")
     @PostMapping("")
     public Boolean saveColour(@RequestBody ColourDO colourDO) {
-        return colourService.save(colourDO);
+        return colourService.saveOrUpdate(colourDO);
     }
 
     @ApiOperation(value = "删除颜色(批量))")

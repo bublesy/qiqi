@@ -66,7 +66,7 @@ public class TextureOfMaterialController {
     @ApiOperation(value = "新增材质")
     @PostMapping("")
     public Boolean saveTextureOfMaterial(@RequestBody TextureOfMaterialDO textureOfMaterialDO) {
-        return textureOfMaterialService.save(textureOfMaterialDO);
+        return textureOfMaterialService.saveOrUpdate(textureOfMaterialDO);
     }
 
     @ApiOperation(value = "删除材质(批量))")
