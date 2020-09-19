@@ -5,7 +5,7 @@ export function add(data) {
 }
 
 export function list(params) {
-  return request({ url: '/purchase/order/list', method: 'get', params: params })
+  return request({ url: '/warehouse/list', method: 'get', params: params })
 }
 
 export function listByIds(params) {
@@ -22,9 +22,5 @@ export function getById(id) {
 
 export function getNameById(id) {
   return request({ url: '/purchase/order/getNameById/' + id, method: 'get' })
-}
-
-export function getNamesById(id) {
-  return request({ url: '/purchase/order/getNamesById/' + id, method: 'get' })
 }
 

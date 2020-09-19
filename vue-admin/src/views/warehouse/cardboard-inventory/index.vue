@@ -7,14 +7,14 @@
           <el-date-picker
             v-model="form.time"
             align="right"
+            value-format="yyyy-MM-dd"
             type="date"
             placeholder="选择日期"
           />
         </el-form-item>
-        <el-button type="primary" size="mini" @click="query">查询</el-button>
+        <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
         <el-button type="primary" size="mini" @click="stockAdd">新增</el-button>
 
-        <!-- <el-button type="danger" size="mini" @click="drop">删除</el-button> -->
       </el-form>
       <el-table
         ref="singleTable"
@@ -29,8 +29,8 @@
         <el-table-column property="stock" label="库存" width="120" />
         <el-table-column label="操作" width="120">
           <template slot-scope="scope">
-            <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
-            <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
+            <el-link type="danger" size="small" @click="drop(scope)">删除</el-link>
+            <el-link type="primary" size="small" @click="modifyPur(scope)">编辑</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -75,6 +75,10 @@
 </template>
 <script>
 import initData from '@/mixins/initData'
+import { add } from '@/api/cardboard-inventory/cardboardInventory'
+import { list } from '@/api/cardboard-inventory/cardboardInventory'
+import { getById } from '@/api/cardboard-inventory/cardboardInventory'
+import { removeById } from '@/api/cardboard-inventory/cardboardInventory'
 
 export default {
   name: 'CardboardInventory',
@@ -86,14 +90,50 @@ export default {
       stockAddVisible: false,
       formAdd: {},
       titleType: '',
-      form: {},
+      form: {
+        time: ''
+      },
       supRules: {}
     }
   },
-
+  created() {
+    this.init()
+  },
   methods: {
+    loadData() {
+      this.queryParams.time = this.form.time
+      if (this.queryParams.time === null) {
+        this.$set(this.queryParams, 'time', '')
+      }
+      console.log(this.queryParams)
+      list(this.queryParams).then(res => {
+        this.stockTable = res.list
+        this.pagination.total = res.total
+      })
+    },
+    // 删除
+    drop(scope) {
+      removeById(scope.row.id).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+          this.loadData()
+        } else {
+          this.$message.error('删除失败')
+        }
+      })
+    },
+    // 编辑订单
+    modifyPur(scope) {
+      this.stockAddVisible = true
+      this.titleType = '编辑'
+      getById(scope.row.id).then(res => {
+        this.formAdd = res
+      })
+    },
     stockAdd() {
       this.stockAddVisible = true
+      this.titleType = '新增'
+      this.formAdd = {}
     },
     stockAddNo() {
       this.stockAddVisible = false
@@ -101,6 +141,14 @@ export default {
     },
     stockAddOk() {
       this.stockAddVisible = false
+      add(this.formAdd).then(res => {
+        if (res) {
+          this.$message.success(this.titleType + '成功')
+          this.loadData()
+        } else {
+          this.$message.error(this.titleType + '失败')
+        }
+      })
     },
     query() {}
   }

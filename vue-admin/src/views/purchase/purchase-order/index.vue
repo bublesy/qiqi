@@ -130,7 +130,15 @@
           </el-form-item>
 
           <el-form-item label="是否成品">
-            <el-checkbox v-model="formAdd.product" disabled />
+            <el-checkbox v-model="formAdd.isProduct" disabled />
+          </el-form-item>
+
+          <el-form-item v-if="!formAdd.isProduct" label="仓位">
+            <el-input v-model="formAdd.position" />
+          </el-form-item>
+
+          <el-form-item v-if="formAdd.isProduct" label="成品仓位">
+            <el-input v-model="formAdd.endProductPos" />
           </el-form-item>
 
           <el-form-item label="楞型">
@@ -153,8 +161,16 @@
             <el-input v-model="formAdd.paperWidth" disabled />
           </el-form-item>
 
+          <el-form-item label="高">
+            <el-input v-model="formAdd.paperHeight" disabled />
+          </el-form-item>
+
           <el-form-item label="订单数量">
             <el-input v-model="formAdd.orderQuantity" disabled />
+          </el-form-item>
+
+          <el-form-item label="箱型">
+            <el-input v-model="formAdd.boxType" disabled />
           </el-form-item>
 
           <el-form-item label="采购数量">
@@ -165,12 +181,16 @@
             <el-input v-model="formAdd.batching" disabled />
           </el-form-item>
 
+          <el-form-item label="款号">
+            <el-input v-model="formAdd.modelNo" disabled />
+          </el-form-item>
+
           <el-form-item label="平方价">
             <el-input v-model="formAdd.squarePrice" />
           </el-form-item>
 
           <el-form-item label="单价">
-            <el-input v-model="formAdd.unitPrice" disabled />
+            <el-input v-model="formAdd.unitPrice" />
           </el-form-item>
 
           <el-form-item label="金额">
@@ -261,10 +281,14 @@ export default {
           this.formAdd.paperLength = a.paperLength
           this.formAdd.paperWidth = a.paperWidth
           this.formAdd.orderQuantity = a.orderNum
-          this.formAdd.unitPrice = a.perPrice
           this.formAdd.unit = a.unit
           this.orderDate = a.orderDate
-          this.formAdd.product = a.product
+          this.formAdd.modelNo = a.modelNo
+          this.formAdd.isProduct = a.isProduct
+          this.formAdd.modelNo = a.modelNo
+          this.formAdd.paperHeight = a.height
+          this.formAdd.boxType = a.boxType
+          this.formAdd.orderId = a.id
         }
       })
     },
@@ -280,7 +304,8 @@ export default {
         this.pagination.total = res.total
         this.tableData.forEach(a => {
           getCustomerById(a.customerName).then(data => {
-            a.customerName = data.name
+            // a.customerName = data.name
+            this.$set(a, 'customerName', data.name)
           })
         })
       })

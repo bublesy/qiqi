@@ -6,17 +6,23 @@ import com.qiqi.admin.basicdata.model.SupplierCardboardQuotationVO;
 import com.qiqi.admin.basicdata.model.SupplierVO;
 import com.qiqi.admin.purchase.model.PurchaseOrderVO;
 import com.qiqi.basicdata.entity.SupplierDO;
+import com.qiqi.endproductwarehouse.entity.EndProductWarehouseDO;
+import com.qiqi.endproductwarehouse.service.EndProductWarehouseService;
+import com.qiqi.order.entity.OrderDO;
+import com.qiqi.order.service.OrderService;
 import com.qiqi.purchase.entity.PurchaseOrderDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.purchase.model.PurchaseOrderDTO;
 import com.qiqi.sys.entity.SysUserDO;
 import com.qiqi.sys.service.SysUserService;
 import com.qiqi.warehouse.entity.WarehouseDO;
 import com.qiqi.warehouse.service.WarehouseService;
 import io.swagger.annotations.*;
+import org.springframework.security.core.parameters.P;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.qiqi.purchase.service.PurchaseOrderService;
@@ -46,6 +52,11 @@ public class PurchaseOrderController {
     private SysUserService sysUserService;
     @Resource
     private WarehouseService warehouseService;
+    @Resource
+    private EndProductWarehouseService endProductWarehouseService;
+    @Resource
+    private OrderService orderService;
+
 
     @ApiOperation(value = "获取采购单(列表)")
     @ApiImplicitParams({
@@ -103,6 +114,14 @@ public class PurchaseOrderController {
         return nickname;
     }
 
+    @ApiOperation(value = "获取名字(单个)")
+    @GetMapping("/getNamesById/{id}")
+    public String getNamesById(@PathVariable Long id) {
+        SysUserDO users = sysUserService.getById(id);
+        String nickname = users.getNickname();
+        return nickname;
+    }
+
 
     @ApiOperation(value = "修改采购单")
     @PutMapping("")
@@ -112,19 +131,53 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "新增采购单")
     @PostMapping("/add")
-    public Boolean savePurchaseOrder(@RequestBody PurchaseOrderDO purchaseOrderDO) {
-        WarehouseDO warehouseDO = new WarehouseDO();
-        BeanUtil.copyProperties(purchaseOrderDO,warehouseDO);
+    public Boolean savePurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
+        PurchaseOrderDO purchaseOrderDO = new PurchaseOrderDO();
+        BeanUtil.copyProperties(purchaseOrderDTO,purchaseOrderDO);
+        OrderDO orderDO = new OrderDO();
         //设置日期格式
         SimpleDateFormat df = new SimpleDateFormat("yyMMddHHmmssms");
         // new Date()为获取当前系统时间，也可使用当前时间戳
         String no = df.format(new Date());
         SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd MM:ss");
         purchaseOrderDO.setDocumentsNo(no);
-        warehouseDO.setWarehouseNo(purchaseOrderDO.getDocumentsNo());
-        warehouseDO.setWarehousingDate(df2.format(new Date()));
-        warehouseDO.setDrawerId(purchaseOrderDO.getCreatedBy());
-        warehouseService.saveOrUpdate(warehouseDO);
+        if (purchaseOrderDO.getIsProduct()){
+            EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
+            BeanUtil.copyProperties(purchaseOrderDO,endProductWarehouseDO);
+            endProductWarehouseDO.setWarehouseNo(purchaseOrderDO.getDocumentsNo());
+            endProductWarehouseDO.setWarehousingData(df2.format(new Date()));
+            endProductWarehouseDO.setDrawer(purchaseOrderDO.getCreatedBy());
+            endProductWarehouseDO.setBillingData(df2.format(new Date()));
+            endProductWarehouseDO.setCustomerId(purchaseOrderDO.getCustomerName());
+            endProductWarehouseDO.setSpecifications(purchaseOrderDO.getParPreSpe());
+            endProductWarehouseDO.setDeliveryQuantity(purchaseOrderDO.getPurchaseQuantity());
+            endProductWarehouseDO.setWidth(purchaseOrderDO.getPaperWidth());
+            endProductWarehouseDO.setLength(purchaseOrderDO.getPaperLength());
+            endProductWarehouseDO.setTypeNo(purchaseOrderDO.getModelNo());
+            endProductWarehouseDO.setHeight(purchaseOrderDO.getPaperHeight());
+            endProductWarehouseService.saveOrUpdate(endProductWarehouseDO);
+            BeanUtil.copyProperties(purchaseOrderDTO,orderDO);
+            orderDO.setId(purchaseOrderDTO.getOrderId());
+            orderDO.setWosState("入仓未出货");
+            orderDO.setProductSpace(endProductWarehouseDO.getEndProductPos());
+            orderService.updateById(orderDO);
+        }else{
+            WarehouseDO warehouseDO = new WarehouseDO();
+            BeanUtil.copyProperties(purchaseOrderDO,warehouseDO);
+            warehouseDO.setWarehouseNo(purchaseOrderDO.getDocumentsNo());
+            warehouseDO.setWarehousingDate(df2.format(new Date()));
+            warehouseDO.setDrawerId(purchaseOrderDO.getCreatedBy());
+            warehouseService.saveOrUpdate(warehouseDO);
+            BeanUtil.copyProperties(purchaseOrderDTO,orderDO);
+            orderDO.setId(purchaseOrderDTO.getOrderId());
+            orderDO.setWosState("字板已入仓");
+            orderDO.setSpace(warehouseDO.getPosition());
+            orderService.updateById(orderDO);
+        }
+        orderDO.setId(purchaseOrderDTO.getOrderId());
+        Integer a = Integer.parseInt(purchaseOrderDTO.getPurchaseQuantity());
+        orderDO.setIncomeNum(a);
+        orderService.updateById(orderDO);
         return purchaseOrderService.saveOrUpdate(purchaseOrderDO);
     }
 

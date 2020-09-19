@@ -1,27 +1,31 @@
-package com.qiqi.admin.purchase.model;
+package com.qiqi.purchase.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 /**
  * @author sun
- * @time 2020/9/15 11:45
  */
 @Data
-public class PurchaseOrderVO {
-    private String fullName;
-    private String fax;
-    private String mobilePhone;
+public class PurchaseOrderDTO {
+
+    private String position;
+    private String endProductPos;
+
+    private Long orderId;
     /**
      * 供应商id
      */
     private String supplierId;
 
+    private String boxType;
+    private String modelNo;
+    private String taskNumber;
+
+    private String paperHeight;
+
     private Boolean isProduct;
 
-    private String taskNumber;
     /**
      * 计价方式
      */
@@ -32,16 +36,16 @@ public class PurchaseOrderVO {
      * 开单日期
      */
     @TableField("billingDate")
-    private LocalDateTime billingDate;
+    private String billingDate;
 
     /**
      * 交货日期
      */
     @TableField("deliveryDate")
-    private LocalDateTime deliveryDate;
+    private String deliveryDate;
 
     /**
-     * 客户id
+     * 客户名称
      */
     private String customerName;
 
@@ -55,8 +59,6 @@ public class PurchaseOrderVO {
      * 材质
      */
     private String material;
-
-    private String documentsNo;
 
     /**
      * 分压规格
@@ -114,11 +116,11 @@ public class PurchaseOrderVO {
      * 单位
      */
     private String unit;
+    private String documentsNo;
 
     /**
      * 备注
      */
     private String remark;
 
-    private Long id;
 }

@@ -3,15 +3,13 @@
     <el-main>
       <div id="print">
         <el-header align="center">成品库存待送货情况表</el-header>
-        <span style="margin-left:60px">制表人:{{ }}</span>
-        <span style="margin-left:40%">打印日期:{{ }}</span>
+        <span style="margin-left:60px">制表人:{{ nickname }}</span>
         <br>
         <br>
         <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#print'" type="primary">打印</el-button>
         <el-table
           ref="multipleTable"
-          :summary-method="getSummaries"
           :data="tableData"
           stripe
           border
@@ -20,7 +18,6 @@
         >
           <el-table-column width="50px" align="center" />
           <el-table-column prop="customerName" label="客户名称" />
-          <el-table-column prop="customerNo" label="客户单号" />
           <el-table-column prop="taskNumber" label="任务编号" />
           <el-table-column prop="material" label="材质" />
           <el-table-column prop="specifications" label="规格(mm)">
@@ -29,9 +26,9 @@
             </template>
           </el-table-column>
           <el-table-column prop="orderQuantity" label="订单量" />
-          <el-table-column prop="warehousingQuantity" label="入仓数量" />
-          <el-table-column prop="deliveredQuantity" label="已送数量" />
-          <el-table-column prop="stayDeliveredQuantity" label="待送数量" />
+          <el-table-column prop="deliveryQuantity" label="入仓数量" />
+          <el-table-column prop="stayDeliveredQuantity" label="已送数量" />
+          <el-table-column prop="deliveryQuantity" label="待送数量" />
           <el-table-column prop="unitPrice" label="单价" />
           <el-table-column prop="amount" label="金额" />
           <el-table-column prop="deliveryDate" label="交货日期" />
@@ -54,6 +51,9 @@
 
 <script scope>
 import initData from '@/mixins/initData'
+import { getCustomerById } from '@/api/basedata/customer'
+import { getNamesById } from '@/api/purchase/purchase'
+
 export default {
   name: 'EndProductListNotDeliveryNote',
   mixins: [initData],
@@ -62,43 +62,53 @@ export default {
       tableData: [{
         taskNumber: '1'
       }],
-      form: {}
+      form: {},
+      data: [],
+      billingDate: '',
+      customerId: '',
+      fullName: '',
+      remark: '',
+      createdBy: '',
+      nickname: ''
     }
   },
+  created() {
+    this.data = this.$route.query.data
+    console.log(this.data)
+    this.getList()
+  },
   methods: {
-    // 返回
+    getList() {
+      this.tableData = this.data
+      this.tableData.forEach(a => {
+        a.amount = a.unitPrice * a.deliveryQuantity
+        this.billingDate = a.billingDate
+        this.documentsNo = a.documentsNo
+        this.remark = a.remark
+        this.customerId = a.customerId
+        this.createdBy = a.createdBy
+        a.stayDeliveredQuantity = a.deliveryQuantity - a.deliveryQuantity
+      })
+      this.pagination.total = this.tableData.length
+      this.getCustomer()
+      this.getName()
+    },
+    // 加载客户
+    getCustomer() {
+      getCustomerById(this.customerId).then(res => {
+        this.fullName = res.name
+        this.remark = res.remark
+      })
+    },
+    // 价值名称
+    getName() {
+      getNamesById(this.createdBy).then(res => {
+        console.log(res)
+        this.nickname = res
+      })
+    },
     toBack() {
       this.$router.push('/end_product_list')
-    },
-    /**
-     * 表格合计
-     */
-    getSummaries(param) {
-      const { columns, data } = param
-      const sums = []
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '总计'
-          return
-        }
-        if (index === 2 || index === 3 || index === 4 || index === 5) {
-          const values = data.map(item => Number(item[column.property]))
-          if (!values.every(value => isNaN(value))) {
-            sums[index] = values.reduce((prev, curr) => {
-              const value = Number(curr)
-              if (!isNaN(value)) {
-                return prev + curr
-              } else {
-                return prev
-              }
-            }, 0)
-            sums[index] = parseFloat(sums[index] / 100).toFixed(2)
-          } else {
-            sums[index] = ''
-          }
-        }
-      })
-      return sums
     }
   }
 }
