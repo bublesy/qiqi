@@ -2,6 +2,7 @@
   <div class="app-container">
     <div>
       <el-button type="success" style="margin-left:80%" @click="print">前往打印</el-button>
+      <!-- <el-button type="success" style="margin-left:60%" @click="back">返回</el-button> -->
       <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
       <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
       <div class="dh">
@@ -92,7 +93,7 @@
           <td />
           <td />
           <td colspan="5" rowspan="4" style="vertical-align:top;">生产时注意的内容写在这里!显示在生产单上!</td>
-          <td>{{ tableData.total_area }}</td>
+          <td>{{ tableData.totalArea }}</td>
         </tr>
         <tr>
           <td><input type="checkbox" :checked="tableData.dieCutting"> 模切</td>
@@ -103,22 +104,22 @@
           <td />
           <td>是否常规</td>
         </tr>
-        <td><input type="checkbox" :checked="tableData.partialPressure"> 结合</td>
+        <td><input type="checkbox" :checked="tableData.combine"> 结合</td>
         <td />
         <td />
         <td />
         <td />
         <td />
         <td>
-          <input type="checkbox"> 是
-          <input type="checkbox" :checked="conventional"> 否
+          <input type="checkbox" :checked="tableData.conventional"> 是
+          <!-- <input type="checkbox" :checked="!conventional"> 否 -->
         </td>
       </table>
       <div class="footer">
-        <p>制单:管理</p>
+        <p>制单:</p>
         <p>复核：</p>
-        <p>制单日期：{{ tableData.preparation }}</p>
-        <p>交货日期：{{ tableData.delivery }}</p>
+        <p>制单日期：{{ tableData.orderDate }}</p>
+        <p>交货日期：{{ tableData.deliveryDate }}</p>
       </div>
     </div>
   </div>
@@ -130,42 +131,45 @@ export default {
   inject: ['closeTag', 'reloadTag', 'refreshTag'],
   data() {
     return {
+      tableData: {},
+      row: {}
       // my: '这是测试文本'
-      tableData: {
-        name: '百味林',
-        no: '120',
-        modelNo: '客户的箱号或者款号',
-        boxType: '五层箱',
-        length: 600,
-        width: 300,
-        height: 400,
-        orderNum: 256,
-        material: '美卡',
-        color: '红色',
-        stare: 'AB',
-        paperLength: '1880',
-        paperWidth: '704',
-        paperArea: '0.66',
-        printSurface: '按样箱',
-        combine: '粘胶',
-        NailClass: 1,
-        nailingNumber: '打钉数',
-        combineOptions: '',
-        total_area: '373.54',
-        partialPressure: true,
-        pasting: true,
-        printing: true,
-        grooving: true,
-        dieCutting: true,
-        preparation: '2020-5',
-        delivery: '250'
+      // tableData: {
+      //   name: '百味林',
+      //   no: '120',
+      //   modelNo: '客户的箱号或者款号',
+      //   boxType: '五层箱',
+      //   length: 600,
+      //   width: 300,
+      //   height: 400,
+      //   orderNum: 256,
+      //   material: '美卡',
+      //   color: '红色',
+      //   stare: 'AB',
+      //   paperLength: '1880',
+      //   paperWidth: '704',
+      //   paperArea: '0.66',
+      //   printSurface: '按样箱',
+      //   combine: '粘胶',
+      //   NailClass: 1,
+      //   nailingNumber: '打钉数',
+      //   combineOptions: '',
+      //   total_area: '373.54',
+      //   partialPressure: true,
+      //   pasting: true,
+      //   printing: true,
+      //   grooving: true,
+      //   dieCutting: true,
+      //   preparation: '2020-5',
+      //   delivery: '250'
 
-      }
+      // }
     }
   },
   created() {
-    this.id = this.$route.query.id
-    console.log(this.id)
+    var row = this.$route.query.row
+    this.row = row
+    this.tableData = row
   },
   methods: {
     changeText() {
@@ -177,7 +181,7 @@ export default {
     print() {
       this.$router.push({
         path: '/index2',
-        query: { a: '测试跳转' }
+        query: { row: this.row }
       })
     }
   }

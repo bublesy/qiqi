@@ -5,7 +5,11 @@ import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.qiqi.admin.order.util.IdGeneratorUtils;
+import com.qiqi.admin.order.util.TimeAddEight;
+import com.qiqi.basicdata.entity.CustomerInformationDO;
 import com.qiqi.basicdata.entity.SupplierDO;
+import com.qiqi.basicdata.service.CustomerInformationService;
 import com.qiqi.basicdata.service.SupplierService;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.order.dto.OrderDTO;
@@ -17,11 +21,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.IdGenerator;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import sun.awt.SunHints;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,16 +52,26 @@ public class OrderController {
     @Resource
     private ScheduleService scheduleService;
 
+    @Resource
+    private CustomerInformationService customerInformationService;
+
     @ApiOperation(value = "获取(列表)")
     @PostMapping("/list")
     public PageEntity<OrderDO> getOrderPage(@RequestBody OrderDTO query) {
+        if(query.getOrderDate() != null){
+            query.setOrderDate(TimeAddEight.formatTimeEight(query.getOrderDate()));
+        }
+        if(query.getDeliveryDate() != null){
+            query.setDeliveryDate(TimeAddEight.formatTimeEight(query.getDeliveryDate()));
+        }
         QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtils.isNotBlank(query.getNo()),"no",query.getNo())
                 .like(StringUtils.isNotBlank(query.getName()),"name",query.getName())
                 .like(StringUtils.isNotBlank(query.getCustomerNo()),"customer_no",query.getCustomerNo())
                 .eq(!ObjectUtils.isEmpty(query.getOrderDate()),"order_date",query.getOrderDate())
                 .eq(!ObjectUtils.isEmpty(query.getDeliveryDate()),"delivery_date",query.getDeliveryDate())
-                .eq(!ObjectUtils.isEmpty(query.getWosState()),"wos_state",query.getWosState());
+                .eq(!ObjectUtils.isEmpty(query.getWosState()),"wos_state",query.getWosState())
+                .eq(!ObjectUtils.isEmpty(query.getIsProduct()),"is_product",query.getIsProduct());
         IPage<OrderDO> iPage = orderService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
 
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<OrderDO>>() {}, iPage.getRecords()));
@@ -84,6 +100,10 @@ public class OrderController {
             scheduleDO.setDate(orderDO.getDeliveryDate());
             scheduleService.save(scheduleDO);
         }
+        orderDO.setOrderDate(new Date());
+        IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
+        orderDO.setNo(idGeneratorUtils.nextId());
+        orderDO.setDeliveryDate(TimeAddEight.formatTimeEight(orderDO.getDeliveryDate()));
         return orderService.saveOrUpdate(orderDO);
     }
 
@@ -102,5 +122,10 @@ public class OrderController {
     @GetMapping("/supplier")
     public List<SupplierDO> getSupplier(){
         return supplierService.list();
+    }
+
+    @GetMapping("/customer")
+    public List<CustomerInformationDO> getList(){
+        return customerInformationService.list();
     }
 }

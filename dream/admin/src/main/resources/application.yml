@@ -17,7 +17,22 @@ spring:
     #日期格式化
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 20MB
 
 jwt:
   secret: qiqi-admin-secret #JWT加解密使用的密钥
   expiration: 604800 #JWT的超期限时间(60*60*24*7)
+fdfs:
+  # 链接超时
+  connect-timeout: 60
+  # 读取时间
+  so-timeout: 60
+  # 生成缩略图参数
+  thumb-image:
+    width: 150
+    height: 150
+  tracker-list: localhost:22122

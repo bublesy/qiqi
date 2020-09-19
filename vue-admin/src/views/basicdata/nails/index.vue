@@ -1,0 +1,175 @@
+<template>
+  <div class="app-container">
+    <h2 style="margin-left:10%">钉类管理</h2>
+    <el-form :inline="true" :model="form" size="mini">
+      <el-form-item label="部门名称:">
+        <el-input v-model="form.name" clearable @clear="loadData" />
+      </el-form-item>
+      <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
+      <el-button type="primary" size="mini" @click="supplierAdd">新增 </el-button>
+    </el-form>
+    <el-table
+      :data="tableData"
+      border
+      style="width: 400px"
+    >
+      <el-table-column
+        type="index"
+        label="#"
+      />
+      <el-table-column
+        prop="name"
+        label="钉类名称"
+      />
+      <el-table-column
+        label="操作"
+        width="150"
+      >
+        <template slot-scope="scope">
+          <el-button size="mini" type="warning" @click="modifyPur(scope)">编辑</el-button>
+          <el-popconfirm title="内容确定删除吗？" @onConfirm="drop(scope)">
+            <el-button slot="reference" type="danger" size="mini">删除</el-button>
+          </el-popconfirm>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- 新增/编辑对话框 -->
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%"
+    >
+      <el-form ref="supForm" :inline="true" :rules="supRules" :model="formAdd" size="mini">
+        <el-form-item label="钉类名称:" prop="name">
+          <el-input v-model="formAdd.name" />
+        </el-form-item>
+
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="supplierAddNo('supForm')">取 消</el-button>
+        <el-button type="primary" @click="supplierAddOk('supForm')">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 分页 -->
+    <el-pagination
+      style="margin-top: 10px"
+      :total="pagination.total"
+      :current-page="pagination.page"
+      layout="total, prev, pager, next, sizes"
+      @size-change="pagination.size"
+      @current-change="pageChange"
+    />
+  </div>
+</template>
+<script>
+import initData from '@/mixins/initData'
+import { list, add, removeById, updated, getById } from '@/api/basedata/nails'
+
+export default {
+  name: 'Color',
+  mixins: [initData],
+
+  data() {
+    return {
+      form: {
+        page: 1,
+        count: 10,
+        name: '' },
+      formAdd: { name: '' },
+      dialogVisible: false,
+      tableData: [],
+      titleType: '',
+      supRules: {
+        name: [{ required: true, message: '该输入为必填项', trigger: 'blur' }]
+      }
+    }
+  },
+  created() {
+    this.init()
+  },
+  methods: {
+    // 获取列表数据
+    loadData() {
+      this.form.name = this.form.name
+      // this.queryParams.abbreviation = this.form.abbreviation
+      // this.queryParams.time = this.form.time
+      // if (this.queryParams.time === null) {
+      //   this.$set(this.queryParams, 'time', '')
+      // }
+      list(this.form).then(res => {
+        this.tableData = res.list
+        this.pagination.total = res.total
+        this.page = res.page
+
+        console.log(res)
+      })
+    },
+    // 编辑
+    modifyPur(scope) {
+      // this.titleType = '编辑'
+      this.dialogVisible = true
+      // console.log(scope.row.id)
+      // getById(scope.row.id).then(res => {
+      //   this.formAdd = res
+      // })
+      // this.formAdd = scope.row
+      getById(scope.row.id).then(res => {
+        this.formAdd = res
+      })
+    },
+    // 新增
+    supplierAdd() {
+      this.formAdd.id = null
+      // this.formAdd = {}
+      this.dialogVisible = true
+      this.titleType = '新增'
+    },
+    // 新增保存
+    supplierAddOk(supForm) {
+      this.$refs[supForm].validate((valid) => {
+        if (valid) {
+          if (this.formAdd.id !== null) {
+            updated(this.formAdd).then(res => {
+              console.log(res)
+              this.$message.success(this.titleType + '成功')
+              this.$refs[supForm].resetFields()
+              this.loadData()
+            })
+          } else {
+            console.log('aaa')
+            add(this.formAdd).then(res => {
+              this.$message.success(this.titleType + '成功')
+              this.$refs[supForm].resetFields()
+              this.loadData()
+            })
+          }
+
+          this.dialogVisible = false
+        } else {
+          return false
+        }
+      })
+    },
+    // 新增取消
+    supplierAddNo(supForm) {
+      this.dialogVisible = false
+      this.formAdd = {}
+      this.$refs[supForm].resetFields()
+    },
+    // 删除
+    drop(scope) {
+      removeById(scope.row.id).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+          this.loadData()
+        } else {
+          this.$message.error('删除失败')
+        }
+      })
+    }
+  }
+}
+</script>
+<style scoped>
+
+</style>

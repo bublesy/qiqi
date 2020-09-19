@@ -17,7 +17,7 @@
           type="date"
           placeholder="选择日期"
         />
-      </el-form-item>
+      </el-form-item><br>
       <el-form-item label="交货日期:">
         <el-date-picker
           v-model="form.deliveryDate"
@@ -26,14 +26,16 @@
         />
       </el-form-item>
       <el-form-item label="仓库状态:">
-        <el-select v-model="form.wosState" placeholder="请选择">
+        <el-select v-model="form.wosState" placeholder="请选择" clearable>
           <el-option label="已出货" value="已出货" />
           <el-option label="纸板已入仓" value="纸板已入仓" />
           <el-option label="入仓未出货" value="入仓未出货" />
           <el-option label="新订单" value="新订单" />
         </el-select>
       </el-form-item>
-      <!-- xlk -->
+      <el-form-item label="是否成品:">
+        <el-checkbox v-model="form.isProduct" />
+      </el-form-item>
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
     <el-button size="mini" type="primary" @click="add">新增</el-button>
@@ -56,7 +58,11 @@
         <el-table-column prop="modelNo" label="款号" width="120" />
         <el-table-column prop="boxType" label="箱型" width="120" />
         <el-table-column prop="material" label="材质" width="120" />
-        <el-table-column prop="cartonSize" label="纸箱尺寸(mm)" width="120" />
+        <el-table-column prop="cartonSize" label="纸箱尺寸(mm)" width="180">
+          <template slot-scope="scope">
+            {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
+          </template>
+        </el-table-column>
         <el-table-column prop="orderNum" label="订单数量" width="120" />
         <el-table-column prop="incomeNum" label="纸板到货数量" width="120" />
         <el-table-column prop="space" label="仓位" width="120" />
@@ -66,7 +72,7 @@
         <el-table-column prop="lossNum" label="损耗数量" width="120" />
         <el-table-column prop="orderDate" label="下单日期" width="120" />
         <el-table-column prop="deliveryDate" label="交货日期" width="120" />
-        <el-table-column prop="usedBox" label="常用箱" width="120" />
+        <!-- <el-table-column prop="usedBox" label="常用箱" width="120" /> -->
         <!-- <el-table-column prop="money" label="金额" width="120" />
         <el-table-column prop="supplier" label="供方" width="120" /> -->
         <!-- <el-table-column prop="createdTime" label="制单时间" width="120" />
@@ -81,7 +87,7 @@
             </el-popconfirm>
             <el-button type="success" size="mini" @click="singlePrint(scope.row)">打印</el-button>
             <el-button type="warning" size="mini" @click="orderAgain(scope.row.id)">再次下单</el-button>
-            <el-button type="primary" size="mini" @click="generate">生成施工单</el-button>
+            <el-button type="primary" size="mini" @click="generate(scope.row)">生成施工单</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -138,10 +144,10 @@ export default {
     query() {
       this.initTable()
     },
-    generate() {
+    generate(row) {
       this.$router.push({
         path: '/index',
-        query: { id: this.id }
+        query: { row: row }
       })
     },
     orderAgain(id) {
@@ -161,6 +167,7 @@ export default {
     },
     initTable() {
       getOrder(this.form).then(res => {
+        console.log(res)
         this.tableData = res.list
         this.total = res.total
       })

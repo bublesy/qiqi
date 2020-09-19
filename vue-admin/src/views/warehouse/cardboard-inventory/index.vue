@@ -10,6 +10,7 @@
             value-format="yyyy-MM-dd"
             type="date"
             placeholder="选择日期"
+            value-format="yyyy-MM-dd"
           />
         </el-form-item>
         <el-button type="primary" size="mini" @click="loadData()">查询</el-button>

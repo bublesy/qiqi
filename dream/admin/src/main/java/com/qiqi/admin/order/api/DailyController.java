@@ -4,6 +4,7 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.qiqi.admin.order.util.TimeAddEight;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.order.dto.OrderDTO;
 import com.qiqi.order.entity.OrderDO;
@@ -32,6 +33,7 @@ public class DailyController {
     @PostMapping("/list")
     public PageEntity<OrderDO> getList(@RequestBody OrderDTO query){
         QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
+        query.setDeliveryDate(TimeAddEight.formatTimeEight(query.getDeliveryDate()));
         queryWrapper.eq(!ObjectUtils.isEmpty(query.getDeliveryDate()),"delivery_date",query.getDeliveryDate())
                 .like(StringUtils.isNotBlank(query.getName()),"name",query.getName())
                 .like(StringUtils.isNotBlank(query.getNo()),"no",query.getNo());
