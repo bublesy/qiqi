@@ -16,3 +16,7 @@ export function getSingleSchedule(id) {
   return request({ url: '/schedule/' + id, method: 'get' })
 }
 
+export function updateProductNum() {
+  return request({ url: '/schedule/order', method: 'put' })
+}
+

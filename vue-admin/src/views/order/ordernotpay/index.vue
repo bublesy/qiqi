@@ -47,8 +47,12 @@
         </template>
       </el-table-column>
       <el-table-column prop="orderNum" label="订单数量" width="120" />
-      <el-table-column prop="" label="已产数量" width="120" />
-      <el-table-column prop="" label="未产数量" width="120" />
+      <el-table-column prop="productNum" label="已产数量" width="120" />
+      <el-table-column prop="" label="未产数量" width="120">
+        <template slot-scope="scope">
+          {{ scope.row.orderNum - scope.row.productNum }}
+        </template>
+      </el-table-column>
       <el-table-column prop="deliveryDate" label="交货日期" width="120" />
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">

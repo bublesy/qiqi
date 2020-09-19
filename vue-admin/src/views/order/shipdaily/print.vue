@@ -27,15 +27,20 @@
       border
       stripe
     >
-      <el-table-column type="index" width="55" />
+      <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
-      <el-table-column prop="name" label="出货日期" width="120" />
-      <el-table-column prop="name" label="出货单号" width="120" />
+      <el-table-column prop="" label="出货日期" width="120" />
+      <el-table-column prop="" label="出货单号" width="120" />
       <el-table-column prop="name" label="箱型" width="120" />
-      <el-table-column prop="name" label="出货数量" width="120" />
-      <el-table-column prop="name" label="单价" width="120" />
-      <el-table-column prop="name" label="金额" width="120" />
-      <el-table-column prop="name" label="回签状态" width="120" />
+      <el-table-column prop="" label="出货数量" width="120" />
+      <el-table-column prop="perPrice" label="单价" width="120" />
+      <el-table-column prop="money" label="金额" width="120" />
+      <el-table-column prop="" label="回签状态" width="120" />
+      <el-table-column label="操作" width="100">
+        <template slot-scope="scope">
+          <el-button type="warning" size="mini" @click="singlePrint(scope.row)">打印</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <!-- <el-pagination
       :current-page="form.page"

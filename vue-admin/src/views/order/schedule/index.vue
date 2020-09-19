@@ -13,7 +13,7 @@
         <el-input v-model="form.no" />
       </el-form-item>
       <el-form-item label="客户简介:">
-        <el-input v-model="form.as" />
+        <el-input v-model="form.name" />
       </el-form-item>
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>

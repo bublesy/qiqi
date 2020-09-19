@@ -15,14 +15,23 @@
     >
       <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
-      <el-table-column prop="name" label="任务编号" width="120" />
-      <el-table-column prop="name" label="款号" width="120" />
-      <el-table-column prop="name" label="材质" width="120" />
-      <el-table-column prop="name" label="订单尺寸" width="120" />
-      <el-table-column prop="name" label="订单数量" width="120" />
-      <el-table-column prop="name" label="单价" width="120" />
-      <el-table-column prop="name" label="金额" width="120" />
-      <el-table-column prop="name" label="交货日期" width="120" />
+      <el-table-column prop="no" label="任务编号" width="120" />
+      <el-table-column prop="modelNo" label="款号" width="120" />
+      <el-table-column prop="material" label="材质" width="120" />
+      <el-table-column prop="name" label="订单尺寸" width="120">
+        <template slot-scope="scope">
+          {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="orderNum" label="订单数量" width="120" />
+      <el-table-column prop="perPrice" label="单价" width="120" />
+      <el-table-column prop="money" label="金额" width="120" />
+      <el-table-column prop="deliveryDate" label="交货日期" width="120" />
+      <el-table-column label="操作" width="100">
+        <template slot-scope="scope">
+          <el-button type="warning" size="mini" @click="singlePrint(scope.row)">打印</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <!-- <el-pagination
       :current-page="form.page"

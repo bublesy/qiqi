@@ -17,6 +17,9 @@
       <el-form-item label="生产天数:">
         <el-input v-model="form.productDay" />
       </el-form-item>
+      <el-form-item label="成品数量:">
+        <el-input v-model="form.productNum" />
+      </el-form-item>
       <el-form-item label="是否排期:">
         <el-checkbox v-model="form.isSchedule" />
       </el-form-item>
@@ -29,7 +32,7 @@
 </template>
 
 <script>
-import { addOrUpdateSchedule, getSingleSchedule } from '@/api/order/schedule'
+import { addOrUpdateSchedule, getSingleSchedule, updateProductNum } from '@/api/order/schedule'
 export default {
   props: {
     dialog: {
@@ -61,11 +64,14 @@ export default {
     sure() {
       console.log(this.form)
       addOrUpdateSchedule(this.form).then(res => {
-        if (res) {
-          this.dialog.show = false
-          this.$message.success('修改成功')
-          this.$emit('init')
-        }
+        updateProductNum().then(res => {
+          console.log('修改数量')
+          if (res) {
+            this.dialog.show = false
+            this.$message.success('修改成功')
+            this.$emit('init')
+          }
+        })
       })
     }
   }

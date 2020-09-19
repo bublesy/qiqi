@@ -46,7 +46,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="orderNum" label="订单数量" width="120" />
-      <el-table-column prop="" label="已产数量" width="120" />
+      <el-table-column prop="productNum" label="已产数量" width="120" />
       <el-table-column prop="perPrice" label="单价" width="120" />
       <el-table-column prop="money" label="金额" width="120" />
       <!-- <el-table-column prop="name" label="是否生产" width="120" /> -->

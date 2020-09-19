@@ -2,7 +2,7 @@
   <el-dialog title="订单" :visible.sync="dialog.show" width="1000px" body-style :close-on-click-modal="false">
     <div>
       <el-button type="primary" size="mini" @click="save">保存</el-button>
-      <el-button type="primary" size="mini" @click="audit">审核</el-button>
+      <!-- <el-button type="primary" size="mini" @click="audit">审核</el-button> -->
 
       <el-button type="primary" size="mini" @click="back">返回</el-button>
     </div><br>
@@ -20,10 +20,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="客户单号:">
-          <el-input v-model="form.customerNo" />
+          <el-input v-model="form.customerNo" @input="customerNo" />
         </el-form-item>
         <el-form-item label="款号:">
-          <el-input v-model="form.modelNo" />
+          <el-input v-model="form.modelNo" @input="modelNo" />
         </el-form-item>
         <!-- xlk -->
         <el-form-item label="箱型:" prop="boxType">
@@ -60,9 +60,9 @@
           </el-select>
         </el-form-item>
         <el-form-item label="长X宽X高:">
-          <el-input v-model="form.length" style="width:50px" />X
-          <el-input v-model="form.width" style="width:50px" />X
-          <el-input v-model="form.height" style="width:50px" />
+          <el-input v-model="form.length" style="width:50px" @input="length" />X
+          <el-input v-model="form.width" style="width:50px" @input="width" />X
+          <el-input v-model="form.height" style="width:50px" @input="height" />
         </el-form-item>
         <!-- xlk -->
         <el-form-item label="组合:">
@@ -92,7 +92,7 @@
           <el-input v-model="form.perPrice" @input="perPrice" />
         </el-form-item>
         <el-form-item label="金额:">
-          <el-input v-model="form.money" />
+          <el-input v-model="form.money" @input="money" />
         </el-form-item>
         <!-- xlk -->
         <el-form-item label="供方:">
@@ -114,8 +114,8 @@
     <el-card>
       <el-form :model="form" :inline="true" size="mini">
         <el-form-item label="纸长X纸宽:">
-          <el-input v-model="form.paperLength" style="width:50px" />X
-          <el-input v-model="form.paperWidth" style="width:50px" />
+          <el-input v-model="form.paperLength" style="width:50px" @input="paperLength" />X
+          <el-input v-model="form.paperWidth" style="width:50px" @input="paperWidth" />
           <!-- xlk -->
           <!-- <el-select v-model="form.paperWidth" placeholder="请选择">
             <el-option
@@ -138,7 +138,7 @@
           <el-checkbox v-model="form.materialStock">存料</el-checkbox>
         </el-form-item>
         <el-form-item label="耗用门幅:">
-          <el-input v-model="form.fabric" />
+          <el-input v-model="form.fabric" @input="fabric" />
         </el-form-item>
         <el-form-item label="门幅倍数:">
           <el-input v-model="form.ratio" @input="ratio" />
@@ -168,10 +168,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="总面积:">
-          <el-input v-model="form.totalArea" />
+          <el-input v-model="form.totalArea" @input="totalArea" />
         </el-form-item>
         <el-form-item label="纸箱面积:">
-          <el-input v-model="form.paperArea" />
+          <el-input v-model="form.paperArea" @input="paperArea" />
         </el-form-item>
         <el-form-item label="是否常规:">
           <el-checkbox v-model="form.conventional" />
@@ -336,13 +336,6 @@ export default {
     }
   },
   methods: {
-    perPrice() {
-      this.form.money = parseFloat(this.form.orderNum) * parseFloat(this.form.perPrice)
-      this.form.money = parseFloat(this.form.money)
-      if (isNaN(this.form.money)) {
-        this.form.money = 0
-      }
-    },
     save() {
       // var list = []
       // list.push(this.form)
@@ -363,7 +356,32 @@ export default {
     back() {
       this.dialog.show = false
     },
+    money(x) {
+      if (isNaN(x)) {
+        this.form.money = this.form.money.substring(0, this.form.money.length - 1)
+        if (isNaN(this.form.money)) {
+          this.form.money = 0
+        }
+      }
+    },
+    perPrice(x) {
+      if (isNaN(x)) {
+        this.form.perPrice = this.form.perPrice.substring(0, this.form.perPrice.length - 1)
+        if (isNaN(this.form.perPrice)) {
+          this.form.perPrice = ''
+        }
+      }
+      this.form.money = parseFloat(this.form.orderNum) * parseFloat(this.form.perPrice)
+      this.form.money = parseFloat(this.form.money).toFixed(2)
+      if (isNaN(this.form.money)) {
+        this.form.money = 0
+      }
+    },
     orderNum(x) {
+      if (!(x % 1 === 0)) {
+        this.$message.info('请输入整数')
+        return
+      }
       if (isNaN(x)) {
         this.form.orderNum = this.form.orderNum.substring(0, this.form.orderNum.length - 1)
         if (isNaN(this.form.orderNum)) {
@@ -371,12 +389,17 @@ export default {
         }
       }
       this.form.money = parseFloat(this.form.orderNum) * parseFloat(this.form.perPrice)
-      this.form.money = parseFloat(this.form.money)
+      this.form.money = parseFloat(this.form.money).toFixed(2)
       if (isNaN(this.form.money)) {
         this.form.money = 0
       }
     },
     paperNum(x) {
+      if (!(x % 1 === 0)) {
+        this.$message.info('请输入毫米为单位的整数')
+        this.form.paperNum = ''
+        return
+      }
       if (isNaN(x)) {
         this.form.paperNum = this.form.paperNum.substring(0, this.form.paperNum.length - 1)
         if (isNaN(this.form.paperNum)) {
@@ -385,6 +408,11 @@ export default {
       }
     },
     ratio(x) {
+      if (!(x % 1 === 0)) {
+        this.$message.info('请输入整数')
+        this.form.ratio = ''
+        return
+      }
       if (isNaN(x)) {
         this.form.ratio = this.form.ratio.substring(0, this.form.ratio.length - 1)
         if (isNaN(this.form.ratio)) {
@@ -393,10 +421,117 @@ export default {
       }
     },
     pack(x) {
+      if (!(x % 1 === 0)) {
+        this.$message.info('请输入整数')
+        this.form.nailingNumber = ''
+        return
+      }
       if (isNaN(x)) {
         this.form.pack = this.form.pack.substring(0, this.form.pack.length - 1)
         if (isNaN(this.form.pack)) {
           this.form.pack = ''
+        }
+      }
+    },
+    customerNo(x) {
+      if (isNaN(x)) {
+        this.form.customerNo = this.form.customerNo.substring(0, this.form.customerNo.length - 1)
+        if (isNaN(this.form.customerNo)) {
+          this.form.customerNo = ''
+        }
+      }
+    },
+    modelNo(x) {
+      if (isNaN(x)) {
+        this.form.modelNo = this.form.modelNo.substring(0, this.form.modelNo.length - 1)
+        if (isNaN(this.form.modelNo)) {
+          this.form.modelNo = ''
+        }
+      }
+    },
+    length(x) {
+      if (!(x % 1 === 0)) {
+        this.$message.info('请输入毫米为单位的整数')
+        return
+      }
+      if (isNaN(x)) {
+        this.form.length = this.form.length.substring(0, this.form.length.length - 1)
+        if (isNaN(this.form.length)) {
+          this.form.length = ''
+        }
+      }
+    },
+    width(x) {
+      if (!(x % 1 === 0)) {
+        this.$message.info('请输入毫米为单位的整数')
+        return
+      }
+      if (isNaN(x)) {
+        this.form.width = this.form.width.substring(0, this.form.width.length - 1)
+        if (isNaN(this.form.width)) {
+          this.form.width = ''
+        }
+      }
+    },
+    height(x) {
+      if (!(x % 1 === 0)) {
+        this.$message.info('请输入毫米为单位的整数')
+        return
+      }
+      if (isNaN(x)) {
+        this.form.height = this.form.height.substring(0, this.form.height.length - 1)
+        if (isNaN(this.form.height)) {
+          this.form.height = ''
+        }
+      }
+    },
+    paperLength(x) {
+      if (!(x % 1 === 0)) {
+        this.$message.info('请输入整数')
+        this.form.paperLength = ''
+        return
+      }
+      if (isNaN(x)) {
+        this.form.paperLength = this.form.paperLength.substring(0, this.form.paperLength.length - 1)
+        if (isNaN(this.form.paperLength)) {
+          this.form.paperLength = ''
+        }
+      }
+    },
+    paperWidth(x) {
+      if (!(x % 1 === 0)) {
+        this.$message.info('请输入毫米为单位的整数')
+        this.form.paperWidth = ''
+        return
+      }
+      if (isNaN(x)) {
+        this.form.paperWidth = this.form.paperWidth.substring(0, this.form.paperWidth.length - 1)
+        if (isNaN(this.form.paperWidth)) {
+          this.form.paperWidth = ''
+        }
+      }
+    },
+    fabric(x) {
+      if (isNaN(x)) {
+        this.form.fabric = this.form.fabric.substring(0, this.form.fabric.length - 1)
+        if (isNaN(this.form.fabric)) {
+          this.form.fabric = ''
+        }
+      }
+    },
+    totalArea(x) {
+      if (isNaN(x)) {
+        this.form.totalArea = this.form.totalArea.substring(0, this.form.totalArea.length - 1)
+        if (isNaN(this.form.totalArea)) {
+          this.form.totalArea = ''
+        }
+      }
+    },
+    paperArea(x) {
+      if (isNaN(x)) {
+        this.form.paperArea = this.form.paperArea.substring(0, this.form.paperArea.length - 1)
+        if (isNaN(this.form.paperArea)) {
+          this.form.paperArea = ''
         }
       }
     }

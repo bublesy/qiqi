@@ -28,7 +28,7 @@
       </el-form-item>
       <el-form-item label="箱型:" prop="boxType" label-width="100px">
         <!-- <el-input v-model="form.paperName" /> -->
-        <el-select v-model="form.boxType" placeholder="请选择">
+        <el-select v-model="form.boxType" multiple placeholder="请选择">
           <el-option
             v-for="item in boxTypeOptions"
             :key="item.id"

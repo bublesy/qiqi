@@ -65,13 +65,14 @@
         </el-table-column>
         <el-table-column prop="orderNum" label="订单数量" width="120" />
         <el-table-column prop="incomeNum" label="纸板到货数量" width="120" />
-        <el-table-column prop="space" label="仓位" width="120" />
+        <!-- <el-table-column prop="space" label="仓位" width="120" /> -->
         <el-table-column prop="productNum" label="已产数量" width="120" />
         <el-table-column prop="productSpace" label="成品仓位" width="120" />
         <el-table-column prop="sendNum" label="已送数量" width="120" />
-        <el-table-column prop="lossNum" label="损耗数量" width="120" />
+        <!-- <el-table-column prop="lossNum" label="损耗数量" width="120" /> -->
         <el-table-column prop="orderDate" label="下单日期" width="120" />
         <el-table-column prop="deliveryDate" label="交货日期" width="120" />
+        <el-table-column prop="wosState" label="仓库状态" width="120" />
         <!-- <el-table-column prop="usedBox" label="常用箱" width="120" /> -->
         <!-- <el-table-column prop="money" label="金额" width="120" />
         <el-table-column prop="supplier" label="供方" width="120" /> -->

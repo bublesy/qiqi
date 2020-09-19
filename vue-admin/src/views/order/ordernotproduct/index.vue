@@ -16,7 +16,7 @@
         <el-input v-model="form.no" />
       </el-form-item>
       <el-form-item label="">
-        <el-button size="mini" type="primary">查询</el-button>
+        <el-button size="mini" type="primary" @click="query">查询</el-button>
         <el-button type="warning" size="mini" @click="print">批量打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
       </el-form-item>
@@ -47,8 +47,12 @@
         </template>
       </el-table-column>
       <el-table-column prop="orderNum" label="订单数量" width="120" />
-      <el-table-column prop="" label="已产数量" width="120" />
-      <el-table-column prop="" label="未产数量" width="120" />
+      <el-table-column prop="productNum" label="已产数量" width="120" />
+      <el-table-column prop="" label="未产数量" width="120">
+        <template slot-scope="scope">
+          {{ scope.row.orderNum - scope.row.productNum }}
+        </template>
+      </el-table-column>
       <el-table-column prop="deliveryDate" label="交货日期" width="120" />
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
@@ -91,6 +95,9 @@ export default {
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   },
   methods: {
+    query() {
+      this.initTable()
+    },
     initTable() {
       getOrderNotProduct(this.form).then(res => {
         this.tableData = res.list
