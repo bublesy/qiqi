@@ -27,7 +27,7 @@
       </el-form-item>
       <el-form-item label="仓库状态:">
         <el-select v-model="form.wosState" placeholder="请选择" clearable>
-          <el-option label="已出货" value="已出货" />
+          <el-option label="已送货" value="已送货" />
           <el-option label="纸板已入仓" value="纸板已入仓" />
           <el-option label="入仓未出货" value="入仓未出货" />
           <el-option label="新订单" value="新订单" />
@@ -69,9 +69,10 @@
         <el-table-column prop="productNum" label="已产数量" width="120" />
         <el-table-column prop="productSpace" label="成品仓位" width="120" />
         <el-table-column prop="sendNum" label="已送数量" width="120" />
-        <el-table-column prop="lossNum" label="损耗数量" width="120" />
+        <!-- <el-table-column prop="lossNum" label="损耗数量" width="120" /> -->
         <el-table-column prop="orderDate" label="下单日期" width="120" />
         <el-table-column prop="deliveryDate" label="交货日期" width="120" />
+        <el-table-column prop="wosState" label="仓库状态" width="120" />
         <!-- <el-table-column prop="usedBox" label="常用箱" width="120" /> -->
         <!-- <el-table-column prop="money" label="金额" width="120" />
         <el-table-column prop="supplier" label="供方" width="120" /> -->
@@ -119,11 +120,12 @@ export default {
       total: 0,
       form: {
         page: 1,
-        count: 10
+        count: 10,
         // no: '',
         // modelNo: '',
         // boxType: '',
         // supplier: ''
+        isProduct: false
       },
       editDialog: {
         show: false
@@ -167,8 +169,10 @@ export default {
     },
     initTable() {
       getOrder(this.form).then(res => {
-        console.log(res)
         this.tableData = res.list
+        this.tableData.forEach(x => {
+          x.cartonSize = x.length + 'X' + x.width + 'X' + x.height
+        })
         this.total = res.total
       })
     },
@@ -192,10 +196,10 @@ export default {
     },
     toExcel() {
       var list = this.tableData
-      const th = ['部门名称', '最后操作时间']
-      const filterVal = ['name', 'lastmodifytime']
+      const th = ['任务编号', '客户名称', '客户单号', '款号', '箱型', '材质', '纸箱尺寸(mm)', '订单数量', '纸板到货数量', '已产数量', '成品仓位', '已送数量', '下单日期', '交货日期', '仓库状态']
+      const filterVal = ['no', 'name', 'customerNo', 'modelNo', 'boxType', 'material', 'cartonSize', 'orderNum', 'incomeNum', 'productNum', 'productSpace', 'sendNum', 'orderDate', 'deliveryDate', 'wosState']
       const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '部门管理')
+      export2Excel(th, data, '客户订单')
     },
     print() {
       if (this.select.length === 0) {

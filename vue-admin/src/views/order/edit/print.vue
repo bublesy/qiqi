@@ -12,22 +12,28 @@
         border
         stripe
       >
-        <el-table-column type="index" width="55" />
+        <el-table-column type="selection" width="55" />
         <el-table-column prop="no" label="任务编号" width="120" />
         <el-table-column prop="name" label="客户名称" width="120" />
         <el-table-column prop="customerNo" label="客户单号" width="120" />
         <el-table-column prop="modelNo" label="款号" width="120" />
         <el-table-column prop="boxType" label="箱型" width="120" />
         <el-table-column prop="material" label="材质" width="120" />
-        <el-table-column prop="cartonSize" label="纸箱尺寸(mm)" width="120" />
+        <el-table-column prop="cartonSize" label="纸箱尺寸(mm)" width="180">
+          <template slot-scope="scope">
+            {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
+          </template>
+        </el-table-column>
         <el-table-column prop="orderNum" label="订单数量" width="120" />
-        <el-table-column prop="perPrice" label="纸板到货数量" width="120" />
-
-        <el-table-column prop="cartonSize" label="已产数量" width="120" />
-        <el-table-column prop="orderNum" label="已送数量" width="120" />
-        <el-table-column prop="perPrice" label="下单日期" width="120" />
-        <el-table-column prop="perPrice" label="交货日期" width="120" />
-
+        <el-table-column prop="incomeNum" label="纸板到货数量" width="120" />
+        <!-- <el-table-column prop="space" label="仓位" width="120" /> -->
+        <el-table-column prop="productNum" label="已产数量" width="120" />
+        <el-table-column prop="productSpace" label="成品仓位" width="120" />
+        <el-table-column prop="sendNum" label="已送数量" width="120" />
+        <!-- <el-table-column prop="lossNum" label="损耗数量" width="120" /> -->
+        <el-table-column prop="orderDate" label="下单日期" width="120" />
+        <el-table-column prop="deliveryDate" label="交货日期" width="120" />
+        <el-table-column prop="wosState" label="仓库状态" width="120" />
         <!-- <el-table-column prop="money" label="金额" width="120" />
         <el-table-column prop="supplier" label="供方" width="120" /> -->
         <!-- <el-table-column prop="createdTime" label="制单时间" width="120" />

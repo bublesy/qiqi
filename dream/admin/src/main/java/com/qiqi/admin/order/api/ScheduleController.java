@@ -3,12 +3,14 @@ package com.qiqi.admin.order.api;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qiqi.admin.order.util.TimeAddEight;
 import com.qiqi.order.dto.ScheduleDTO;
+import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.entity.ScheduleDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.order.service.OrderService;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
@@ -34,6 +36,13 @@ public class ScheduleController {
 
     @Resource
     private ScheduleService scheduleService;
+
+    private Long scheduleId;
+
+    private Integer product;
+
+    @Resource
+    private OrderService orderService;
 
     @ApiOperation(value = "获取排期(列表)")
     @PostMapping("/list")
@@ -68,7 +77,17 @@ public class ScheduleController {
     @ApiOperation(value = "新增排期")
     @PostMapping("")
     public Boolean saveSchedule(@RequestBody ScheduleDO scheduleDO) {
-        return scheduleService.saveOrUpdate(scheduleDO);
+        boolean b = scheduleService.saveOrUpdate(scheduleDO);
+        this.scheduleId = scheduleDO.getId();
+        this.product = scheduleDO.getProductNum();
+        return b;
+    }
+
+    @PutMapping("/order")
+    public Boolean updateSchedule(){
+        OrderDO orderDO = new OrderDO();
+        orderDO.setProductNum(product);
+        return orderService.update(orderDO,new QueryWrapper<OrderDO>().eq("schedule_id",this.scheduleId));
     }
 
     @ApiOperation(value = "删除排期(批量))")

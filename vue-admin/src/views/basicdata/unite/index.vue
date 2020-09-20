@@ -3,9 +3,9 @@
     <h2 style="margin-left:10%">结合管理</h2>
     <el-form :inline="true" :model="form" size="mini">
       <el-form-item label="部门名称:">
-        <el-input v-model="form.name" clearable @clear="loadData" />
+        <el-input v-model="form.name" clearable @click="init" />
       </el-form-item>
-      <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
+      <el-button type="primary" size="mini" @click="init()">查询</el-button>
       <el-button type="primary" size="mini" @click="supplierAdd">新增 </el-button>
     </el-form>
     <el-table
@@ -52,12 +52,13 @@
     </el-dialog>
     <!-- 分页 -->
     <el-pagination
-      style="margin-top: 10px"
-      :total="pagination.total"
-      :current-page="pagination.page"
-      layout="total, prev, pager, next, sizes"
-      @size-change="pagination.size"
-      @current-change="pageChange"
+      :current-page="form.page"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="form.count"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
     />
   </div>
 </template>
@@ -71,6 +72,7 @@ export default {
 
   data() {
     return {
+      total: 0,
       form: {
         page: 1,
         count: 10,
@@ -88,31 +90,26 @@ export default {
     this.init()
   },
   methods: {
+    handleCurrentChange(page) {
+      this.form.page = page
+      this.init()
+    },
+    handleSizeChange(size) {
+      this.form.size = size
+      this.init()
+    },
     // 获取列表数据
-    loadData() {
-      this.form.name = this.form.name
-      // this.queryParams.abbreviation = this.form.abbreviation
-      // this.queryParams.time = this.form.time
-      // if (this.queryParams.time === null) {
-      //   this.$set(this.queryParams, 'time', '')
-      // }
+    init() {
       list(this.form).then(res => {
         this.tableData = res.list
-        this.pagination.total = res.total
-        this.page = res.page
-
-        console.log(res)
+        this.total = res.total
       })
     },
     // 编辑
     modifyPur(scope) {
-      console.log('id', scope)
-      console.log(scope.$index)
       this.titleType = '编辑'
       this.dialogVisible = true
-      this.formAdd.id = scope.row.id
-
-      getById(this.formAdd).then(res => {
+      getById(scope.row.id).then(res => {
         this.formAdd = res
       })
     },
@@ -130,7 +127,7 @@ export default {
             if (res) {
               this.$message.success(this.titleType + '成功')
               this.$refs[supForm].resetFields()
-              this.loadData()
+              this.init()
             } else {
               this.$message.error(this.titleType + '失败')
             }
@@ -152,7 +149,7 @@ export default {
       removeById(scope.row.id).then(res => {
         if (res) {
           this.$message.success('删除成功')
-          this.loadData()
+          this.init()
         } else {
           this.$message.error('删除失败')
         }

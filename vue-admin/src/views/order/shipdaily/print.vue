@@ -17,7 +17,7 @@
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
       </el-form-item>
     </el-form> -->
-    <span style="margin-left:25%">制表:</span>
+    <span style="margin-left:25%">制表:{{ name }}</span>
     <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
     <el-table
       ref="multipleTable"
@@ -27,15 +27,15 @@
       border
       stripe
     >
-      <el-table-column type="index" width="55" />
+      <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
-      <el-table-column prop="name" label="出货日期" width="120" />
-      <el-table-column prop="name" label="出货单号" width="120" />
-      <el-table-column prop="name" label="箱型" width="120" />
-      <el-table-column prop="name" label="出货数量" width="120" />
-      <el-table-column prop="name" label="单价" width="120" />
-      <el-table-column prop="name" label="金额" width="120" />
-      <el-table-column prop="name" label="回签状态" width="120" />
+      <el-table-column prop="deliveryDate" label="出货日期" width="120" />
+      <el-table-column prop="outNo" label="出货单号" width="120" />
+      <el-table-column prop="boxType" label="箱型" width="120" />
+      <el-table-column prop="sendNum" label="出货数量" width="120" />
+      <el-table-column prop="perPrice" label="单价" width="120" />
+      <el-table-column prop="money" label="金额" width="120" />
+      <el-table-column prop="sign" label="回签状态" width="120" />
     </el-table>
     <!-- <el-pagination
       :current-page="form.page"
@@ -51,6 +51,7 @@
 
 <script>
 // import { export2Excel } from '@/utils/common'
+import { getUser } from '@/api/order/customerOrder'
 export default {
   name: 'ProDaily',
   data() {
@@ -60,10 +61,14 @@ export default {
       form: {
         page: 1,
         size: 10
-      }
+      },
+      name: ''
     }
   },
   created() {
+    getUser().then(res => {
+      this.name = res.nickname
+    })
     var date = new Date()
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
     var list = []

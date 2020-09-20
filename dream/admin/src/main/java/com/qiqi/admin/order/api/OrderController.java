@@ -94,16 +94,25 @@ public class OrderController {
     @ApiOperation(value = "新增")
     @PostMapping("")
     public Boolean saveOrder(@RequestBody OrderDO orderDO) {
-        if(orderDO.getId() == null){
-            ScheduleDO scheduleDO = new ScheduleDO();
+        IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
+        String no = idGeneratorUtils.nextId();
+        orderDO.setNo(no);
+        ScheduleDO scheduleDO = new ScheduleDO();
+        if(orderDO.getId() == null && !orderDO.getIsProduct()){
             BeanUtils.copyProperties(orderDO,scheduleDO);
             scheduleDO.setDate(orderDO.getDeliveryDate());
             scheduleService.save(scheduleDO);
         }
         orderDO.setOrderDate(new Date());
-        IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
-        orderDO.setNo(idGeneratorUtils.nextId());
-        orderDO.setDeliveryDate(TimeAddEight.formatTimeEight(orderDO.getDeliveryDate()));
+        if(orderDO.getDeliveryDate() != null){
+            orderDO.setDeliveryDate(TimeAddEight.formatTimeEight(orderDO.getDeliveryDate()));
+        }
+        if(scheduleDO != null){
+            orderDO.setScheduleId(scheduleDO.getId());
+        }
+        if(orderDO.getId() == null){
+            orderDO.setWosState("新订单");
+        }
         return orderService.saveOrUpdate(orderDO);
     }
 

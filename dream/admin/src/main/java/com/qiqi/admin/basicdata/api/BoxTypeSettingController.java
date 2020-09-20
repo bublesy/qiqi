@@ -25,7 +25,7 @@ import java.util.List;
  * @author QiQiDream
  * @since 2020-09-15
  */
-@Api("箱型设定相关接口")
+@Api(tags = "箱型设定相关接口")
 @RestController
 @RequestMapping("/box/type/setting")
 public class BoxTypeSettingController {

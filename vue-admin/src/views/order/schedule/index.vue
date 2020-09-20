@@ -13,7 +13,7 @@
         <el-input v-model="form.no" />
       </el-form-item>
       <el-form-item label="客户简介:">
-        <el-input v-model="form.as" />
+        <el-input v-model="form.name" />
       </el-form-item>
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
@@ -50,12 +50,12 @@
       <el-table-column prop="orderNum" label="订单数量" width="120" />
       <el-table-column prop="productNum" label="成品数量" width="120" />
       <el-table-column prop="deliveryDate" label="交货日期" width="180" />
-      <el-table-column prop="isSchedule" label="是否排期" width="120">
-        <template slot-scope="scope">
-          <span v-if="scope.row.isSchedule === true">是</span>
+      <el-table-column prop="isSchedule" label="是否排期" width="120" />
+      <!-- <template slot-scope="scope">
+          <span v-if="scope.row.isSchedule">是</span>
           <span v-else>否</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="操作" width="250">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
@@ -112,6 +112,11 @@ export default {
     initTable() {
       getSchedule(this.form).then(res => {
         this.tableData = res.list
+        this.tableData.forEach(x => {
+          x.cartonSize = x.length + 'X' + x.width + 'X' + x.height
+          x.isSchedule = (x.isSchedule === true ? '是' : '否')
+          console.log(x.isSchedule)
+        })
         this.total = res.total
       })
     },
@@ -142,10 +147,10 @@ export default {
     },
     toExcel() {
       var list = this.tableData
-      const th = ['客户名称', '出货日期', '出货单号', '箱型', '出货数量', '单价', '金额', '回签状态']
-      const filterVal = ['code', 'name', 'limitPaperLength']
+      const th = ['排期日期', '生产天数', '任务编号', '客户简介', '箱型', '材质', '楞型', '纸箱尺寸', '纸长', '纸宽', '分压规格', '单位', '订单数量', '成品数量', '交货日期', '是否排期']
+      const filterVal = ['date', 'productDay', 'no', 'name', 'boxType', 'material', 'stare', 'cartonSize', 'paperLength', 'paperWidth', 'pressureSpecification', 'unit', 'orderNum', 'productNum', 'deliveryDate', 'isSchedule']
       const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '箱类设定')
+      export2Excel(th, data, '生产排期表')
     },
     print() {
       if (this.select.length === 0) {

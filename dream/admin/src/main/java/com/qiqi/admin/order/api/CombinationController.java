@@ -67,7 +67,7 @@ public class CombinationController {
     @ApiOperation(value = "新增组合")
     @PostMapping("")
     public Boolean saveCombination(@RequestBody CombinationDO combinationDO) {
-        return combinationService.save(combinationDO);
+        return combinationService.saveOrUpdate(combinationDO);
     }
 
     @ApiOperation(value = "删除组合(批量))")

@@ -70,7 +70,6 @@ export default {
   },
   created() {
     this.initTable()
-    this.tableData.push({ name: '销售部', lastmodifytime: '2020-9-11' })
   },
   methods: {
     initTable() {

@@ -17,7 +17,7 @@
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br> -->
       </el-form-item>
     </el-form>
-    <span style="margin-left:25%">制表:</span>
+    <span style="margin-left:25%">制表:{{ name }}</span>
     <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
     <el-table
       ref="multipleTable"
@@ -27,20 +27,28 @@
       border
       stripe
     >
-      <el-table-column type="index" width="55" />
+      <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="客户名称" width="120" />
-      <el-table-column prop="name" label="任务编号" width="120" />
-      <el-table-column prop="name" label="客户单号" width="120" />
-      <el-table-column prop="name" label="款号" width="120" />
-      <el-table-column prop="name" label="箱型" width="120" />
-      <el-table-column prop="name" label="纸质" width="120" />
-      <el-table-column prop="name" label="供方" width="120" />
+      <el-table-column prop="no" label="任务编号" width="120" />
+      <el-table-column prop="customerNo" label="客户单号" width="120" />
+      <el-table-column prop="modelNo" label="款号" width="120" />
+      <el-table-column prop="boxType" label="箱型" width="120" />
+      <el-table-column prop="material" label="纸质" width="120" />
+      <el-table-column prop="supplier" label="供方" width="120" />
       <el-table-column prop="name" label="来料数量" width="120" />
-      <el-table-column prop="name" label="尺寸" width="120" />
-      <el-table-column prop="name" label="订单数量" width="120" />
-      <el-table-column prop="name" label="已产数量" width="120" />
-      <el-table-column prop="name" label="未产数量" width="120" />
-      <el-table-column prop="name" label="交货日期" width="120" />
+      <el-table-column prop="" label="尺寸" width="120">
+        <template slot-scope="scope">
+          {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="orderNum" label="订单数量" width="120" />
+      <el-table-column prop="productNum" label="已产数量" width="120" />
+      <el-table-column prop="" label="未产数量" width="120">
+        <template slot-scope="scope">
+          {{ scope.row.orderNum - scope.row.productNum }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="deliveryDate" label="交货日期" width="120" />
     </el-table>
     <!-- <el-pagination
       :current-page="form.page"
@@ -56,6 +64,7 @@
 
 <script>
 // import { export2Excel } from '@/utils/common'
+import { getUser } from '@/api/order/customerOrder'
 export default {
   name: 'ProDaily',
   data() {
@@ -68,10 +77,14 @@ export default {
         size: 10,
         date: null
 
-      }
+      },
+      name: ''
     }
   },
   created() {
+    getUser().then(res => {
+      this.name = res.nickname
+    })
     var date = new Date()
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
     var list = []

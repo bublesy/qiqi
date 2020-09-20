@@ -4,7 +4,7 @@
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
       <el-form-item label="交货日期:">
         <el-date-picker
-          v-model="form.date"
+          v-model="form.deliveryDate"
           type="date"
           placeholder="选择日期"
         />
@@ -21,7 +21,7 @@
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
       </el-form-item>
     </el-form>
-    <span style="margin-left:25%">制表:</span>
+    <span style="margin-left:25%">制表:{{ name }}</span>
     <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
     <el-table
       ref="multipleTable"
@@ -37,7 +37,7 @@
       <el-table-column prop="no" label="任务编号" width="120" />
       <el-table-column prop="modelNo" label="款号" width="120" />
       <el-table-column prop="material" label="材质" width="120" />
-      <el-table-column prop="name" label="订单尺寸" width="120">
+      <el-table-column prop="cartonSize" label="订单尺寸" width="120">
         <template slot-scope="scope">
           {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
         </template>
@@ -67,6 +67,7 @@
 <script>
 import { export2Excel } from '@/utils/common'
 import { getDaily } from '@/api/order/daily'
+import { getUser } from '@/api/order/customerOrder'
 export default {
   name: 'Daily',
   data() {
@@ -78,10 +79,14 @@ export default {
         count: 10,
         date: null
       },
-      select: []
+      select: [],
+      name: ''
     }
   },
   created() {
+    getUser().then(res => {
+      this.name = res.nickname
+    })
     this.initTable()
     var date = new Date()
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
@@ -93,6 +98,9 @@ export default {
     initTable() {
       getDaily(this.form).then(res => {
         this.tableData = res.list
+        this.tableData.forEach(x => {
+          x.cartonSize = x.length + 'X' + x.width + 'X' + x.height
+        })
         this.total = res.total
       })
     },
@@ -106,8 +114,8 @@ export default {
     },
     toExcel() {
       var list = this.tableData
-      const th = ['客户名称', '出货日期', '出货单号', '箱型', '出货数量', '单价', '金额', '回签状态']
-      const filterVal = ['code', 'name', 'limitPaperLength']
+      const th = ['客户名称', '任务编号', '款号', '材质', '订单尺寸', '订单数量', '单价', '金额', '交货日期']
+      const filterVal = ['name', 'no', 'modelNo', 'material', 'cartonSize', 'orderNum', 'perPrice', 'money', 'deliveryDate']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '箱类设定')
     },

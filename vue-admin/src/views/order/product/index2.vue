@@ -63,47 +63,20 @@
 </template>
 
 <script>
-
+import { getUser } from '@/api/order/customerOrder'
 export default window.$crudCommon({
   data() {
     return {
       tableData: {},
-      a: []
-      // my: '这是测试文本'
-      // tableData: {
-      //   name: '百味林',
-      //   no: '120',
-      //   modelNo: '客户的箱号或者款号',
-      //   boxType: '五层箱',
-      //   length: 600,
-      //   width: 300,
-      //   height: 400,
-      //   orderNum: 256,
-      //   material: '美卡',
-      //   color: '红色',
-      //   stare: 'AB',
-      //   paperLength: '1880',
-      //   paperWidth: '704',
-      //   paperArea: '0.66',
-      //   printSurface: '按样箱',
-      //   combine: '粘胶',
-      //   NailClass: 1,
-      //   nailingNumber: '打钉数',
-      //   combineOptions: '',
-      //   totalArea: '373.54',
-      //   conventional: true,
-      //   partialPressure: true,
-      //   pasting: true,
-      //   printing: true,
-      //   grooving: true,
-      //   dieCutting: true,
-      //   delivery: '250',
-      //   remark: '备注'
-      // },
+      a: [],
+      name: ''
 
     }
   },
   created() {
+    getUser().then(res => {
+      this.name = res
+    })
     var row = this.$route.query.row
     this.row = row
     this.tableData = row

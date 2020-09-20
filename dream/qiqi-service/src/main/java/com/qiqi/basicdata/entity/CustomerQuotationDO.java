@@ -25,7 +25,8 @@ public class CustomerQuotationDO extends BaseModel {
 
     private static final long serialVersionUID=1L;
 
-    private String boxType;
+    @TableField(typeHandler = FastjsonTypeHandler.class)
+    private JSONArray boxType;
 
     private BigDecimal totalPrice;
 

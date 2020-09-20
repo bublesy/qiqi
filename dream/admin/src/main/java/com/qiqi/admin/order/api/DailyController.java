@@ -33,7 +33,9 @@ public class DailyController {
     @PostMapping("/list")
     public PageEntity<OrderDO> getList(@RequestBody OrderDTO query){
         QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
-        query.setDeliveryDate(TimeAddEight.formatTimeEight(query.getDeliveryDate()));
+        if(query.getDeliveryDate() != null){
+            query.setDeliveryDate(TimeAddEight.formatTimeEight(query.getDeliveryDate()));
+        }
         queryWrapper.eq(!ObjectUtils.isEmpty(query.getDeliveryDate()),"delivery_date",query.getDeliveryDate())
                 .like(StringUtils.isNotBlank(query.getName()),"name",query.getName())
                 .like(StringUtils.isNotBlank(query.getNo()),"no",query.getNo());

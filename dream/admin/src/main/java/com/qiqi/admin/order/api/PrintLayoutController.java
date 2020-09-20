@@ -66,7 +66,7 @@ public class PrintLayoutController {
     @ApiOperation(value = "新增印刷版面")
     @PostMapping("")
     public Boolean savePrintLayout(@RequestBody PrintLayoutDO printLayoutDO) {
-        return printLayoutService.save(printLayoutDO);
+        return printLayoutService.saveOrUpdate(printLayoutDO);
     }
 
     @ApiOperation(value = "删除印刷版面(批量))")
