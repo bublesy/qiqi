@@ -34,7 +34,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="是否成品:">
-        <el-checkbox v-model="form.isProduct" />
+        <el-select v-model="form.isProduct" placeholder="请选择" clearable>
+          <el-option label="全部" value="" />
+          <el-option label="成品" value="成品" />
+          <el-option label="非成品" value="非成品" />
+        </el-select>
       </el-form-item>
     </el-form>
     <el-button size="mini" type="primary" @click="query">查询</el-button>
@@ -125,7 +129,7 @@ export default {
         // modelNo: '',
         // boxType: '',
         // supplier: ''
-        isProduct: false
+        isProduct: ''
       },
       editDialog: {
         show: false

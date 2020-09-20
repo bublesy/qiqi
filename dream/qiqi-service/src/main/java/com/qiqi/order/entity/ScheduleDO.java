@@ -28,6 +28,8 @@ public class ScheduleDO extends BaseModel {
 
     private Integer productDay;
 
+    private String finished;
+
     /**
      * 任务编号
      */
@@ -94,7 +96,7 @@ public class ScheduleDO extends BaseModel {
     private Integer orderNum;
 
     /**
-     * 成品数量
+     * 已产数量
      */
     private Integer productNum;
 

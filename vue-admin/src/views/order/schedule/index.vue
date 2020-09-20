@@ -48,7 +48,8 @@
       <el-table-column prop="pressureSpecification" label="分压规格" width="120" />
       <el-table-column prop="unit" label="单位" width="120" />
       <el-table-column prop="orderNum" label="订单数量" width="120" />
-      <el-table-column prop="productNum" label="成品数量" width="120" />
+      <el-table-column prop="productNum" label="已产数量" width="120" />
+      <!-- <el-table-column prop="finished" label="成品数量" width="120" /> -->
       <el-table-column prop="deliveryDate" label="交货日期" width="180" />
       <el-table-column prop="isSchedule" label="是否排期" width="120" />
       <!-- <template slot-scope="scope">

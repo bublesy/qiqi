@@ -19,6 +19,8 @@ import com.qiqi.order.service.ScheduleService;
 
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,6 +42,10 @@ public class ScheduleController {
     private Long scheduleId;
 
     private Integer product;
+
+    private String finished;
+
+    private Date date;
 
     @Resource
     private OrderService orderService;
@@ -80,6 +86,8 @@ public class ScheduleController {
         boolean b = scheduleService.saveOrUpdate(scheduleDO);
         this.scheduleId = scheduleDO.getId();
         this.product = scheduleDO.getProductNum();
+        this.finished = scheduleDO.getFinished();
+        this.date = scheduleDO.getDate();
         return b;
     }
 
@@ -87,6 +95,8 @@ public class ScheduleController {
     public Boolean updateSchedule(){
         OrderDO orderDO = new OrderDO();
         orderDO.setProductNum(product);
+        orderDO.setFinished(finished);
+        orderDO.setDate(date);
         return orderService.update(orderDO,new QueryWrapper<OrderDO>().eq("schedule_id",this.scheduleId));
     }
 

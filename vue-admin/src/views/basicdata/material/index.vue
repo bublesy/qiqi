@@ -72,6 +72,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      total: 0,
       form: {
         page: 1,
         count: 10,

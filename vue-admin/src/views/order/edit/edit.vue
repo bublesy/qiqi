@@ -106,7 +106,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="是否成品:">
-          <el-checkbox v-model="form.isProduct" />
+          <el-select v-model="form.isProduct" placeholder="请选择" clearable>
+            <el-option label="成品" value="成品" />
+            <el-option label="非成品" value="非成品" />
+          </el-select>
         </el-form-item>
       </el-form>
     </el-card>
@@ -150,7 +153,14 @@
           <el-input v-model="form.nailingNumber" @input="pack" />
         </el-form-item>
         <el-form-item label="楞型:">
-          <el-input v-model="form.stare" />
+          <el-select v-model="form.stare" placeholder="请选择">
+            <el-option
+              v-for="item in stareOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="分压规格:">
           <el-input v-model="form.pressureSpecification" />
@@ -240,7 +250,7 @@
 <script>
 import upload from '@/views/order/edit/upload'
 import { addOrUpdateOrder, getSupplier, getMaterial, getUnite, getColor, getNails,
-  getCombination, getPrintLayout, getSingleOrder, getCustomer } from '@/api/order/customerOrder'
+  getCombination, getPrintLayout, getSingleOrder, getCustomer, getStare } from '@/api/order/customerOrder'
 import { getBoxClassList } from '@/api/basedata/boxclass'
 export default {
   components: { upload },
@@ -262,7 +272,7 @@ export default {
     return {
       imageUrl: '',
       form: {
-        isProduct: false
+        isProduct: ''
       },
       rules: {
         material: [
@@ -285,12 +295,16 @@ export default {
       printSurfaceOptions: [],
       combineOptions: [],
       NailClassOptions: [],
-      customerOptions: []
+      customerOptions: [],
+      stareOptions: []
     }
   },
   watch: {
     'dialog.show': function(val) {
       if (val) {
+        getStare().then(res => {
+          this.stareOptions = res
+        })
         getBoxClassList().then(res => {
           this.boxTypeOptions = res
         })

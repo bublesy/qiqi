@@ -17,9 +17,12 @@
       <el-form-item label="生产天数:">
         <el-input v-model="form.productDay" />
       </el-form-item>
-      <el-form-item label="成品数量:">
+      <el-form-item label="已产数量:">
         <el-input v-model="form.productNum" />
       </el-form-item>
+      <!-- <el-form-item label="成品数量:">
+        <el-input v-model="form.finished" />
+      </el-form-item> -->
       <el-form-item label="是否排期:">
         <el-checkbox v-model="form.isSchedule" />
       </el-form-item>

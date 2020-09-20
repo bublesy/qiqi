@@ -1,7 +1,8 @@
 <template>
   <div id="print" class="app-container">
     <div>
-      <el-button v-print="'#print'" type="warning" style="margin-left:75%">打印当前</el-button>
+      <el-button type="info" style="margin-left:65%" @click="back">返回</el-button>
+      <el-button v-print="'#print'" type="warning">打印当前</el-button>
       <el-button type="success" @click="print">前往打印</el-button>
       <!-- <el-button type="success" style="margin-left:60%" @click="back">返回</el-button> -->
       <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
@@ -150,6 +151,9 @@ export default {
     console.log(this.url)
   },
   methods: {
+    back() {
+      this.$router.push('/edit')
+    },
     changeText() {
       this.reloadTag()
     },

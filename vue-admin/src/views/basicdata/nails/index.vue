@@ -118,8 +118,8 @@ export default {
     },
     // 新增
     supplierAdd() {
+      this.formAdd = this.form = Object.assign({}, this.$options.data().form)
       this.formAdd.id = null
-      this.formAdd = {}
       this.dialogVisible = true
       this.titleType = '新增'
     },
@@ -127,13 +127,17 @@ export default {
     supplierAddOk(supForm) {
       this.$refs[supForm].validate((valid) => {
         if (valid) {
+          console.log(this.formAdd.id)
           if (this.formAdd.id !== null) {
+            console.log('ccc')
             updated(this.formAdd).then(res => {
               this.$message.success(this.titleType + '成功')
               this.$refs[supForm].resetFields()
               this.init()
             })
           } else {
+            console.log('aaa')
+            console.log(this.form.id)
             add(this.formAdd).then(res => {
               this.$message.success(this.titleType + '成功')
               this.$refs[supForm].resetFields()
