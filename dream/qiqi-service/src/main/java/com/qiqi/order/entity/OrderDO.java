@@ -41,7 +41,6 @@ public class OrderDO extends BaseModel {
 
     private String pressureSpecification;
 
-    private String outNo;
 
     private BigDecimal totalArea;
 
