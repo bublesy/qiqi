@@ -1,7 +1,8 @@
 <template>
-  <div class="app-container">
+  <div id="print" class="app-container">
     <div>
-      <el-button type="success" style="margin-left:80%" @click="print">前往打印</el-button>
+      <el-button v-print="'#print'" type="warning" style="margin-left:75%">打印当前</el-button>
+      <el-button type="success" @click="print">前往打印</el-button>
       <!-- <el-button type="success" style="margin-left:60%" @click="back">返回</el-button> -->
       <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
       <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
@@ -34,7 +35,7 @@
           <td colspan="3" class="center">印刷</td>
           <td colspan="3" class="center">结合</td>
           <td colspan="6" rowspan="5" class="xx"><span>箱型展开图: </span>
-            <img v-if="tableData.img" src="D:\hc\Carton\dream\admin\target\classes\upload\2020\09\19\file.jpg" class="avatar">
+            <img v-if="tableData.img" :src="url" class="avatar" style="width:200px;height:150px">
           </td>
         </tr>
         <tr>
@@ -132,6 +133,7 @@ export default {
   inject: ['closeTag', 'reloadTag', 'refreshTag'],
   data() {
     return {
+      url: '',
       tableData: {},
       row: {},
       name: ''
@@ -143,16 +145,15 @@ export default {
     })
     var row = this.$route.query.row
     this.row = row
-    console.log(row.img)
-    // row.img = row.img.substring(5, row.img.length)
     this.tableData = row
+    this.url = 'http://192.168.1.150:8080/api/admin' + localStorage.getItem('imageUrl')
+    console.log(this.url)
   },
   methods: {
     changeText() {
       this.reloadTag()
     },
     onload(id) {
-      console.log(id)
     },
     print() {
       this.$router.push({

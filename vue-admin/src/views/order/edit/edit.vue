@@ -229,7 +229,9 @@
           <el-input v-model="form.remark" />
         </el-form-item>
       </el-form>
-      <p :imageUrl="imageUrl">添加样图:</p>
+      <p>添加样图:</p>
+      <img v-if="imageUrl" :src="imageUrl" class="avatar">
+      <i v-else class="el-icon-plus avatar-uploader-icon" />
       <upload />
     </el-card>
   </el-dialog>
