@@ -63,6 +63,7 @@
               v-model="formAdd.date"
               type="date"
               placeholder="选择日期"
+              value-format="yyyy-MM-dd"
             />
           </el-form-item>
           <el-form-item label="开单员:" prop="partOrder">
@@ -71,28 +72,24 @@
           <el-form-item label="备注:" prop="note">
             <el-input v-model="formAdd.note" />
           </el-form-item>
-          <el-form-item label="品名规格:" prop="pickingPeople">
-            <el-select v-model="value" placeholder="请选择">
+          <el-form-item label="品名规格:" prop="specification">
+            <el-select v-model="formAdd.specificationId" placeholder="请选择" @change="specificationChange">
               <el-option
-                v-for="item in specification"
+                v-for="item in specificationFor"
                 :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :label="item.specification"
+                :value="item.id"
               />
             </el-select>
           </el-form-item>
           <el-form-item label="单位:" prop="unit">
-            <el-select v-model="value1" placeholder="请选择">
-              <el-option
-                v-for="item in unit"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value1"
-              />
-            </el-select>
+            <el-input v-model="formAdd.unit" disabled />
           </el-form-item>
-          <el-form-item label="数量:" prop="pickingeople">
-            <el-input v-model="formAdd.pickingeople" />
+          <el-form-item
+            label="数量:"
+            prop="num"
+          >
+            <el-input v-model="formAdd.num" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -114,8 +111,9 @@
 </template>
 <script>
 import initData from '@/mixins/initData'
-import { list, add, removeById, getById, updated, listunit } from '@/api/accessories/picking'
+import { list, add, removeById, getById, listunit } from '@/api/accessories/picking'
 import { export2Excel } from '@/utils/common'
+import { specificationList } from '@/api/accessories/means'
 
 export default {
   name: 'Means',
@@ -145,40 +143,8 @@ export default {
       // 辅料数据
       table: [],
       // 品名规格下拉
-      specification: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
+      specificationFor: [],
       value: '',
-      // 单位下拉
-      unit: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
       value1: ''
     }
   },
@@ -186,6 +152,13 @@ export default {
     this.init()
   },
   methods: {
+    specificationChange() {
+      this.specificationFor.forEach(a => {
+        if (a.id === this.formAdd.specificationId) {
+          this.formAdd.unit = a.unit
+        }
+      })
+    },
     // 获取列表数据
     loadData() {
       // this.form.name = this.form.name
@@ -223,30 +196,22 @@ export default {
     // 新增
     supplierAdd() {
       // this.formAdd = {}
-      this.formAdd.id = null
       this.dialogVisible = true
+      this.formAdd = {}
       this.titleType = '新增'
+      specificationList().then(res => {
+        this.specificationFor = res
+      })
     },
     // 新增保存
     supplierAddOk(supForm) {
       this.$refs[supForm].validate((valid) => {
         if (valid) {
-          if (this.formAdd.id !== null) {
-            updated(this.formAdd).then(res => {
-              console.log(res)
-              this.$message.success(this.titleType + '成功')
-              this.$refs[supForm].resetFields()
-              this.loadData()
-            })
-          } else {
-            console.log('aaa')
-            console.log(this.formAdd)
-            add(this.formAdd).then(res => {
-              this.$message.success(this.titleType + '成功')
-              this.$refs[supForm].resetFields()
-              this.loadData()
-            })
-          }
+          add(this.formAdd).then(res => {
+            this.$message.success(this.titleType + '成功')
+            this.$refs[supForm].resetFields()
+            this.loadData()
+          })
           this.dialogVisible = false
         } else {
           return false

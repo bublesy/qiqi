@@ -8,6 +8,10 @@ export function list(data) {
   return request({ url: '/material/data/list', method: 'post', data: data })
 }
 
+export function specificationList(data) {
+  return request({ url: '/material/data/specificationList', method: 'get', data: data })
+}
+
 export function removeById(id) {
   return request({ url: '/material/data/' + id, method: 'delete' })
 }

@@ -1,14 +1,19 @@
 package com.qiqi.admin.material.api;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qiqi.admin.material.dto.MaterialPickingDTO;
+import com.qiqi.material.entity.MaterialDataDO;
 import com.qiqi.material.entity.MaterialInStoreDO;
+import com.qiqi.material.entity.MaterialInventoryDO;
 import com.qiqi.material.entity.MaterialPickingDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.material.service.MaterialDataService;
+import com.qiqi.material.service.MaterialInventoryService;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
@@ -34,6 +39,10 @@ public class MaterialPickingController {
 
     @Resource
     private MaterialPickingService materialPickingService;
+    @Resource
+    private MaterialInventoryService materialInventoryService;
+    @Resource
+    private MaterialDataService materialDataService;
 
     @ApiOperation(value = "获取(列表)")
     @PostMapping("/list")
@@ -65,7 +74,20 @@ public class MaterialPickingController {
     @ApiOperation(value = "新增")
     @PostMapping("")
     public Boolean saveMaterialPicking(@RequestBody MaterialPickingDO materialPickingDO) {
-        return materialPickingService.save(materialPickingDO);
+        String specificationId = materialPickingDO.getSpecificationId();
+        MaterialDataDO byId = materialDataService.getById(specificationId);
+        MaterialInventoryDO a = materialInventoryService.getNumBySpecificationId(specificationId);
+        if (a==null){
+            MaterialInventoryDO materialInventoryDO = new MaterialInventoryDO();
+            BeanUtil.copyProperties(materialPickingDO,materialInventoryDO);
+            materialInventoryDO.setNumber(materialPickingDO.getNum());
+            materialInventoryDO.setCompany(byId.getUnit());
+            materialInventoryService.save(materialInventoryDO);
+        }else{
+            a.setNumber(a.getNumber()-materialPickingDO.getNum());
+            materialInventoryService.updateById(a);
+        }
+        return materialPickingService.saveOrUpdate(materialPickingDO);
     }
 
     @ApiOperation(value = "删除(批量))")

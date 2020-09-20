@@ -76,4 +76,13 @@ public class MaterialDataController {
     public Boolean deleteMaterialDataById(@PathVariable Long id) {
         return materialDataService.removeById(id);
     }
+
+    @GetMapping("/specificationList")
+    public List list() {
+        //todo: 需要转Vo
+
+        return materialDataService.list();
+    }
+
+
 }
