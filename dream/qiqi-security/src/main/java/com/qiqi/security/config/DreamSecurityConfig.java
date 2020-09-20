@@ -66,7 +66,7 @@ public class DreamSecurityConfig extends WebSecurityConfigurerAdapter {
         registry.antMatchers("/login").permitAll();
 
         // 其余所有请求都需要认证
-        registry.anyRequest().authenticated();
+//        registry.anyRequest().authenticated();
     }
 
     /**

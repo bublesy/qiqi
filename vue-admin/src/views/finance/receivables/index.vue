@@ -65,8 +65,8 @@
           <el-table-column label="操作" width="354">
             <template slot-scope="scope">
               <!-- <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link> -->
-              <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
-              <el-link type="warning" size="small" @click="printing">生成打印单</el-link>
+              <!-- <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link> -->
+              <el-link type="warning" size="small" @click="printing(scope.row.id)">生成打印单</el-link>
             </template>
           </el-table-column>
         </el-table>
