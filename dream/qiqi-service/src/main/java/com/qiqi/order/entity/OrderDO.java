@@ -39,8 +39,6 @@ public class OrderDO extends BaseModel {
 
     private BigDecimal totalArea;
 
-    private Boolean isProduct;
-
     private BigDecimal paperArea;
 
     private Boolean conventional;
