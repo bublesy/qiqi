@@ -4,8 +4,8 @@ export function add(data) {
   return request({ url: '/material/data', data: data, method: 'post' })
 }
 
-export function list(data) {
-  return request({ url: '/material/data/list', method: 'post', data: data })
+export function list(params) {
+  return request({ url: '/material/inventory/list', method: 'get', params: params })
 }
 
 export function specificationList(data) {

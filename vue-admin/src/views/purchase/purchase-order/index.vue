@@ -271,7 +271,6 @@ export default {
     customerSelect() {
       this.customerFor.forEach(a => {
         if (a.id === this.formAdd.customerName) {
-          console.log(a)
           this.formAdd.deliveryDate = a.deliveryDate
           this.formAdd.taskNumber = a.no
           this.formAdd.ridgeType = a.stare

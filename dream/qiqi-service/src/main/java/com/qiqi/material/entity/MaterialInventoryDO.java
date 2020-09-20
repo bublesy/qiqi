@@ -1,48 +1,39 @@
 package com.qiqi.material.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.util.Date;
 import com.qiqi.common.base.BaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 
+ * 辅料库存
  * </p>
  *
  * @author QiQiDream
- * @since 2020-09-19
+ * @since 2020-09-20
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("material_picking")
-public class MaterialPickingDO extends BaseModel {
+@TableName("material_inventory")
+public class MaterialInventoryDO extends BaseModel {
 
     private static final long serialVersionUID=1L;
 
     /**
-     * 日期
+     * 规格
      */
-    private String date;
-
-    /**
-     * 开单员
-     */
-    private String partOrder;
-    private Integer num;
-
     private String specificationId;
 
     /**
-     * 备注
+     * 单位
      */
-    private String note;
+    private String company;
 
     /**
-     * 领料人
+     * 数量
      */
-    private String pickingPeople;
+    private Integer number;
 
 
 }

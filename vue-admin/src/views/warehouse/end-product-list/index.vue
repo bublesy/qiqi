@@ -286,12 +286,26 @@ export default {
     printing(scope) {
       if (this.form.carryTo === '已送货') {
         this.multipleSelection.push(scope.row)
+        // 更改送货状态
+        const idList = []
+        this.multipleSelection.forEach(a => {
+          idList.push(a.id)
+        })
+        updateState(idList).then(res => {
+        })
         this.$router.push({
           path: '/end_product_list_delivery_note',
           query: { 'data': this.multipleSelection }
         })
       } else if (this.form.carryTo === '未送货') {
         this.multipleSelection.push(scope.row)
+        // 更改送货状态
+        const idList = []
+        this.multipleSelection.forEach(a => {
+          idList.push(a.id)
+        })
+        updateState(idList).then(res => {
+        })
         this.$router.push({
           path: '/end_product_list_not_delivery_note',
           query: { 'data': this.multipleSelection }
@@ -299,7 +313,7 @@ export default {
       } else {
         this.multipleSelection.push(scope.row)
         // 更改送货状态
-        var idList = []
+        const idList = []
         this.multipleSelection.forEach(a => {
           idList.push(a.id)
         })
@@ -314,16 +328,37 @@ export default {
     // 整页打印
     wholePrinting() {
       if (this.form.carryTo === '已送货') {
+        // 更改送货状态
+        const idList = []
+        this.tableData.forEach(a => {
+          idList.push(a.id)
+        })
+        updateState(idList).then(res => {
+        })
         this.$router.push({
           path: '/end_product_list_delivery_note',
           query: { 'data': this.tableData }
         })
       } else if (this.form.carryTo === '未送货') {
+        // 更改送货状态
+        const idList = []
+        this.tableData.forEach(a => {
+          idList.push(a.id)
+        })
+        updateState(idList).then(res => {
+        })
         this.$router.push({
           path: '/end_product_list_not_delivery_note',
           query: { 'data': this.tableData }
         })
       } else {
+        // 更改送货状态
+        const idList = []
+        this.tableData.forEach(a => {
+          idList.push(a.id)
+        })
+        updateState(idList).then(res => {
+        })
         this.$router.push({
           path: '/end_product_list_delivery_note',
           query: { 'data': this.tableData }
@@ -333,11 +368,25 @@ export default {
     // 选择打印
     selectPrinting() {
       if (this.form.carryTo === '已送货') {
+        // 更改送货状态
+        const idList = []
+        this.multipleSelection.forEach(a => {
+          idList.push(a.id)
+        })
+        updateState(idList).then(res => {
+        })
         this.$router.push({
           path: '/end_product_list_delivery_note',
           query: { 'data': this.multipleSelection }
         })
       } else if (this.form.carryTo === '未送货') {
+        // 更改送货状态
+        const idList = []
+        this.multipleSelection.forEach(a => {
+          idList.push(a.id)
+        })
+        updateState(idList).then(res => {
+        })
         this.$router.push({
           path: '/end_product_list_not_delivery_note',
           query: { 'data': this.multipleSelection }
@@ -347,6 +396,13 @@ export default {
           this.$message.error('请选择打印的内容！！！')
           return
         } else {
+        // 更改送货状态
+          const idList = []
+          this.multipleSelection.forEach(a => {
+            idList.push(a.id)
+          })
+          updateState(idList).then(res => {
+          })
           this.$router.push({
             path: '/end_product_list_delivery_note',
             query: { 'data': this.multipleSelection }
