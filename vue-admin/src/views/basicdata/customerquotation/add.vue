@@ -38,10 +38,10 @@
         </el-select>
       </el-form-item>
       <el-form-item label="销售平方价:" prop="squaredPrice" label-width="100px">
-        <el-input-number v-model="form.squaredPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:180px" />
+        <el-input-number v-model="form.squaredPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:180px" @blur="price" />
       </el-form-item>
       <el-form-item label="箱型计价:" prop="boxPrice" label-width="100px">
-        <el-input-number v-model="form.boxPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:180px" />
+        <el-input-number v-model="form.boxPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:180px" @blur="box" />
       </el-form-item>
       <el-form-item label="总价:" prop="totalPrice" label-width="100px">
         <el-input-number v-model="form.totalPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:180px" />
@@ -176,6 +176,18 @@ export default {
     }
   },
   methods: {
+    price() {
+      this.form.totalPrice = this.form.squaredPrice * this.form.boxPrice
+      if (isNaN(this.form.totalPrice)) {
+        this.form.totalPrice = 0
+      }
+    },
+    box() {
+      this.form.totalPrice = this.form.squaredPrice * this.form.boxPrice
+      if (isNaN(this.form.totalPrice)) {
+        this.form.totalPrice = 0
+      }
+    },
     code(x) {
       if (isNaN(x)) {
         this.form.code = this.form.code.substring(0, this.form.code.length - 1)

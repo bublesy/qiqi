@@ -39,13 +39,13 @@
           <el-input-number v-model="scope.row.squaredPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:90px" />
         </template>
       </el-table-column> -->
-      <el-table-column prop="boxPrice" label="箱型计价(元)" width="120" />
+      <el-table-column prop="boxPrice" label="箱型计价" width="120" />
       <el-table-column prop="totalPrice" label="总价(元)" width="120" />
       <!-- <template slot-scope="scope">
           <el-input-number v-model="scope.row.BoxPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:90px" />
         </template>
       </el-table-column> -->
-      <el-table-column label="操作" width="250">
+      <el-table-column label="操作" width="300">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" :disabled="scope.row.totalPrice===null?false:true" @click="add(scope.row.id)">新增报价单</el-button>
           <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
