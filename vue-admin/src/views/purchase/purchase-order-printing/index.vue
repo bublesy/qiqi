@@ -83,7 +83,6 @@ export default {
   },
   created() {
     this.data = this.$route.query.data
-    console.log(this.data)
     this.getList()
   },
   methods: {

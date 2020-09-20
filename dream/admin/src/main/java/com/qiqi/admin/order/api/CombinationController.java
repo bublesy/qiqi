@@ -44,7 +44,7 @@ public class CombinationController {
     public PageEntity<CombinationDO> getCombinationPage(@RequestBody CombinationDTO query) {
         QueryWrapper<CombinationDO> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StringUtils.isNotBlank(query.getName()),"name",query.getName());
-        IPage<CombinationDO> iPage = combinationService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
+        IPage<CombinationDO> iPage = combinationService.page(new Page<>(query.getPage(),query.getSize()),queryWrapper);
         //todo: 需要转Vo
 
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<CombinationDO>>() {}, iPage.getRecords()));

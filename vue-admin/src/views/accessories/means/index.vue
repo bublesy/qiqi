@@ -1,152 +1,183 @@
 <template>
   <div class="app-container">
-    <avue-crud
-      v-model="form"
-      v-bind="bindVal"
-      :page.sync="page"
+    <h2 style="margin-left:10%">辅料资料</h2>
+    <el-form :inline="true" :model="form" size="mini">
+      <el-form-item label="品名规格:">
+        <el-input v-model="form.specification" clearable @clear="loadData" />
+      </el-form-item>
+      <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
+      <el-button type="primary" size="mini" @click="supplierAdd">新增 </el-button>
+    </el-form>
+    <el-table
+      :data="tableData"
+      border
+      style="width: 400px"
+    >
+      <el-table-column
+        type="index"
+        label="#"
+      />
+      <el-table-column
+        prop="specification"
+        label="品名规格"
+      />
+      <el-table-column
+        prop="unit"
+        label="单位"
+      />
+      <el-table-column
+        label="操作"
+        width="150"
+      >
+        <template slot-scope="scope">
+          <el-button size="mini" type="warning" @click="modifyPur(scope)">编辑</el-button>
+          <el-popconfirm title="内容确定删除吗？" @onConfirm="drop(scope)">
+            <el-button slot="reference" type="danger" size="mini">删除</el-button>
+          </el-popconfirm>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- 新增/编辑对话框 -->
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
       :close-on-click-modal="false"
-      v-on="onEvent"
+
+      width="30%"
+    >
+      <el-form ref="supForm" :inline="true" :rules="supRules" :model="formAdd" size="mini">
+        <el-form-item label="品名规格:" prop="specification">
+          <el-input v-model="formAdd.specification" />
+        </el-form-item>
+        <el-form-item label="单位:" prop="unit">
+          <el-input v-model="formAdd.unit" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="supplierAddNo('supForm')">取 消</el-button>
+        <el-button type="primary" @click="supplierAddOk('supForm')">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 分页 -->
+    <el-pagination
+      style="margin-top: 10px"
+      :total="pagination.total"
+      :current-page="pagination.page"
+      layout="total, prev, pager, next, sizes"
+      @size-change="pagination.size"
+      @current-change="pageChange"
     />
   </div>
 </template>
-
 <script>
-import { removeRole } from '@/api/accessories/means'
-// import { export2Excel } from '@/utils/common'
-export default window.$crudCommon({
-  inject: ['reloadTag'],
+import initData from '@/mixins/initData'
+import { list, add, removeById, getById, updated } from '@/api/accessories/means'
+
+export default {
+  name: 'Means',
+  mixins: [initData],
   data() {
     return {
-      a: []
+      form: {
+        page: 1,
+        count: 10,
+        specification: '',
+        unit: '' },
+      formAdd: { specification: '', unit: '' },
+      dialogVisible: false,
+      tableData: [],
+      titleType: '',
+      supRules: {
+        specification: [{ required: true, message: '该输入为必填项', trigger: 'blur' }],
+        unit: [{ required: true, message: '该输入为必填项', trigger: 'blur' }]
+
+      }
     }
   },
   created() {
-
+    this.init()
   },
   methods: {
-    // toExcel() {
-    //   var list = this.tableData
-    //   const th = ['编码', '名称', '限定最大纸长']
-    //   const filterVal = ['code', 'name', 'limitPaperLength']
-    //   const data = list.map(v => filterVal.map(k => v[k]))
-    //   export2Excel(th, data, '箱类设定')
-    // },
-    handleDel(row, index) {
-      removeRole(row.id).then(response => {
-        if (response) {
-          this.$message({
-            message: '删除成功',
-            type: 'success'
-          })
+    // 获取列表数据
+    loadData() {
+      // this.form.name = this.form.name
+      // this.queryParams.abbreviation = this.form.abbreviation
+      // this.queryParams.time = this.form.time
+      // if (this.queryParams.time === null) {
+      //   this.$set(this.queryParams, 'time', '')
+      // }
+      list(this.form).then(res => {
+        this.tableData = res.list
+        this.pagination.total = res.total
+
+        console.log(res)
+      })
+    },
+    // 编辑
+    modifyPur(scope) {
+      console.log('id', scope)
+      console.log(scope.$index)
+      this.titleType = '编辑'
+      this.dialogVisible = true
+      this.formAdd.id = scope.row.id
+
+      getById(scope.row.id).then(res => {
+        this.formAdd = res
+      })
+    },
+    // 新增
+    supplierAdd() {
+      // this.formAdd = {}
+      this.formAdd.id = null
+      this.dialogVisible = true
+      this.titleType = '新增'
+    },
+    // 新增保存
+    supplierAddOk(supForm) {
+      this.$refs[supForm].validate((valid) => {
+        if (valid) {
+          if (this.formAdd.id !== null) {
+            updated(this.formAdd).then(res => {
+              console.log(res)
+              this.$message.success(this.titleType + '成功')
+              this.$refs[supForm].resetFields()
+              this.loadData()
+            })
+          } else {
+            console.log('aaa')
+            console.log(this.formAdd)
+            add(this.formAdd).then(res => {
+              this.$message.success(this.titleType + '成功')
+              this.$refs[supForm].resetFields()
+              this.loadData()
+            })
+          }
+          this.dialogVisible = false
+        } else {
+          return false
+        }
+      })
+    },
+    // 新增取消
+    supplierAddNo(supForm) {
+      this.dialogVisible = false
+      this.formAdd = {}
+      this.$refs[supForm].resetFields()
+    },
+    // 删除
+    drop(scope) {
+      removeById(scope.row.id).then(res => {
+        if (res) {
+          this.$message.success('删除成功')
+          this.loadData()
         } else {
           this.$message.error('删除失败')
         }
-      }).finally(() => {
-        this.reloadTag()
       })
-    },
-    onLoadTable({ page, value, data }, callback) {
-      // 首次加载去查询对应的值
-      if (value) {
-        this.$message.success('首次查询' + value)
-        callback({
-          id: '0',
-          name: '',
-          sex: '男'
-        })
-        return
-      }
-      if (data) {
-        this.$message.success('搜索查询参数' + JSON.stringify(data))
-      }
-      if (page) {
-        this.$message.success('分页参数' + JSON.stringify(page))
-      }
-      // 分页查询信息
-      callback({
-        total: 2,
-        data: [{
-          id: '0',
-          name: '张三',
-          sex: '男'
-        }, {
-          id: '1',
-          name: '',
-          sex: '女'
-        }]
-      })
-    },
-    setVal() {
-      this.a = [{
-        label: '选项1',
-        value: 0
-      }, {
-        label: '选项2',
-        value: 1
-      }]
-    },
-
-    beforeOpen(done, type) {
-      this.setVal()
-      done()
-    },
-
-    // 列表前操作方法
-    listBefore() {
-    },
-
-    // 列表后操作方法
-    listAfter() {
-    },
-
-    // 新增前操作方法
-    addBefore() {
-      // this.form.createUser = 'small'
-    },
-    // 新增后操作方法
-    addAfter(val) {
-      if (val) {
-        this.$message.success('新增成功')
-      } else {
-        this.$message.error('新增失败')
-      }
-    },
-
-    // 修改前操作方法
-    updateBefore() {
-      // this.form.updateUser = 'small'
-    },
-
-    // 修改后操作方法
-    updateAfter(val) {
-      if (val) {
-        this.$message.success('修改成功')
-      } else {
-        this.$message.error('修改失败')
-      }
-    },
-
-    // 删除前操作方法
-    delBefore() {},
-
-    // 删除后操作方法
-    delAfter() {
-
     }
   }
-}, {
-  name: 'accessories/means', // 模块名字
-  list: 'getRoles', // 列表接口名字
-  update: 'editRole', // 更新接口名字
-  add: 'addRole', // 新增接口名字
-  del: 'removeRole', // 删除接口名字
-  rowKey: 'id', // 主键
-  pageNumber: 'pageNumber', // 页码
-  pageSize: 'pageSize', // 页数
-  total: 'total', // 总页数
-  data: 'list'// 列表属性
-})
+}
 </script>
-<style lang="scss" scoped>
+<style scoped>
 
 </style>

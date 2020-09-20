@@ -1,29 +1,25 @@
 import request from '@/utils/request'
 
-export function getRoleSelector() {
-  return request({ url: '/dev/role/selector', method: 'get' })
+export function add(data) {
+  return request({ url: '/material/picking', data: data, method: 'post' })
 }
 
-export function getRoles(param) {
-  return request({ url: '/dev/role', params: param, method: 'get' })
+export function list(data) {
+  return request({ url: '/material/picking/list', method: 'post', data: data })
 }
 
-export function getRole(id) {
-  return request({ url: '/dev/role/' + id, method: 'get' })
+export function removeById(id) {
+  return request({ url: '/material/picking/' + id, method: 'delete' })
 }
 
-export function addRole(data) {
-  return request({ url: '/dev/role', data: data, method: 'post' })
+export function updated(data) {
+  return request({ url: '/material/picking', method: 'put', data: data })
 }
 
-export function editRole(data) {
-  return request({ url: '/dev/role', data: data, method: 'put' })
+export function getById(id) {
+  return request({ url: '/material/picking/' + id, method: 'get' })
 }
 
-export function removeRole(id) {
-  return request({ url: '/dev/role/' + id, method: 'delete' })
-}
-
-export function editRoleMenus(id, data) {
-  return request({ url: '/dev/role/' + id + '/menu', data: data, method: 'put' })
+export function listunit(data) {
+  return request({ url: '/material/data/list', method: 'post', data: data })
 }

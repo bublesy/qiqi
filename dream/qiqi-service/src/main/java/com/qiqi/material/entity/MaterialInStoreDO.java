@@ -25,7 +25,11 @@ public class MaterialInStoreDO extends BaseModel {
     /**
      * 日期
      */
-    private Date date;
+    private String date;
+
+    private String unitId;
+
+    private String specificationId;
 
     /**
      * 供方
@@ -50,12 +54,12 @@ public class MaterialInStoreDO extends BaseModel {
     /**
      * 单价
      */
-    private BigDecimal perPrice;
+    private String perPrice;
 
     /**
      * 金额
      */
-    private BigDecimal money;
+    private String money;
 
     /**
      * 数量
