@@ -18,6 +18,8 @@ public class PurchaseOrderDTO {
      */
     private String supplierId;
 
+    private String settlementPeriod;
+
     private String boxType;
     private String modelNo;
     private String taskNumber;
@@ -122,5 +124,8 @@ public class PurchaseOrderDTO {
      * 备注
      */
     private String remark;
+
+    private Long id;
+
 
 }
