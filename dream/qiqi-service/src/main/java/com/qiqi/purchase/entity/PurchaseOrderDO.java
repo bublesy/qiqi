@@ -25,6 +25,8 @@ public class PurchaseOrderDO extends BaseModel {
     private String position;
     private String endProductPos;
 
+    private String settlementPeriod;
+
     private String orderId;
 
 

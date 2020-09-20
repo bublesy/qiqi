@@ -114,6 +114,10 @@
             />
           </el-form-item>
 
+          <el-form-item label="结算周期" prop="settlementPeriod">
+            <el-input-number v-model="formAdd.settlementPeriod" :controls="false" placeholder="单位（天）" />
+          </el-form-item>
+
           <el-form-item label="客户名称" prop="customerName">
             <el-select v-model="formAdd.customerName" size="mini" @change="customerSelect">
               <el-option
@@ -363,6 +367,10 @@ export default {
       // 加载供应商下拉框
         supplierSelect().then(res => {
           this.supplierFor = res
+        })
+        // 加载客户名称下拉框
+        customerSelect().then(res => {
+          this.customerFor = res
         })
         this.formAdd = res
       })
