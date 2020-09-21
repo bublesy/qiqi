@@ -24,6 +24,7 @@ public class EndProductWarehouseDO extends BaseModel {
 
     private String carryTo;
 
+    private String posting;
     private String checkNum;
     private String checkDate;
 
