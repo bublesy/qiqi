@@ -1,9 +1,8 @@
 <template>
   <el-dialog title="订单" :visible.sync="dialog.show" width="1000px" body-style :close-on-click-modal="false">
     <div>
-      <el-button type="primary" size="mini" @click="save">保存</el-button>
-      <!-- <el-button type="primary" size="mini" @click="audit">审核</el-button> -->
-
+      <el-button type="primary" size="mini" :disabled="saveStatus" @click="save">保存</el-button>
+      <el-button type="primary" size="mini" :disabled="auditStatus" @click="audit">审核</el-button>
       <el-button type="primary" size="mini" @click="back">返回</el-button>
     </div><br>
     <p style="">订单信息</p>
@@ -248,7 +247,7 @@
 <script>
 import upload from '@/views/order/edit/upload'
 import { addOrUpdateOrder, getSupplier, getMaterial, getUnite, getColor, getNails,
-  getCombination, getPrintLayout, getSingleOrder, getCustomer, getStare } from '@/api/order/customerOrder'
+  getCombination, getPrintLayout, getSingleOrder, getCustomer, getStare, getUser } from '@/api/order/customerOrder'
 import { getBoxClassList } from '@/api/basedata/boxclass'
 export default {
   components: { upload },
@@ -268,6 +267,8 @@ export default {
   },
   data() {
     return {
+      saveStatus: false,
+      auditStatus: true,
       imageUrl: '',
       form: {
         isProduct: ''
@@ -338,12 +339,22 @@ export default {
         if (this.id !== '' && this.id !== null) {
           // 编辑
           getSingleOrder(this.id).then(res => {
+            if (res.audit === '审核') {
+              this.auditStatus = true
+              this.saveStatus = true
+            }
+            if (res.audit === '制单') {
+              this.auditStatus = false
+              this.saveStatus = false
+            }
             this.form = res
             this.imageUrl = 'http://192.168.1.150:8080/api/admin' + res.img
             localStorage.setItem('editUrl', this.imageUrl)
           })
         } else {
           // 新增
+          this.auditStatus = true
+          this.saveStatus = false
           this.form = Object.assign({}, this.$options.data().form)
         }
       }
@@ -355,6 +366,9 @@ export default {
         this.form.id = null
       }
       this.form.img = localStorage.getItem('imageUrl')
+      if (this.form.id === null || this.form.id === '' || this.form.id === undefined) {
+        this.form.audit = '制单'
+      }
       addOrUpdateOrder(this.form).then(res => {
         if (res) {
           this.$emit('init')
@@ -363,7 +377,17 @@ export default {
       this.dialog.show = false
     },
     audit() {
-      this.dialog.show = false
+      this.form.audit = '审核'
+      getUser().then(res => {
+        this.form.auditBy = res.nickname
+        addOrUpdateOrder(this.form).then(res => {
+          if (res) {
+            this.$message.success('审核成功')
+            this.$emit('init')
+          }
+        })
+        this.dialog.show = false
+      })
     },
     back() {
       this.dialog.show = false

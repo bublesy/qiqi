@@ -20,6 +20,8 @@ import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.entity.ScheduleDO;
 import com.qiqi.order.service.OrderService;
 import com.qiqi.order.service.ScheduleService;
+import com.qiqi.sys.entity.SysUserDO;
+import com.qiqi.sys.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +43,7 @@ import java.util.List;
  * @author QiQiDream
  * @since 2020-09-17
  */
-@Api("相关接口")
+@Api(tags = "订单相关接口")
 @RestController
 @RequestMapping("/order")
 public class OrderController {
@@ -60,6 +62,9 @@ public class OrderController {
 
     @Resource
     private PaperboardDataSettingService paperboardDataSettingService;
+
+    @Resource
+    private SysUserService sysUserService;
 
     private String state = "成品";
     private String state2 = "非成品";
@@ -86,6 +91,17 @@ public class OrderController {
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<OrderDO>>() {}, iPage.getRecords()));
     }
 
+    @ApiOperation(value = "月结对账单")
+    @PostMapping("/bill")
+    public PageEntity<OrderDO> getBill(@RequestBody OrderDTO query){
+        QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(!ObjectUtils.isEmpty(query.getDeliveryDate()),"delivery_date",query.getDeliveryDate())
+                .like(StringUtils.isNotBlank(query.getName()),"name",query.getName());
+        IPage<OrderDO> iPage = orderService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
+
+        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<OrderDO>>() {}, iPage.getRecords()));
+    }
+
     @ApiOperation(value = "获取(单个)")
     @GetMapping("/{id}")
     public OrderDO getOrder(@PathVariable Long id) {
@@ -100,11 +116,15 @@ public class OrderController {
         return orderService.updateById(orderDO);
     }
 
-    @ApiOperation(value = "新增")
+    @ApiOperation(value = "新增or修改")
     @PostMapping("")
     public Boolean saveOrder(@RequestBody OrderDO orderDO) {
         IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
         String no = idGeneratorUtils.nextId();
+        OrderDO order = orderService.getById(orderDO.getId());
+        if(orderDO.getDeliveryDate() != null && !order.getDeliveryDate().equals(orderDO.getDeliveryDate())){
+            orderDO.setDeliveryDate(TimeAddEight.formatTimeEight(orderDO.getDeliveryDate()));
+        }
         orderDO.setNo(no);
         ScheduleDO scheduleDO = new ScheduleDO();
         if(orderDO.getId() == null && !state.equals(orderDO.getIsProduct())){
@@ -113,23 +133,17 @@ public class OrderController {
             scheduleService.save(scheduleDO);
         }
         if(orderDO.getId() != null && !state.equals(orderDO.getIsProduct())){
-            OrderDO order = orderService.getById(orderDO.getId());
                 BeanUtils.copyProperties(orderDO,scheduleDO);
                 scheduleDO.setDate(orderDO.getDeliveryDate());
                 scheduleDO.setId(order.getScheduleId());
                 scheduleService.saveOrUpdate(scheduleDO);
         }
         if(orderDO.getId() != null && state.equals(orderDO.getIsProduct())){
-            OrderDO order = orderService.getById(orderDO.getId());
             if(order.getScheduleId() != null){
                 scheduleService.delete(order.getScheduleId());
             }
         }
-
         orderDO.setOrderDate(new Date());
-        if(orderDO.getDeliveryDate() != null){
-            orderDO.setDeliveryDate(TimeAddEight.formatTimeEight(orderDO.getDeliveryDate()));
-        }
         if(scheduleDO != null){
             orderDO.setScheduleId(scheduleDO.getId());
         }
@@ -166,5 +180,10 @@ public class OrderController {
     @GetMapping("/stare")
     public List<PaperboardDataSettingDO> getstare(){
         return paperboardDataSettingService.list();
+    }
+
+    @GetMapping("/user/{id}")
+    public SysUserDO getUser(@PathVariable Long id){
+        return sysUserService.getById(id);
     }
 }
