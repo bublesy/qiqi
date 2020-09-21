@@ -50,7 +50,6 @@
           <el-table-column v-show="true" prop="checkNum" label="盘点后库存数量" width="140" />
           <el-table-column v-show="true" prop="checkNum" label="盘点数量" width="140" />
           <el-table-column v-show="true" prop="differencesNum" label="差异数量" width="140" />
-          <el-table-column v-show="true" prop="checkDate" label="盘点时间" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
               <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?true : false" @click="purAdd(scope)">新增送货数量</el-link>
@@ -157,8 +156,12 @@ export default {
     this.init()
   },
   methods: {
-    purAddNo() {},
-    addCheckNo() {},
+    purAddNo() {
+      this.purAddVisible = false
+    },
+    addCheckNo() {
+      this.addCheckVisible = false
+    },
     checkNumChange() {
       this.$set(this.formAddCheck, 'differencesNum', this.formAddCheck.checkNum - this.formAddCheck.purQuantity)
     },

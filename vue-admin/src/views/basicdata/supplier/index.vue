@@ -72,7 +72,7 @@
           <el-input v-model="formAdd.fullName" />
         </el-form-item>
 
-        <el-form-item label="电话" prop="telephone">
+        <el-form-item label="电话">
           <el-input-number v-model="formAdd.telephone" :controls="false" />
         </el-form-item>
 
@@ -140,8 +140,7 @@ export default {
       supRules: {
         mobilePhone: [{ validator: checkPhone, trigger: 'blur' }],
         abbreviation: [{ required: true, message: '该输入为必填项', trigger: 'blur' }],
-        fullName: [{ required: true, message: '该输入为必填项', trigger: 'blur' }],
-        telephone: [{ required: true, message: '该输入为必填项', trigger: 'blur' }]
+        fullName: [{ required: true, message: '该输入为必填项', trigger: 'blur' }]
       },
       form: {
         code: '',

@@ -118,7 +118,7 @@ public class EndProductWarehouseController {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        orderDO.setDeliveryDate(date);
+        orderDO.setShipDate(date);
         orderDO.setOutNo(byId.getWarehouseNo());
         orderService.updateById(orderDO);
         return endProductWarehouseService.updateById(endProductWarehouseDO);
