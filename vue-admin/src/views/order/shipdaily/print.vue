@@ -1,5 +1,5 @@
 <template>
-  <div id="printTest" style="margin:30px">
+  <div id="printTest" style="margin:30px;width:100%;height:100%">
     <p class="font">出货日报表</p>
     <el-button type="info" style="margin-left:84%" @click="back">返回</el-button>
     <el-button v-print="'#printTest'" type="success">打印</el-button>
@@ -37,6 +37,8 @@
       <el-table-column prop="money" label="金额" width="120" />
       <el-table-column prop="sign" label="回签状态" width="120" />
     </el-table>
+    <p class="a">签收人:</p>
+    <p class="b">签收时间:</p>
     <!-- <el-pagination
       :current-page="form.page"
       :page-sizes="[10, 20, 30, 40]"
@@ -91,6 +93,14 @@ export default {
 </script>
 
 <style scoped>
+.a{
+  margin: 20px 0 0 55%;
+  font-family: 'Courier New', Courier, monospace;
+}
+.b{
+   margin: 20px 0 0 55%;
+  font-family: 'Courier New', Courier, monospace;
+}
 .font{
   font-weight: bold;
   width:400px;
