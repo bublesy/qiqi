@@ -18,6 +18,7 @@ public class PurchaseOrderDTO {
      */
     private String supplierId;
 
+    private String costPrice;
     private String settlementPeriod;
 
     private String boxType;
@@ -26,7 +27,7 @@ public class PurchaseOrderDTO {
 
     private String paperHeight;
 
-    private Boolean isProduct;
+    private String isProduct;
 
     /**
      * 计价方式
@@ -50,6 +51,12 @@ public class PurchaseOrderDTO {
      * 客户名称
      */
     private String customerName;
+
+    private String stare;
+
+    private String length;
+    private String width;
+    private String height;
 
     /**
      * 楞型

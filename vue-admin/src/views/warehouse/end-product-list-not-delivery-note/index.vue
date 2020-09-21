@@ -2,7 +2,7 @@
   <el-container>
     <el-main>
       <div id="print">
-        <el-header align="center">成品库存待送货情况表</el-header>
+        <h1 align="center">成品库存待送货情况表</h1>
         <span style="margin-left:60px">制表人:{{ nickname }}</span>
         <br>
         <br>
@@ -20,11 +20,7 @@
           <el-table-column prop="customerName" label="客户名称" />
           <el-table-column prop="taskNumber" label="任务编号" />
           <el-table-column prop="material" label="材质" />
-          <el-table-column prop="specifications" label="规格(mm)">
-            <template slot-scope="scope">
-              {{ scope.row.paperLength }} x {{ scope.row.paperWidth }} x {{ scope.row.paperHeight }}
-            </template>
-          </el-table-column>
+          <el-table-column prop="specifications" label="规格(mm)" />
           <el-table-column prop="orderQuantity" label="订单量" />
           <el-table-column prop="deliveryQuantity" label="入仓数量" />
           <el-table-column prop="stayDeliveredQuantity" label="已送数量" />
@@ -32,7 +28,6 @@
           <el-table-column prop="unitPrice" label="单价" />
           <el-table-column prop="amount" label="金额" />
           <el-table-column prop="deliveryDate" label="交货日期" />
-          <el-table-column prop="typeNo" label="款号" />
         </el-table>
         <el-pagination
           background
@@ -81,6 +76,7 @@ export default {
     getList() {
       this.tableData = this.data
       this.tableData.forEach(a => {
+        console.log(a)
         a.amount = a.unitPrice * a.deliveryQuantity
         this.billingDate = a.billingDate
         this.documentsNo = a.documentsNo
@@ -88,6 +84,7 @@ export default {
         this.customerId = a.customerId
         this.createdBy = a.createdBy
         a.stayDeliveredQuantity = a.deliveryQuantity - a.deliveryQuantity
+        a.specifications = a.length * a.width
       })
       this.pagination.total = this.tableData.length
       this.getCustomer()

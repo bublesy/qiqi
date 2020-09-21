@@ -29,13 +29,10 @@ public class MaterialSpareDO extends BaseModel {
     /**
      * 材料
      */
-    private String material;
+    private String materialId;
 
-    /**
-     * 楞形
-     */
-    @TableField("ridgeType")
-    private String ridgeType;
+    private String ridgeTypeId;
+
 
     /**
      * 规格

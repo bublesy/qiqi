@@ -24,7 +24,6 @@
         </el-form-item>
 
         <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
-        <el-button type="primary" size="mini" @click="purAdd">新增</el-button>
         <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
         <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
@@ -40,25 +39,30 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" />
-          <el-table-column v-show="true" prop="documentsNo" label="采购单号" width="140" />
-          <el-table-column v-show="true" prop="taskNumber" label="任务编号" width="140" />
-          <el-table-column v-show="true" prop="customerName" label="客户名称" width="140" />
-          <el-table-column v-show="true" prop="ridgeType" label="楞型" width="140" />
+          <el-table-column v-show="true" prop="no" label="任务编号" width="140" />
+          <el-table-column v-show="true" prop="name" label="客户名称" width="140" />
+          <el-table-column v-show="true" prop="customerNo" label="客户单号" width="140" />
+          <el-table-column v-show="true" prop="stare" label="楞型" width="140" />
           <el-table-column v-show="true" prop="material" label="材质" width="140" />
-          <el-table-column v-show="true" prop="paperLength" label="纸长" width="140" />
-          <el-table-column v-show="true" prop="paperWidth" label="纸宽" width="140" />
-          <el-table-column v-show="true" prop="parPreSpe" label="分压规格" width="140" />
-          <el-table-column v-show="true" prop="orderQuantity" label="订单数量" width="140" />
-          <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" width="140" />
-          <el-table-column v-show="true" prop="batching" label="配料面积" width="140" />
-          <el-table-column v-show="true" prop="squarePrice" label="平方价" width="140" />
-          <el-table-column v-show="true" prop="unitPrice" label="单价" width="140" />
-          <el-table-column v-show="true" prop="amount" label="金额" width="140" />
+          <el-table-column v-show="true" prop="length" label="长" width="140" />
+          <el-table-column v-show="true" prop="width" label="宽" width="140" />
+          <el-table-column v-show="true" prop="height" label="高" width="140" />
+          <el-table-column v-show="true" prop="pressureSpecification" label="分压规格" width="140" />
+          <el-table-column v-show="true" prop="orderNum" label="订单数量" width="140" />
           <el-table-column v-show="true" prop="unit" label="单位" width="140" />
-          <el-table-column label="操作" width="180">
+          <el-table-column v-show="true" prop="isPurchase" label="采购单是否生成" width="140" />
+          <el-table-column v-show="true" prop="documentsNo" label="采购单号" width="140" />
+          <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" width="140" />
+          <el-table-column v-show="true" prop="costPrice" label="成本价" width="140" />
+          <el-table-column v-show="true" prop="amount" label="金额" width="140" />
+          <el-table-column v-show="true" prop="position" label="仓位" width="140" />
+          <el-table-column v-show="true" prop="endProductPos" label="成品仓位" width="140" />
+          <el-table-column label="操作" width="400">
             <template slot-scope="scope">
               <el-link type="danger" size="small" @click="drop(scope)">删除</el-link>
-              <el-link type="primary" size="small" @click="modifyPur(scope)">编辑</el-link>
+              <el-link type="primary" size="small" :disabled="scope.row.documentsNo!==null ?true : false" @click="purAdd(scope)">生成采购单</el-link>
+              <el-link type="primary" size="small" :disabled="warehousingDis" @click="modifyPur(scope)">编辑采购单</el-link>
+              <el-link type="primary" size="small" :disabled="warehousingDis" @click="warehousing(scope)">入库</el-link>
               <el-link type="warning" size="small" @click="printing(scope)">生成打印单</el-link>
             </template>
           </el-table-column>
@@ -88,6 +92,19 @@
               />
             </el-select>
           </el-form-item>
+
+          <el-form-item label="客户名称" prop="customerName">
+            <el-input v-model="formAdd.customerName" disabled />
+          </el-form-item>
+
+          <el-form-item label="任务编号">
+            <el-input v-model="formAdd.taskNumber" disabled />
+          </el-form-item>
+
+          <el-form-item label="客户单号">
+            <el-input v-model="formAdd.customerNo" disabled />
+          </el-form-item>
+
           <el-form-item label="计价方式" prop="pricingMethod">
             <el-select v-model="formAdd.pricingMethod">
               <el-option label="净边" value="净边" />
@@ -103,34 +120,9 @@
               placeholder="选择日期"
             />
           </el-form-item>
-          <el-form-item label="交货日期" prop="deliveryDate">
-            <el-date-picker
-              v-model="formAdd.deliveryDate"
-              align="right"
-              value-format="yyyy-MM-dd"
-              type="date"
-              placeholder="选择日期"
-              disabled
-            />
-          </el-form-item>
 
           <el-form-item label="结算周期" prop="settlementPeriod">
             <el-input-number v-model="formAdd.settlementPeriod" :controls="false" placeholder="单位（天）" />
-          </el-form-item>
-
-          <el-form-item label="客户名称" prop="customerName">
-            <el-select v-model="formAdd.customerName" size="mini" @change="customerSelect">
-              <el-option
-                v-for="item in customerFor"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="任务编号">
-            <el-input v-model="formAdd.taskNumber" disabled />
           </el-form-item>
 
           <el-form-item label="是否成品">
@@ -145,64 +137,16 @@
             <el-input v-model="formAdd.endProductPos" />
           </el-form-item>
 
-          <el-form-item label="楞型">
-            <el-input v-model="formAdd.ridgeType" disabled />
-          </el-form-item>
-
-          <el-form-item label="分压规格">
-            <el-input v-model="formAdd.parPreSpe" disabled />
-          </el-form-item>
-
-          <el-form-item label="材质">
-            <el-input v-model="formAdd.material" disabled />
-          </el-form-item>
-
-          <el-form-item label="纸长">
-            <el-input v-model="formAdd.paperLength" disabled />
-          </el-form-item>
-
-          <el-form-item label="纸宽">
-            <el-input v-model="formAdd.paperWidth" disabled />
-          </el-form-item>
-
-          <el-form-item label="高">
-            <el-input v-model="formAdd.paperHeight" disabled />
-          </el-form-item>
-
-          <el-form-item label="订单数量">
-            <el-input v-model="formAdd.orderQuantity" disabled />
-          </el-form-item>
-
-          <el-form-item label="箱型">
-            <el-input v-model="formAdd.boxType" disabled />
-          </el-form-item>
-
           <el-form-item label="采购数量">
             <el-input v-model="formAdd.purchaseQuantity" @change="purchaseSelect" />
           </el-form-item>
 
-          <el-form-item label="配料面积">
-            <el-input v-model="formAdd.batching" disabled />
-          </el-form-item>
-
-          <el-form-item label="款号">
-            <el-input v-model="formAdd.modelNo" disabled />
-          </el-form-item>
-
-          <el-form-item label="平方价">
-            <el-input v-model="formAdd.squarePrice" />
-          </el-form-item>
-
-          <el-form-item label="单价">
-            <el-input v-model="formAdd.unitPrice" />
+          <el-form-item label="成本价">
+            <el-input v-model="formAdd.costPrice" @change="purchaseSelect" />
           </el-form-item>
 
           <el-form-item label="金额">
             <el-input-number v-model="formAdd.amount" :controls="false" disabled />
-          </el-form-item>
-
-          <el-form-item label="单位">
-            <el-input v-model="formAdd.unit" disabled />
           </el-form-item>
 
           <el-form-item label="备注">
@@ -226,12 +170,11 @@
 import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
 import { supplierSelect } from '@/api/supplier-cardboard-quotation/cardboard'
-import { customerSelect } from '@/api/supplier-cardboard-quotation/cardboard'
 import { add } from '@/api/purchase/purchase'
 import { list } from '@/api/purchase/purchase'
 import { getById } from '@/api/purchase/purchase'
-import { removeById } from '@/api/purchase/purchase'
-import { getCustomerById } from '@/api/basedata/customer'
+import { delOrder } from '@/api/order/customerOrder'
+import { warehousing } from '@/api/purchase/purchase'
 
 export default {
   name: 'PurchaseOrder',
@@ -260,7 +203,9 @@ export default {
         quantityOverdue: '',
         time: ''
       },
-      orderDate: ''
+      orderDate: '',
+      identification: '',
+      warehousingDis: true
     }
   },
   created() {
@@ -269,31 +214,7 @@ export default {
   methods: {
     // 采购数量改变金额改变
     purchaseSelect() {
-      this.formAdd.amount = this.formAdd.unitPrice * this.formAdd.purchaseQuantity
-    },
-    // 选完客户名称 回调信息
-    customerSelect() {
-      this.customerFor.forEach(a => {
-        if (a.id === this.formAdd.customerName) {
-          this.formAdd.deliveryDate = a.deliveryDate
-          this.formAdd.taskNumber = a.no
-          this.formAdd.ridgeType = a.stare
-          this.formAdd.parPreSpe = a.pressureSpecification
-          this.formAdd.material = a.material
-          this.formAdd.batching = a.paperArea
-          this.formAdd.paperLength = a.paperLength
-          this.formAdd.paperWidth = a.paperWidth
-          this.formAdd.orderQuantity = a.orderNum
-          this.formAdd.unit = a.unit
-          this.orderDate = a.orderDate
-          this.formAdd.modelNo = a.modelNo
-          this.formAdd.isProduct = a.isProduct
-          this.formAdd.modelNo = a.modelNo
-          this.formAdd.paperHeight = a.height
-          this.formAdd.boxType = a.boxType
-          this.formAdd.orderId = a.id
-        }
-      })
+      this.formAdd.amount = this.formAdd.costPrice * this.formAdd.purchaseQuantity
     },
     loadData() {
       this.queryParams.customerName = this.form.customerName
@@ -306,10 +227,11 @@ export default {
         this.tableData = res.list
         this.pagination.total = res.total
         this.tableData.forEach(a => {
-          getCustomerById(a.customerName).then(data => {
-            // a.customerName = data.name
-            this.$set(a, 'customerName', data.name)
-          })
+          if (a.documentsNo !== null) {
+            a.isPurchase = '已生成采购单'
+          } else {
+            a.isPurchase = '未生成采购单'
+          }
         })
       })
     },
@@ -393,7 +315,7 @@ export default {
     },
     // 删除
     drop(scope) {
-      removeById(scope.row.id).then(res => {
+      delOrder(scope.row.id).then(res => {
         if (res) {
           this.$message.success('删除成功')
           this.loadData()
@@ -402,24 +324,55 @@ export default {
         }
       })
     },
+    // 入库
+    warehousing(scope) {
+      this.formAdd.id = scope.row.pid
+      this.formAdd.isProduct = scope.row.isProduct
+      this.formAdd.purchaseQuantity = scope.row.purchaseQuantity
+      this.formAdd.deliveryDate = scope.row.deliveryDate
+      this.formAdd.boxType = scope.row.boxType
+      this.formAdd.stare = scope.row.stare
+      this.formAdd.material = scope.row.material
+      this.formAdd.orderQuantity = scope.row.orderNum
+      this.formAdd.length = scope.row.length
+      this.formAdd.width = scope.row.width
+      this.formAdd.height = scope.row.height
+      this.formAdd.costPrice = scope.row.costPrice
+      this.formAdd.taskNumber = scope.row.no
+      this.formAdd.endProductPos = scope.row.endProductPos
+      this.formAdd.position = scope.row.position
+      this.formAdd.customerName = scope.row.id
+      this.formAdd.supplierId = scope.row.supplierId
+      warehousing(this.formAdd).then(res => {
+        if (res) {
+          this.identification = this.$message.success('入库成功')
+          this.warehousingDis = true
+          this.loadData()
+        } else {
+          this.$message.error('入库失败')
+        }
+      })
+    },
     // 编辑订单
     modifyPur(scope) {
       this.purAddVisible = true
       this.titleType = '编辑'
-      getById(scope.row.id).then(res => {
-      // 加载供应商下拉框
+      getById(scope.row.pid).then(res => {
+        this.formAdd = res
+        // 加载供应商下拉框
         supplierSelect().then(res => {
           this.supplierFor = res
         })
-        // 加载客户名称下拉框
-        customerSelect().then(res => {
-          this.customerFor = res
-        })
-        this.formAdd = res
+        this.$set(this.formAdd, 'customerName', scope.row.name)
+        this.$set(this.formAdd, 'taskNumber', scope.row.no)
+        this.$set(this.formAdd, 'customerNo', scope.row.customerNo)
+        if (scope.row.isProduct === '成品') {
+          this.$set(this.formAdd, 'isProduct', true)
+        }
       })
     },
     // 新增订单
-    purAdd() {
+    purAdd(scope) {
       this.purAddVisible = true
       this.titleType = '新增'
       // 新增初始化数据
@@ -428,10 +381,13 @@ export default {
       supplierSelect().then(res => {
         this.supplierFor = res
       })
-      // 加载客户名称下拉框
-      customerSelect().then(res => {
-        this.customerFor = res
-      })
+      this.$set(this.formAdd, 'customerName', scope.row.name)
+      this.$set(this.formAdd, 'taskNumber', scope.row.no)
+      this.$set(this.formAdd, 'customerNo', scope.row.customerNo)
+      if (scope.row.isProduct === '成品') {
+        this.$set(this.formAdd, 'isProduct', true)
+      }
+      this.warehousingDis = false
     },
     // 取消
     purAddNo(purForm) {

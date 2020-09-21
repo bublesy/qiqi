@@ -25,8 +25,8 @@
         align="center"
       >
         <el-table-column property="supplierName" label="供方" width="120" />
-        <el-table-column property="material" label="材质" width="120" />
-        <el-table-column property="ridgeType" label="楞型" width="120" />
+        <el-table-column property="materialId" label="材质" width="120" />
+        <el-table-column property="ridgeTypeId" label="楞型" width="120" />
         <el-table-column property="specification" label="分压规格" width="120" />
         <el-table-column property="paperLength" label="纸长" width="120" />
         <el-table-column property="paperWidth" label="纸宽" width="120" />
@@ -65,11 +65,25 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="材质:" prop="material">
-          <el-input v-model="formAdd.material" />
+        <el-form-item label="材质:" prop="materialId">
+          <el-select v-model="formAdd.materialId">
+            <el-option
+              v-for="item in materialFor"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="楞型:" prop="ridgeType">
-          <el-input v-model="formAdd.ridgeType" />
+        <el-form-item label="楞型:" prop="ridgeTypeId">
+          <el-select v-model="formAdd.ridgeTypeId">
+            <el-option
+              v-for="item in ridgeTypeFor"
+              :key="item.id"
+              :label="item.ridgeType"
+              :value="item.ridgeType"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="分压规格:" prop="specification">
           <el-input v-model="formAdd.specification" />
@@ -102,6 +116,8 @@
 <script>
 import initData from '@/mixins/initData'
 import { supplierSelect } from '@/api/supplier-cardboard-quotation/cardboard'
+import { materialSelect } from '@/api/supplier-cardboard-quotation/cardboard'
+import { ridgeTypeSelect } from '@/api/supplier-cardboard-quotation/cardboard'
 import { add } from '@/api/material-spare/material'
 import { list } from '@/api/material-spare/material'
 import { getById } from '@/api/material-spare/material'
@@ -125,13 +141,15 @@ export default {
       titleType: '',
       stockRules: {
         supplierId: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        material: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        ridgeType: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        materialId: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        ridgeTypeId: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         specification: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         purchaseQuantity: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         unitPrice: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
-      supplierFor: []
+      supplierFor: [],
+      materialFor: [],
+      ridgeTypeFor: []
     }
   },
   created() {
@@ -193,6 +211,14 @@ export default {
         supplierSelect().then(res => {
           this.supplierFor = res
         })
+        // 加载材质
+        materialSelect().then(res => {
+          this.materialFor = res
+        })
+        // 加载楞型
+        ridgeTypeSelect().then(res => {
+          this.ridgeTypeFor = res
+        })
         this.formAdd = res
       })
     },
@@ -200,9 +226,18 @@ export default {
     stockSpareAdd() {
       this.stockSpareAddVisible = true
       this.titleType = '新增'
+      this.formAdd = {}
       // 加载供应商下拉框
       supplierSelect().then(res => {
         this.supplierFor = res
+      })
+      // 加载材质
+      materialSelect().then(res => {
+        this.materialFor = res
+      })
+      // 加载楞型
+      ridgeTypeSelect().then(res => {
+        this.ridgeTypeFor = res
       })
     },
     // 增加取消

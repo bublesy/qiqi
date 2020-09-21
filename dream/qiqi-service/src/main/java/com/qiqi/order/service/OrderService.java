@@ -1,7 +1,11 @@
 package com.qiqi.order.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.qiqi.order.entity.OrderDO;
+
+import java.util.Date;
 
 /**
  * <p>
@@ -13,4 +17,14 @@ import com.qiqi.order.entity.OrderDO;
  */
 public interface OrderService extends IService<OrderDO> {
 
+    /**
+     * 列表
+     * @param objectPage
+     * @param customerName
+     * @param quantityOverdue
+     * @param time
+     * @param date
+     * @return
+     */
+    IPage<OrderDO> GetList(Page<Object> objectPage, String customerName, String quantityOverdue, String time, Date date);
 }

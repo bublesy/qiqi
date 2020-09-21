@@ -33,7 +33,7 @@ public class OrderDO extends BaseModel {
 
     private Long scheduleId;
 
-    private Boolean isProduct;
+    private String isProduct;
 
     private String wosState;
 
