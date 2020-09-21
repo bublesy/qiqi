@@ -26,7 +26,12 @@ public class ScheduleDO extends BaseModel {
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date date;
 
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    private Date shipDate;
+
     private Integer productDay;
+
+    private String finished;
 
     /**
      * 任务编号
@@ -94,7 +99,7 @@ public class ScheduleDO extends BaseModel {
     private Integer orderNum;
 
     /**
-     * 成品数量
+     * 已产数量
      */
     private Integer productNum;
 

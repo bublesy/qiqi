@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ScheduleService extends IService<ScheduleDO> {
 
+    void delete(Long scheduleId);
 }

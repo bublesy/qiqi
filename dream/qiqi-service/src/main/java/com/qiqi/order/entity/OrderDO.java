@@ -27,6 +27,9 @@ public class OrderDO extends BaseModel {
 
     private static final long serialVersionUID=1L;
 
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    private Date shipDate;
+
     private Boolean sign;
 
     private String outNo;
@@ -47,6 +50,11 @@ public class OrderDO extends BaseModel {
     private BigDecimal paperArea;
 
     private Boolean conventional;
+
+    private String finished;
+
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    private Date date;
 
     /**
      * 任务编号

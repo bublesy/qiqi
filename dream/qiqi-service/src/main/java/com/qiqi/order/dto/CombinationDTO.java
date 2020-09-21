@@ -10,5 +10,5 @@ import lombok.Data;
 @Data
 public class CombinationDTO extends CombinationDO {
     private Long page;
-    private Long size;
+    private Long count;
 }

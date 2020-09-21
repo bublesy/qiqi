@@ -35,7 +35,7 @@ import java.util.List;
  * @author QiQiDream
  * @since 2020-09-15
  */
-@Api("供应商相关接口")
+@Api(tags = "供应商相关接口")
 @RestController
 @RequestMapping("/supplier")
 public class SupplierController {

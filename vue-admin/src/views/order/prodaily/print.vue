@@ -27,6 +27,8 @@
       <el-table-column prop="productNum" label="已产数量" width="120" />
       <el-table-column prop="perPrice" label="单价" width="120" />
       <el-table-column prop="money" label="金额" width="120" />
+      <el-table-column prop="deliveryDate" label="交货日期" width="120" />
+      <el-table-column prop="date" label="排期日期" width="120" />
     </el-table>
     <!-- <el-pagination
       :current-page="form.page"

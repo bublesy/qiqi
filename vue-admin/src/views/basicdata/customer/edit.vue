@@ -100,14 +100,15 @@ export default {
         fullName: [
           { required: true, message: '请输入全称', trigger: 'blur' }
         ],
-        phone: [
-          { required: true, message: '请输入电话', trigger: 'blur' },
-          { min: 8, max: 8, message: '电话号码为8位', trigger: 'blur' }
-        ],
+        // phone: [
+        //   { required: true, message: '请输入电话', trigger: 'blur' },
+        //   { min: 8, max: 8, message: '电话号码为8位', trigger: 'blur' }
+        // ],
         address: [
           { required: true, message: '请输入地址', trigger: 'blur' }
         ],
         mobilePhone: [
+          { required: true, message: '请输入手机号码', trigger: 'blur' },
           { min: 11, max: 11, message: '手机号码必须为11位', trigger: 'blur' }
         ]
       },

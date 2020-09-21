@@ -105,7 +105,7 @@ export default {
       })
     },
     handleSizeChange(size) {
-      this.form.size = size
+      this.form.count = size
       this.initTable()
     },
     handleCurrentChange(page) {

@@ -2,14 +2,17 @@ package com.qiqi.admin.order.api;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
+import cn.hutool.db.sql.Order;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.admin.order.util.IdGeneratorUtils;
 import com.qiqi.admin.order.util.TimeAddEight;
 import com.qiqi.basicdata.entity.CustomerInformationDO;
+import com.qiqi.basicdata.entity.PaperboardDataSettingDO;
 import com.qiqi.basicdata.entity.SupplierDO;
 import com.qiqi.basicdata.service.CustomerInformationService;
+import com.qiqi.basicdata.service.PaperboardDataSettingService;
 import com.qiqi.basicdata.service.SupplierService;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.order.dto.OrderDTO;
@@ -55,6 +58,12 @@ public class OrderController {
     @Resource
     private CustomerInformationService customerInformationService;
 
+    @Resource
+    private PaperboardDataSettingService paperboardDataSettingService;
+
+    private String state = "成品";
+    private String state2 = "非成品";
+
     @ApiOperation(value = "获取(列表)")
     @PostMapping("/list")
     public PageEntity<OrderDO> getOrderPage(@RequestBody OrderDTO query) {
@@ -71,7 +80,7 @@ public class OrderController {
                 .eq(!ObjectUtils.isEmpty(query.getOrderDate()),"order_date",query.getOrderDate())
                 .eq(!ObjectUtils.isEmpty(query.getDeliveryDate()),"delivery_date",query.getDeliveryDate())
                 .eq(!ObjectUtils.isEmpty(query.getWosState()),"wos_state",query.getWosState())
-                .eq(!ObjectUtils.isEmpty(query.getIsProduct()),"is_product",query.getIsProduct());
+                .eq(StringUtils.isNotBlank(query.getIsProduct()),"is_product",query.getIsProduct());
         IPage<OrderDO> iPage = orderService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
 
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<OrderDO>>() {}, iPage.getRecords()));
@@ -94,25 +103,39 @@ public class OrderController {
     @ApiOperation(value = "新增")
     @PostMapping("")
     public Boolean saveOrder(@RequestBody OrderDO orderDO) {
-//        IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
-//        String no = idGeneratorUtils.nextId();
-//        orderDO.setNo(no);
-//        ScheduleDO scheduleDO = new ScheduleDO();
-//        if(orderDO.getId() == null && !orderDO.getIsProduct()){
-//            BeanUtils.copyProperties(orderDO,scheduleDO);
-//            scheduleDO.setDate(orderDO.getDeliveryDate());
-//            scheduleService.save(scheduleDO);
-//        }
-//        orderDO.setOrderDate(new Date());
-//        if(orderDO.getDeliveryDate() != null){
-//            orderDO.setDeliveryDate(TimeAddEight.formatTimeEight(orderDO.getDeliveryDate()));
-//        }
-//        if(scheduleDO != null){
-//            orderDO.setScheduleId(scheduleDO.getId());
-//        }
-//        if(orderDO.getId() == null){
-//            orderDO.setWosState("新订单");
-//        }
+        IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
+        String no = idGeneratorUtils.nextId();
+        orderDO.setNo(no);
+        ScheduleDO scheduleDO = new ScheduleDO();
+        if(orderDO.getId() == null && !state.equals(orderDO.getIsProduct())){
+            BeanUtils.copyProperties(orderDO,scheduleDO);
+            scheduleDO.setDate(orderDO.getDeliveryDate());
+            scheduleService.save(scheduleDO);
+        }
+        if(orderDO.getId() != null && !state.equals(orderDO.getIsProduct())){
+            OrderDO order = orderService.getById(orderDO.getId());
+                BeanUtils.copyProperties(orderDO,scheduleDO);
+                scheduleDO.setDate(orderDO.getDeliveryDate());
+                scheduleDO.setId(order.getScheduleId());
+                scheduleService.saveOrUpdate(scheduleDO);
+        }
+        if(orderDO.getId() != null && state.equals(orderDO.getIsProduct())){
+            OrderDO order = orderService.getById(orderDO.getId());
+            if(order.getScheduleId() != null){
+                scheduleService.delete(order.getScheduleId());
+            }
+        }
+
+        orderDO.setOrderDate(new Date());
+        if(orderDO.getDeliveryDate() != null){
+            orderDO.setDeliveryDate(TimeAddEight.formatTimeEight(orderDO.getDeliveryDate()));
+        }
+        if(scheduleDO != null){
+            orderDO.setScheduleId(scheduleDO.getId());
+        }
+        if(orderDO.getId() == null){
+            orderDO.setWosState("新订单");
+        }
         return orderService.saveOrUpdate(orderDO);
     }
 
@@ -125,6 +148,8 @@ public class OrderController {
     @ApiOperation(value = "删除(单个))")
     @DeleteMapping("/{id}")
     public Boolean deleteOrderById(@PathVariable Long id) {
+        OrderDO order = orderService.getById(id);
+        scheduleService.removeById(order.getId());
         return orderService.removeById(id);
     }
 
@@ -136,5 +161,10 @@ public class OrderController {
     @GetMapping("/customer")
     public List<CustomerInformationDO> getList(){
         return customerInformationService.list();
+    }
+
+    @GetMapping("/stare")
+    public List<PaperboardDataSettingDO> getstare(){
+        return paperboardDataSettingService.list();
     }
 }

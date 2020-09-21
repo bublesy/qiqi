@@ -59,3 +59,7 @@ export function getUser() {
   return request({ url: 'userInfo', method: 'get' })
 }
 
+export function getStare() {
+  return request({ url: '/order/stare', method: 'get' })
+}
+
