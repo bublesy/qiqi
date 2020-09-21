@@ -51,11 +51,11 @@
           label="领料人"
         />
         <el-table-column
-          prop="username"
+          prop="company"
           label="单位"
         />
         <el-table-column
-          prop="nickname"
+          prop="number"
           label="数量"
         />
       </el-table>
@@ -69,6 +69,7 @@ import { export2Excel } from '@/utils/common'
 
 export default {
   name: 'Printing',
+  inject: ['closeTag'],
   data() {
     return {
       tableData: [],
@@ -80,24 +81,19 @@ export default {
   },
   created() {
     // console.log(document.getElementById('da'))
-    this.data = this.$route.query.tableData
-    this.getList()
+    this.tableData = [this.$route.query.data]
+    console.log(this.tableData)
+    // this.getList()
     // getUser().then(res => {
     //   console.log(res)
     //   this.tableData = res
     // })
-    this.tableData = this.data
-    this.tableData.forEach(a => {
-      this.specifications = a.specifications
-      this.company = a.company
-      this.number = a.number
-    })
-    this.pagination.total = this.tableData.length
   },
   methods: {
     // 返回
     toBack() {
-      this.$router.push('/accessories/stock')
+      // this.$router.push('/accessories/stock')
+      this.closeTag()
     },
 
     toExcel() {

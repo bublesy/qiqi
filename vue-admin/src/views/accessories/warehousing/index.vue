@@ -123,7 +123,7 @@
         :total="pagination.total"
         :current-page="pagination.page"
         layout="total, prev, pager, next, sizes"
-        @size-change="pagination.size"
+        @size-change="sizeChange"
         @current-change="pageChange"
       />
     </div>
@@ -244,6 +244,8 @@ export default {
       // if (this.queryParams.time === null) {
       //   this.$set(this.queryParams, 'time', '')
       // }
+      this.form.page = this.pagination.page
+      this.form.count = this.pagination.size
       list(this.form).then(res => {
         this.tableData = res.list
         this.pagination.total = res.total
@@ -253,7 +255,6 @@ export default {
       // 获取辅料资料数据
       listunit(this.form).then(res => {
         this.table = res.list
-        this.pagination.total = res.total
         console.log(11)
         console.log(res)
       })

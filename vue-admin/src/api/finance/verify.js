@@ -27,3 +27,7 @@ export function removeRole(id) {
 export function editRoleMenus(id, data) {
   return request({ url: '/dev/role/' + id + '/menu', data: data, method: 'put' })
 }
+// 对账明细表
+export function record(data) {
+  return request({ url: '/order/bill', method: 'post', data: data })
+}

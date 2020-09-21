@@ -113,7 +113,11 @@ export default {
   mixins: [initData],
   data() {
     return {
-      form: { time: '' },
+      form: {
+        time: '',
+        page: 1,
+        count: 10
+      },
       formAdd: {
         number: ''
       },
@@ -131,6 +135,8 @@ export default {
   },
   methods: {
     loadData() {
+      this.form.page = this.pagination.page
+      this.form.count = this.pagination.size
       this.queryParams.time = this.form.time
       list(this.queryParams).then(res => {
         console.log(res)
@@ -143,8 +149,10 @@ export default {
         this.pagination.total = res.total
       })
     },
-    printing() {
-      this.$router.push('/accessories/printing')
+    printing(scope) {
+      // this.$router.push('/accessories/printing')
+      this.$router.push({ path: '/accessories/printing', query: { data: scope.row }})
+      console.log(scope)
     },
     toExcel() {
       var list = this.tableData
