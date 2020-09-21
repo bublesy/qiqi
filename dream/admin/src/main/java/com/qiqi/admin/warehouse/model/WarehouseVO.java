@@ -13,6 +13,10 @@ public class WarehouseVO {
 
     private String taskNumber;
 
+    private String checkNum;
+
+    private String checkDate;
+
     /**
      * 计价方式
      */
@@ -20,6 +24,8 @@ public class WarehouseVO {
     private String pricingMethod;
 
     private String warehouseNo;
+
+    private String noType;
 
     /**
      * 过账

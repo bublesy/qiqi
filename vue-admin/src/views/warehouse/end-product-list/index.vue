@@ -19,7 +19,6 @@
           />
         </el-form-item>
         <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
-        <!-- <el-button type="primary" size="mini" @click="purAdd">新增</el-button> -->
         <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
         <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
       </el-form>
@@ -37,20 +36,27 @@
           <el-table-column v-show="true" prop="taskNumber" label="任务编号" width="140" />
           <el-table-column v-show="true" prop="customerName" label="客户名称" width="140" />
           <el-table-column v-show="true" prop="orderQuantity" label="订单数量" width="140" />
+          <el-table-column v-show="true" prop="purQuantity" label="订单采购数量" width="140" />
           <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" width="140" />
-          <el-table-column v-show="true" prop="typeNo" label="款号" width="140" />
           <el-table-column v-show="true" prop="boxType" label="箱型" width="140" />
           <el-table-column v-show="true" prop="material" label="材质" width="140" />
           <el-table-column v-show="true" prop="length" label="长" width="140" />
           <el-table-column v-show="true" prop="width" label="宽" width="140" />
           <el-table-column v-show="true" prop="height" label="高" width="140" />
-          <el-table-column v-show="true" prop="unitPrice" label="单价" width="140" />
+          <el-table-column v-show="true" prop="unitPrice" label="成本价" width="140" />
           <el-table-column v-show="true" prop="endProductPos" label="成品仓位" width="140" />
           <el-table-column v-show="true" prop="warehousingData" label="入仓时间" width="140" />
-          <el-table-column label="操作" width="180">
+          <el-table-column v-show="true" prop="isCheck" label="盘点单是否生成" width="140" />
+          <el-table-column v-show="true" prop="checkNum" label="盘点后库存数量" width="140" />
+          <el-table-column v-show="true" prop="checkNum" label="盘点数量" width="140" />
+          <el-table-column v-show="true" prop="differencesNum" label="差异数量" width="140" />
+          <el-table-column v-show="true" prop="checkDate" label="盘点时间" width="160" />
+          <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
-              <!-- <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
-              <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link> -->
+              <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?true : false" @click="purAdd(scope)">新增送货数量</el-link>
+              <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?false : true" @click="modifyPur(scope)">编辑送货数量</el-link>
+              <el-link type="primary" size="small" :disabled="scope.row.checkNum!==null ?true : false" @click="addCheck(scope)">新增成品盘点单</el-link>
+              <el-link type="primary" size="small" :disabled="scope.row.checkNum!==null ?false : true" @click="modifyCheck(scope)">编辑成品盘点单</el-link>
               <el-link type="warning" size="small" @click="printing(scope)">生成送货单</el-link>
             </template>
           </el-table-column>
@@ -67,136 +73,48 @@
           @current-change="pageChange"
         />
       </div>
-      <!-- 新增/编辑纸板入仓单
-      <el-dialog :title="titleType+'成品入仓单'" :visible.sync="purAddVisible">
-
+      <!-- 新增/编辑送货数量 -->
+      <el-dialog :title="titleType+'送货数量'" :visible.sync="purAddVisible">
         <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="80px">
-          <el-form-item label="供方" prop="supplier">
-            <el-select v-model="formAdd.supplier">
-              <el-option
-                v-for="item in supplierFor"
-                :key="item.id"
-                :label="item.fullName"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="入仓单号" prop="documentsNo">
-            <el-input v-model="formAdd.documentsNo" disabled />
-          </el-form-item>
-          <el-form-item label="开单人">
-            <el-select v-model="formAdd.drawer">
-              <el-option
-                v-for="item in drawerFor"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="开单日期" prop="billingTime">
-            <el-date-picker
-              v-model="formAdd.billingTime"
-              align="right"
-              type="date"
-              placeholder="选择日期"
-            />
-          </el-form-item>
 
-          <el-form-item label="客户名称">
-            <el-select v-model="formAdd.customerName" size="mini" @change="customerSelect">
-              <el-option
-                v-for="item in customerFor"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
+          <el-form-item label="入仓单号:" prop="warehouseNo">
+            <el-input v-model="formAdd.warehouseNo" disabled />
           </el-form-item>
-
-          <el-form-item label="交货日期">
-            <el-date-picker
-              v-model="formAdd.deliveryDate"
-              align="right"
-              type="date"
-              placeholder="选择日期"
-            />
-          </el-form-item>
-
-          <el-form-item label="箱型">
-            <el-select v-model="formAdd.serialName" size="mini">
-              <el-option
-                v-for="item in serialNameFor"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="规格">
-            <el-input v-model="formAdd.specifications" />
-          </el-form-item>
-
-          <el-form-item label="款号">
-            <el-input v-model="formAdd.typeNo" />
-          </el-form-item>
-
-          <el-form-item label="箱型">
-            <el-input v-model="formAdd.boxType" />
-          </el-form-item>
-
-          <el-form-item label="材质">
-            <el-input v-model="formAdd.material" />
-          </el-form-item>
-
-          <el-form-item label="订单数量">
-            <el-input v-model="formAdd.orderQuantity" />
-          </el-form-item>
-
-          <el-form-item label="送货数量">
+          <el-form-item label="送货数量:" prop="deliveryQuantity">
             <el-input v-model="formAdd.deliveryQuantity" />
           </el-form-item>
-
-          <el-form-item label="长">
-            <el-input v-model="formAdd.length" />
-          </el-form-item>
-
-          <el-form-item label="宽">
-            <el-input v-model="formAdd.width" />
-          </el-form-item>
-
-          <el-form-item label="高">
-            <el-input v-model="formAdd.height" />
-          </el-form-item>
-
-          <el-form-item label="单价">
-            <el-input v-model="formAdd.unitPrice" />
-          </el-form-item>
-
-          <el-form-item label="成品仓位">
-            <el-input v-model="formAdd.EndProductPos" />
-          </el-form-item>
-
-          <el-form-item label="入仓时间" prop="warehousingTime">
-            <el-date-picker
-              v-model="formAdd.warehousingTime"
-              align="right"
-              type="date"
-              placeholder="选择日期"
-            />
-          </el-form-item>
-
-          <el-form-item label="备注:">
-            <el-input v-model="formAdd.remark" />
-          </el-form-item>
         </el-form>
-
         <span slot="footer" class="dialog-footer">
           <el-button size="small" @click="purAddNo">取 消</el-button>
           <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
         </span>
-      </el-dialog> -->
+      </el-dialog>
+
+      <!-- 新增/编辑盘点单 -->
+      <el-dialog :title="titleType+'盘点单'" :visible.sync="addCheckVisible">
+        <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAddCheck" size="mini" label-width="80px">
+
+          <el-form-item label="入仓单号:" prop="warehouseNo">
+            <el-input v-model="formAddCheck.warehouseNo" disabled />
+          </el-form-item>
+          <el-form-item label="库存数量" prop="purQuantity">
+            <el-input v-model="formAddCheck.purQuantity" disabled />
+          </el-form-item>
+          <el-form-item label="盘点数量" prop="checkNum">
+            <el-input v-model="formAddCheck.checkNum" @change="checkNumChange" />
+          </el-form-item>
+          <el-form-item label="差异数量">
+            <el-input v-model="formAddCheck.differencesNum" disabled />
+          </el-form-item>
+          <el-form-item label="备注:">
+            <el-input v-model="formAddCheck.remark" />
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" @click="addCheckNo">取 消</el-button>
+          <el-button size="small" type="primary" @click="addCheckOk('purForm')">确 定</el-button>
+        </span>
+      </el-dialog>
 
     </el-main>
   </el-container>
@@ -205,38 +123,33 @@
 
 <script>
 import initData from '@/mixins/initData'
-import { supplierSelect } from '@/api/supplier-cardboard-quotation/cardboard'
-import { customerSelect } from '@/api/supplier-cardboard-quotation/cardboard'
 import { list } from '@/api/end-product/product'
 import { getCustomerById } from '@/api/basedata/customer'
 import { updateState } from '@/api/end-product/product'
+import { add } from '@/api/end-product/product'
+import { getById } from '@/api/end-product/product'
 
 export default {
   name: 'EndProductList',
   mixins: [initData],
   data() {
     return {
-      // formAdd: { },
+      formAdd: { },
       tableData: [],
-      // addTableData: [],
       customerFor: [],
-      // purAddVisible: false,
-      // purRules: {
-      //   supplier: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-      //   billingTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-      //   deliveryTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
-      // },
-      // titleType: '',
+      purAddVisible: false,
+      purRules: {
+        deliveryQuantity: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        checkNum: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+      },
+      titleType: '',
       multipleSelection: [],
-      // serialNameFor: [],
-      // customerNoFor: [],
-      specificationsFor: [],
-      drawerFor: [],
-      supplierFor: [],
       form: {
         carryTo: '',
         time: ''
-      }
+      },
+      addCheckVisible: false,
+      formAddCheck: {}
 
     }
   },
@@ -244,6 +157,79 @@ export default {
     this.init()
   },
   methods: {
+    purAddNo() {},
+    addCheckNo() {},
+    checkNumChange() {
+      this.$set(this.formAddCheck, 'differencesNum', this.formAddCheck.checkNum - this.formAddCheck.purQuantity)
+    },
+    modifyCheck(scope) {
+      this.addCheckVisible = true
+      this.titleType = '编辑'
+      getById(scope.row.id).then(res => {
+        this.formAddCheck = res
+        this.formAddCheck.differencesNum = this.formAddCheck.checkNum - this.formAddCheck.purQuantity
+      })
+    },
+    modifyPur(scope) {
+      this.purAddVisible = true
+      this.titleType = '编辑'
+      getById(scope.row.id).then(res => {
+        this.formAdd = res
+      })
+    },
+    purAddOk(purForm) {
+      this.$refs[purForm].validate((valid) => {
+        if (valid) {
+          add(this.formAdd).then(res => {
+            if (res) {
+              this.$message.success(this.titleType + '成功')
+              this.$refs[purForm].resetFields()
+              this.loadData()
+            } else {
+              this.$message.error(this.titleType + '失败')
+            }
+          })
+          this.purAddVisible = false
+        } else {
+          return false
+        }
+      })
+    },
+    addCheckOk(purForm) {
+      this.$refs[purForm].validate((valid) => {
+        if (valid) {
+          add(this.formAddCheck).then(res => {
+            if (res) {
+              this.$message.success(this.titleType + '成功')
+              this.$refs[purForm].resetFields()
+              this.loadData()
+            } else {
+              this.$message.error(this.titleType + '失败')
+            }
+          })
+          this.addCheckVisible = false
+        } else {
+          return false
+        }
+      })
+    },
+    addCheck(scope) {
+      this.addCheckVisible = true
+      this.titleType = '新增'
+      // 新增初始化数据
+      this.formAddCheck = {}
+      this.$set(this.formAddCheck, 'warehouseNo', scope.row.warehouseNo)
+      this.$set(this.formAddCheck, 'purQuantity', scope.row.purQuantity)
+      this.$set(this.formAddCheck, 'id', scope.row.id)
+    },
+    purAdd(scope) {
+      this.purAddVisible = true
+      this.titleType = '新增'
+      // 新增初始化数据
+      this.formAdd = {}
+      this.$set(this.formAdd, 'id', scope.row.id)
+      this.$set(this.formAdd, 'warehouseNo', scope.row.warehouseNo)
+    },
     loadData() {
       this.queryParams.carryTo = this.form.carryTo
       this.queryParams.time = this.form.time
@@ -251,35 +237,19 @@ export default {
         this.$set(this.queryParams, 'time', '')
       }
       list(this.queryParams).then(res => {
-        console.log(res.list)
         this.tableData = res.list
         this.pagination.total = res.total
         this.tableData.forEach(a => {
+          a.differencesNum = a.checkNum - a.purQuantity
+          if (a.checkNum !== null) {
+            a.isCheck = '已生成盘点单'
+          } else {
+            a.isCheck = '未生成盘点单'
+          }
           getCustomerById(a.customerId).then(data => {
-            // a.customerName = data.name
             this.$set(a, 'customerName', data.name)
           })
         })
-      })
-    },
-    // 选完客户名称 回调信息
-    customerSelect() {
-      this.customerFor.forEach(a => {
-        console.log(a)
-        if (a.id === this.formAdd.customerName) {
-          this.formAdd.customerNo = a.customerNo
-          this.formAdd.deliveryDate = a.deliveryDate
-          this.formAdd.taskNumber = a.no
-          this.formAdd.ridgeType = a.stare
-          this.formAdd.parPreSpe = a.pressureSpecification
-          this.formAdd.material = a.material
-          this.formAdd.batching = a.paperArea
-          this.formAdd.paperLength = a.paperLength
-          this.formAdd.paperWidth = a.paperWidth
-          this.formAdd.orderQuantity = a.orderNum
-          this.formAdd.unitPrice = a.perPrice
-          this.formAdd.unit = a.unit
-        }
       })
     },
     // 打印
@@ -410,67 +380,10 @@ export default {
         }
       }
     },
-    tableRowClassName({ row, rowIndex }) {
-      if (row.consignment) {
-        return 'green-row'
-      }
-    },
     handleSelectionChange(row) {
       this.multipleSelection = row
-    },
-    // 删除
-    drop() {
-      if (this.dropRow.id == null) {
-        this.$message.error('请选择一条进行操作')
-      } else {
-        this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
-      }
-    },
-    // 编辑订单
-    modifyPur(row) {
-      this.purAddVisible = true
-      this.titleType = '编辑'
-    },
-    // 新增订单
-    purAdd() {
-      this.purAddVisible = true
-      this.titleType = '新增'
-      // 新增初始化数据
-      this.formAdd = {}
-      // 加载供应商下拉框
-      supplierSelect().then(res => {
-        this.supplierFor = res
-      })
-      // 加载客户名称下拉框
-      customerSelect().then(res => {
-        this.customerFor = res
-      })
-    },
-    // 取消
-    purAddNo() {
-      this.purAddVisible = false
-      this.addTableData = []
-    },
-    purAddOk(purForm) {
-      this.$refs[purForm].validate((valid) => {
-        if (valid) {
-          this.purAddVisible = false
-        } else {
-          return false
-        }
-      })
     }
+
   }
 }
 

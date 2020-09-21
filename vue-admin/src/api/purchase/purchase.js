@@ -28,3 +28,7 @@ export function getNamesById(id) {
   return request({ url: '/purchase/order/getNamesById/' + id, method: 'get' })
 }
 
+export function warehousing(data) {
+  return request({ url: '/purchase/order/warehousing', method: 'post', data: data })
+}
+

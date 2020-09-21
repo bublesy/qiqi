@@ -18,6 +18,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -68,9 +70,12 @@ public class WarehouseController {
     }
 
     @ApiOperation(value = "新增仓库")
-    @PostMapping("")
+    @PostMapping("/add")
     public Boolean saveWarehouse(@RequestBody WarehouseDO warehouseDO) {
-        return warehouseService.save(warehouseDO);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String format = df.format(new Date());
+        warehouseDO.setCheckDate(format);
+        return warehouseService.saveOrUpdate(warehouseDO);
     }
 
     @ApiOperation(value = "删除仓库(批量))")

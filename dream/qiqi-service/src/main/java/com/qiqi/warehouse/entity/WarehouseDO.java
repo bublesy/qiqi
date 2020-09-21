@@ -28,7 +28,6 @@ public class WarehouseDO extends BaseModel {
 
     private String taskNumber;
 
-    private String supplierId;
 
     /**
      * 单据类型
@@ -43,8 +42,11 @@ public class WarehouseDO extends BaseModel {
     /**
      * 开单时间
      */
-    private LocalDateTime billingDate;
+    private String billingDate;
 
+    private String checkNum;
+
+    private String checkDate;
     /**
      * 过账
      */
