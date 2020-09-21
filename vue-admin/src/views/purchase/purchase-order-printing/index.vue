@@ -6,10 +6,11 @@
         <el-button v-print="'#print'" type="primary">打印</el-button>
         <h1 align="center">采购订单</h1>
         <span style="margin-left:60px">供方:{{ fullName }}</span>
+        <br>
         <span style="margin-left:60px">电话:{{ mobilePhone }}</span>
         <span style="margin-left:86%">No:{{ documentsNo }}</span>
+        <br>
         <span style="margin-left:60px">传真:{{ fax }}</span>
-        <span style="margin-left:80%">日期:{{ billingDate }}</span>
         <p />
         <br>
         <el-table
@@ -70,7 +71,6 @@ export default {
       tableData: [],
       form: {},
       fullName: '',
-      billingDate: '',
       mobilePhone: '',
       documentsNo: '',
       fax: '',
@@ -87,9 +87,8 @@ export default {
     getList() {
       this.tableData = this.data
       this.tableData.forEach(a => {
-        a.totalPrice = a.unitPrice * a.purchaseQuantity
+        a.totalPrice = a.costPrice * a.purchaseQuantity
         a.paperSize = a.length * a.width
-        this.billingDate = a.billingDate
         this.documentsNo = a.documentsNo
         this.remark = a.remark
         this.spplierId = a.supplierId
