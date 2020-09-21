@@ -61,7 +61,7 @@
             <template slot-scope="scope">
               <el-link type="danger" size="small" @click="drop(scope)">删除</el-link>
               <el-link type="primary" size="small" :disabled="scope.row.documentsNo!==null ?true : false" @click="purAdd(scope)">生成采购单</el-link>
-              <el-link type="primary" size="small" :disabled="warehousingDis" @click="modifyPur(scope)">编辑采购单</el-link>
+              <el-link type="primary" size="small" :disabled="scope.row.documentsNo!==null ?false : true" @click="modifyPur(scope)">编辑采购单</el-link>
               <el-link type="primary" size="small" :disabled="warehousingDis" @click="warehousing(scope)">入库</el-link>
               <el-link type="warning" size="small" @click="printing(scope)">生成打印单</el-link>
             </template>
@@ -315,13 +315,15 @@ export default {
     },
     // 删除
     drop(scope) {
-      delOrder(scope.row.id).then(res => {
-        if (res) {
-          this.$message.success('删除成功')
-          this.loadData()
-        } else {
-          this.$message.error('删除失败')
-        }
+      this.tableData.forEach(a => {
+        delOrder(scope.row.id).then(res => {
+          if (res) {
+            this.$message.success('删除成功')
+            this.loadData()
+          } else {
+            this.$message.error('删除失败')
+          }
+        })
       })
     },
     // 入库
