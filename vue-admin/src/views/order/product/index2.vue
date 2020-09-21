@@ -58,7 +58,7 @@
         <td colspan="10">{{ tableData.remark }}</td>
       </tr>
     </table>
-    <!-- <div class="img" /> -->
+    <img v-if="url" :src="url" class="avatar" style="width:200px;height:150px">
   </div>
 </template>
 
@@ -69,11 +69,13 @@ export default window.$crudCommon({
     return {
       tableData: {},
       a: [],
-      name: ''
+      name: '',
+      url: ''
 
     }
   },
   created() {
+    this.url = localStorage.getItem('imageUrl')
     getUser().then(res => {
       this.name = res
     })

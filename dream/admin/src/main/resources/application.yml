@@ -35,8 +35,16 @@ fdfs:
   thumb-image:
     width: 150
     height: 150
-  tracker-list: localhost:8080
-#  prop.upload-folder=D:/tmp
-#  spring.resources.static-locations=classpath:/META-INF/resources/,classpath:/resources/,\
-#  classpath:/static/,classpath:/public/,file:${prop.upload-folder}
+  tracker-list: 192.168.1.150:8080
+minio:
+  # 图片bucket名称
+  imageBucket: "images"
+  # 视频bucket名称
+  videoBucket: "videos"
+  # 文档bucket名称
+  docBucket: "document"
+  # Minio服务地址
+  host: "http://oss.qiqidream.fun"
+  access-key: "jcy"
+  secret-key: "jcy123456"
 

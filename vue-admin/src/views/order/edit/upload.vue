@@ -36,8 +36,8 @@ export default {
   methods: {
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
-      console.log(this.imageUrl)
-      localStorage.setItem('imageUrl', this.imageUrl)
+      console.log(res)
+      localStorage.setItem('imageUrl', res)
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg'
