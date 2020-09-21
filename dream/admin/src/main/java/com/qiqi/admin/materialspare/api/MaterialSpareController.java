@@ -45,7 +45,6 @@ public class MaterialSpareController {
                                                             @RequestParam(value = "material") String material) {
         LambdaQueryWrapper<MaterialSpareDO> wrapper = new LambdaQueryWrapper<MaterialSpareDO>();
         wrapper.like(!ObjectUtils.isEmpty(time),MaterialSpareDO::getCreatedTime,time);
-        wrapper.like(!ObjectUtils.isEmpty(material),MaterialSpareDO ::getMaterial,material);
         IPage<MaterialSpareDO> iPage = materialSpareService.page(new Page<>(page,count));
         //todo: 需要转Vo
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<MaterialSpareDO>>() {}, iPage.getRecords()));

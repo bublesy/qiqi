@@ -6,10 +6,11 @@
         <el-button v-print="'#print'" type="primary">打印</el-button>
         <h1 align="center">采购订单</h1>
         <span style="margin-left:60px">供方:{{ fullName }}</span>
+        <br>
         <span style="margin-left:60px">电话:{{ mobilePhone }}</span>
         <span style="margin-left:86%">No:{{ documentsNo }}</span>
+        <br>
         <span style="margin-left:60px">传真:{{ fax }}</span>
-        <span style="margin-left:80%">日期:{{ billingDate }}</span>
         <p />
         <br>
         <el-table
@@ -22,14 +23,12 @@
           style="width: 100%"
         >
           <el-table-column width="50px" align="center" />
-          <el-table-column prop="taskNumber" label="任务编号" />
+          <el-table-column prop="no" label="任务编号" />
           <el-table-column prop="material" label="材质" />
-          <el-table-column prop="ridgeType" label="楞型" />
+          <el-table-column prop="stare" label="楞型" />
           <el-table-column prop="paperSize" label="纸片尺寸(MM)纸长 X 纸宽" />
-          <el-table-column prop="parPreSpe" label="分压规格(MM)" />
-          <el-table-column prop="batching" label="纸板面积" />
-          <el-table-column prop="squarePrice" label="平方价" />
-          <el-table-column prop="unitPrice" label="单价 元/片" />
+          <el-table-column prop="pressureSpecification" label="分压规格(MM)" />
+          <el-table-column prop="costPrice" label="成本价 元/片" />
           <el-table-column prop="purchaseQuantity" label="数量 (片)" />
           <el-table-column prop="totalPrice" label="总价 (元)" />
           <el-table-column prop="deliveryDate" label="交货日期" />
@@ -72,7 +71,6 @@ export default {
       tableData: [],
       form: {},
       fullName: '',
-      billingDate: '',
       mobilePhone: '',
       documentsNo: '',
       fax: '',
@@ -89,9 +87,8 @@ export default {
     getList() {
       this.tableData = this.data
       this.tableData.forEach(a => {
-        a.totalPrice = a.unitPrice * a.purchaseQuantity
-        a.paperSize = a.paperWidth * a.paperLength
-        this.billingDate = a.billingDate
+        a.totalPrice = a.costPrice * a.purchaseQuantity
+        a.paperSize = a.length * a.width
         this.documentsNo = a.documentsNo
         this.remark = a.remark
         this.spplierId = a.supplierId

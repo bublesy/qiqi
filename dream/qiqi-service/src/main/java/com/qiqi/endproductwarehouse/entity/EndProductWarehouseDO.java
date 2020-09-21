@@ -21,12 +21,14 @@ public class EndProductWarehouseDO extends BaseModel {
     private static final long serialVersionUID=1L;
 
     private String orderId;
-    /**
-     * 供应商id
-     */
-    private String supplierId;
 
     private String carryTo;
+
+    private String posting;
+    private String checkNum;
+    private String checkDate;
+
+    private String purQuantity;
 
     private String unitPrice;
     private String taskNumber;

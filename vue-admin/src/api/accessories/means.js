@@ -23,3 +23,8 @@ export function updated(data) {
 export function getById(id) {
   return request({ url: '/material/data/' + id, method: 'get' })
 }
+
+// 领料人
+export function getUser() {
+  return request({ url: '/sys/user/salesman', method: 'get' })
+}

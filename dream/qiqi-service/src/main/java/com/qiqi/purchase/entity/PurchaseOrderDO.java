@@ -27,7 +27,9 @@ public class PurchaseOrderDO extends BaseModel {
 
     private String settlementPeriod;
 
-    private String orderId;
+    private Long orderId;
+
+    private String costPrice;
 
 
     /**
@@ -118,11 +120,6 @@ public class PurchaseOrderDO extends BaseModel {
     @TableField("squarePrice")
     private String squarePrice;
 
-    /**
-     * 单价
-     */
-    @TableField("unitPrice")
-    private String unitPrice;
 
     /**
      * 金额

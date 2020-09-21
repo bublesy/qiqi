@@ -79,9 +79,12 @@ public class EndProductWarehouseController {
     }
 
     @ApiOperation(value = "新增产品仓库")
-    @PostMapping("")
+    @PostMapping("/add")
     public Boolean saveEndProductWarehouse(@RequestBody EndProductWarehouseDO endProductWarehouseDO) {
-        return endProductWarehouseService.save(endProductWarehouseDO);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String format = df.format(new Date());
+        endProductWarehouseDO.setCheckDate(format);
+        return endProductWarehouseService.saveOrUpdate(endProductWarehouseDO);
     }
 
     @ApiOperation(value = "删除产品仓库(批量))")
@@ -115,7 +118,7 @@ public class EndProductWarehouseController {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        orderDO.setDeliveryDate(date);
+        orderDO.setShipDate(date);
         orderDO.setOutNo(byId.getWarehouseNo());
         orderService.updateById(orderDO);
         return endProductWarehouseService.updateById(endProductWarehouseDO);

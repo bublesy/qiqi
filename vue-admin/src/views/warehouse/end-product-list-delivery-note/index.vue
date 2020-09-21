@@ -5,7 +5,7 @@
         <p align="center">海宁市中奇纸箱包装厂</p>
         <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#print'" type="primary">打印</el-button>
-        <el-header align="center">定作送货单</el-header>
+        <h1 align="center">定作送货单</h1>
         <span style="margin-left:60px">收货单位:{{ fullName }}</span>
         <br>
         <br>
@@ -19,12 +19,7 @@
         >
           <el-table-column width="50px" align="center" />
           <el-table-column prop="taskNumber" label="订单编号" />
-          <el-table-column prop="typeNo" label="款号" />
-          <el-table-column prop="specifications" label="规格(mm)">
-            <template slot-scope="scope">
-              {{ scope.row.paperLength }} x {{ scope.row.paperWidth }} x {{ scope.row.paperHeight }}
-            </template>
-          </el-table-column>
+          <el-table-column prop="specifications" label="规格(mm)" />
           <el-table-column prop="orderQuantity" label="订单量" />
           <el-table-column prop="deliveryQuantity" label="送货量" />
           <el-table-column prop="unitPrice" label="单价" />
@@ -105,6 +100,7 @@ export default {
         this.remark = a.remark
         this.customerId = a.customerId
         this.createdBy = a.createdBy
+        a.specifications = a.length * a.width
       })
       this.pagination.total = this.tableData.length
       this.getCustomer()

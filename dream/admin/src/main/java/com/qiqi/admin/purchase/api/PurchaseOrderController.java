@@ -29,6 +29,7 @@ import com.qiqi.purchase.service.PurchaseOrderService;
 
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -69,32 +70,10 @@ public class PurchaseOrderController {
                                                             @RequestParam(value = "customerName") String customerName,
                                                             @RequestParam(value = "quantityOverdue") String quantityOverdue,
                                                             @RequestParam(value = "time") String time) {
-        //todo: 需要转Vo
-        LambdaQueryWrapper<PurchaseOrderDO> wrapper = new LambdaQueryWrapper<PurchaseOrderDO>();
-        wrapper.like(!ObjectUtils.isEmpty(customerName),PurchaseOrderDO::getCustomerName,customerName);
-        wrapper.like(!ObjectUtils.isEmpty(time),PurchaseOrderDO::getCreatedTime,time);
-        //设置日期格式
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        // new Date()为获取前系统时间，也可使用当前时间戳
-        String date = df.format(new Date());
-        if (quantityOverdue.equals("已过期")){
-            wrapper.le(!ObjectUtils.isEmpty(quantityOverdue),PurchaseOrderDO::getDeliveryDate,date);
-        }else{
-            wrapper.ge(!ObjectUtils.isEmpty(quantityOverdue),PurchaseOrderDO::getDeliveryDate,date);
-        }
-        IPage<PurchaseOrderDO> iPage = purchaseOrderService.page(new Page<>(page,size),wrapper);
+        Date data = new Date();
+        IPage<OrderDO> iPage = orderService.GetList(new Page<>(page,size),customerName,quantityOverdue,time,data);
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<PurchaseOrderVO>>() {}, iPage.getRecords()));
     }
-
-    @PostMapping("/listByIds")
-    public PageEntity<PurchaseOrderVO> listByIds(@RequestParam(value = "page",defaultValue = "1") Long page,
-                                                 @RequestParam(value = "size",defaultValue = "10") Long size,
-                                                 @RequestParam(value = "ids") List<Long> ids) {
-        //todo: 需要转Vo
-        IPage iPage = purchaseOrderService.SuppAndPurList(new Page<>(page,size),ids);
-        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<PurchaseOrderVO>>() {}, iPage.getRecords()));
-    }
-
 
     @ApiOperation(value = "获取采购单(单个)")
     @GetMapping("/{id}")
@@ -107,7 +86,7 @@ public class PurchaseOrderController {
     @ApiOperation(value = "获取名字(单个)")
     @GetMapping("/getNameById/{id}")
     public String getNameById(@PathVariable Long id) {
-        PurchaseOrderDO byId = purchaseOrderService.getById(id);
+        OrderDO byId = orderService.getById(id);
         Long ids = byId.getCreatedBy();
         SysUserDO users = sysUserService.getById(ids);
         String nickname = users.getNickname();
@@ -122,6 +101,59 @@ public class PurchaseOrderController {
         return nickname;
     }
 
+    @ApiOperation(value = "入库(单个)")
+    @PostMapping("/warehousing")
+    public Boolean warehousing(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
+        boolean flag =false;
+        OrderDO orderDO = new OrderDO();
+        SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd MM:ss");
+        //设置日期格式
+        SimpleDateFormat df = new SimpleDateFormat("yyMMddHHmmss");
+        String no = df.format(new Date());
+        if (purchaseOrderDTO.getIsProduct().equals("成品")){
+            EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
+            BeanUtil.copyProperties(purchaseOrderDTO,endProductWarehouseDO);
+            endProductWarehouseDO.setWarehouseNo(no);
+            endProductWarehouseDO.setWarehousingData(df2.format(new Date()));
+            endProductWarehouseDO.setBillingData(df2.format(new Date()));
+            endProductWarehouseDO.setCustomerId(purchaseOrderDTO.getCustomerName());
+            endProductWarehouseDO.setSpecifications(purchaseOrderDTO.getStare());
+            endProductWarehouseDO.setWidth(purchaseOrderDTO.getWidth());
+            endProductWarehouseDO.setLength(purchaseOrderDTO.getLength());
+            endProductWarehouseDO.setTypeNo(purchaseOrderDTO.getModelNo());
+            endProductWarehouseDO.setPurQuantity(purchaseOrderDTO.getPurchaseQuantity());
+            endProductWarehouseDO.setHeight(purchaseOrderDTO.getHeight());
+            endProductWarehouseDO.setUnitPrice(purchaseOrderDTO.getCostPrice());
+            endProductWarehouseDO.setOrderId(purchaseOrderDTO.getCustomerName());
+            flag = endProductWarehouseService.saveOrUpdate(endProductWarehouseDO);
+            BeanUtil.copyProperties(purchaseOrderDTO,orderDO);
+            orderDO.setId(purchaseOrderDTO.getOrderId());
+            orderDO.setWosState("入仓未出货");
+            orderDO.setProductSpace(endProductWarehouseDO.getEndProductPos());
+            orderService.updateById(orderDO);
+        }else{
+            WarehouseDO warehouseDO = new WarehouseDO();
+            BeanUtil.copyProperties(purchaseOrderDTO,warehouseDO);
+            warehouseDO.setWarehouseNo(no);
+            warehouseDO.setWarehousingDate(df2.format(new Date()));
+            warehouseDO.setBillingDate(df2.format(new Date()));
+            warehouseDO.setPaperLength(purchaseOrderDTO.getLength());
+            warehouseDO.setPaperWidth(purchaseOrderDTO.getWidth());
+            warehouseDO.setUnitPrice(purchaseOrderDTO.getCostPrice());
+            flag = warehouseService.saveOrUpdate(warehouseDO);
+            BeanUtil.copyProperties(purchaseOrderDTO,orderDO);
+            orderDO.setId(purchaseOrderDTO.getOrderId());
+            orderDO.setWosState("字板已入仓");
+            orderDO.setSpace(warehouseDO.getPosition());
+            orderService.updateById(orderDO);
+        }
+        orderDO.setId(purchaseOrderDTO.getOrderId());
+        Integer a = Integer.parseInt(purchaseOrderDTO.getPurchaseQuantity());
+        orderDO.setIncomeNum(a);
+        orderService.updateById(orderDO);
+        return flag;
+    }
+
 
     @ApiOperation(value = "修改采购单")
     @PutMapping("")
@@ -134,50 +166,12 @@ public class PurchaseOrderController {
     public Boolean savePurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
         PurchaseOrderDO purchaseOrderDO = new PurchaseOrderDO();
         BeanUtil.copyProperties(purchaseOrderDTO,purchaseOrderDO);
-        OrderDO orderDO = new OrderDO();
         //设置日期格式
-        SimpleDateFormat df = new SimpleDateFormat("yyMMddHHmmssms");
+        SimpleDateFormat df = new SimpleDateFormat("yyMMddHHmmss");
         // new Date()为获取当前系统时间，也可使用当前时间戳
         String no = df.format(new Date());
-        SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd MM:ss");
         purchaseOrderDO.setDocumentsNo(no);
-        if (purchaseOrderDO.getIsProduct()){
-            EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
-            BeanUtil.copyProperties(purchaseOrderDO,endProductWarehouseDO);
-            endProductWarehouseDO.setWarehouseNo(purchaseOrderDO.getDocumentsNo());
-            endProductWarehouseDO.setWarehousingData(df2.format(new Date()));
-            endProductWarehouseDO.setDrawer(purchaseOrderDO.getCreatedBy());
-            endProductWarehouseDO.setBillingData(df2.format(new Date()));
-            endProductWarehouseDO.setCustomerId(purchaseOrderDO.getCustomerName());
-            endProductWarehouseDO.setSpecifications(purchaseOrderDO.getParPreSpe());
-            endProductWarehouseDO.setDeliveryQuantity(purchaseOrderDO.getPurchaseQuantity());
-            endProductWarehouseDO.setWidth(purchaseOrderDO.getPaperWidth());
-            endProductWarehouseDO.setLength(purchaseOrderDO.getPaperLength());
-            endProductWarehouseDO.setTypeNo(purchaseOrderDO.getModelNo());
-            endProductWarehouseDO.setHeight(purchaseOrderDO.getPaperHeight());
-            endProductWarehouseService.saveOrUpdate(endProductWarehouseDO);
-            BeanUtil.copyProperties(purchaseOrderDTO,orderDO);
-            orderDO.setId(purchaseOrderDTO.getOrderId());
-            orderDO.setWosState("入仓未出货");
-            orderDO.setProductSpace(endProductWarehouseDO.getEndProductPos());
-            orderService.updateById(orderDO);
-        }else{
-            WarehouseDO warehouseDO = new WarehouseDO();
-            BeanUtil.copyProperties(purchaseOrderDO,warehouseDO);
-            warehouseDO.setWarehouseNo(purchaseOrderDO.getDocumentsNo());
-            warehouseDO.setWarehousingDate(df2.format(new Date()));
-            warehouseDO.setDrawerId(purchaseOrderDO.getCreatedBy());
-            warehouseService.saveOrUpdate(warehouseDO);
-            BeanUtil.copyProperties(purchaseOrderDTO,orderDO);
-            orderDO.setId(purchaseOrderDTO.getOrderId());
-            orderDO.setWosState("字板已入仓");
-            orderDO.setSpace(warehouseDO.getPosition());
-            orderService.updateById(orderDO);
-        }
-        orderDO.setId(purchaseOrderDTO.getOrderId());
-        Integer a = Integer.parseInt(purchaseOrderDTO.getPurchaseQuantity());
-        orderDO.setIncomeNum(a);
-        orderService.updateById(orderDO);
+
         return purchaseOrderService.saveOrUpdate(purchaseOrderDO);
     }
 
