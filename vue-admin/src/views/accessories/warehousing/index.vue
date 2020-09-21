@@ -25,11 +25,11 @@
         />
         <el-table-column
           prop="supplier"
-          label="供方"
+          label="供应商"
         />
         <el-table-column
           prop="no"
-          label="原始单号"
+          label="采购单号"
         />
         <el-table-column
           prop="note"
@@ -63,17 +63,31 @@
               value-format="yyyy-MM-dd"
             />
           </el-form-item>
-          <el-form-item label="供方:" prop="supplier">
-            <el-input v-model="formAdd.supplier" />
+          <el-form-item label="供应商:" prop="supplier">
+            <el-select v-model="formAdd.supplier" placeholder="此为必选项" @change="supplierList">
+              <el-option
+                v-for="item in supplier"
+                :key="item.id"
+                :label="item.fullName"
+                :value="item.fullName"
+              />
+            </el-select>
           </el-form-item>
-          <el-form-item label="原始单号:" prop="no">
-            <el-input v-model="formAdd.no" />
+          <el-form-item label="采购单号:" prop="no">
+            <el-select v-model="formAdd.no" placeholder="此为必选项" @change="specificationChange">
+              <el-option
+                v-for="item in no"
+                :key="item.id"
+                :label="item.documentsNo"
+                :value="item.documentsNo"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item label="备注:" prop="note">
             <el-input v-model="formAdd.note" />
           </el-form-item>
-          <el-form-item label="品名规格:" prop="specification">
-            <el-select v-model="formAdd.specificationId" placeholder="请选择" @change="specificationChange">
+          <el-form-item label="品名规格:" prop="specificationId">
+            <el-select v-model="formAdd.specificationId" placeholder="此为必选项" @change="specificationChange">
               <el-option
                 v-for="item in specificationFor"
                 :key="item.value"
@@ -117,7 +131,7 @@
 </template>
 <script>
 import initData from '@/mixins/initData'
-import { list, add, removeById, getById, listunit } from '@/api/accessories/warehousing'
+import { list, add, removeById, getById, listunit, supplier, purchaseList } from '@/api/accessories/warehousing'
 import { specificationList } from '@/api/accessories/means'
 import { export2Excel } from '@/utils/common'
 export default {
@@ -157,7 +171,8 @@ export default {
         date: '',
         supplier: '',
         no: '',
-        note: ''
+        note: '',
+        purchase: ''
 
       },
       formAdd: {
@@ -166,13 +181,15 @@ export default {
         date: '',
         supplier: '',
         no: '',
-        note: ''
+        note: '',
+        purchase: ''
+
       },
       dialogVisible: false,
       tableData: [],
       titleType: '',
       supRules: {
-        unm: [
+        num: [
           { required: true, message: '请输入数量', trigger: 'blur' },
           { validator: money, trigger: 'blur' }
         ],
@@ -183,26 +200,41 @@ export default {
         perPrice: [
           { required: true, message: '请输入单价', trigger: 'blur' },
           { validator: perPrice, trigger: 'blur' }
-        ]
+        ],
+        specificationId: [{ required: true, message: '此为必选项', trigger: 'blur' }],
+        no: [{ required: true, message: '此为必选项', trigger: 'blur' }],
+        supplier: [{ required: true, message: '此为必选项', trigger: 'blur' }]
       },
       // 辅料资料数据
       table: [],
       // 品名规格下拉
       specificationFor: [],
-      value: '',
-      value1: ''
+      // 供方下拉
+      suppliers: [],
+      supplier: [],
+      // 购单号下拉
+      purchasesS: [],
+      no: []
+
     }
   },
   created() {
     this.init()
   },
   methods: {
+    // 获取品名规格
     specificationChange() {
       this.specificationFor.forEach(a => {
         if (a.id === this.formAdd.specificationId) {
           this.formAdd.unit = a.unit
         }
       })
+    },
+    // 获取供应商
+    supplierList() {
+      // this.supplier.forEach(a => {
+      //   this.formAdd.supplier = a.supplier
+      // })
     },
     // 获取列表数据
     loadData() {
@@ -234,12 +266,30 @@ export default {
       this.dialogVisible = true
       this.formAdd.id = scope.row.id
       getById(scope.row.id).then(res => {
+      // 品名规格数据
         specificationList().then(res => {
           this.specificationFor = res
           this.specificationFor.forEach(a => {
             if (a.id === this.formAdd.specificationId) {
               this.formAdd.unit = a.unit
             }
+          })
+        })
+        // 供应商数据
+        supplier({ page: 1, size: 10, code: '',
+          abbreviation: '',
+          time: '' }).then(res => {
+          this.supplier = res.list
+          this.supplier.forEach(a => {
+            this.formAdd.supplier = a.supplier
+          })
+        })
+        // 采购单数据
+        purchaseList({ page: 1, size: 10, customerName: '', quantityOverdue: '', time: '' }).then(res => {
+          this.no = res.list
+          console.log(res)
+          this.no.forEach(a => {
+            this.formAdd.no = a.purchase
           })
         })
         this.formAdd = res
@@ -251,8 +301,19 @@ export default {
       this.dialogVisible = true
       this.formAdd = {}
       this.titleType = '新增'
+      // 品名规格数据
       specificationList().then(res => {
         this.specificationFor = res
+      })
+      // 供应商数据
+      console.log({ page: 1, size: 10 })
+      supplier({ page: 1, size: 10, code: '', abbreviation: '', time: '' }).then(res => {
+        this.supplier = res.list
+      })
+      // 采购单数据
+      console.log({ page: 1, size: 10 })
+      purchaseList({ page: 1, size: 10, customerName: '', quantityOverdue: '', time: '' }).then(res => {
+        this.no = res.list
       })
     },
     // 新增保存
@@ -291,7 +352,7 @@ export default {
     toExcel() {
       var list = this.tableData
       const th = ['日期', '供方', '原始单号', '备注']
-      const filterVal = ['data', 'supplier', 'no', 'note']
+      const filterVal = ['date', 'supplier', 'no', 'note']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '辅料入库')
     }
