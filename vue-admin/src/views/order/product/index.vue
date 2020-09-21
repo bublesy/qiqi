@@ -148,7 +148,9 @@ export default {
     var row = this.$route.query.row
     this.row = row
     this.tableData = row
-    this.url = 'http://192.168.1.150:8080/api/admin' + localStorage.getItem('imageUrl')
+    this.tableData = row
+    console.log(row.img)
+    this.url = 'http://192.168.1.150:8080/api/admin' + row.img
     getUserById(row.createdBy).then(res => {
       this.created = res.nickname
     })

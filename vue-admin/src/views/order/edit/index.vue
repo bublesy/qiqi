@@ -84,15 +84,16 @@
         <el-table-column prop="making" label="制单人" width="120" />
         <el-table-column prop="auditTime" label="审核时间" width="120" />
         <el-table-column prop="audit" label="审核人" width="120" /> -->
-        <el-table-column label="操作" width="420">
+        <el-table-column label="操作" width="500">
           <template slot-scope="scope">
-            <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
+            <el-button type="warning" size="mini" :disabled="scope.row.audit==='审核'?true:false" @click="updated(scope.row.id)">编辑</el-button>
             <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
               <el-button slot="reference" type="danger" size="mini">删除</el-button>
             </el-popconfirm>
             <el-button type="success" size="mini" @click="singlePrint(scope.row)">打印</el-button>
             <el-button type="warning" size="mini" @click="orderAgain(scope.row.id)">再次下单</el-button>
             <el-button type="primary" size="mini" @click="generate(scope.row)">生成施工单</el-button>
+            <el-button type="primary" size="mini" :disabled="scope.row.audit==='审核'?true:false" @click="audit(scope.row.id)">审核</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -106,14 +107,14 @@
         @current-change="handleCurrentChange"
       />
     </el-card>
-    <editDialog :id="id" :dialog="editDialog" :flag="flag" @init="initTable" />
+    <editDialog :id="id" :dialog="editDialog" :flag="flag" :status="status" @init="initTable" />
   </div>
 </template>
 
 <script>
 import editDialog from '@/views/order/edit/edit'
 import { export2Excel } from '@/utils/common'
-import { getOrder, delOrder } from '@/api/order/customerOrder'
+import { getOrder, delOrder, getUser, addOrUpdateOrder, getSingleOrder } from '@/api/order/customerOrder'
 export default {
   name: 'Edit',
   components: { editDialog },
@@ -139,7 +140,8 @@ export default {
       options: [],
       boxTypeOptions: [],
       supplierOptions: [],
-      select: []
+      select: [],
+      status: false
 
     }
   },
@@ -147,6 +149,21 @@ export default {
     this.initTable()
   },
   methods: {
+    audit(id) {
+      getSingleOrder(id).then(res => {
+        var data = res
+        getUser().then(res => {
+          data.auditBy = res.nickname
+          data.audit = '审核'
+          addOrUpdateOrder(data).then(res => {
+            if (res) {
+              this.$message.success('审核成功')
+              this.initTable()
+            }
+          })
+        })
+      })
+    },
     query() {
       this.initTable()
     },
@@ -159,6 +176,7 @@ export default {
     orderAgain(id) {
       this.flag = true
       this.id = id
+      this.status = true
       this.editDialog.show = true
     },
     add() {

@@ -122,7 +122,7 @@ public class OrderController {
         IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
         String no = idGeneratorUtils.nextId();
         OrderDO order = orderService.getById(orderDO.getId());
-        if(orderDO.getDeliveryDate() != null && !order.getDeliveryDate().equals(orderDO.getDeliveryDate())){
+        if(orderDO != null && orderDO.getDeliveryDate() != null && order!= null && order.getDeliveryDate()!= null && !order.getDeliveryDate().equals(orderDO.getDeliveryDate())){
             orderDO.setDeliveryDate(TimeAddEight.formatTimeEight(orderDO.getDeliveryDate()));
         }
         orderDO.setNo(no);

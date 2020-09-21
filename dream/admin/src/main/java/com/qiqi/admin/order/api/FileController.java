@@ -1,6 +1,7 @@
 package com.qiqi.admin.order.api;
 
 import com.qiqi.admin.order.util.FileDfsUtil;
+import com.qiqi.admin.order.util.IdGeneratorUtils;
 import io.swagger.annotations.ApiOperation;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,8 @@ import java.util.Date;
 @RequestMapping("/file")
 public class FileController {
 
+    @Resource
+    private IdGeneratorUtils idGeneratorUtils;
 
     @ApiOperation(value="上传文件", notes="测试FastDFS文件上传")
     @RequestMapping(value = "/upload",headers="content-type=multipart/form-data", method = RequestMethod.POST)
@@ -36,7 +39,7 @@ public class FileController {
         SimpleDateFormat month = new SimpleDateFormat("MM");
         SimpleDateFormat day = new SimpleDateFormat("dd");
 //        String savePath="/upload/"+year.format(date)+"/"+month.format(date)+"/"+day.format(date)+"/"+ file.getName()+".jpg";
-        String savePath = "/upload/"+file.getName()+".jpg";
+        String savePath = "/upload/"+idGeneratorUtils.nextId()+file.getName()+".jpg";
         File dest = new File(filePath+savePath);
         //判断文件保存是否存在
         if (!dest.getParentFile().exists()) {

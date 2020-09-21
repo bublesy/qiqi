@@ -2,13 +2,20 @@
   <div id="printTest" style="margin:30px">
     <p class="font">生产日报表</p>
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
-      <!-- <el-form-item label="创建日期:">
+      <el-form-item label="交货日期:">
+        <el-date-picker
+          v-model="form.deliveryDate"
+          type="date"
+          placeholder="选择日期"
+        />
+      </el-form-item>
+      <el-form-item label="排期日期:">
         <el-date-picker
           v-model="form.date"
           type="date"
           placeholder="选择日期"
         />
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item label="客户名称:">
         <el-input v-model="form.name" />
       </el-form-item>
