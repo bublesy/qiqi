@@ -39,11 +39,11 @@
       </el-table-column>
       <el-table-column prop="orderNum" label="订单数量" width="120" />
       <el-table-column prop="sendNum" label="已送数量" width="120" />
-      <el-table-column prop="notSend" label="未送数量" width="120">
-        <template slot-scope="scope">
+      <el-table-column prop="notSend" label="未送数量" width="120" />
+      <!-- <template slot-scope="scope">
           {{ scope.row.orderNum - scope.row.productNum }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column prop="deliveryDate" label="交货日期" width="120" />
     </el-table>
     <!-- <el-pagination

@@ -99,7 +99,7 @@
       <el-pagination
         :current-page="form.page"
         :page-sizes="[10, 20, 30, 40]"
-        :page-size="form.size"
+        :page-size="form.count"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         @size-change="handleSizeChange"
@@ -181,7 +181,7 @@ export default {
       })
     },
     handleSizeChange(size) {
-      this.form.size = size
+      this.form.count = size
       this.initTable()
     },
     handleCurrentChange(page) {

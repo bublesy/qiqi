@@ -2,7 +2,7 @@
   <el-dialog
     title="编辑排期"
     :visible.sync="dialog.show"
-    width="20%"
+    width="18%"
     :close-on-click-modal="false"
   >
     <el-form ref="form" :model="form" size="mini" :inline="true">

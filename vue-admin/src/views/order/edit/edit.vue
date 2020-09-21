@@ -240,9 +240,7 @@
         </el-form-item>
       </el-form>
       <p>添加样图:</p>
-      <img v-if="imageUrl" :src="imageUrl" class="avatar">
-      <i v-else class="el-icon-plus avatar-uploader-icon" />
-      <upload />
+      <upload :url="imageUrl" :dialog="dialog.show" />
     </el-card>
   </el-dialog>
 </template>
@@ -339,11 +337,10 @@ export default {
         })
         if (this.id !== '' && this.id !== null) {
           // 编辑
-          console.log(this.id)
           getSingleOrder(this.id).then(res => {
-            console.log(res)
             this.form = res
-            this.imageUrl = res.img
+            this.imageUrl = 'http://192.168.1.150:8080/api/admin' + res.img
+            localStorage.setItem('editUrl', this.imageUrl)
           })
         } else {
           // 新增
@@ -354,9 +351,6 @@ export default {
   },
   methods: {
     save() {
-      // var list = []
-      // list.push(this.form)
-      // list.push(this.form)
       if (this.flag) {
         this.form.id = null
       }

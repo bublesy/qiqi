@@ -116,7 +116,6 @@ export default {
         this.tableData.forEach(x => {
           x.cartonSize = x.length + 'X' + x.width + 'X' + x.height
           x.isSchedule = (x.isSchedule === true ? '是' : '否')
-          console.log(x.isSchedule)
         })
         this.total = res.total
       })
@@ -143,7 +142,7 @@ export default {
       this.initTable()
     },
     handleCurrentChange(page) {
-      this.page = page
+      this.form.page = page
       this.initTable()
     },
     toExcel() {

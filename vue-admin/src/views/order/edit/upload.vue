@@ -17,26 +17,35 @@
 <script>
 import { getToken } from '@/utils/auth'
 export default {
-  // props: {
-  //   imageUrl: {
-  //     type: String,
-  //     default: ''
-  //   }
-  // },
+  props: {
+    url: {
+      type: String,
+      default: ''
+    },
+    dialog: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       imageUrl: '',
       headers: {
         Authorization: getToken()
       }
-
     }
   },
-
+  watch: {
+    'dialog.show': function(val) {
+      if (val) {
+        this.imageUrl = localStorage.getItem('editUrl')
+        console.log('aaa')
+      }
+    }
+  },
   methods: {
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
-      console.log(res)
       localStorage.setItem('imageUrl', res)
     },
     beforeAvatarUpload(file) {

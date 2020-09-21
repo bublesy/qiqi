@@ -81,7 +81,6 @@ export default {
   created() {
     var list = []
     var object = this.$route.query
-    console.log(object)
     for (const key in object) {
       if (object.hasOwnProperty(key)) {
         const element = object[key]
