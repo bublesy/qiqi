@@ -2,6 +2,7 @@ package com.qiqi.order.mapper;
 
 import com.qiqi.order.entity.ScheduleDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface ScheduleMapper extends BaseMapper<ScheduleDO> {
 
+    void delete(@Param("id") Long id);
 }

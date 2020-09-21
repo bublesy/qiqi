@@ -6,6 +6,8 @@ import com.qiqi.order.service.ScheduleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
  * <p>
  * 排期表 服务实现类
@@ -17,4 +19,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, ScheduleDO> implements ScheduleService {
 
+    @Resource
+    private ScheduleMapper scheduleMapper;
+
+    @Override
+    public void delete(Long scheduleId) {
+        scheduleMapper.delete(scheduleId);
+    }
 }

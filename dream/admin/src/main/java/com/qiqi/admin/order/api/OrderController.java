@@ -2,6 +2,7 @@ package com.qiqi.admin.order.api;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
+import cn.hutool.db.sql.Order;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -117,6 +118,12 @@ public class OrderController {
                 scheduleDO.setDate(orderDO.getDeliveryDate());
                 scheduleDO.setId(order.getScheduleId());
                 scheduleService.saveOrUpdate(scheduleDO);
+        }
+        if(orderDO.getId() != null && state.equals(orderDO.getIsProduct())){
+            OrderDO order = orderService.getById(orderDO.getId());
+            if(order.getScheduleId() != null){
+                scheduleService.delete(order.getScheduleId());
+            }
         }
 
         orderDO.setOrderDate(new Date());
