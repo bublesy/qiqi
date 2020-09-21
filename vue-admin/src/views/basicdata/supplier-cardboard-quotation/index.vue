@@ -80,15 +80,15 @@
         </el-form-item>
 
         <el-form-item label="纸板报价" prop="cardboardQuotation">
-          <el-input-number v-model="formAdd.cardboardQuotation" :controls="false" />
+          <el-input-number v-model="formAdd.cardboardQuotation" :controls="false" @change="cardboardChange" />
         </el-form-item>
 
         <el-form-item label="优惠设定" prop="preferentialSetting">
-          <el-input v-model="formAdd.preferentialSetting" />
+          <el-input-number v-model="formAdd.preferentialSetting" :controls="false" @change="cardboardChange" />
         </el-form-item>
 
         <el-form-item label="总价" prop="totalPrice">
-          <el-input v-model="formAdd.totalPrice" />
+          <el-input v-model="formAdd.totalPrice" disabled />
         </el-form-item>
 
       </el-form>
@@ -139,6 +139,9 @@ export default {
     this.init()
   },
   methods: {
+    cardboardChange() {
+      this.formAdd.totalPrice = this.formAdd.cardboardQuotation * this.formAdd.preferentialSetting
+    },
     loadData() {
       this.queryParams.code = this.form.code
       this.queryParams.abbreviation = this.form.abbreviation
