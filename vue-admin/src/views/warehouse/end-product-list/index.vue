@@ -36,8 +36,9 @@
           <el-table-column v-show="true" prop="taskNumber" label="任务编号" width="140" />
           <el-table-column v-show="true" prop="customerName" label="客户名称" width="140" />
           <el-table-column v-show="true" prop="orderQuantity" label="订单数量" width="140" />
-          <el-table-column v-show="true" prop="purQuantity" label="订单采购数量" width="140" />
+          <el-table-column v-show="true" prop="purQuantity" label="库存数量" width="140" />
           <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" width="140" />
+          <el-table-column v-show="true" prop="carryTo" label="发货状态" width="140" />
           <el-table-column v-show="true" prop="boxType" label="箱型" width="140" />
           <el-table-column v-show="true" prop="material" label="材质" width="140" />
           <el-table-column v-show="true" prop="length" label="长" width="140" />
@@ -45,18 +46,14 @@
           <el-table-column v-show="true" prop="height" label="高" width="140" />
           <el-table-column v-show="true" prop="unitPrice" label="成本价" width="140" />
           <el-table-column v-show="true" prop="endProductPos" label="成品仓位" width="140" />
-          <el-table-column v-show="true" prop="warehousingData" label="入仓时间" width="140" />
-          <el-table-column v-show="true" prop="isCheck" label="盘点单是否生成" width="140" />
-          <el-table-column v-show="true" prop="checkNum" label="盘点后库存数量" width="140" />
-          <el-table-column v-show="true" prop="checkNum" label="盘点数量" width="140" />
-          <el-table-column v-show="true" prop="differencesNum" label="差异数量" width="140" />
+          <el-table-column v-show="true" prop="warehousingData" label="入仓时间" width="160" />
+          <el-table-column v-show="true" prop="checkNum" label="实际库存数量" width="140" />
+          <el-table-column v-show="true" prop="checkDate" label="盘点时间" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
               <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?true : false" @click="purAdd(scope)">新增送货数量</el-link>
-              <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?false : true" @click="modifyPur(scope)">编辑送货数量</el-link>
-              <el-link type="primary" size="small" :disabled="scope.row.checkNum!==null ?true : false" @click="addCheck(scope)">新增成品盘点单</el-link>
-              <el-link type="primary" size="small" :disabled="scope.row.checkNum!==null ?false : true" @click="modifyCheck(scope)">编辑成品盘点单</el-link>
-              <el-link type="warning" size="small" @click="printing(scope)">生成送货单</el-link>
+              <el-link type="primary" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true)||(scope.row.checkDate===null ?false : true)" @click="modifyPur(scope)">编辑送货数量</el-link>
+              <el-link type="warning" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true)||(scope.row.checkDate===null ?false : true)" @click="printing(scope)">生成送货单</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -232,6 +229,7 @@ export default {
       this.formAdd = {}
       this.$set(this.formAdd, 'id', scope.row.id)
       this.$set(this.formAdd, 'warehouseNo', scope.row.warehouseNo)
+      this.$set(this.formAdd, 'deliveryQuantity', scope.row.orderQuantity)
     },
     loadData() {
       this.queryParams.carryTo = this.form.carryTo
@@ -243,12 +241,6 @@ export default {
         this.tableData = res.list
         this.pagination.total = res.total
         this.tableData.forEach(a => {
-          a.differencesNum = a.checkNum - a.purQuantity
-          if (a.checkNum !== null) {
-            a.isCheck = '已生成盘点单'
-          } else {
-            a.isCheck = '未生成盘点单'
-          }
           getCustomerById(a.customerId).then(data => {
             this.$set(a, 'customerName', data.name)
           })

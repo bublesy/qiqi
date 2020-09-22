@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.admin.warehouse.model.WarehouseVO;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.endproductwarehouse.entity.EndProductWarehouseDO;
+import com.qiqi.order.entity.OrderDO;
+import com.qiqi.order.service.OrderService;
 import com.qiqi.purchase.entity.PurchaseOrderDO;
 import com.qiqi.warehouse.entity.WarehouseDO;
 import com.qiqi.warehouse.service.WarehouseService;
@@ -14,10 +17,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +42,8 @@ public class WarehouseController {
 
     @Resource
     private WarehouseService warehouseService;
+    @Resource
+    private OrderService orderService;
 
     @ApiOperation(value = "获取仓库(列表)")
     @ApiImplicitParams({
@@ -72,9 +79,6 @@ public class WarehouseController {
     @ApiOperation(value = "新增仓库")
     @PostMapping("/add")
     public Boolean saveWarehouse(@RequestBody WarehouseDO warehouseDO) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String format = df.format(new Date());
-        warehouseDO.setCheckDate(format);
         return warehouseService.saveOrUpdate(warehouseDO);
     }
 
@@ -88,5 +92,47 @@ public class WarehouseController {
     @DeleteMapping("/{id}")
     public Boolean deleteWarehouseById(@PathVariable Long id) {
         return warehouseService.removeById(id);
+    }
+
+
+    @ApiOperation(value = "修改状态(批量))")
+    @PostMapping("/upState")
+    public Boolean updateState(@RequestBody List<String> idList) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:dd:ss");
+        String join = StringUtils.join(idList, ",");
+        Long id = Long.parseLong(join);
+        WarehouseDO warehouseDO = new WarehouseDO();
+        WarehouseDO byId = warehouseService.getById(join);
+        String checkNum = byId.getCheckNum();
+        int check = Integer.parseInt(checkNum);
+        String delivery = byId.getDeliveryQuantity();
+        int del = Integer.parseInt(delivery);
+        int i = check - del;
+        String s = String.valueOf(i);
+        warehouseDO.setCheckNum(s);
+        warehouseDO.setCheckDate(df.format(new Date()));
+        warehouseDO.setId(id);
+        warehouseDO.setDeliveryStatus("已送货");
+
+        String order = byId.getOrderId();
+        String deliveryQuantity = byId.getDeliveryQuantity();
+        Long orderId = Long.parseLong(order);
+        OrderDO orderDO = new OrderDO();
+        orderDO.setId(orderId);
+        Integer a = Integer.parseInt(deliveryQuantity);
+        orderDO.setSendNum(a);
+        orderDO.setWosState("已送货");
+        // new Date()为获取当前系统时间，也可使用当前时间戳
+        Date date = null;
+        try {
+            date = df.parse(byId.getDeliveryDate());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        orderDO.setShipDate(date);
+        orderDO.setOutNo(byId.getWarehouseNo());
+        orderService.updateById(orderDO);
+
+        return warehouseService.updateById(warehouseDO);
     }
 }

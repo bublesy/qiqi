@@ -27,6 +27,7 @@
         <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
         <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
+        <el-button type="primary" size="small" @click="addMaterial()">生成辅料单</el-button>
       </el-form>
       <div>
         <el-table
@@ -57,13 +58,13 @@
           <el-table-column v-show="true" prop="amount" label="金额" width="140" />
           <el-table-column v-show="true" prop="position" label="仓位" width="140" />
           <el-table-column v-show="true" prop="endProductPos" label="成品仓位" width="140" />
-          <el-table-column label="操作" width="400">
+          <el-table-column label="操作" width="450">
             <template slot-scope="scope">
-              <el-link type="danger" size="small" @click="drop(scope)">删除</el-link>
+              <el-link type="danger" size="small" :disabled="scope.row.documentsNo!==null ?false : true" @click="drop(scope)">删除采购单</el-link>
               <el-link type="primary" size="small" :disabled="scope.row.documentsNo!==null ?true : false" @click="purAdd(scope)">生成采购单</el-link>
-              <el-link type="primary" size="small" :disabled="scope.row.documentsNo!==null ?false : true" @click="modifyPur(scope)">编辑采购单</el-link>
-              <el-link type="primary" size="small" :disabled="warehousingDis" @click="warehousing(scope)">入库</el-link>
-              <el-link type="warning" size="small" @click="printing(scope)">生成打印单</el-link>
+              <el-link type="primary" size="small" :disabled="(scope.row.position==='0' ?false : true)||(scope.row.endProductPos==='0' ?false : true)" @click="modifyPur(scope)">编辑采购单</el-link>
+              <el-link type="primary" size="small" :disabled="(scope.row.position==='0' ?false : true)||(scope.row.endProductPos==='0' ?false : true)" @click="warehousing(scope)">入库</el-link>
+              <el-link type="warning" size="small" :disabled="scope.row.documentsNo!==null ?false : true" @click="printing(scope)">生成打印单</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -130,18 +131,18 @@
           </el-form-item>
 
           <el-form-item v-if="!formAdd.isProduct" label="仓位">
-            <el-input v-model="formAdd.position" />
+            <el-input-number v-model="formAdd.position" :controls="false" disabled />
           </el-form-item>
 
           <el-form-item v-if="formAdd.isProduct" label="成品仓位">
-            <el-input v-model="formAdd.endProductPos" />
+            <el-input-number v-model="formAdd.endProductPos" :controls="false" disabled />
           </el-form-item>
 
-          <el-form-item label="采购数量">
+          <el-form-item label="采购数量" prop="purchaseQuantity">
             <el-input v-model="formAdd.purchaseQuantity" @change="purchaseSelect" />
           </el-form-item>
 
-          <el-form-item label="成本价">
+          <el-form-item label="成本价" prop="costPrice">
             <el-input v-model="formAdd.costPrice" @change="purchaseSelect" />
           </el-form-item>
 
@@ -162,6 +163,78 @@
       </el-dialog>
 
     </el-main>
+
+    <!-- 新增/编辑对话框 -->
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :close-on-click-modal="false"
+    >
+      <el-form ref="supForm" :inline="true" :model="formMaterial" size="mini">
+        <el-form-item label="日期:" prop="date">
+          <el-date-picker
+            v-model="formMaterial.date"
+            type="date"
+            placeholder="选择日期"
+            value-format="yyyy-MM-dd"
+          />
+        </el-form-item>
+        <el-form-item label="供方:" prop="supplier">
+          <el-select v-model="formMaterial.supplier">
+            <el-option
+              v-for="item in supplierFor"
+              :key="item.id"
+              :label="item.fullName"
+              :value="item.fullName"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="采购单号:" prop="no">
+          <el-select v-model="formMaterial.no">
+            <el-option
+              v-for="item in noFor"
+              :key="item.id"
+              :label="item.documentsNo"
+              :value="item.documentsNo"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注:" prop="note">
+          <el-input v-model="formMaterial.note" />
+        </el-form-item>
+        <el-form-item label="品名规格:" prop="specification">
+          <el-select v-model="formMaterial.specificationId" placeholder="请选择" @change="specificationChange">
+            <el-option
+              v-for="item in specificationFor"
+              :key="item.value"
+              :label="item.specification"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="单位:" prop="unit">
+          <el-input v-model="formMaterial.unit" disabled />
+        </el-form-item>
+        <el-form-item
+          label="数量:"
+          prop="num"
+        >
+          <el-input v-model="formMaterial.num" />
+        </el-form-item>
+        <el-form-item label="单价:" prop="perPrice">
+          <el-input v-model="formMaterial.perPrice" />
+        </el-form-item>
+        <el-form-item label="金额:" prop="money">
+          <el-input v-model="formMaterial.money" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="supplierAddNo('supForm')">取 消</el-button>
+        <el-button type="primary" @click="supplierAddOk('supForm')">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </el-container>
 
 </template>
@@ -170,11 +243,14 @@
 import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
 import { supplierSelect } from '@/api/supplier-cardboard-quotation/cardboard'
+import { purNoSelect } from '@/api/supplier-cardboard-quotation/cardboard'
 import { add } from '@/api/purchase/purchase'
 import { list } from '@/api/purchase/purchase'
 import { getById } from '@/api/purchase/purchase'
-import { delOrder } from '@/api/order/customerOrder'
+import { specificationList } from '@/api/accessories/means'
+import { removeById } from '@/api/purchase/purchase'
 import { warehousing } from '@/api/purchase/purchase'
+import { addMaterial } from '@/api/accessories/warehousing'
 
 export default {
   name: 'PurchaseOrder',
@@ -191,7 +267,11 @@ export default {
         pricingMethod: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         billingDate: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         deliveryDate: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        customerName: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        customerName: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        settlementPeriod: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        purchaseQuantity: [{ required: true, message: '该输入为必填项', trigger: 'blur' }],
+        costPrice: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+
       },
       supplierFor: [],
       pricingFor: [],
@@ -205,13 +285,60 @@ export default {
       },
       orderDate: '',
       identification: '',
-      warehousingDis: true
+      dialogVisible: false,
+      formMaterial: {},
+      specificationFor: [],
+      noFor: []
     }
   },
   created() {
     this.init()
   },
   methods: {
+    specificationChange() {
+      this.specificationFor.forEach(a => {
+        if (a.id === this.formMaterial.specificationId) {
+          this.formMaterial.unit = a.unit
+        }
+      })
+    },
+    // 新增辅料
+    addMaterial() {
+      this.dialogVisible = true
+      this.formMaterial = {}
+      specificationList().then(res => {
+        this.specificationFor = res
+      })
+      // 加载供应商下拉框
+      supplierSelect().then(res => {
+        this.supplierFor = res
+      })
+      // 加载采购单号下拉框
+      purNoSelect().then(res => {
+        this.noFor = res
+      })
+    },
+    // 新增保存
+    supplierAddOk(supForm) {
+      this.$refs[supForm].validate((valid) => {
+        if (valid) {
+          addMaterial(this.formMaterial).then(res => {
+            this.$message.success(this.titleType + '成功')
+            this.$refs[supForm].resetFields()
+            this.loadData()
+          })
+          this.dialogVisible = false
+        } else {
+          return false
+        }
+      })
+    },
+    // 新增取消
+    supplierAddNo(supForm) {
+      this.dialogVisible = false
+      this.formMaterial = {}
+      this.$refs[supForm].resetFields()
+    },
     // 采购数量改变金额改变
     purchaseSelect() {
       this.formAdd.amount = this.formAdd.costPrice * this.formAdd.purchaseQuantity
@@ -315,8 +442,11 @@ export default {
     },
     // 删除
     drop(scope) {
-      this.tableData.forEach(a => {
-        delOrder(scope.row.id).then(res => {
+      if (scope.row.position !== '0' || scope.row.endProductPos !== '0') {
+        this.$message.error('已入库删除失败')
+        return
+      } else {
+        removeById(scope.row.pid).then(res => {
           if (res) {
             this.$message.success('删除成功')
             this.loadData()
@@ -324,7 +454,7 @@ export default {
             this.$message.error('删除失败')
           }
         })
-      })
+      }
     },
     // 入库
     warehousing(scope) {
@@ -348,7 +478,6 @@ export default {
       warehousing(this.formAdd).then(res => {
         if (res) {
           this.identification = this.$message.success('入库成功')
-          this.warehousingDis = true
           this.loadData()
         } else {
           this.$message.error('入库失败')
@@ -386,10 +515,12 @@ export default {
       this.$set(this.formAdd, 'customerName', scope.row.name)
       this.$set(this.formAdd, 'taskNumber', scope.row.no)
       this.$set(this.formAdd, 'customerNo', scope.row.customerNo)
+      this.$set(this.formAdd, 'purchaseQuantity', scope.row.orderNum)
+      this.formAdd.position = 0
+      this.formAdd.endProductPos = 0
       if (scope.row.isProduct === '成品') {
         this.$set(this.formAdd, 'isProduct', true)
       }
-      this.warehousingDis = false
     },
     // 取消
     purAddNo(purForm) {

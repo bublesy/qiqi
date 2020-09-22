@@ -24,7 +24,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderDO> implemen
     @Resource
     private OrderMapper orderMapper;
     @Override
-    public IPage<OrderDO> GetList(Page<Object> objectPage, String customerName, String quantityOverdue, String time, Date date) {
+    public IPage<OrderDO> GetList(Page<Object> objectPage, String customerName, String quantityOverdue, String time, String date) {
         return orderMapper.getList(objectPage,customerName,quantityOverdue,time,date);
     }
 }
