@@ -18,22 +18,22 @@
         <div id="printTest">
           <el-table
             ref="singleTable"
-            :data="nickname"
+            :data="tableData"
             highlight-current-row
             style="width: 70%;margin-top:20px"
             border=""
           >
             <!-- 复选框是否开启 -->
             <!-- <el-table-column v-show="true" prop="pickingPeople" label="领料人" /> -->
-            <el-table-column v-show="true" prop="nickname" label="供应商" />
-            <el-table-column v-show="true" prop="" label="领料人" />
-            <el-table-column v-show="true" prop="" label="日期" />
-            <el-table-column v-show="true" prop="" label="开单员" />
+            <el-table-column v-show="true" prop="supplierId" label="供应商" />
+            <el-table-column v-show="true" prop="pickingPeople" label="领料人" />
+            <el-table-column v-show="true" prop="date" label="日期" />
+            <el-table-column v-show="true" prop="partOrder" label="开单员" />
             <el-table-column v-show="true" prop="specifications" label="品名规格" />
-            <el-table-column v-show="true" prop="company" label="单位" />
+            <el-table-column v-show="true" prop="unit" label="单位" />
             <el-table-column v-show="true" prop="number" label="数量" />
-            <el-table-column v-show="true" prop="" label="单价" />
-            <el-table-column v-show="true" prop="" label="金额" />
+            <el-table-column v-show="true" prop="perPrice" label="单价" />
+            <el-table-column v-show="true" prop="money" label="金额" />
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-link type="warning" size="small" @click="printing(scope)">生成打印单</el-link>
@@ -108,7 +108,7 @@
 <script>
 import initData from '@/mixins/initData'
 import { list } from '@/api/accessories/materialinventory'
-import { getById, getUser } from '@/api/accessories/means'
+import { getById } from '@/api/accessories/means'
 import { export2Excel } from '@/utils/common'
 
 // import { export2Excel } from '@/utils/common'
@@ -127,16 +127,11 @@ export default {
         number: ''
       },
       // 表格数据
-      tableData: [],
-      nickname: []
+      tableData: []
     }
   },
   created() {
     this.init()
-    getUser().then(res => {
-      console.log(res)
-      this.nickname = res
-    })
   },
   methods: {
     loadData() {
@@ -148,12 +143,7 @@ export default {
         this.tableData = res.list
         this.tableData.forEach(a => {
           getById(a.specificationId).then(res => {
-            // console.log(res)
             this.$set(a, 'specifications', res.specification)
-          })
-          getUser(a.nickname).then(res => {
-            // console.log(res)
-            // this.$set(a, 'nickname', res.nickname)
           })
         })
         this.pagination.total = res.total

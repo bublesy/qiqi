@@ -77,14 +77,20 @@ public class MaterialInStoreController {
     public Boolean saveMaterialInStore(@RequestBody MaterialInStoreDO materialInStoreDO) {
         String specificationId = materialInStoreDO.getSpecificationId();
         MaterialInventoryDO a = materialInventoryService.getNumBySpecificationId(specificationId);
+        MaterialDataDO byId = materialDataService.getById(specificationId);
         if (a==null){
             MaterialInventoryDO materialInventoryDO = new MaterialInventoryDO();
             BeanUtil.copyProperties(materialInStoreDO,materialInventoryDO);
             materialInventoryDO.setNumber(materialInStoreDO.getNum());
             materialInventoryDO.setSupplierId(materialInStoreDO.getSupplier());
+            materialInventoryDO.setUnit(byId.getUnit());
             materialInventoryService.saveOrUpdate(materialInventoryDO);
         }else{
             a.setNumber(a.getNumber()+materialInStoreDO.getNum());
+            a.setSupplierId(materialInStoreDO.getSupplier());
+            a.setUnit(byId.getUnit());
+            a.setPerPrice(materialInStoreDO.getPerPrice());
+            a.setMoney(materialInStoreDO.getMoney());
             materialInventoryService.updateById(a);
         }
         return materialInStoreService.saveOrUpdate(materialInStoreDO);
