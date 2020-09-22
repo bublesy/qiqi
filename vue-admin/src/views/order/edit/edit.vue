@@ -82,6 +82,7 @@
             style="width:190px"
             type="date"
             placeholder="选择日期"
+            @blur="changeTime"
           />
         </el-form-item>
         <el-form-item label="订货数量:">
@@ -248,7 +249,7 @@
         :before-upload="beforeAvatarUpload"
         :headers="headers"
       >
-        <img v-if="imageUrl !== null" :src="imageUrl" class="avatar">
+        <img :src="imageUrl" class="avatar">
         <!-- <i v-else class="el-icon-plus avatar-uploader-icon" /> -->
       </el-upload>
     </el-card>
@@ -288,7 +289,8 @@ export default {
       auditStatus: false,
       imageUrl: '',
       form: {
-        isProduct: ''
+        isProduct: '',
+        modCount: 0
       },
       rules: {
         material: [
@@ -373,6 +375,7 @@ export default {
               this.saveStatus = false
             }
             this.form = res
+            this.form.modCount = 0
             this.imageUrl = this.baseURL + res.img
           })
         } else {
@@ -386,6 +389,9 @@ export default {
     }
   },
   methods: {
+    changeTime() {
+      this.form.modCount++
+    },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
       this.form.img = res
@@ -413,6 +419,7 @@ export default {
           if (this.form.id === null || this.form.id === '' || this.form.id === undefined) {
             this.form.audit = '制单'
           }
+          console.log(this.form)
           addOrUpdateOrder(this.form).then(res => {
             if (res) {
               this.$emit('init')

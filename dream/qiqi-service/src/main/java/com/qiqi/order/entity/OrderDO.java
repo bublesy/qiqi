@@ -60,6 +60,8 @@ public class OrderDO extends BaseModel {
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date date;
 
+    private Integer modCount;
+
     /**
      * 任务编号
      */

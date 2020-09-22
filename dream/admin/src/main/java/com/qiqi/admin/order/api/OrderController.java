@@ -119,10 +119,12 @@ public class OrderController {
     @ApiOperation(value = "新增or修改")
     @PostMapping("")
     public Boolean saveOrder(@RequestBody OrderDO orderDO) {
+        if(orderDO == null){
+            return false;
+        }
         IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
         String no = idGeneratorUtils.nextId();
-        OrderDO order = orderService.getById(orderDO.getId());
-        if(orderDO != null && orderDO.getDeliveryDate() != null && order!= null && order.getDeliveryDate()!= null && !order.getDeliveryDate().equals(orderDO.getDeliveryDate())){
+        if(orderDO.getDeliveryDate() != null && orderDO.getModCount() > 0){
             orderDO.setDeliveryDate(TimeAddEight.formatTimeEight(orderDO.getDeliveryDate()));
         }
         orderDO.setNo(no);
@@ -135,12 +137,12 @@ public class OrderController {
         if(orderDO.getId() != null && !state.equals(orderDO.getIsProduct())){
                 BeanUtils.copyProperties(orderDO,scheduleDO);
                 scheduleDO.setDate(orderDO.getDeliveryDate());
-                scheduleDO.setId(order.getScheduleId());
+                scheduleDO.setId(orderDO.getScheduleId());
                 scheduleService.saveOrUpdate(scheduleDO);
         }
         if(orderDO.getId() != null && state.equals(orderDO.getIsProduct())){
-            if(order.getScheduleId() != null){
-                scheduleService.delete(order.getScheduleId());
+            if(orderDO.getScheduleId() != null){
+                scheduleService.delete(orderDO.getScheduleId());
             }
         }
         orderDO.setOrderDate(new Date());

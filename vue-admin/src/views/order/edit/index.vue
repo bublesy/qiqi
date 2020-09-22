@@ -88,7 +88,7 @@
           <template slot-scope="scope">
             <el-button type="warning" size="mini" :disabled="scope.row.audit==='审核'?true:false" @click="updated(scope.row.id)">编辑</el-button>
             <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
-              <el-button slot="reference" type="danger" size="mini">删除</el-button>
+              <el-button slot="reference" type="danger" size="mini" :disabled="scope.row.audit==='审核'?true:false">删除</el-button>
             </el-popconfirm>
             <el-button type="success" size="mini" @click="singlePrint(scope.row)">打印</el-button>
             <el-button type="warning" size="mini" @click="orderAgain(scope.row.id)">再次下单</el-button>

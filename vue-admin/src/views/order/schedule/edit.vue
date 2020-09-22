@@ -12,6 +12,7 @@
           style="width:150px"
           type="date"
           placeholder="选择日期"
+          @blur="changerModCount"
         />
       </el-form-item>
       <el-form-item label="生产天数:">
@@ -50,7 +51,8 @@ export default {
   data() {
     return {
       form: {
-        isSchedule: false
+        isSchedule: false,
+        modCount: 0
       }
     }
   },
@@ -59,11 +61,15 @@ export default {
       if (val) {
         getSingleSchedule(this.id).then(res => {
           this.form = res
+          this.form.modCount = 0
         })
       }
     }
   },
   methods: {
+    changerModCount() {
+      this.form.modCount++
+    },
     sure() {
       console.log(this.form)
       addOrUpdateSchedule(this.form).then(res => {
