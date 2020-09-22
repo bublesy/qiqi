@@ -29,4 +29,9 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
         String join = StringUtils.join(ids,",");
         return purchaseOrderMapper.SuppAndPurList(objectPage,join);
     }
+
+    @Override
+    public Boolean empty(Long id) {
+        return purchaseOrderMapper.empty(id);
+    }
 }

@@ -25,10 +25,14 @@ public class MaterialInventoryDO extends BaseModel {
      */
     private String specificationId;
 
-    /**
-     * 单位
-     */
-    private String company;
+    private String unit;
+
+    private String supplierId;
+
+    private String partOrder;
+
+    private String perPrice;
+    private String money;
 
     /**
      * 数量

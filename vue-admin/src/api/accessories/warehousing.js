@@ -4,6 +4,10 @@ export function add(data) {
   return request({ url: '/material/in/store', data: data, method: 'post' })
 }
 
+export function addMaterial(data) {
+  return request({ url: '/material/in/store', data: data, method: 'post' })
+}
+
 export function list(data) {
   return request({ url: '/material/in/store/list', method: 'post', data: data })
 }

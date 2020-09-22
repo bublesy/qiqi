@@ -24,6 +24,10 @@ export function supplierSelect() {
   return request({ url: '/supplier/cardboard/quotation/supplierSelect', method: 'get' })
 }
 
+export function purNoSelect() {
+  return request({ url: '/supplier/cardboard/quotation/purNoSelect', method: 'get' })
+}
+
 export function materialSelect() {
   return request({ url: '/supplier/cardboard/quotation/materialSelect', method: 'get' })
 }

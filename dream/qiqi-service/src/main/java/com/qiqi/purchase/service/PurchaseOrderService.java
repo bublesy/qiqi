@@ -24,4 +24,11 @@ public interface PurchaseOrderService extends IService<PurchaseOrderDO> {
      * @return
      */
     IPage SuppAndPurList(Page<Object> objectPage, List<Long> ids);
+
+    /**
+     * 清空
+     * @param id
+     * @return
+     */
+    Boolean empty(Long id);
 }

@@ -81,9 +81,6 @@ public class EndProductWarehouseController {
     @ApiOperation(value = "新增产品仓库")
     @PostMapping("/add")
     public Boolean saveEndProductWarehouse(@RequestBody EndProductWarehouseDO endProductWarehouseDO) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String format = df.format(new Date());
-        endProductWarehouseDO.setCheckDate(format);
         return endProductWarehouseService.saveOrUpdate(endProductWarehouseDO);
     }
 
@@ -96,21 +93,30 @@ public class EndProductWarehouseController {
     @ApiOperation(value = "修改状态(批量))")
     @PostMapping("/updateState")
     public Boolean updateState(@RequestBody List<String> idList) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:dd:ss");
         String join = StringUtils.join(idList, ",");
         Long id = Long.parseLong(join);
         EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
         EndProductWarehouseDO byId = endProductWarehouseService.getById(join);
+        String checkNum = byId.getCheckNum();
+        int check = Integer.parseInt(checkNum);
+        String delivery = byId.getDeliveryQuantity();
+        int del = Integer.parseInt(delivery);
+        int i = check - del;
+        String s = String.valueOf(i);
+        endProductWarehouseDO.setCheckNum(s);
+        endProductWarehouseDO.setCheckDate(df.format(new Date()));
+        endProductWarehouseDO.setId(id);
+        endProductWarehouseDO.setCarryTo("已送货");
+
         String order = byId.getOrderId();
         String deliveryQuantity = byId.getDeliveryQuantity();
         Long orderId = Long.parseLong(order);
-        endProductWarehouseDO.setId(id);
-        endProductWarehouseDO.setCarryTo("已送货");
         OrderDO orderDO = new OrderDO();
         orderDO.setId(orderId);
         Integer a = Integer.parseInt(deliveryQuantity);
         orderDO.setSendNum(a);
         orderDO.setWosState("已送货");
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         // new Date()为获取当前系统时间，也可使用当前时间戳
         Date date = null;
         try {
@@ -121,6 +127,7 @@ public class EndProductWarehouseController {
         orderDO.setShipDate(date);
         orderDO.setOutNo(byId.getWarehouseNo());
         orderService.updateById(orderDO);
+
         return endProductWarehouseService.updateById(endProductWarehouseDO);
     }
 

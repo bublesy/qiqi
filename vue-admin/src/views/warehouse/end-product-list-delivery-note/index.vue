@@ -2,9 +2,9 @@
   <el-container>
     <el-main>
       <div id="print">
-        <p align="center">海宁市中奇纸箱包装厂</p>
         <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#print'" type="primary">打印</el-button>
+        <span style="margin-left:70%">打印日期:{{ dateFormat(new Date()) }}</span>
         <h1 align="center">定作送货单</h1>
         <span style="margin-left:60px">收货单位:{{ fullName }}</span>
         <br>
@@ -19,7 +19,6 @@
         >
           <el-table-column width="50px" align="center" />
           <el-table-column prop="taskNumber" label="订单编号" />
-          <el-table-column prop="specifications" label="规格(mm)" />
           <el-table-column prop="orderQuantity" label="订单量" />
           <el-table-column prop="deliveryQuantity" label="送货量" />
           <el-table-column prop="unitPrice" label="单价" />
@@ -82,7 +81,8 @@ export default {
       fullName: '',
       remark: '',
       createdBy: '',
-      nickname: ''
+      nickname: '',
+      date: new Date()
     }
   },
   created() {
@@ -91,6 +91,20 @@ export default {
     this.getList()
   },
   methods: {
+    dateFormat: function(time) {
+      var date = new Date(time)
+      var year = date.getFullYear()
+      /* 在日期格式中，月份是从0开始的，因此要加0
+     * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+     * */
+      var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+      var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+      var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+      var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+      var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+      // 拼接
+      return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
+    },
     getList() {
       this.tableData = this.data
       this.tableData.forEach(a => {
@@ -100,7 +114,6 @@ export default {
         this.remark = a.remark
         this.customerId = a.customerId
         this.createdBy = a.createdBy
-        a.specifications = a.length * a.width
       })
       this.pagination.total = this.tableData.length
       this.getCustomer()

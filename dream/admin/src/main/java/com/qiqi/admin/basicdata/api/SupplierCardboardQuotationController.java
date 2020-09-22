@@ -11,6 +11,7 @@ import com.qiqi.basicdata.service.PaperboardDataSettingService;
 import com.qiqi.basicdata.service.SupplierService;
 import com.qiqi.order.service.OrderService;
 import com.qiqi.order.service.TextureOfMaterialService;
+import com.qiqi.purchase.service.PurchaseOrderService;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.qiqi.basicdata.service.SupplierCardboardQuotationService;
@@ -43,6 +44,8 @@ public class SupplierCardboardQuotationController {
     private OrderService orderService;
     @Resource
     private TextureOfMaterialService textureOfMaterialService;
+    @Resource
+    private PurchaseOrderService purchaseOrderService;
 
 
     @ApiOperation(value = "获取供应商纸板报价(列表)")
@@ -115,6 +118,19 @@ public class SupplierCardboardQuotationController {
     @GetMapping("/supplierSelect")
     public List supplierSelect(){
         return supplierService.list();
+    }
+
+
+    /**
+     * 下拉框
+     * @param
+     * @return {@link List}
+     * @author sun
+     * @time 2020/9/15 14:15
+     */
+    @GetMapping("/purNoSelect")
+    public List purNoSelect(){
+        return purchaseOrderService.list();
     }
 
 

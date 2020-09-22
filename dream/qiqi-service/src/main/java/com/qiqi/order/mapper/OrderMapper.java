@@ -30,5 +30,5 @@ public interface OrderMapper extends BaseMapper<OrderDO> {
      */
     IPage<OrderDO> getList(@Param("objectPage") Page<Object> objectPage,@Param("customerName")  String customerName,
                            @Param("quantityOverdue")  String quantityOverdue,@Param("time")  String time,
-                           @Param("date") Date date);
+                           @Param("date") String date);
 }

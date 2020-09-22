@@ -13,7 +13,7 @@ export function listByIds(params) {
 }
 
 export function removeById(id) {
-  return request({ url: '/purchase/order/' + id, method: 'delete' })
+  return request({ url: '/purchase/order/remove/' + id, method: 'get' })
 }
 
 export function getById(id) {
