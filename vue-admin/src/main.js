@@ -26,6 +26,8 @@ window.$crudCommon = crudCommon
 
 Vue.config.productionTip = false
 
+Vue.prototype.baseURL = process.env.VUE_APP_BASE_API
+
 new Vue({
   el: '#app',
   router,
