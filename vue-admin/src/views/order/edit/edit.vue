@@ -373,7 +373,7 @@ export default {
               this.saveStatus = false
             }
             this.form = res
-            this.imageUrl = 'http://192.168.1.150:8080/api/admin' + res.img
+            this.imageUrl = this.baseURL + res.img
           })
         } else {
           // 新增

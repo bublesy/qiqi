@@ -150,7 +150,7 @@ export default {
     this.tableData = row
     this.tableData = row
     console.log(row.img)
-    this.url = 'http://192.168.1.150:8080/api/admin' + row.img
+    this.url = this.baseURL + row.img
     getUserById(row.createdBy).then(res => {
       this.created = res.nickname
     })
