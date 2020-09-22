@@ -83,6 +83,8 @@ public class MaterialPickingController {
             materialInventoryService.saveOrUpdate(materialInventoryDO);
         }else{
             a.setNumber(a.getNumber()-materialPickingDO.getNum());
+            a.setPickingPeople(materialPickingDO.getPickingPeople());
+            a.setPartOrder(materialPickingDO.getPartOrder());
             materialInventoryService.updateById(a);
         }
         return materialPickingService.saveOrUpdate(materialPickingDO);
