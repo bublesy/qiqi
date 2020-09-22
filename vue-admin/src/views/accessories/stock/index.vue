@@ -156,8 +156,8 @@ export default {
     },
     toExcel() {
       var list = this.tableData
-      const th = ['编码', '品名规格', '单位', '数量']
-      const filterVal = ['index', 'specifications', 'company', 'number']
+      const th = ['供应商', '领料人', '日期', '开单员', '品名规格', '单位', '数量', '单价', '金额']
+      const filterVal = ['supplierId', 'pickingPeople', 'date', 'partOrder', 'specifications', 'unit', 'number', 'perPrice', 'money']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '辅料领料')
     }
