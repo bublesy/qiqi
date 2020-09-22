@@ -8,14 +8,14 @@
     <p style="">订单信息</p>
     <el-card>
       <el-form ref="form" :model="form" label-width="80px" size="mini" :rules="rules" :inline="true">
-        <el-form-item label="选择客户:" prop="name">
-          <el-select v-model="form.name" placeholder="请选择">
+        <el-form-item label="选择客户:" prop="customerId">
+          <el-select v-model="form.customerId" placeholder="请选择">
             <el-option
               v-for="item in customerOptions"
               :key="item.id"
               prop="name"
               :label="item.fullName"
-              :value="item.fullName"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
@@ -299,7 +299,7 @@ export default {
         boxType: [
           { required: true, message: '请输入箱型', trigger: 'blur' }
         ],
-        name: [
+        customerId: [
           { required: true, message: '请选择客户', trigger: 'blur' }
         ]
       },
@@ -419,6 +419,11 @@ export default {
           if (this.form.id === null || this.form.id === '' || this.form.id === undefined) {
             this.form.audit = '制单'
           }
+          this.customerOptions.forEach(e => {
+            if (e.id === this.form.customerId) {
+              this.form.name = e.fullName
+            }
+          })
           console.log(this.form)
           addOrUpdateOrder(this.form).then(res => {
             if (res) {

@@ -67,7 +67,6 @@ public class OrderController {
     private SysUserService sysUserService;
 
     private String state = "成品";
-    private String state2 = "非成品";
 
     @ApiOperation(value = "获取(列表)")
     @PostMapping("/list")
@@ -86,17 +85,6 @@ public class OrderController {
                 .eq(!ObjectUtils.isEmpty(query.getDeliveryDate()),"delivery_date",query.getDeliveryDate())
                 .eq(!ObjectUtils.isEmpty(query.getWosState()),"wos_state",query.getWosState())
                 .eq(StringUtils.isNotBlank(query.getIsProduct()),"is_product",query.getIsProduct());
-        IPage<OrderDO> iPage = orderService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
-
-        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<OrderDO>>() {}, iPage.getRecords()));
-    }
-
-    @ApiOperation(value = "月结对账单")
-    @PostMapping("/bill")
-    public PageEntity<OrderDO> getBill(@RequestBody OrderDTO query){
-        QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(!ObjectUtils.isEmpty(query.getDeliveryDate()),"delivery_date",query.getDeliveryDate())
-                .like(StringUtils.isNotBlank(query.getName()),"name",query.getName());
         IPage<OrderDO> iPage = orderService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
 
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<OrderDO>>() {}, iPage.getRecords()));

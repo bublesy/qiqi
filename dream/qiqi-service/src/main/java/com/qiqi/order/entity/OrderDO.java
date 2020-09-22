@@ -48,6 +48,7 @@ public class OrderDO extends BaseModel {
 
     private String pressureSpecification;
 
+    private Long customerId;
 
     private BigDecimal totalArea;
 
