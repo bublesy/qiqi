@@ -26,9 +26,18 @@ public class WarehouseDO extends BaseModel {
      */
     private String warehouseNo;
 
+    private String deliveryDate;
+
+    private String deliveryStatus;
+    private String orderId;
+
+    private String customerId;
+    private String deliveryQuantity;
+
+    private String specifications;
     private String taskNumber;
 
-
+    private String  orderQuantity;
     /**
      * 单据类型
      */

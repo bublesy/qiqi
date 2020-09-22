@@ -24,4 +24,11 @@ public interface PurchaseOrderMapper extends BaseMapper<PurchaseOrderDO> {
      * @return
      */
     IPage SuppAndPurList(Page<Object> objectPage, String str);
+
+    /**
+     * 清空
+     * @param id
+     * @return
+     */
+    Boolean empty(Long id);
 }

@@ -71,8 +71,9 @@ public class PurchaseOrderController {
                                                             @RequestParam(value = "customerName") String customerName,
                                                             @RequestParam(value = "quantityOverdue") String quantityOverdue,
                                                             @RequestParam(value = "time") String time) {
-        Date data = new Date();
-        IPage<OrderDO> iPage = orderService.GetList(new Page<>(page,size),customerName,quantityOverdue,time,data);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd MM:ss");
+        String format = df.format(new Date());
+        IPage<OrderDO> iPage = orderService.GetList(new Page<>(page,size),customerName,quantityOverdue,time,format);
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<PurchaseOrderVO>>() {}, iPage.getRecords()));
     }
 
@@ -109,6 +110,8 @@ public class PurchaseOrderController {
         SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd MM:ss");
         //设置日期格式
         SimpleDateFormat df = new SimpleDateFormat("yyMMddHHmmss");
+        PurchaseOrderDO purchaseOrderDO = new PurchaseOrderDO();
+
         String no = df.format(new Date());
         if (purchaseOrderDTO.getIsProduct().equals("成品")){
             EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
@@ -122,7 +125,9 @@ public class PurchaseOrderController {
             endProductWarehouseDO.setLength(purchaseOrderDTO.getLength());
             endProductWarehouseDO.setTypeNo(purchaseOrderDTO.getModelNo());
             endProductWarehouseDO.setPurQuantity(purchaseOrderDTO.getPurchaseQuantity());
+            endProductWarehouseDO.setEndProductPos(purchaseOrderDTO.getPurchaseQuantity());
             endProductWarehouseDO.setHeight(purchaseOrderDTO.getHeight());
+            endProductWarehouseDO.setCheckNum(endProductWarehouseDO.getEndProductPos());
             endProductWarehouseDO.setUnitPrice(purchaseOrderDTO.getCostPrice());
             endProductWarehouseDO.setOrderId(purchaseOrderDTO.getCustomerName());
             flag = endProductWarehouseService.saveOrUpdate(endProductWarehouseDO);
@@ -131,21 +136,32 @@ public class PurchaseOrderController {
             orderDO.setWosState("入仓未出货");
             orderDO.setProductSpace(endProductWarehouseDO.getEndProductPos());
             orderService.updateById(orderDO);
+            BeanUtil.copyProperties(purchaseOrderDTO,purchaseOrderDO);
+            purchaseOrderDO.setEndProductPos(purchaseOrderDO.getPurchaseQuantity());
+            purchaseOrderService.updateById(purchaseOrderDO);
         }else{
             WarehouseDO warehouseDO = new WarehouseDO();
             BeanUtil.copyProperties(purchaseOrderDTO,warehouseDO);
             warehouseDO.setWarehouseNo(no);
             warehouseDO.setWarehousingDate(df2.format(new Date()));
             warehouseDO.setBillingDate(df2.format(new Date()));
+            warehouseDO.setSpecifications(purchaseOrderDTO.getStare());
             warehouseDO.setPaperLength(purchaseOrderDTO.getLength());
+            warehouseDO.setCustomerId(purchaseOrderDTO.getCustomerName());
             warehouseDO.setPaperWidth(purchaseOrderDTO.getWidth());
             warehouseDO.setUnitPrice(purchaseOrderDTO.getCostPrice());
+            warehouseDO.setPosition(purchaseOrderDTO.getPurchaseQuantity());
+            warehouseDO.setCheckNum(warehouseDO.getPurchaseQuantity());
+            warehouseDO.setOrderId(purchaseOrderDTO.getCustomerName());
             flag = warehouseService.saveOrUpdate(warehouseDO);
             BeanUtil.copyProperties(purchaseOrderDTO,orderDO);
             orderDO.setId(purchaseOrderDTO.getOrderId());
             orderDO.setWosState("字板已入仓");
             orderDO.setSpace(warehouseDO.getPosition());
             orderService.updateById(orderDO);
+            BeanUtil.copyProperties(purchaseOrderDTO,purchaseOrderDO);
+            purchaseOrderDO.setPosition(purchaseOrderDO.getPurchaseQuantity());
+            purchaseOrderService.updateById(purchaseOrderDO);
         }
         orderDO.setId(purchaseOrderDTO.getOrderId());
         Integer a = Integer.parseInt(purchaseOrderDTO.getPurchaseQuantity());
@@ -181,9 +197,9 @@ public class PurchaseOrderController {
         return purchaseOrderService.removeByIds(idList);
     }
 
-    @ApiOperation(value = "删除采购单(单个))")
-    @DeleteMapping("/{id}")
+    @ApiOperation(value = "清空(单个))")
+    @GetMapping("/remove/{id}")
     public Boolean deletePurchaseOrderById(@PathVariable Long id) {
-        return purchaseOrderService.removeById(id);
+        return purchaseOrderService.empty(id);
     }
 }

@@ -17,6 +17,14 @@ public class WarehouseVO {
 
     private String checkDate;
 
+    private String deliveryQuantity;
+
+    private String deliveryStatus;
+
+    private String createdBy;
+    private String customerId;
+
+
     /**
      * 计价方式
      */

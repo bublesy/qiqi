@@ -4,4 +4,8 @@
     <select id="SuppAndPurList" resultType="com.qiqi.admin.purchase.model.PurchaseOrderVO">
       select po.*,s.full_name,s.mobile_phone,s.fax from purchase_order po left join supplier s on po.supplier_id = s.id where po.id in (${str})
     </select>
+
+    <delete id="empty">
+        DELETE FROM purchase_order WHERE id = #{id}
+    </delete>
 </mapper>

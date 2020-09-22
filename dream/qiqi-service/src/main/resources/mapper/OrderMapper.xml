@@ -9,10 +9,10 @@ p.supplier_id,p.billingDate as pBilling  from  orders o left join purchase_order
             and  o.name like concat('%', #{customerName} , '%')
         </if>
         <if test="quantityOverdue == '已过期'  ">
-            and  o.delivery_date &lt; concat('%', #{date} , '%')
+            and  o.delivery_date &lt;  #{date}
         </if>
         <if test="quantityOverdue == '未过期'  ">
-            and  o.delivery_date &gt;= concat('%', #{date} , '%')
+            and  o.delivery_date &gt;= #{date}
         </if>
         <if test="time != null and time != ''  ">
             and  o.created_time like concat('%', #{time} , '%')

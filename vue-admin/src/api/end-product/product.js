@@ -27,3 +27,7 @@ export function getNameById(id) {
 export function updateState(data) {
   return request({ url: '/end/product/warehouse/updateState', method: 'post', data: data })
 }
+
+export function upState(data) {
+  return request({ url: '/warehouse/upState', method: 'post', data: data })
+}

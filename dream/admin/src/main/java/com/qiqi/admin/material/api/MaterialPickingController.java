@@ -75,16 +75,16 @@ public class MaterialPickingController {
     @PostMapping("")
     public Boolean saveMaterialPicking(@RequestBody MaterialPickingDO materialPickingDO) {
         String specificationId = materialPickingDO.getSpecificationId();
-        MaterialDataDO byId = materialDataService.getById(specificationId);
         MaterialInventoryDO a = materialInventoryService.getNumBySpecificationId(specificationId);
         if (a==null){
             MaterialInventoryDO materialInventoryDO = new MaterialInventoryDO();
             BeanUtil.copyProperties(materialPickingDO,materialInventoryDO);
             materialInventoryDO.setNumber(materialPickingDO.getNum());
-            materialInventoryDO.setCompany(byId.getUnit());
-            materialInventoryService.save(materialInventoryDO);
+            materialInventoryService.saveOrUpdate(materialInventoryDO);
         }else{
             a.setNumber(a.getNumber()-materialPickingDO.getNum());
+            a.setPickingPeople(materialPickingDO.getPickingPeople());
+            a.setPartOrder(materialPickingDO.getPartOrder());
             materialInventoryService.updateById(a);
         }
         return materialPickingService.saveOrUpdate(materialPickingDO);

@@ -4,50 +4,50 @@
       <div id="print">
         <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#print'" type="primary">打印</el-button>
-        <h1 align="center">采购订单</h1>
-        <span style="margin-left:60px">供方:{{ fullName }}</span>
-        <br>
-        <span style="margin-left:60px">电话:{{ mobilePhone }}</span>
-        <span style="margin-left:65%">No:{{ documentsNo }}</span>
-        <br>
-        <span style="margin-left:60px">传真:{{ fax }}</span>
+        <h1 align="center">定作送货单</h1>
+        <span style="margin-left:60px">收货单位:{{ fullName }}</span>
         <span style="margin-left:70%">打印日期:{{ dateFormat(new Date()) }}</span>
-        <p />
+        <br>
         <br>
         <el-table
           ref="multipleTable"
           :data="tableData"
           stripe
           highlight-current-row
-          border=""
           show-summary
           style="width: 100%"
         >
           <el-table-column width="50px" align="center" />
-          <el-table-column prop="no" label="任务编号" />
-          <el-table-column prop="material" label="材质" />
-          <el-table-column prop="stare" label="楞型" />
-          <el-table-column prop="pressureSpecification" label="分压规格(MM)" />
-          <el-table-column prop="paperSize" label="纸片尺寸(MM)纸长 X 纸宽">
-            <template>
-              {{ length }}  X {{ width }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="costPrice" label="成本价 元/片" />
-          <el-table-column prop="purchaseQuantity" label="数量 (片)" />
-          <el-table-column prop="totalPrice" label="总价 (元)" />
-          <el-table-column prop="deliveryDate" label="交货日期" />
+          <el-table-column prop="taskNumber" label="订单编号" />
+          <el-table-column prop="orderQuantity" label="订单量" />
+          <el-table-column prop="deliveryQuantity" label="送货量" />
+          <el-table-column prop="unitPrice" label="单价" />
+          <el-table-column prop="amount" label="金额" />
+          <el-table-column prop="remark" label="备注" />
         </el-table>
         <br>
         <span style="margin-left:60px">备注:{{ remark }}</span>
         <br>
         <Br />
-        <span style="margin-left:60px">如供方对以上各项确认无误,请在确认栏签字并回传;<br>
-          <span style="margin-left:60px"> 如有疑问,速与我方联系!
-            <span style="margin-left:666px">供方确认:</span>
-            <span style="margin-left:888px">采购方确认:</span>
-          </span>
+        <span style="margin-left:444px">送单人:{{ nickname }}</span>
+        <span style="margin-left:385px">收货单位(签章):{{ }}</span>
+        <span style="margin-left:888px">经手人:{{ }}</span>
+        <br>
+        <Br />
+        <span style="margin-left:60px">
+          1.本定作送货单是合同的组成部分,如无书面合同,本定作送货单代合同.
         </span>
+        <span style="margin-left:20%">
+          2.收货单位如发现质量问题.请将原产品三日内退回,收货方使用过的产品供方概不负责.
+        </span>
+        <br>
+        <span style="margin-left:60px">
+          3.本定作送货单之价款如双方发生纠纷,合同履行地为供方所在地.
+        </span>
+        <span style="margin-left:22%">
+          4.本定作送货单经收货方签字之后生效.
+        </span>
+
         <el-pagination
           background
           layout="total, sizes, prev, pager, next"
@@ -65,27 +65,23 @@
 
 <script scope>
 import initData from '@/mixins/initData'
-import { getById } from '@/api/supplier/supplier'
+import { getCustomerById } from '@/api/basedata/customer'
+import { getNamesById } from '@/api/purchase/purchase'
 
 export default {
-  name: 'PurchaseOrderPrinting',
+  name: 'CardboardProduct',
   mixins: [initData],
-
   data() {
     return {
       tableData: [],
       form: {},
-      fullName: '',
-      mobilePhone: '',
-      documentsNo: '',
-      fax: '',
-      remark: '',
-      spplierId: '',
+      data: [],
       billingDate: '',
-      date: '',
-      length: '',
-      width: ''
-
+      customerId: '',
+      fullName: '',
+      remark: '',
+      createdBy: '',
+      nickname: ''
     }
   },
   created() {
@@ -110,30 +106,35 @@ export default {
     getList() {
       this.tableData = this.data
       this.tableData.forEach(a => {
-        a.totalPrice = a.costPrice * a.purchaseQuantity
+        console.log('aaa', a)
+        a.amount = a.unitPrice * a.deliveryQuantity
+        this.billingDate = a.billingDate
         this.documentsNo = a.documentsNo
         this.remark = a.remark
-        this.spplierId = a.supplierId
-        this.width = a.width
-        this.length = a.length
+        this.customerId = a.customerId
+        this.createdBy = a.createdBy
       })
       this.pagination.total = this.tableData.length
-      this.getSupplier()
+      this.getCustomer()
+      this.getName()
     },
-
-    // 加载供应商
-    getSupplier() {
-      getById(this.spplierId).then(res => {
-        this.fullName = res.fullName
-        this.mobilePhone = res.mobilePhone
-        this.fax = res.fax
+    // 加载客户
+    getCustomer() {
+      getCustomerById(this.customerId).then(res => {
+        this.fullName = res.name
+        this.remark = res.remark
+      })
+    },
+    // 价值名称
+    getName() {
+      getNamesById(this.createdBy).then(res => {
+        this.nickname = res
       })
     },
     // 返回
     toBack() {
-      this.$router.push('/purchase_order')
+      this.$router.push('/cardboard_list')
     }
-
   }
 }
 </script>

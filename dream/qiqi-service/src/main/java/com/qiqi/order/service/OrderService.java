@@ -26,5 +26,5 @@ public interface OrderService extends IService<OrderDO> {
      * @param date
      * @return
      */
-    IPage<OrderDO> GetList(Page<Object> objectPage, String customerName, String quantityOverdue, String time, Date date);
+    IPage<OrderDO> GetList(Page<Object> objectPage, String customerName, String quantityOverdue, String time, String date);
 }
