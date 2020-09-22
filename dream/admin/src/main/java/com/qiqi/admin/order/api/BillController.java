@@ -18,13 +18,12 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author hc
@@ -53,9 +52,22 @@ public class BillController {
         PageEntity<OrderDO> orderDOPageEntity = new PageEntity<>(iPage.getTotal(), Convert.convert(new TypeReference<List<OrderDO>>() {
         }, iPage.getRecords()));
         BillVO billVO = new BillVO();
-        CustomerInformationDO customerInformationDO = customerInformationService.getById(query.getCustomerId());
-        BeanUtils.copyProperties(customerInformationDO,billVO);
+        if(query.getCustomerId() != null){
+            CustomerInformationDO customerInformationDO = customerInformationService.getById(query.getCustomerId());
+            BeanUtils.copyProperties(customerInformationDO,billVO);
+            return billVO;
+        }
+
         billVO.setOrderDOPageEntity(orderDOPageEntity);
         return billVO;
     }
+
+    @ApiOperation(value = "应收款列表")
+    @GetMapping("")
+    public void getAllBill(){
+        List<OrderDO> list = orderService.list();
+        Map<Long, List<OrderDO>> collect = list.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
+
+    }
+
 }
