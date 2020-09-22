@@ -40,7 +40,7 @@
       <el-table
         :data="tableData"
         border
-        style="width: 100%,margin-top:20px"
+        style="width: 400,margin-top:20px"
       >
         <el-table-column
           prop="date"
@@ -48,7 +48,7 @@
         />
         <el-table-column
           prop="specifications"
-          label="领料人"
+          label="品名规格"
         />
         <el-table-column
           prop="company"

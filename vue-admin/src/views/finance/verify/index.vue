@@ -3,7 +3,7 @@
     <el-main>
       <h1 align="center">对账明细表管理</h1>
       <el-form :inline="true" :model="form" size="mini">
-        <el-select v-model="value" placeholder="请选择月份" size="mini">
+        <el-select v-model="month" placeholder="请选择月份" size="mini">
           <el-option
             v-for="item in month"
             :key="item.value"
@@ -11,7 +11,7 @@
             :value="item.value"
           />
         </el-select>
-        <el-select v-model="valu" placeholder="请选择客户" size="mini">
+        <el-select v-model="customer" placeholder="请选择客户" size="mini">
           <el-option
             v-for="item in customer"
             :key="item.value"
@@ -31,7 +31,7 @@
           :data="tableData"
           highlight-current-row
           style="width: 100%;margin-top:20px"
-          border=""
+          border
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" />
@@ -152,7 +152,9 @@
 <script>
 import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
+import { record } from '@/api/accessories/means'
 
+// import { record } from '@/finance/verify'
 export default {
   name: 'Verify',
   mixins: [initData],
@@ -194,7 +196,10 @@ export default {
         label: '湖南'
       }],
       valu: '',
-      form: {},
+      form: {
+        deliveryDate: '',
+        name: ''
+      },
       formAdd: { },
       // 表单数据
       tableData: [{
@@ -254,9 +259,13 @@ export default {
 
     }
   },
+  created() {
+    record(this.form).then(res => {
+      console.log(res)
+    })
+  },
   methods: {
     toQuery() {
-
     },
     // 导出
     toExcel() {

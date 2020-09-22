@@ -83,9 +83,6 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="备注:" prop="note">
-            <el-input v-model="formAdd.note" />
-          </el-form-item>
           <el-form-item label="品名规格:" prop="specificationId">
             <el-select v-model="formAdd.specificationId" placeholder="请选择" @change="specificationChange">
               <el-option
@@ -104,6 +101,9 @@
             prop="num"
           >
             <el-input v-model="formAdd.num" />
+          </el-form-item>
+          <el-form-item label="备注:" prop="note">
+            <el-input v-model="formAdd.note" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
