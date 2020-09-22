@@ -5,6 +5,7 @@ import cn.hutool.core.lang.TypeReference;
 import cn.hutool.http.HttpRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.qiqi.admin.order.util.TimeAddEight;
 import com.qiqi.admin.order.util.UserInfoUtil;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.order.dto.OrderDTO;
@@ -12,8 +13,8 @@ import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.service.OrderService;
 import com.qiqi.sys.entity.SysUserDO;
 import io.swagger.annotations.Api;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,11 +39,18 @@ public class productDailyController {
     @PostMapping("/list")
     public PageEntity<OrderDO> getList(@RequestBody OrderDTO query){
         QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
+        if(query.getDeliveryDate() != null){
+            query.setDeliveryDate(TimeAddEight.formatTimeEight(query.getDeliveryDate()));
+        }
+        if(query.getDate() != null){
+            query.setDate(TimeAddEight.formatTimeEight(query.getDate()));
+        }
         queryWrapper
+                .eq(!ObjectUtils.isEmpty(query.getDeliveryDate()),"delivery_date",query.getDeliveryDate())
+                .eq(!ObjectUtils.isEmpty(query.getDate()),"date",query.getDate())
                 .like(StringUtils.isNotBlank(query.getName()),"name",query.getName())
                 .like(StringUtils.isNotBlank(query.getNo()),"no",query.getNo());
         Page<OrderDO> iPage = orderService.page(new Page<OrderDO>(query.getPage(), query.getCount()), queryWrapper);
         return new PageEntity<>(iPage.getTotal(), Convert.convert(new TypeReference<List<OrderDO>>() {}, iPage.getRecords()));
-
     }
 }

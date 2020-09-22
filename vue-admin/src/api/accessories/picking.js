@@ -23,3 +23,8 @@ export function getById(id) {
 export function listunit(data) {
   return request({ url: '/material/data/list', method: 'post', data: data })
 }
+// 领料人
+export function getUser() {
+  return request({ url: '/sys/user/salesman', method: 'get' })
+}
+

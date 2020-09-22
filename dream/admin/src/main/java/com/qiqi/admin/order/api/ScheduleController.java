@@ -11,6 +11,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.order.service.OrderService;
+import com.qiqi.sys.entity.SysUserDO;
+import com.qiqi.sys.service.SysUserService;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
@@ -83,6 +85,10 @@ public class ScheduleController {
     @ApiOperation(value = "新增排期")
     @PostMapping("")
     public Boolean saveSchedule(@RequestBody ScheduleDO scheduleDO) {
+        ScheduleDO schedule = scheduleService.getById(scheduleDO);
+        if(schedule != null && !schedule.getDate().equals(scheduleDO.getDate())){
+            scheduleDO.setDate(TimeAddEight.formatTimeEight(scheduleDO.getDate()));
+        }
         boolean b = scheduleService.saveOrUpdate(scheduleDO);
         this.scheduleId = scheduleDO.getId();
         this.product = scheduleDO.getProductNum();
@@ -111,4 +117,6 @@ public class ScheduleController {
     public Boolean deleteScheduleById(@PathVariable Long id) {
         return scheduleService.removeById(id);
     }
+
+
 }

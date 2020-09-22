@@ -118,8 +118,8 @@
         </td>
       </table>
       <div class="footer">
-        <p>制单:{{ name }}</p>
-        <p>复核：</p>
+        <p>制单:{{ created }}</p>
+        <p>复核：{{ tableData.auditBy }}</p>
         <p>制单日期：{{ tableData.orderDate }}</p>
         <p>交货日期：{{ tableData.deliveryDate }}</p>
       </div>
@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import { getUser } from '@/api/order/customerOrder'
+import { getUser, getUserById } from '@/api/order/customerOrder'
 export default {
   name: 'TagMethods',
   inject: ['closeTag', 'reloadTag', 'refreshTag'],
@@ -137,7 +137,8 @@ export default {
       url: '',
       tableData: {},
       row: {},
-      name: ''
+      name: '',
+      created: ''
     }
   },
   created() {
@@ -147,8 +148,12 @@ export default {
     var row = this.$route.query.row
     this.row = row
     this.tableData = row
-    this.url = 'http://192.168.1.150:8080/api/admin' + localStorage.getItem('imageUrl')
-    console.log(this.url)
+    this.tableData = row
+    console.log(row.img)
+    this.url = this.baseURL + row.img
+    getUserById(row.createdBy).then(res => {
+      this.created = res.nickname
+    })
   },
   methods: {
     back() {

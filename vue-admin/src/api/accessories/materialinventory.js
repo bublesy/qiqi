@@ -23,3 +23,5 @@ export function updated(data) {
 export function getById(id) {
   return request({ url: '/material/data/' + id, method: 'get' })
 }
+// 领料人数据
+

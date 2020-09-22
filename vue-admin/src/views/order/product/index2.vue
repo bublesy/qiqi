@@ -58,7 +58,7 @@
         <td colspan="10">{{ tableData.remark }}</td>
       </tr>
     </table>
-    <img v-if="url" :src="url" class="avatar" style="width:200px;height:150px">
+    <img v-if="url" :src="url" class="avatar">
   </div>
 </template>
 
@@ -75,13 +75,14 @@ export default window.$crudCommon({
     }
   },
   created() {
-    this.url = localStorage.getItem('imageUrl')
     getUser().then(res => {
       this.name = res
     })
     var row = this.$route.query.row
     this.row = row
     this.tableData = row
+    console.log(row.img)
+    this.url = this.baseURL + row.img
   },
   methods: {
     back() {
@@ -217,5 +218,11 @@ table td{
 .img img{
   width: 100%;
   height:100%;
+}
+.avatar {
+  width: 1200px;
+  height: 550px;
+  display: block;
+  margin-left: 21.3%;
 }
 </style>

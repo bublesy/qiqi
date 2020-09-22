@@ -56,7 +56,14 @@
       >
         <el-form ref="supForm" :inline="true" :rules="supRules" :model="formAdd" size="mini">
           <el-form-item label="领料人:" prop="pickingPeople">
-            <el-input v-model="formAdd.pickingPeople" />
+            <el-select v-model="formAdd.pickingPeople" placeholder="请选择" @change="collectorll">
+              <el-option
+                v-for="item in pickingPeople"
+                :key="item.value"
+                :label="item.nickname"
+                :value="item.nickname"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item label="日期:" prop="date">
             <el-date-picker
@@ -67,12 +74,16 @@
             />
           </el-form-item>
           <el-form-item label="开单员:" prop="partOrder">
-            <el-input v-model="formAdd.partOrder" />
+            <el-select v-model="formAdd.partOrder" placeholder="请选择" @change="collectorll">
+              <el-option
+                v-for="item in partOrder"
+                :key="item.value"
+                :label="item.nickname"
+                :value="item.nickname"
+              />
+            </el-select>
           </el-form-item>
-          <el-form-item label="备注:" prop="note">
-            <el-input v-model="formAdd.note" />
-          </el-form-item>
-          <el-form-item label="品名规格:" prop="specification">
+          <el-form-item label="品名规格:" prop="specificationId">
             <el-select v-model="formAdd.specificationId" placeholder="请选择" @change="specificationChange">
               <el-option
                 v-for="item in specificationFor"
@@ -91,6 +102,9 @@
           >
             <el-input v-model="formAdd.num" />
           </el-form-item>
+          <el-form-item label="备注:" prop="note">
+            <el-input v-model="formAdd.note" />
+          </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="supplierAddNo('supForm')">取 消</el-button>
@@ -103,7 +117,7 @@
         :total="pagination.total"
         :current-page="pagination.page"
         layout="total, prev, pager, next, sizes"
-        @size-change="pagination.size"
+        @size-change="sizeChange"
         @current-change="pageChange"
       />
     </div>
@@ -111,7 +125,7 @@
 </template>
 <script>
 import initData from '@/mixins/initData'
-import { list, add, removeById, getById, listunit } from '@/api/accessories/picking'
+import { list, add, removeById, getById, listunit, getUser } from '@/api/accessories/picking'
 import { export2Excel } from '@/utils/common'
 import { specificationList } from '@/api/accessories/means'
 
@@ -119,6 +133,15 @@ export default {
   name: 'Means',
   mixins: [initData],
   data() {
+    // 验证金额的正则
+    var money = (rule, value, cb) => {
+      const reg = /(^[1-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)/
+      if (reg.test(value)) {
+        // 合法
+        return cb()
+      }
+      cb(new Error('请输入数字'))
+    }
     return {
       form: {
         page: 1,
@@ -126,8 +149,7 @@ export default {
         pickingPeople: '',
         data: '',
         partOrder: '',
-        no: ''
-      },
+        no: '' },
       formAdd: { page: 1,
         count: 10,
         pickingPeople: '',
@@ -138,14 +160,24 @@ export default {
       tableData: [],
       titleType: '',
       supRules: {
-        name: [{ required: true, message: '该输入为必填项', trigger: 'blur' }]
+        num: [
+          { required: true, message: '请输入数量', trigger: 'blur' },
+          { validator: money, trigger: 'blur' }
+        ],
+        pickingPeople: [{ required: true, message: '此为必选项', trigger: 'blur' }],
+        partOrder: [{ required: true, message: '此为必选项', trigger: 'blur' }],
+        specificationId: [{ required: true, message: '此为必选项', trigger: 'blur' }]
+
       },
       // 辅料数据
       table: [],
       // 品名规格下拉
       specificationFor: [],
       value: '',
-      value1: ''
+      value1: '',
+      // 领料人
+      partOrder: [],
+      pickingPeople: []
     }
   },
   created() {
@@ -159,6 +191,9 @@ export default {
         }
       })
     },
+    collectorll() {
+
+    },
     // 获取列表数据
     loadData() {
       // this.form.name = this.form.name
@@ -167,6 +202,8 @@ export default {
       // if (this.queryParams.time === null) {
       //   this.$set(this.queryParams, 'time', '')
       // }
+      this.form.page = this.pagination.page
+      this.form.count = this.pagination.size
       list(this.form).then(res => {
         this.tableData = res.list
         this.pagination.total = res.total
@@ -192,6 +229,13 @@ export default {
       getById(scope.row.id).then(res => {
         this.formAdd = res
       })
+
+      // 领料人数据
+      getUser().then(res => {
+        this.partOrder = res
+        this.pickingPeople = res
+        console.log(res)
+      })
     },
     // 新增
     supplierAdd() {
@@ -201,6 +245,12 @@ export default {
       this.titleType = '新增'
       specificationList().then(res => {
         this.specificationFor = res
+      })
+      // 领料人数据
+      getUser().then(res => {
+        this.partOrder = res
+        this.pickingPeople = res
+        console.log(res)
       })
     },
     // 新增保存
@@ -238,7 +288,7 @@ export default {
     toExcel() {
       var list = this.tableData
       const th = ['领料人', '日期', '开单员', '备注']
-      const filterVal = ['data', 'supplier', 'no', 'note']
+      const filterVal = ['pickingPeople', 'date', 'partOrder', 'note']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '辅料领料')
     }

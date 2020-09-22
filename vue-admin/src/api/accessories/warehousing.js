@@ -27,3 +27,12 @@ export function getById(id) {
 export function listunit(data) {
   return request({ url: '/material/data/list', method: 'post', data: data })
 }
+// 供应商数据
+export function supplier(data) {
+  return request({ url: '/supplier/list', method: 'get', params: data })
+}
+// 采购单数据
+
+export function purchaseList(params) {
+  return request({ url: '/purchase/order/list', method: 'get', params: params })
+}

@@ -18,7 +18,6 @@
             placeholder="选择日期"
           />
         </el-form-item>
-
         <el-button size="mini" type="primary" @click="loadData()">查询</el-button>
         <el-button type="primary" size="mini" @click="supplierAdd">新增</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>

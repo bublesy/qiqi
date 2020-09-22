@@ -49,7 +49,7 @@ public class IdGeneratorUtils {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHMMssSSS");
         String dataPrefix = format.format(timestamp);
-        String prefix = dataPrefix.substring(11,dataPrefix.length());
+        String prefix = dataPrefix.substring(14,dataPrefix.length());
         return prefix + suffix;
     }
 

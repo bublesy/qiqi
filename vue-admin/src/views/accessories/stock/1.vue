@@ -13,6 +13,7 @@
         <el-button type="primary" size="mini" @click="printing">整页打印</el-button>
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button> -->
       </el-form>
+
       <div>
         <el-table
           ref="singleTable"

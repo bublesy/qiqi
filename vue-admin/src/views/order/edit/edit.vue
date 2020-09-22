@@ -1,19 +1,19 @@
 <template>
   <el-dialog title="订单" :visible.sync="dialog.show" width="1000px" body-style :close-on-click-modal="false">
     <div>
-      <el-button type="primary" size="mini" @click="save">保存</el-button>
-      <!-- <el-button type="primary" size="mini" @click="audit">审核</el-button> -->
+      <el-button type="primary" size="mini" :disabled="saveStatus" @click="save">保存</el-button>
 
       <el-button type="primary" size="mini" @click="back">返回</el-button>
     </div><br>
     <p style="">订单信息</p>
     <el-card>
       <el-form ref="form" :model="form" label-width="80px" size="mini" :rules="rules" :inline="true">
-        <el-form-item label="选择客户:">
+        <el-form-item label="选择客户:" prop="name">
           <el-select v-model="form.name" placeholder="请选择">
             <el-option
               v-for="item in customerOptions"
               :key="item.id"
+              prop="name"
               :label="item.fullName"
               :value="item.fullName"
             />
@@ -117,8 +117,8 @@
     <el-card>
       <el-form :model="form" :inline="true" size="mini">
         <el-form-item label="纸长X纸宽:">
-          <el-input v-model="form.paperLength" style="width:50px" @input="paperLength" />X
-          <el-input v-model="form.paperWidth" style="width:50px" @input="paperWidth" />
+          <el-input v-model="form.paperLength" style="width:80px" @input="paperLength" />X
+          <el-input v-model="form.paperWidth" style="width:80px" @input="paperWidth" />
           <!-- xlk -->
           <!-- <el-select v-model="form.paperWidth" placeholder="请选择">
             <el-option
@@ -240,19 +240,32 @@
         </el-form-item>
       </el-form>
       <p>添加样图:</p>
-      <upload :url="imageUrl" :dialog="dialog.show" />
+      <el-upload
+        class="avatar-uploader"
+        action="http://192.168.1.150:8080/api/admin/file/upload"
+        :show-file-list="false"
+        :on-success="handleAvatarSuccess"
+        :before-upload="beforeAvatarUpload"
+        :headers="headers"
+      >
+        <img v-if="imageUrl !== null" :src="imageUrl" class="avatar">
+        <!-- <i v-else class="el-icon-plus avatar-uploader-icon" /> -->
+      </el-upload>
     </el-card>
   </el-dialog>
 </template>
 
 <script>
-import upload from '@/views/order/edit/upload'
 import { addOrUpdateOrder, getSupplier, getMaterial, getUnite, getColor, getNails,
   getCombination, getPrintLayout, getSingleOrder, getCustomer, getStare } from '@/api/order/customerOrder'
 import { getBoxClassList } from '@/api/basedata/boxclass'
+import { getToken } from '@/utils/auth'
 export default {
-  components: { upload },
   props: {
+    status: {
+      type: Boolean,
+      default: null
+    },
     dialog: {
       type: Object,
       default: () => {}
@@ -268,6 +281,11 @@ export default {
   },
   data() {
     return {
+      headers: {
+        Authorization: getToken()
+      },
+      saveStatus: false,
+      auditStatus: false,
       imageUrl: '',
       form: {
         isProduct: ''
@@ -278,6 +296,9 @@ export default {
         ],
         boxType: [
           { required: true, message: '请输入箱型', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '请选择客户', trigger: 'blur' }
         ]
       },
       // 下拉框数组
@@ -338,33 +359,81 @@ export default {
         if (this.id !== '' && this.id !== null) {
           // 编辑
           getSingleOrder(this.id).then(res => {
+            this.imageUrl = null
+            if (res.audit === '审核') {
+              this.auditStatus = true
+              if (status) {
+                this.saveStatus = false
+              } else {
+                this.saveStatus = true
+              }
+            }
+            if (res.audit === '制单') {
+              this.auditStatus = false
+              this.saveStatus = false
+            }
             this.form = res
-            this.imageUrl = 'http://192.168.1.150:8080/api/admin' + res.img
-            localStorage.setItem('editUrl', this.imageUrl)
+            this.imageUrl = this.baseURL + res.img
           })
         } else {
           // 新增
+          this.imageUrl = null
+          this.auditStatus = true
+          this.saveStatus = false
           this.form = Object.assign({}, this.$options.data().form)
         }
       }
     }
   },
   methods: {
-    save() {
-      if (this.flag) {
-        this.form.id = null
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw)
+      this.form.img = res
+      localStorage.setItem('imageUrl', res)
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
       }
-      this.form.img = localStorage.getItem('imageUrl')
-      addOrUpdateOrder(this.form).then(res => {
-        if (res) {
-          this.$emit('init')
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
+    },
+    save() {
+      this.$refs.form.validate(x => {
+        if (x) {
+          if (this.flag) {
+            this.form.id = null
+          }
+
+          if (this.form.id === null || this.form.id === '' || this.form.id === undefined) {
+            this.form.audit = '制单'
+          }
+          addOrUpdateOrder(this.form).then(res => {
+            if (res) {
+              this.$emit('init')
+            }
+          })
+          this.dialog.show = false
         }
       })
-      this.dialog.show = false
     },
-    audit() {
-      this.dialog.show = false
-    },
+    // audit() {
+    //   this.form.audit = '审核'
+    //   getUser().then(res => {
+    //     this.form.auditBy = res.nickname
+    //     addOrUpdateOrder(this.form).then(res => {
+    //       if (res) {
+    //         this.$message.success('审核成功')
+    //         this.$emit('init')
+    //       }
+    //     })
+    //   })
+    // },
     back() {
       this.dialog.show = false
     },
@@ -553,5 +622,28 @@ export default {
 </script>
 
 <style scoped>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 
 </style>

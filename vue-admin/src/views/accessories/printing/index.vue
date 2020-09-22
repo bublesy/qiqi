@@ -4,7 +4,7 @@
       <el-row>
         <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#printTest'" type="primary">打印</el-button>
-        <el-button type="primary" @click="toExcel">导出</el-button>
+        <!-- <el-button type="primary" @click="toExcel">导出</el-button> -->
         <!-- <el-pagination
           style="float:right;"
           :current-page="currentPage4"
@@ -18,67 +18,88 @@
       </el-row>
     </div>
     <div id="printTest" class="ful">
-      <h2>辅料库存表</h2>
+      <!-- <h2>辅料库存表</h2>
       <table>
         <tr>
           <th>编码</th>
+          <th>领料人</th>
           <th>品名规格</th>
           <th>单位</th>
           <th>数量</th>
-          <th>领料人</th>
-          <!-- <th>日期</th>
-          <th>开单员</th>
-          <th>备注</th> -->
         </tr>
         <tr v-for="item in tableData" :key="item.id">
           <th>{{ item.code }}</th>
+          <th>{{ item.collector }}</th>
           <th>{{ item.specifications }}</th>
           <th>{{ item.company }}</th>
           <th>{{ item.number }}</th>
-          <th>{{ item.collector }}</th>
+
         </tr>
-        <!-- <tr>
-          <td>1</td>
-          <td>传真纸</td>
-          <td>卷</td>
-          <td>24</td>
-          <td>管理</td>
-          <td>2020年9月10日</td>
-          <td>张三</td>
-          <td>11</td>
-        </tr> -->
-      </table>
+      </table> -->
+      <div class="h" />
+      <el-table
+        :data="tableData"
+        border
+        style="width: 400,margin-top:20px"
+      >
+        <el-table-column
+          prop="date"
+          label="编码"
+        />
+        <el-table-column
+          prop="specifications"
+          label="品名规格"
+        />
+        <el-table-column
+          prop="company"
+          label="单位"
+        />
+        <el-table-column
+          prop="number"
+          label="数量"
+        />
+      </el-table>
     </div>
   </div>
 </template>
 <script>
 // accessories  means
 import { export2Excel } from '@/utils/common'
+// import { getUser } from '@/api/accessories/means'
+
 export default {
   name: 'Printing',
+  inject: ['closeTag'],
   data() {
     return {
-      tableData: [
-        { code: 1,
-          specifications: '传真纸',
-          company: '卷',
-          number: 24,
-          collector: '张三' }
-      ]
+      tableData: [],
+      specifications: '',
+      company: '',
+      number: '',
+      data: []
     }
   },
   created() {
     // console.log(document.getElementById('da'))
+    this.tableData = [this.$route.query.data]
+    console.log(this.tableData)
+    // this.getList()
+    // getUser().then(res => {
+    //   console.log(res)
+    //   this.tableData = res
+    // })
   },
   methods: {
     // 返回
     toBack() {
-      this.$router.push('/accessories/stock')
+      // this.$router.push('/accessories/stock')
+      this.closeTag()
     },
+
     toExcel() {
       var list = this.tableData
-      const th = ['编码', '品名规格', '单位', '数量', '领料人']
-      const filterVal = ['code', 'specifications', 'company', 'number', 'collector']
+      const th = ['领料人', '领料人', '品名规格', '单位', '数量']
+      const filterVal = ['code', 'collector', 'specifications', 'company', 'umber']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '辅料库存表')
     }
@@ -87,11 +108,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.ful{
-  text-align:center;
-  width: 100%;
-  height: 35px;
-  border-bottom:1px solid #717171;
+.h{
+ margin-bottom: 20px;
 }
 table{
   width: 100%;
