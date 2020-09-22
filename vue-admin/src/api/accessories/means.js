@@ -28,3 +28,8 @@ export function getById(id) {
 export function getUser() {
   return request({ url: '/sys/user/salesman', method: 'get' })
 }
+
+// 对账明细表
+export function record(data) {
+  return request({ url: '/order/bill', method: 'post', data: data })
+}

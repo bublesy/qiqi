@@ -2,7 +2,7 @@
   <div class="app-container">
     <h2 style="margin-left:10%">辅料入库</h2>
     <el-form :inline="true" :model="form" size="mini">
-      <el-form-item label="供方:">
+      <el-form-item label="供应商:">
         <el-input v-model="form.supplier" clearable @clear="loadData" />
       </el-form-item>
       <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
@@ -32,8 +32,8 @@
           label="采购单号"
         />
         <el-table-column
-          prop="note"
-          label="备注"
+          prop="money"
+          label="金额"
         />
         <el-table-column
           label="操作"
@@ -83,9 +83,6 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="备注:" prop="note">
-            <el-input v-model="formAdd.note" />
-          </el-form-item>
           <el-form-item label="品名规格:" prop="specificationId">
             <el-select v-model="formAdd.specificationId" placeholder="此为必选项" @change="specificationChange">
               <el-option
@@ -99,17 +96,17 @@
           <el-form-item label="单位:" prop="unit">
             <el-input v-model="formAdd.unit" disabled />
           </el-form-item>
-          <el-form-item
-            label="数量:"
-            prop="num"
-          >
-            <el-input v-model="formAdd.num" />
+          <el-form-item label="数量:" prop="num">
+            <el-input v-model="formAdd.num" @input="changeNum()" />
           </el-form-item>
           <el-form-item label="单价:" prop="perPrice">
-            <el-input v-model="formAdd.perPrice" />
+            <el-input v-model="formAdd.perPrice" @input="changeNum()" />
           </el-form-item>
           <el-form-item label="金额:" prop="money">
-            <el-input v-model="formAdd.money" />
+            <el-input v-model="formAdd.money" disabled />
+          </el-form-item>
+          <el-form-item label="备注:" prop="note">
+            <el-input v-model="formAdd.note" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -182,7 +179,10 @@ export default {
         supplier: '',
         no: '',
         note: '',
-        purchase: ''
+        purchase: '',
+        money: 11,
+        num: 10,
+        perPrice: 0
 
       },
       dialogVisible: false,
@@ -220,8 +220,21 @@ export default {
   },
   created() {
     this.init()
+    // this.formAdd.money = this.formAdd.perPrice * this.formAdd.um
   },
   methods: {
+    accMul(arg1, arg2) {
+      var m = 0; var s1 = arg1.toString(); var s2 = arg2.toString()
+      try { m += s1.split('.')[1].length } catch (e) { 0 }
+      try { m += s2.split('.')[1].length } catch (e) { 0 }
+      return (Number(s1.replace('.', '')) * Number(s2.replace('.', '')) / Math.pow(10, m)).toFixed(2)
+    },
+    changeNum() {
+      if (this.formAdd.perPrice !== '' && this.formAdd.num !== '' && this.formAdd.perPrice !== undefined && this.formAdd.num !== undefined) {
+        this.formAdd.money = this.accMul(this.formAdd.perPrice, this.formAdd.num)
+      }
+      // console.log(this.formAdd.money)
+    },
     // 获取品名规格
     specificationChange() {
       this.specificationFor.forEach(a => {
