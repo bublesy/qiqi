@@ -289,5 +289,9 @@ public class OrderDO extends BaseModel {
      */
     private String img;
 
+    private String refundNum;
+
+    private Date refundTime;
+
 
 }

@@ -15,6 +15,8 @@ import com.qiqi.basicdata.service.CustomerInformationService;
 import com.qiqi.basicdata.service.PaperboardDataSettingService;
 import com.qiqi.basicdata.service.SupplierService;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.endproductwarehouse.entity.EndProductWarehouseDO;
+import com.qiqi.endproductwarehouse.service.EndProductWarehouseService;
 import com.qiqi.order.dto.OrderDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.entity.ScheduleDO;
@@ -62,6 +64,9 @@ public class OrderController {
 
     @Resource
     private PaperboardDataSettingService paperboardDataSettingService;
+
+    @Resource
+    private EndProductWarehouseService endProductWarehouseService;
 
     @Resource
     private SysUserService sysUserService;
@@ -139,6 +144,19 @@ public class OrderController {
         }
         if(orderDO.getId() == null){
             orderDO.setWosState("新订单");
+        }
+        EndProductWarehouseDO endProductWarehouseDO = endProductWarehouseService.getOne(new QueryWrapper<EndProductWarehouseDO>().eq("order_id",orderDO.getId()));
+        if(endProductWarehouseDO != null && endProductWarehouseDO.getEndProductPos() != null && orderDO.getRefundNum() != null){
+            Integer num = Integer.parseInt(endProductWarehouseDO.getEndProductPos()) + Integer.parseInt(orderDO.getRefundNum());
+            endProductWarehouseDO.setEndProductPos(num.toString());
+            boolean b = endProductWarehouseService.updateById(endProductWarehouseDO);
+            if(b){
+
+                orderDO.setRefundTime(new Date());
+            }
+        }else {
+            orderDO.setRefundNum(null);
+            orderDO.setRefundTime(null);
         }
         return orderService.saveOrUpdate(orderDO);
     }

@@ -21,8 +21,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,19 +54,18 @@ public class BillController {
         if(query.getCustomerId() != null){
             CustomerInformationDO customerInformationDO = customerInformationService.getById(query.getCustomerId());
             BeanUtils.copyProperties(customerInformationDO,billVO);
-            return billVO;
         }
-
         billVO.setOrderDOPageEntity(orderDOPageEntity);
         return billVO;
     }
 
     @ApiOperation(value = "应收款列表")
     @GetMapping("")
-    public void getAllBill(){
+    public Collection<List<OrderDO>> getAllBill(){
         List<OrderDO> list = orderService.list();
         Map<Long, List<OrderDO>> collect = list.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
-
+        Collection<List<OrderDO>> values = collect.values();
+        return values;
     }
 
 }

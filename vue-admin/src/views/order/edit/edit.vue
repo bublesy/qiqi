@@ -427,6 +427,7 @@ export default {
           console.log(this.form)
           addOrUpdateOrder(this.form).then(res => {
             if (res) {
+              this.$message.success('保存成功')
               this.$emit('init')
             }
           })

@@ -67,3 +67,7 @@ export function getStare() {
   return request({ url: '/order/stare', method: 'get' })
 }
 
+export function refundNum(data) {
+  return request({ url: '/order', method: 'post', data: data })
+}
+
