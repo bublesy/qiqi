@@ -8,6 +8,14 @@ export function list(params) {
   return request({ url: '/end/product/warehouse/list', method: 'get', params: params })
 }
 
+export function endList(data) {
+  return request({ url: '/end/product/warehouse/endList', method: 'post', data: data })
+}
+
+export function noList(params) {
+  return request({ url: '/end/product/warehouse/noList', method: 'get', params: params })
+}
+
 export function listByIds(params) {
   return request({ url: '/end/product/warehouse/listByIds', method: 'post', params: params })
 }
@@ -26,6 +34,10 @@ export function getNameById(id) {
 
 export function updateState(data) {
   return request({ url: '/end/product/warehouse/updateState', method: 'post', data: data })
+}
+
+export function updatePosting(data) {
+  return request({ url: '/end/product/warehouse/updatePosting', method: 'post', data: data })
 }
 
 export function upState(data) {

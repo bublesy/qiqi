@@ -39,6 +39,7 @@
           <el-table-column v-show="true" prop="purQuantity" label="库存数量" width="140" />
           <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" width="140" />
           <el-table-column v-show="true" prop="carryTo" label="发货状态" width="140" />
+          <el-table-column v-show="true" prop="posting" label="过账状态" width="140" />
           <el-table-column v-show="true" prop="boxType" label="箱型" width="140" />
           <el-table-column v-show="true" prop="material" label="材质" width="140" />
           <el-table-column v-show="true" prop="length" label="长" width="140" />
@@ -49,6 +50,8 @@
           <el-table-column v-show="true" prop="warehousingData" label="入仓时间" width="160" />
           <el-table-column v-show="true" prop="endProductPos" label="实际库存数量" width="140" />
           <el-table-column v-show="true" prop="checkDate" label="盘点时间" width="160" />
+          <el-table-column v-show="true" prop="outNo" label="送货单号" width="160" />
+          <el-table-column v-show="true" prop="outDate" label="送货日期" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
               <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?true : false" @click="purAdd(scope)">新增送货数量</el-link>

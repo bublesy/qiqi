@@ -1,5 +1,6 @@
 package com.qiqi.admin.endproductwarehouse.api;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.qiqi.endproductwarehouse.entity.EndProductWarehouseDO;
 import cn.hutool.core.convert.Convert;
@@ -7,6 +8,7 @@ import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.endproductwarehouse.model.EndProductWarehouseDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.service.OrderService;
 import io.swagger.annotations.*;
@@ -64,6 +66,30 @@ public class EndProductWarehouseController {
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<EndProductWarehouseDO>>() {}, iPage.getRecords()));
     }
 
+    @PostMapping("/endList")
+    public PageEntity<EndProductWarehouseDTO> endList(@RequestBody EndProductWarehouseDTO endProductWarehouseDTO){
+        IPage<EndProductWarehouseDTO> iPage = endProductWarehouseService.endList(new Page<>(endProductWarehouseDTO.getPage(),endProductWarehouseDTO.getSize()),endProductWarehouseDTO);
+        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<EndProductWarehouseDTO>>() {}, iPage.getRecords()));
+    }
+
+    @GetMapping("/noList")
+    public List noList(){
+        return endProductWarehouseService.list();
+    }
+
+    @PostMapping("/updatePosting")
+    public Boolean updatePosting(@RequestBody List<Long> ids){
+        EndProductWarehouseDO byId = null;
+        for(Long id :ids){
+            byId = endProductWarehouseService.getById(id);
+        }
+        EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
+        BeanUtil.copyProperties(byId,endProductWarehouseDO);
+        endProductWarehouseDO.setPosting("已过账");
+        return endProductWarehouseService.updateById(endProductWarehouseDO);
+    }
+
+
     @ApiOperation(value = "获取产品仓库(单个)")
     @GetMapping("/{id}")
     public EndProductWarehouseDO getEndProductWarehouse(@PathVariable Long id) {
@@ -92,12 +118,14 @@ public class EndProductWarehouseController {
 
     @ApiOperation(value = "修改状态(批量))")
     @PostMapping("/updateState")
-    public Boolean updateState(@RequestBody List<String> idList) {
+    public Boolean updateState(@RequestBody List<Long> idList) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:dd:ss");
-        String join = StringUtils.join(idList, ",");
-        Long id = Long.parseLong(join);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
+        EndProductWarehouseDO byId = null;
+        for (Long s:idList){
+            byId = endProductWarehouseService.getById(s);
+        }
         EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
-        EndProductWarehouseDO byId = endProductWarehouseService.getById(join);
         String checkNum = byId.getEndProductPos();
         int check = Integer.parseInt(checkNum);
         String delivery = byId.getDeliveryQuantity();
@@ -106,9 +134,10 @@ public class EndProductWarehouseController {
         String s = String.valueOf(i);
         endProductWarehouseDO.setEndProductPos(s);
         endProductWarehouseDO.setCheckDate(df.format(new Date()));
-        endProductWarehouseDO.setId(id);
+        endProductWarehouseDO.setId(byId.getId());
         endProductWarehouseDO.setCarryTo("已送货");
-
+        endProductWarehouseDO.setOutNo(dateFormat.format(new Date()));
+        endProductWarehouseDO.setOutDate(new Date());
         String order = byId.getOrderId();
         String deliveryQuantity = byId.getDeliveryQuantity();
         Long orderId = Long.parseLong(order);
@@ -117,17 +146,9 @@ public class EndProductWarehouseController {
         Integer a = Integer.parseInt(deliveryQuantity);
         orderDO.setSendNum(a);
         orderDO.setWosState("已送货");
-        // new Date()为获取当前系统时间，也可使用当前时间戳
-        Date date = null;
-        try {
-            date = df.parse(byId.getDeliveryDate());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        orderDO.setShipDate(date);
-        orderDO.setOutNo(byId.getWarehouseNo());
+        orderDO.setShipDate(endProductWarehouseDO.getOutDate());
+        orderDO.setOutNo(endProductWarehouseDO.getOutNo());
         orderService.updateById(orderDO);
-
         return endProductWarehouseService.updateById(endProductWarehouseDO);
     }
 

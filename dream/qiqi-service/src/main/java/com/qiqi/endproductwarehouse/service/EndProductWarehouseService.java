@@ -1,7 +1,10 @@
 package com.qiqi.endproductwarehouse.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.endproductwarehouse.entity.EndProductWarehouseDO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qiqi.endproductwarehouse.model.EndProductWarehouseDTO;
 
 /**
  * <p>
@@ -13,4 +16,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface EndProductWarehouseService extends IService<EndProductWarehouseDO> {
 
+    /**
+     * 查询
+     * @param objectPage
+     * @param endProductWarehouseDTO
+     * @return
+     */
+    IPage<EndProductWarehouseDTO> endList(Page<Object> objectPage, EndProductWarehouseDTO endProductWarehouseDTO);
 }
