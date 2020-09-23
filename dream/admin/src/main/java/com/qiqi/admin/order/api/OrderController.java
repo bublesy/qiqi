@@ -109,18 +109,48 @@ public class OrderController {
         return orderService.updateById(orderDO);
     }
 
+    @ApiOperation(value = "退货")
+    @PostMapping("refund")
+    public Boolean refund(@RequestBody OrderDO orderDO){
+        if(orderDO == null){
+            return false;
+        }
+        EndProductWarehouseDO endProductWarehouseDO = endProductWarehouseService.getOne(new QueryWrapper<EndProductWarehouseDO>().eq("order_id",orderDO.getId()));
+        if(endProductWarehouseDO != null && endProductWarehouseDO.getEndProductPos() != null && orderDO.getRefundNum() != null){
+            Integer num = Integer.parseInt(endProductWarehouseDO.getEndProductPos()) + Integer.parseInt(orderDO.getRefundNum());
+            endProductWarehouseDO.setEndProductPos(num.toString());
+            boolean b = endProductWarehouseService.updateById(endProductWarehouseDO);
+            if(b){
+                orderDO.setRefundTime(new Date());
+                OrderDO orderDO1 = orderService.getById(orderDO.getId());
+                Integer refundNum1 = (orderDO1.getRefundNum() == null ? 0 : Integer.parseInt(orderDO1.getRefundNum()));
+                Integer refundNum = Integer.parseInt(orderDO.getRefundNum()) + refundNum1;
+                orderDO.setRefundNum(refundNum.toString());
+            }
+
+        }else {
+            orderDO.setRefundNum(null);
+            orderDO.setRefundTime(null);
+            return false;
+        }
+        return orderService.updateById(orderDO);
+    }
+
     @ApiOperation(value = "新增or修改")
     @PostMapping("")
     public Boolean saveOrder(@RequestBody OrderDO orderDO) {
         if(orderDO == null){
             return false;
         }
-        IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
-        String no = idGeneratorUtils.nextId();
+        if(orderDO.getId() == null){
+            IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
+            String no = idGeneratorUtils.nextId();
+            orderDO.setNo(no);
+            orderDO.setOrderDate(new Date());
+        }
         if(orderDO.getDeliveryDate() != null && orderDO.getModCount() > 0){
             orderDO.setDeliveryDate(TimeAddEight.formatTimeEight(orderDO.getDeliveryDate()));
         }
-        orderDO.setNo(no);
         ScheduleDO scheduleDO = new ScheduleDO();
         if(orderDO.getId() == null && !state.equals(orderDO.getIsProduct())){
             BeanUtils.copyProperties(orderDO,scheduleDO);
@@ -131,32 +161,18 @@ public class OrderController {
                 BeanUtils.copyProperties(orderDO,scheduleDO);
                 scheduleDO.setDate(orderDO.getDeliveryDate());
                 scheduleDO.setId(orderDO.getScheduleId());
-                scheduleService.saveOrUpdate(scheduleDO);
+                scheduleService.updateById(scheduleDO);
         }
         if(orderDO.getId() != null && state.equals(orderDO.getIsProduct())){
             if(orderDO.getScheduleId() != null){
                 scheduleService.delete(orderDO.getScheduleId());
             }
         }
-        orderDO.setOrderDate(new Date());
         if(scheduleDO != null){
             orderDO.setScheduleId(scheduleDO.getId());
         }
         if(orderDO.getId() == null){
             orderDO.setWosState("新订单");
-        }
-        EndProductWarehouseDO endProductWarehouseDO = endProductWarehouseService.getOne(new QueryWrapper<EndProductWarehouseDO>().eq("order_id",orderDO.getId()));
-        if(endProductWarehouseDO != null && endProductWarehouseDO.getEndProductPos() != null && orderDO.getRefundNum() != null){
-            Integer num = Integer.parseInt(endProductWarehouseDO.getEndProductPos()) + Integer.parseInt(orderDO.getRefundNum());
-            endProductWarehouseDO.setEndProductPos(num.toString());
-            boolean b = endProductWarehouseService.updateById(endProductWarehouseDO);
-            if(b){
-
-                orderDO.setRefundTime(new Date());
-            }
-        }else {
-            orderDO.setRefundNum(null);
-            orderDO.setRefundTime(null);
         }
         return orderService.saveOrUpdate(orderDO);
     }

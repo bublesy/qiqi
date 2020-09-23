@@ -3,8 +3,13 @@
     <el-main>
       <h1 align="center">毛利估算</h1>
       <el-form :inline="true" :model="form" size="mini">
-        <el-form-item label="客户名称:">
-          <el-input v-model="form.name" clearable @clear="loadData" />
+        <el-form-item label="日期:">
+          <el-date-picker
+            v-model="form.time"
+            type="month"
+            placeholder="选择月"
+            value-format="yyyy-MM"
+          />
         </el-form-item>
         <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
         <el-button type="primary" size="mini" @click="toExcel">导出</el-button>
@@ -27,48 +32,21 @@
           <el-table-column v-show="true" prop="width" label="宽" />
           <el-table-column v-show="true" prop="height" label="高" />
           <el-table-column v-show="true" prop="unit" label="单位" />
-          <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" />
           <el-table-column v-show="true" prop="orderNum" label="订单数量" />
           <el-table-column v-show="true" prop="perPrice" label="单价" />
-          <el-table-column v-show="true" prop="orderNum" label="金额">
-            <template slot-scope="scope">
-              {{ scope.row.orderNum* scope.row.perPrice }}
-            </template>
-          </el-table-column>
+          <el-table-column v-show="true" prop="amount" label="金额" />
           <el-table-column v-show="true" prop="discount" label="折扣" width="100px">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.discount" :controls="false" style="width: 80%;" />%
+              <el-input-number v-model="scope.row.discount" :controls="false" style="width: 80%;" @change="discountChange" />%
             </template>
           </el-table-column>
-          <el-table-column v-show="true" prop="discountAmount" label="折扣金额">
-            <template slot-scope="scope">
-              {{ scope.row.orderNum* scope.row.perPrice * scope.row.discount / 100 }}
-            </template>
-          </el-table-column>
+          <el-table-column v-show="true" prop="discountAmount" label="折扣金额" />
+          <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" />
           <el-table-column v-show="true" prop="costPrice" label="成本价" />
-          <el-table-column v-show="true" label="成本金额">
-            <template slot-scope="scope">
-              {{ scope.row.costPrice* scope.row.orderNum }}
-            </template>
-          </el-table-column>
-          <el-table-column v-show="true" prop="profit" label="毛利">
-            <template slot-scope="scope">
-              {{ scope.row.orderNum* scope.row.discount / 100- scope.row.costPrice* scope.row.orderNum }}
-            </template>
-          </el-table-column>
+          <el-table-column v-show="true" prop="costAmount" label="成本金额" />
+          <el-table-column v-show="true" prop="profit" label="毛利" />
           <el-table-column v-show="true" prop="pbilling" label="开单日期" />
-          <el-table-column v-show="true" label="操作">
-            <template slot-scope="scope">
-              <el-button type="primary" size="mini" @click="updated(scope)">保存</el-button>
-            </template>
-          </el-table-column>
         </el-table>
-        <!--分页组件-->
-
-        <!-- <template slot-scope="scope">
-            {{ scope.row.orderNum* scope.row.perPrice }}
-          </template> -->
-
         <el-pagination
           background
           layout="total, sizes, prev, pager, next"
@@ -80,78 +58,6 @@
           @current-change="pageChange"
         />
       </div>
-      <!-- 新增/编辑对账明细单 -->
-      <!-- <el-dialog :title="titleType+'对账明细表'" :visible.sync="purAddVisible" :close-on-click-modal="false">
-        <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="120px">
-          <el-form-item label="客户名称" prop="supplier">
-            <el-input v-model="formAdd.customerName" disabled>/>
-            </el-input></el-form-item>
-          <el-form-item label="客户电话" prop="pricing">
-            <el-select v-model="formAdd.pricing">
-              <el-option
-                v-for="item in pricingFor"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="出货日期" prop="billingTime">
-            <el-date-picker
-              v-model="formAdd.billingTime"
-              align="right"
-              type="date"
-              placeholder="选择日期"
-            />
-          </el-form-item>
-          <el-form-item label="出货单号">
-            <el-select v-model="formAdd.customerName" size="mini">
-              <el-option
-                v-for="item in customerFor"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="物品单号/款号">
-            <el-input v-model="formAdd.ridgeType" />
-          </el-form-item>
-
-          <el-form-item label="箱型">
-            <el-input v-model="formAdd.parPreSpe" />
-          </el-form-item>
-
-          <el-form-item label="长x宽x高">
-            <el-input v-model="formAdd.material" />
-          </el-form-item>
-
-          <el-form-item
-            label="数量"
-            :rules="[
-              { required: true, message: '数量不能为空'},
-              { type: 'number', message: '数量必须为数字值'}
-            ]"
-          >
-            <el-input v-model="formAdd.paperLength" />
-          </el-form-item>
-
-          <el-form-item label="单价">
-            <el-input v-model="formAdd.paperWidth" />
-          </el-form-item>
-
-          <el-form-item label="金额">
-            <el-input v-model="formAdd.orderQuantity" />
-          </el-form-item>
-
-        </el-form>
-
-        <span slot="footer" class="dialog-footer">
-          <el-button size="small" @click="purAddNo">取 消</el-button>
-          <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
-        </span>
-      </el-dialog> -->
 
     </el-main>
   </el-container>
@@ -159,7 +65,7 @@
 <script>
 import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
-import { mlist, updated } from '@/api/finance/profit'
+import { mlist, profit } from '@/api/finance/profit'
 export default {
   name: 'Verify',
   mixins: [initData],
@@ -171,24 +77,27 @@ export default {
         count: 10,
         quantityOverdue: '',
         customerName: '',
-        name: ''
+        name: '',
+        discount: 100
+
       },
       formAdd: { },
       // 表单数据
       tableData: [
-
+        { discount: 100 }
       ]
     }
   },
   created() {
     this.init()
-    // list().then(res => {
-    //   console.log(res)
-    // })
+    this.tableData.discount = 100
   },
   methods: {
-    updated(scope) {
-      console.log(scope)
+    discountChange() {
+      this.tableData.forEach(a => {
+        a.discountAmount = a.orderNum * (a.discount / 100)
+        a.profit = a.amount - a.costAmount - a.discountAmount
+      })
     },
     // 获取列表数据
     loadData() {
@@ -196,19 +105,39 @@ export default {
       this.form.count = this.pagination.size
       mlist(this.form).then(res => {
         this.tableData = res.list
+        this.tableData.forEach(a => {
+          a.discount = 100
+          if (a.discount === 100) {
+            a.discountAmount = 0
+          } else {
+            a.discountAmount = a.orderNum * (a.discount / 100)
+          }
+          a.amount = a.orderNum * a.perPrice
+          a.costAmount = a.costPrice * a.purchaseQuantity
+          a.profit = a.amount - a.costAmount - a.discountAmount
+        })
         this.pagination.total = res.total
-        console.log(res)
+        // console.log(res)
         console.log(this.tableData.orderNum)
       })
     },
+    // 修改数据
+    updated(scope) {
+      // console.log(scope)
+      profit(this.form).then(res => {
+        this.tableData = res
+        mlist()
+      })
+    },
+
     toQuery() {
 
     },
     // 导出
     toExcel() {
       var list = this.tableData
-      const th = ['客户名称', '任务编号', '客户单号', '箱型', '款号', '长', '高', '单位', '采购数量', '订单数量', '单价', '金额', '折扣', '折扣金额', '成本价', '成本金额', '毛利', '开单日期']
-      const filterVal = ['code', 'name', 'limitPaperLength']
+      const th = ['客户名称', '任务编号', '客户单号', '箱型', '款号', '长', '宽', '高', '单位', '订单数量', '单价', '金额', '折扣', '折扣金额', '采购数量', '成本价', '成本金额', '毛利', '开单日期']
+      const filterVal = ['name', 'no', 'customerNo', 'boxType', 'modelNo', 'length', 'width', 'height', 'unit', 'orderNum', 'perPrice', 'amount', 'discount', 'discountAmount', 'purchaseQuantity', 'costPrice', 'costAmount', 'profit', 'pbilling']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '毛利估算表')
     },

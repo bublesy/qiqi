@@ -278,6 +278,10 @@ export default {
     flag: {
       type: Boolean,
       default: false
+    },
+    isView: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -286,7 +290,7 @@ export default {
         Authorization: getToken()
       },
       saveStatus: false,
-      auditStatus: false,
+      // auditStatus: false,
       imageUrl: '',
       form: {
         isProduct: '',
@@ -360,10 +364,11 @@ export default {
         })
         if (this.id !== '' && this.id !== null) {
           // 编辑
+          this.form.refundNum = 0
           getSingleOrder(this.id).then(res => {
             this.imageUrl = null
             if (res.audit === '审核') {
-              this.auditStatus = true
+              // this.auditStatus = true
               if (status) {
                 this.saveStatus = false
               } else {
@@ -371,17 +376,20 @@ export default {
               }
             }
             if (res.audit === '制单') {
-              this.auditStatus = false
+              // this.auditStatus = false
               this.saveStatus = false
             }
             this.form = res
             this.form.modCount = 0
             this.imageUrl = this.baseURL + res.img
+            if (this.isView) {
+              this.saveStatus = true
+            }
           })
         } else {
           // 新增
           this.imageUrl = null
-          this.auditStatus = true
+          // this.auditStatus = true
           this.saveStatus = false
           this.form = Object.assign({}, this.$options.data().form)
         }
@@ -424,7 +432,6 @@ export default {
               this.form.name = e.fullName
             }
           })
-          console.log(this.form)
           addOrUpdateOrder(this.form).then(res => {
             if (res) {
               this.$message.success('保存成功')
@@ -435,18 +442,6 @@ export default {
         }
       })
     },
-    // audit() {
-    //   this.form.audit = '审核'
-    //   getUser().then(res => {
-    //     this.form.auditBy = res.nickname
-    //     addOrUpdateOrder(this.form).then(res => {
-    //       if (res) {
-    //         this.$message.success('审核成功')
-    //         this.$emit('init')
-    //       }
-    //     })
-    //   })
-    // },
     back() {
       this.dialog.show = false
     },

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -26,5 +27,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderDO> implemen
     @Override
     public IPage<OrderDO> GetList(Page<Object> objectPage, String customerName, String quantityOverdue, String time, String date) {
         return orderMapper.getList(objectPage,customerName,quantityOverdue,time,date);
+    }
+
+    @Override
+    public List<OrderDO> getAllBill() {
+        List<OrderDO> allOrder = orderMapper.getAllOrder();
+        return allOrder;
     }
 }

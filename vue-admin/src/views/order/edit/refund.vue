@@ -37,6 +37,14 @@ export default {
     refundId: {
       type: String,
       default: ''
+    },
+    sendNum: {
+      type: Number,
+      default: 0
+    },
+    refundNum2: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -59,14 +67,17 @@ export default {
     sure() {
       this.$refs.form.validate(x => {
         if (x) {
-          this.form.id = parseInt(this.refundId)
+          if (this.refundNum2 - this.sendNum >= 0) {
+            return this.$message.info('退货数量大于送货数量')
+          }
+          this.form.id = this.refundId
           refundNum(this.form).then(res => {
             if (res) {
-              this.$message.success('退款成功')
+              this.$message.success('退货成功')
               this.$emit('init')
               this.dialog.show = false
             } else {
-              this.$message.success('退款失败')
+              this.$message.success('无可退的货物')
             }
           })
         }

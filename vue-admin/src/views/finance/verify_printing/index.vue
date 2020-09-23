@@ -8,13 +8,13 @@
     <div id="printTest">
       <div>
         <!-- <h2 style="text-align:center">海宁中奇纸箱包装厂</h2> -->
-        <p style="text-align:center;margin-top:-10px">地址：{{ name }}&nbsp;&nbsp;&nbsp;&nbsp;电话：{{ name }}</p>
+        <p style="text-align:center;margin-top:-10px">地址：{{ address }}&nbsp;&nbsp;&nbsp;&nbsp;电话：{{ phone }}</p>
       </div>
       <div class="jie">
-        <h2 style="text-align:center">2012年09月份月结对账单</h2>
+        <h2 style="text-align:center">{{ shipDate }}年{{ time }}月结对账单</h2>
         <p>客户：{{ name }}</p>
-        <p>电话：{{ name }}</p>
-        <p>传真：{{ name }}</p>
+        <p>电话：{{ mobilePhone }}</p>
+        <p>传真：{{ fax }}</p>
         <p class="dy">打印日期：{{ data }}</p>
       </div>
       <el-table
@@ -62,37 +62,53 @@
 <script>
 // 引入打印
 import { export2Excel } from '@/utils/common'
+import { getCustomerById } from '@/api/finance/verify_printing'
 export default window.$crudCommon({
   name: 'Verify_printing',
   data() {
     return {
     // 表单数据
-      tableData: [
-
-      ]
+      tableData: [],
+      address: '',
+      mobilePhone: '',
+      phone: '',
+      fax: '',
+      shipDate: '',
+      time: '',
+      name: '',
+      data: ''
     }
   },
   created: function() {
     this.tableData = this.$route.params.data
     this.name = this.$route.params.data.[0].name
-    console.log(this.tableData)
+    // 截取到年
+    this.shipDate = this.$route.params.data.[0].shipDate
+    this.shipDate = this.shipDate.substring(0, 4)
+    // 截取到月
+    this.time = this.$route.params.data.[0].shipDate
+    this.time = this.time.substring(6, 7)
+    console.log(this.time)
+    this.customerId = this.tableData.[0].customerId
+    // console.log(this.tableData)
+    getCustomerById(this.customerId).then(res => {
+      // console.log(res)
+      this.address = res.address
+      this.mobilePhone = res.mobilePhone
+      this.phone = res.phone
+      this.fax = res.fax
+    })
+
     var aData = new Date()
     console.log(aData) // Wed Aug 21 2019 10:00:58 GMT+0800 (中国标准时间)
-
     this.data =
       aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
-    console.log(this.data) // 2019-8-20
+    // console.log(this.data) // 2019-8-20
   },
   methods: {
     // 返回
     toBack() {
       this.$router.push('/finance/verify')
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
     },
     // 打印功能
     toExcel() {
@@ -102,37 +118,7 @@ export default window.$crudCommon({
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '对账明细打印单')
     },
-    onLoadTable({ page, value, data }, callback) {
-      // 首次加载去查询对应的值
-      if (value) {
-        this.$message.success('首次查询' + value)
-        callback({
-          id: '0',
-          name: '张三',
-          sex: '男'
-        })
-        return
-      }
-      if (data) {
-        this.$message.success('搜索查询参数' + JSON.stringify(data))
-      }
-      if (page) {
-        this.$message.success('分页参数' + JSON.stringify(page))
-      }
-      // 分页查询信息
-      callback({
-        total: 2,
-        data: [{
-          id: '0',
-          name: '张三',
-          sex: '男'
-        }, {
-          id: '1',
-          name: '李四',
-          sex: '女'
-        }]
-      })
-    },
+
     setVal() {
       this.a = [{
         label: '选项1',
@@ -143,10 +129,10 @@ export default window.$crudCommon({
       }]
     },
 
-    beforeOpen(done, type) {
-      this.setVal()
-      done()
-    },
+    // beforeOpen(done, type) {
+    //   this.setVal()
+    //   done()
+    // },
 
     // 列表前操作方法
     listBefore() {

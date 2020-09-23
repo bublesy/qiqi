@@ -53,7 +53,9 @@ public class BillController {
         BillVO billVO = new BillVO();
         if(query.getCustomerId() != null){
             CustomerInformationDO customerInformationDO = customerInformationService.getById(query.getCustomerId());
-            BeanUtils.copyProperties(customerInformationDO,billVO);
+            if(customerInformationDO != null){
+                BeanUtils.copyProperties(customerInformationDO,billVO);
+            }
         }
         billVO.setOrderDOPageEntity(orderDOPageEntity);
         return billVO;
@@ -61,11 +63,19 @@ public class BillController {
 
     @ApiOperation(value = "应收款列表")
     @GetMapping("")
-    public Collection<List<OrderDO>> getAllBill(){
-        List<OrderDO> list = orderService.list();
-        Map<Long, List<OrderDO>> collect = list.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
-        Collection<List<OrderDO>> values = collect.values();
-        return values;
+    public Map<Long, List<OrderDO>> getAllBill(@RequestParam(value = "page",defaultValue = "1") Long page,
+                                               @RequestParam(value = "count",defaultValue = "10") Long count,
+                                               @RequestParam(required = false) Long customerId,
+                                               @RequestParam(required = false) Date deliveryDate){
+//        List<OrderDO> list = orderService.list(new QueryWrapper<OrderDO>()
+//        .eq(!ObjectUtils.isEmpty(deliveryDate),"delivery_date",deliveryDate)
+//        .like(StringUtils.isNotBlank(name),"name",name));
+//        Map<Long, List<OrderDO>> collect = list.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
+//        Collection<List<OrderDO>> values = collect.values();
+//        int sum = list.stream().map(orderDO -> orderDO.getMoney())..sum();
+        List<OrderDO> allBill = orderService.getAllBill();
+        Map<Long, List<OrderDO>> collect = allBill.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
+        return collect;
     }
 
 }

@@ -27,3 +27,7 @@ export function removeRole(id) {
 export function editRoleMenus(id, data) {
   return request({ url: '/dev/role/' + id + '/menu', data: data, method: 'put' })
 }
+
+export function getCustomerById(id) {
+  return request({ url: '/customer/information/' + id, method: 'get' })
+}
