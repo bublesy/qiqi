@@ -3,6 +3,8 @@ package com.qiqi.warehouse.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.qiqi.common.base.BaseModel;
 import java.time.LocalDateTime;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -25,6 +27,8 @@ public class WarehouseDO extends BaseModel {
      * 入仓单号
      */
     private String warehouseNo;
+    private Date outDate;
+    private String outNo;
 
     private String deliveryDate;
 

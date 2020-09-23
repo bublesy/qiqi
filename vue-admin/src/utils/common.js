@@ -5,3 +5,4 @@ export function export2Excel(tHeader, data, excelName) {
     export_json_to_excel(tHeader, data, excelName)
   })
 }
+

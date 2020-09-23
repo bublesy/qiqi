@@ -297,7 +297,7 @@ export default {
           this.supplier.forEach(a => {
             // this.formAdd.supplier = a.supplier
             if (a.id === this.formAdd.supplier) {
-              this.formAdd.no = a.purchase
+              // this.formAdd.no = a.purchase
             }
           })
         })

@@ -27,3 +27,12 @@ export function removeRole(id) {
 export function editRoleMenus(id, data) {
   return request({ url: '/dev/role/' + id + '/menu', data: data, method: 'put' })
 }
+
+// 毛利估算数据
+export function mlist(data) {
+  return request({ url: '/purchase/order/list', method: 'get', params: data })
+}
+// 毛利估算保存
+export function profit(data) {
+  return request({ url: '/purchase/order', method: 'put', params: data })
+}

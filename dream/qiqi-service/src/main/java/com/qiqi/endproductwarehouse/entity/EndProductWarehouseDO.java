@@ -5,6 +5,8 @@ import com.qiqi.common.base.BaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
+
 /**
  * <p>
  * 产品仓库
@@ -20,6 +22,9 @@ public class EndProductWarehouseDO extends BaseModel {
 
     private static final long serialVersionUID=1L;
 
+
+    private String outNo;
+    private Date outDate;
     private String orderId;
 
     private String carryTo;

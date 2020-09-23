@@ -3,23 +3,26 @@
     <el-main>
       <h1 align="center">对账明细表管理</h1>
       <el-form :inline="true" :model="form" size="mini">
-        <el-select v-model="month" placeholder="请选择月份" size="mini">
-          <el-option
-            v-for="item in month"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+        <el-form-item label="日期:">
+          <el-date-picker
+            v-model="form.time"
+            type="month"
+            placeholder="选择月"
+            value-format="yyyy-MM"
           />
-        </el-select>
-        <el-select v-model="customer" placeholder="请选择客户" size="mini">
-          <el-option
-            v-for="item in customer"
-            :key="item.value"
-            :label="item.label"
-            :value="item.valu"
-          />
-        </el-select>
-        <el-button type="primary" size="mini" @click="toQuery">查询</el-button>
+        </el-form-item>
+        <el-form-item label="客户:" prop="name">
+          <el-select v-model="form.customerId" filterable placeholder="请选择">
+            <el-option
+              v-for="item in tableData1"
+              :key="item.value"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-button type="primary" size="mini" @click="selectData">查询</el-button>
+        <el-button type="primary" size="mini" :disabled="disabled" @click="printing">生成月份打印单</el-button>
         <!-- <el-button type="primary" size="mini" @click="purAdd">新增</el-button> -->
         <!-- <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
         <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
@@ -28,36 +31,34 @@
       <div>
         <el-table
           ref="singleTable"
-          :data="tableData"
+          :data="tableData1"
           highlight-current-row
           style="width: 100%;margin-top:20px"
           border
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" width="55" />
-          <el-table-column v-show="true" prop="customerName" label="客户名称" width="140" />
-          <el-table-column v-show="true" prop="phone" label="客户电话" width="140" />
-          <el-table-column v-show="true" prop="data" label="出货日期" width="140" />
-          <el-table-column v-show="true" prop="shipment" label="出货单号" width="140" />
-          <el-table-column v-show="true" prop="goods" label="物品单号/款号" width="140" />
-          <el-table-column v-show="true" prop="type" label="箱型" width="140" />
-          <el-table-column v-show="true" prop="long" label="长x宽x高" width="140" />
-          <el-table-column v-show="true" prop="number" label="数量" width="140" />
-          <el-table-column v-show="true" prop="price" label="单价" width="140" />
-          <el-table-column v-show="true" prop="money" label="金额" width="140" />
-          <!-- <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" width="143" /> -->
-          <!-- <el-table-column v-show="true" prop="batching" label="配料面积" width="140" />
-          <el-table-column v-show="true" prop="squarePrice" label="平方价" width="140" />
-          <el-table-column v-show="true" prop="unitPrice" label="单价" width="140" />
-          <el-table-column v-show="true" prop="amount" label="金额" width="140" />
-          <el-table-column v-show="true" prop="unit" label="单位" width="140" /> -->
-          <el-table-column label="操作" width="213 ">
+
+          <el-table-column v-show="true" prop="name" label="客户名称" />
+          <el-table-column v-show="true" prop="outNo" label="出货单号" />
+          <el-table-column v-show="true" prop="shipDate" label="出货日期" />
+          <el-table-column v-show="true" prop="deliveryDate" label="交货日期" />
+          <el-table-column v-show="true" prop="modelNo" label="物品单号/款号" />
+          <el-table-column v-show="true" prop="boxType" label="箱型" />
+          <el-table-column v-show="true" label="长x宽x高">
             <template slot-scope="scope">
-              <!-- <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link> -->
-              <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
-              <el-link type="warning" size="small" @click="printing">生成打印单</el-link>
+              {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
             </template>
           </el-table-column>
+          <el-table-column v-show="true" prop="orderNum" label="数量" />
+          <el-table-column v-show="true" prop="perPrice" label="单价" />
+          <el-table-column v-show="true" prop="money" label="金额" />
+          <!-- <el-table-column label="操作" width="213 ">
+            <template slot-scope="scope">
+              <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
+              <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
+              <el-link type="warning" size="small" @click="printing">生成月份打印单</el-link>
+            </template>
+          </el-table-column> -->
         </el-table>
         <!--分页组件-->
         <el-pagination
@@ -72,10 +73,10 @@
         />
       </div>
       <!-- 新增/编辑对账明细单 -->
-      <el-dialog :title="titleType+'对账明细表'" :visible.sync="purAddVisible" :close-on-click-modal="false">
+      <!-- <el-dialog :title="titleType+'对账明细表'" :visible.sync="purAddVisible" :close-on-click-modal="false">
         <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="120px">
-          <el-form-item label="客户名称" prop="supplier">
-            <el-input v-model="formAdd.customerName" disabled>/>
+          <el-form-item label="客户名称" prop="name">
+            <el-input v-model="formAdd.name" disabled>/>
             </el-input></el-form-item>
           <el-form-item label="客户电话" prop="pricing">
             <el-select v-model="formAdd.pricing">
@@ -142,7 +143,7 @@
           <el-button size="small" @click="purAddNo">取 消</el-button>
           <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
         </span>
-      </el-dialog>
+      </el-dialog> -->
 
     </el-main>
   </el-container>
@@ -152,7 +153,7 @@
 <script>
 import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
-import { record } from '@/api/accessories/means'
+import { record, customer } from '@/api/accessories/means'
 
 // import { record } from '@/finance/verify'
 export default {
@@ -161,65 +162,41 @@ export default {
   data() {
     return {
       // 选择月份
-      month: [{
-        value: '选项1',
-        label: '2020-02-11'
-      }, {
-        value: '选项2',
-        label: '2018-06-11'
-      }, {
-        value: '选项3',
-        label: '2014-09-11'
-      }, {
-        value: '选项4',
-        label: '2012-01-11'
-      }, {
-        value: '选项5',
-        label: '2013-02-11'
-      }],
+      month: [],
       // 选择客户
       value: '',
-      customer: [{
-        value: '选项1',
-        label: '平安'
-      }, {
-        value: '选项2',
-        label: '吉安'
-      }, {
-        value: '选项3',
-        label: '上海'
-      }, {
-        value: '选项4',
-        label: '沈阳'
-      }, {
-        value: '选项5',
-        label: '湖南'
-      }],
+      customer: [],
       valu: '',
       form: {
+        count: 10,
+        customerId: '',
         deliveryDate: '',
+        page: 1,
+        fullName: '',
+        date: '',
+        id: '',
+        time: '',
         name: ''
       },
-      formAdd: { },
+      formAdd: {
+        page: 1,
+        count: 10
+      },
       // 表单数据
       tableData: [{
-        customerName: '李四',
-        phone: '15993472323',
-        data: '2020-09-11',
-        shipment: 'JA00668',
-        goods: '466',
-        type: '五箱',
-        long: 780 * 670 * 430,
-        number: 80,
-        price: 7,
-        money: 856
+        customerName: '',
+        phone: '',
+        data: '2020--11',
+        shipment: '',
+        goods: '',
+        type: '',
+        long: '',
+        number: '',
+        price: '',
+        money: ''
 
       }],
-      addTableData: [],
-      customerFor: [{
-        id: '1',
-        name: '迪迦'
-      }],
+      tableData1: [],
       purAddVisible: false,
       purRules: {
         supplier: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
@@ -227,45 +204,38 @@ export default {
         billingTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         deliveryTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
-      supplierFor: [{
-        id: '1',
-        name: '腾讯'
-      }, {
-        id: '2',
-        name: '阿里'
-      }],
-      pricingFor: [{
-        id: '1',
-        name: '净边'
-      }, {
-        id: '2',
-        name: '净宽'
-      }],
       titleType: '',
       taskNumberVisible: false,
-      taskNumberTable: [{
-        taskNumber: '1',
-        taskName: '就这?'
-      }, {
-        taskNumber: '2',
-        taskName: '就这a ?'
-      }],
-      modifyTaskTable: [{
-        customerName: '张三',
-        taskNumber: '2'
-      }],
       multipleSelection: [],
-      indexId: {}
+      indexId: {},
+      fullNames: [],
+      disabled: true
 
     }
   },
   created() {
-    record(this.form).then(res => {
-      console.log(res)
-    })
+    this.init()
   },
   methods: {
-    toQuery() {
+    supplierList() {},
+    // 获取列表数据
+    loadData() {
+      record(this.form).then(res => {
+        this.tableData1 = res.orderDOPageEntity.list
+        console.log(this.tableData1)
+        this.pagination.total = res.orderDOPageEntity.total
+      })
+      // 获取用户数据
+      customer().then(res => {
+        console.log(res)
+        this.tableData = res
+
+        // this.pagination.total = res.total
+      })
+    },
+    selectData() {
+      this.loadData()
+      this.disabled = false
     },
     // 导出
     toExcel() {
@@ -302,7 +272,8 @@ export default {
     },
     // 打印
     printing() {
-      this.$router.push('/finance/verify_printing')
+      // tableData1
+      this.$router.push({ name: 'Verify_printing', params: { 'data': this.tableData1 }})
     },
     handleSelectionChange(row) {
       this.multipleSelection = row

@@ -1,62 +1,41 @@
 <template>
   <div class="app-container">
-    <!-- <el-select v-model="value" placeholder="请选择月份">
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select>
-    <el-select v-model="value" placeholder="请选择客户">
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select> -->
     <el-button @click="toBack">返回</el-button>
     <el-button v-print="'#printTest'" type="primary">打印</el-button>
     <el-button type="primary" @click="toExcel">导出</el-button>
-    <!-- <el-pagination
-      style="float:right;"
-      :current-page="currentPage4"
-      :page-sizes="[10, 20, 30, 50]"
-      :page-size="1"
-      layout="prev, pager, next, jumper"
-      :total="10"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    /> -->
     <div id="printTest" class="biaoge">
       <h2 style="text-align:center;padding-top:10px">客户应收款总表</h2>
-      <p style="text-align:center;  line-height: 2px;">打印日期:{{ value }}</p>
-      <table>
-        <tr>
-          <th>客户</th>
-          <th>前期</th>
-          <th>2012年-04月</th>
-          <th>2012年-05月</th>
-          <th>2012年-06月</th>
-          <th>2012年-07月</th>
-          <th>2012年-08月</th>
-          <th>2012年-09月</th>
-          <th>合计</th>
-
-        </tr>
-        <tr v-for="item in tableData" :key="item.id">
-          <td>{{ item.customer }}</td>
-          <td>{{ item.early }}</td>
-          <td>{{ item.data1 }}</td>
-          <td>{{ item.data2 }}</td>
-          <td>{{ item.data3 }}</td>
-          <td>{{ item.data4 }}</td>
-          <td>{{ item.data5 }}</td>
-          <td>{{ item.data6 }}</td>
-          <td>{{ item.total }}</td>
-        </tr>
-      </table>
+      <p style="text-align:center;  line-height: 2px;">打印日期:{{ data }}</p>
+      <el-table
+        :data="tableData"
+        border
+        style="width: 400,margin-top:20px"
+      >
+        <el-table-column
+          prop="name"
+          label="客户"
+        />
+        <el-table-column
+          prop="outNo"
+          label="2012年-05月"
+        />
+        <el-table-column
+          prop="modelNo"
+          label="2012年-06月"
+        />
+        <el-table-column
+          prop="boxType"
+          label="2012年-07月"
+        />
+        <el-table-column
+          prop="unit"
+          label="2012年-08月"
+        />
+        <el-table-column
+          prop="unit"
+          label="合计"
+        />
+      </el-table>
     </div>
   </div>
 </template>
@@ -64,33 +43,20 @@
 <script>
 import { export2Excel } from '@/utils/common'
 export default window.$crudCommon({
-  name: 'Receivables',
+  name: 'Receivables_printing',
   data() {
     return {
-      tableData: [
-        {
-          customer: 12,
-          early: 202,
-          data1: 12,
-          data2: 780,
-          data3: 90,
-          data4: 13.09,
-          data5: 7,
-          data6: 7,
-          total: 856
-        }
-
-      ],
+      tableData: [],
       a: []
     }
   },
   created: function() {
+    this.tableData = this.$route.params.data
     var aData = new Date()
     console.log(aData) // Wed Aug 21 2019 10:00:58 GMT+0800 (中国标准时间)
-
     this.data =
       aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
-    console.log(this.data) // 2019-8-20
+    // console.log(this.data) // 2019-8-20
   },
   methods: {
     // 返回
