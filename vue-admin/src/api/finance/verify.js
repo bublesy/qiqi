@@ -29,5 +29,5 @@ export function editRoleMenus(id, data) {
 }
 // 对账明细表
 export function record(data) {
-  return request({ url: '/order/bill', method: 'post', data: data })
+  return request({ url: '/bill', method: 'post', data: data })
 }
