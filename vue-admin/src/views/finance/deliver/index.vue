@@ -23,48 +23,52 @@
     </el-dialog>
     <el-form ref="form" :model="form" label-width="80px" inline>
       <el-form-item label="单据类型:">
-        <el-select v-model="form.region" placeholder="请选择单据类型">
-          <el-option label="区域一" value="shanghai" />
-          <el-option label="区域二" value="beijing" />
-        </el-select>
+        <el-input v-model="form.typeNo" disabled />
       </el-form-item>
       <el-form-item label="回签状态:">
-        <el-select v-model="form.region" placeholder="请选择回签状态">
-          <el-option label="区域一" value="shanghai" />
-          <el-option label="区域二" value="beijing" />
+        <el-select v-model="form.signBackState" placeholder="请选择回签状态">
+          <el-option label="已回签" value="已回签" />
+          <el-option label="未回签" value="未回签" />
         </el-select>
-      </el-form-item>
-      <el-form-item label="活动时间:">
-        <el-col :span="18">
-          <el-date-picker v-model="form.date1" type="date" placeholder="选择日期" style="width: 100%;" />
-        </el-col>
       </el-form-item>
       <el-form-item label="账款年月:">
         <el-col :span="18">
-          <el-date-picker v-model="form.date1" type="date" placeholder="选择日期" style="width: 100%;" />
+          <el-date-picker v-model="form.accountMonthly" type="date" placeholder="选择日期" style="width: 100%;" />
         </el-col>
       </el-form-item>
     </el-form>
     <el-form ref="form" :model="form" label-width="80px" inline>
       <el-form-item label="出货单号:">
-        <el-input v-model="form.user" placeholder="请选择出货单号" />
-      </el-form-item>
-      <el-form-item label="车号:">
-        <el-select v-model="form.region" placeholder="请选择车号">
-          <el-option label="区域一" value="shanghai" />
-          <el-option label="区域二" value="beijing" />
+        <el-select v-model="form.deliveryOrderNo" placeholder="请选择车号">
+          <el-option
+            v-for="item in deliveryOrderNoFor"
+            :key="item.value"
+            :label="item.value"
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
+      <el-form-item label="车号:">
+        <el-input v-model="form.carNo" />
+      </el-form-item>
       <el-form-item label="送货人:">
-        <el-select v-model="form.region" placeholder="请选择送货人">
-          <el-option label="区域一" value="shanghai" />
-          <el-option label="区域二" value="beijing" />
+        <el-select v-model="form.deliveryman" placeholder="请选择" @change="specificationChange">
+          <el-option
+            v-for="item in deliverymanFor"
+            :key="item.value"
+            :label="item.value"
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="业务员:">
-        <el-select v-model="form.region" placeholder="请选择业务员">
-          <el-option label="区域一" value="shanghai" />
-          <el-option label="区域二" value="beijing" />
+        <el-select v-model="form.theSalesman" placeholder="请选择" @change="specificationChange">
+          <el-option
+            v-for="item in deliverymanFor"
+            :key="item.value"
+            :label="item.value"
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
     </el-form>

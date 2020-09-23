@@ -44,7 +44,7 @@ public class CardboardInventoryController {
                                                                       @RequestParam(value = "time") String time) {
         LambdaQueryWrapper<CardboardInventoryDO> wrapper = new LambdaQueryWrapper<CardboardInventoryDO>();
         wrapper.like(!ObjectUtils.isEmpty(time),CardboardInventoryDO::getCreatedTime,time);
-        IPage<CardboardInventoryDO> iPage = cardboardInventoryService.page(new Page<>(page,size));
+        IPage<CardboardInventoryDO> iPage = cardboardInventoryService.page(new Page<>(page,size),wrapper);
         //todo: 需要转Vo
 
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<CardboardInventoryDO>>() {}, iPage.getRecords()));

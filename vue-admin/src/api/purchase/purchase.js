@@ -4,8 +4,16 @@ export function add(data) {
   return request({ url: '/purchase/order/add', data: data, method: 'post' })
 }
 
+export function returnAdd(data) {
+  return request({ url: '/purchase/order/returnAdd', data: data, method: 'post' })
+}
+
 export function list(params) {
   return request({ url: '/purchase/order/list', method: 'get', params: params })
+}
+
+export function purList(params) {
+  return request({ url: '/purchase/order/purList', method: 'get', params: params })
 }
 
 export function listByIds(params) {
