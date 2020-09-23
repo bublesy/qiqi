@@ -33,5 +33,7 @@ public interface OrderMapper extends BaseMapper<OrderDO> {
                            @Param("quantityOverdue")  String quantityOverdue,@Param("time")  String time,
                            @Param("date") String date);
 
-    List<OrderDO> getAllOrder();
+    List<OrderDO> getAllOrder(Long page,Long count,Long customerId,Date deliveryDate);
+
+    List<OrderDO> getTotal(Date deliveryDate);
 }

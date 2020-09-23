@@ -73,9 +73,14 @@ public class BillController {
 //        Map<Long, List<OrderDO>> collect = list.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
 //        Collection<List<OrderDO>> values = collect.values();
 //        int sum = list.stream().map(orderDO -> orderDO.getMoney())..sum();
-        List<OrderDO> allBill = orderService.getAllBill();
+        List<OrderDO> allBill = orderService.getAllBill(page,count,customerId,deliveryDate);
         Map<Long, List<OrderDO>> collect = allBill.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
         return collect;
     }
 
+    @ApiOperation(value = "总计")
+    @GetMapping("/total")
+    public List<OrderDO> getTotal(@RequestParam Date deliveryDate){
+        return orderService.getTotal(deliveryDate);
+    }
 }
