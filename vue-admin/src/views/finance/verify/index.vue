@@ -3,19 +3,20 @@
     <el-main>
       <h1 align="center">对账明细表管理</h1>
       <el-form :inline="true" :model="form" size="mini">
-        <el-form-item label="日期:" prop="deliveryDate">
+        <el-form-item label="日期:">
           <el-date-picker
-            v-model="form.deliveryDate"
-            type="date"
-            placeholder="选择日期"
+            v-model="form.time"
+            type="month"
+            placeholder="选择月"
+            value-format="yyyy-MM"
           />
         </el-form-item>
-        <el-form-item label="客户:" prop="fullName">
+        <el-form-item label="客户:" prop="name">
           <el-select v-model="form.customerId" filterable placeholder="请选择">
             <el-option
-              v-for="item in tableData"
+              v-for="item in tableData1"
               :key="item.value"
-              :label="item.fullName"
+              :label="item.name"
               :value="item.id"
             />
           </el-select>
@@ -167,13 +168,15 @@ export default {
       customer: [],
       valu: '',
       form: {
-        'count': 10,
-        'customerId': '',
-        'deliveryDate': '',
-        'page': 1,
+        count: 10,
+        customerId: '',
+        deliveryDate: '',
+        page: 1,
         fullName: '',
         date: '',
-        id: ''
+        id: '',
+        time: '',
+        name: ''
       },
       formAdd: {
         page: 1,
@@ -219,7 +222,7 @@ export default {
     loadData() {
       record(this.form).then(res => {
         this.tableData1 = res.orderDOPageEntity.list
-        console.log(res)
+        console.log(this.tableData1)
         this.pagination.total = res.orderDOPageEntity.total
       })
       // 获取用户数据
