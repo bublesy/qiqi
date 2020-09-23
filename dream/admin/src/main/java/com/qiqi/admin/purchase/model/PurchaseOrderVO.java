@@ -18,6 +18,11 @@ public class PurchaseOrderVO {
     private String pBilling;
     private String endProductPos;
 
+    private String inProductDate;
+
+    private String returnNum;
+
+
     private String position;
     private Long pid;
 

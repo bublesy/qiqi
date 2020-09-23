@@ -38,7 +38,7 @@
           <el-table-column v-show="true" prop="warehousingDate" label="入仓日期" width="160" />
           <el-table-column v-show="true" prop="warehousingDate" label="入仓日期" width="160" />
           <el-table-column v-show="true" prop="position" label="仓位" width="140" />
-          <el-table-column v-show="true" prop="checkNum" label="实际库存数量" width="140" />
+          <el-table-column v-show="true" prop="position" label="实际库存数量" width="140" />
           <el-table-column v-show="true" prop="checkDate" label="盘点日期" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">

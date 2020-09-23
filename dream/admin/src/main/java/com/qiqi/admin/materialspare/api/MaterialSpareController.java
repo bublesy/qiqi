@@ -1,6 +1,7 @@
 package com.qiqi.admin.materialspare.api;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qiqi.cardboardinvenroty.entity.CardboardInventoryDO;
 import com.qiqi.materialspare.entity.MaterialSpareDO;
 import cn.hutool.core.convert.Convert;
@@ -43,9 +44,12 @@ public class MaterialSpareController {
                                                             @RequestParam(value = "count",defaultValue = "10") Long count,
                                                             @RequestParam(value = "time") String time,
                                                             @RequestParam(value = "material") String material) {
-        LambdaQueryWrapper<MaterialSpareDO> wrapper = new LambdaQueryWrapper<MaterialSpareDO>();
-        wrapper.like(!ObjectUtils.isEmpty(time),MaterialSpareDO::getCreatedTime,time);
-        IPage<MaterialSpareDO> iPage = materialSpareService.page(new Page<>(page,count));
+        QueryWrapper<MaterialSpareDO> wrapper = new QueryWrapper<MaterialSpareDO>();
+        wrapper.like(!ObjectUtils.isEmpty(time),"created_time",time)
+                .like(!ObjectUtils.isEmpty(material),"material_id",material);
+//        wrapper.like(!ObjectUtils.isEmpty(time),"created_time",MaterialSpareDO::getCreatedTime,time);
+//        wrapper.like(!ObjectUtils.isEmpty(material),MaterialSpareDO::getMaterialId,material);
+        IPage<MaterialSpareDO> iPage = materialSpareService.page(new Page<>(page,count),wrapper);
         //todo: 需要转Vo
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<MaterialSpareDO>>() {}, iPage.getRecords()));
     }

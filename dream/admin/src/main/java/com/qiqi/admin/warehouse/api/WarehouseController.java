@@ -57,7 +57,7 @@ public class WarehouseController {
         //todo: 需要转Vo
         LambdaQueryWrapper<WarehouseDO> wrapper = new LambdaQueryWrapper<WarehouseDO>();
         wrapper.like(!ObjectUtils.isEmpty(time),WarehouseDO::getCreatedTime,time);
-        IPage<WarehouseDO> iPage = warehouseService.page(new Page<>(page,size));
+        IPage<WarehouseDO> iPage = warehouseService.page(new Page<>(page,size),wrapper);
         //todo: 需要转Vo
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<WarehouseVO>>() {}, iPage.getRecords()));
     }
@@ -103,13 +103,13 @@ public class WarehouseController {
         Long id = Long.parseLong(join);
         WarehouseDO warehouseDO = new WarehouseDO();
         WarehouseDO byId = warehouseService.getById(join);
-        String checkNum = byId.getCheckNum();
+        String checkNum = byId.getPosition();
         int check = Integer.parseInt(checkNum);
         String delivery = byId.getDeliveryQuantity();
         int del = Integer.parseInt(delivery);
         int i = check - del;
         String s = String.valueOf(i);
-        warehouseDO.setCheckNum(s);
+        warehouseDO.setPosition(s);
         warehouseDO.setCheckDate(df.format(new Date()));
         warehouseDO.setId(id);
         warehouseDO.setDeliveryStatus("已送货");

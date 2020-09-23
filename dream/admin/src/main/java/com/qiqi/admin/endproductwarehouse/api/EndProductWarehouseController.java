@@ -98,13 +98,13 @@ public class EndProductWarehouseController {
         Long id = Long.parseLong(join);
         EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
         EndProductWarehouseDO byId = endProductWarehouseService.getById(join);
-        String checkNum = byId.getCheckNum();
+        String checkNum = byId.getEndProductPos();
         int check = Integer.parseInt(checkNum);
         String delivery = byId.getDeliveryQuantity();
         int del = Integer.parseInt(delivery);
         int i = check - del;
         String s = String.valueOf(i);
-        endProductWarehouseDO.setCheckNum(s);
+        endProductWarehouseDO.setEndProductPos(s);
         endProductWarehouseDO.setCheckDate(df.format(new Date()));
         endProductWarehouseDO.setId(id);
         endProductWarehouseDO.setCarryTo("已送货");

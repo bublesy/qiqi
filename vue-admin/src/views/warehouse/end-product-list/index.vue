@@ -47,7 +47,7 @@
           <el-table-column v-show="true" prop="unitPrice" label="成本价" width="140" />
           <el-table-column v-show="true" prop="endProductPos" label="成品仓位" width="140" />
           <el-table-column v-show="true" prop="warehousingData" label="入仓时间" width="160" />
-          <el-table-column v-show="true" prop="checkNum" label="实际库存数量" width="140" />
+          <el-table-column v-show="true" prop="endProductPos" label="实际库存数量" width="140" />
           <el-table-column v-show="true" prop="checkDate" label="盘点时间" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
