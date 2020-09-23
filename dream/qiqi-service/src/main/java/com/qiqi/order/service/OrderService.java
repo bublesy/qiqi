@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.qiqi.order.entity.OrderDO;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -27,4 +28,6 @@ public interface OrderService extends IService<OrderDO> {
      * @return
      */
     IPage<OrderDO> GetList(Page<Object> objectPage, String customerName, String quantityOverdue, String time, String date);
+
+    List<OrderDO> getAllBill();
 }

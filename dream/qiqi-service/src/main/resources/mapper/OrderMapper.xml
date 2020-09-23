@@ -18,4 +18,7 @@ p.supplier_id,p.billingDate as pBilling,p.return_num  from  orders o left join p
             and  o.created_time like concat('%', #{time} , '%')
         </if>
     </select>
+    <select id="getAllOrder" resultType="com.qiqi.order.entity.OrderDO">
+        SELECT name,SUM(`money`) as money , delivery_date as myDate ,customer_id FROM `orders` WHERE `is_deleted`=0 GROUP BY customer_id,DATE_FORMAT(`delivery_date`,"%Y%m");
+    </select>
 </mapper>

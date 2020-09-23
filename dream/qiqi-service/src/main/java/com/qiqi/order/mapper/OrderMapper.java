@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -31,4 +32,6 @@ public interface OrderMapper extends BaseMapper<OrderDO> {
     IPage<OrderDO> getList(@Param("objectPage") Page<Object> objectPage,@Param("customerName")  String customerName,
                            @Param("quantityOverdue")  String quantityOverdue,@Param("time")  String time,
                            @Param("date") String date);
+
+    List<OrderDO> getAllOrder();
 }

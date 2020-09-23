@@ -85,8 +85,9 @@
         <el-table-column prop="making" label="制单人" width="120" />
         <el-table-column prop="auditTime" label="审核时间" width="120" />
         <el-table-column prop="audit" label="审核人" width="120" /> -->
-        <el-table-column label="操作" width="600">
+        <el-table-column label="操作" width="650">
           <template slot-scope="scope">
+            <el-button type="info" size="mini" @click="view(scope.row.id)">查看</el-button>
             <el-button type="warning" size="mini" :disabled="scope.row.audit==='审核'?true:false" @click="updated(scope.row.id)">编辑</el-button>
             <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
               <el-button slot="reference" type="danger" size="mini" :disabled="scope.row.audit==='审核'?true:false">删除</el-button>
@@ -94,8 +95,10 @@
             <el-button type="success" size="mini" @click="singlePrint(scope.row)">打印</el-button>
             <el-button type="warning" size="mini" @click="orderAgain(scope.row.id)">再次下单</el-button>
             <el-button type="primary" size="mini" @click="generate(scope.row)">生成施工单</el-button>
-            <el-button type="primary" size="mini" :disabled="scope.row.audit==='审核'?true:false" @click="audit(scope.row.id)">审核</el-button>
-            <el-button type="primary" size="mini" @click="refund(scope.row.id)" @init="initTable">退货</el-button>
+            <el-popconfirm title="审核后将不可更改!" @onConfirm="audit(scope.row.id)">
+              <el-button slot="reference" type="primary" size="mini" :disabled="scope.row.audit==='审核'?true:false">审核</el-button>
+            </el-popconfirm>
+            <el-button type="primary" size="mini" @click="refund(scope.row)" @init="initTable">退货</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -109,8 +112,8 @@
         @current-change="handleCurrentChange"
       />
     </el-card>
-    <editDialog :id="id" :dialog="editDialog" :flag="flag" :status="status" @init="initTable" />
-    <refundDialog :dialog="refundDialog" :refund-id="refundId" />
+    <editDialog :id="id" :dialog="editDialog" :flag="flag" :status="status" :is-view="isView" @init="initTable" />
+    <refundDialog :dialog="refundDialog" :refund-id="refundId" :send-num="sendNum" :refund-num2="refundNum2" @init="initTable" />
   </div>
 </template>
 
@@ -128,6 +131,8 @@ export default {
       id: '测试施工单id',
       total: 0,
       refundId: '',
+      sendNum: 0,
+      refundNum2: '',
       form: {
         page: 1,
         count: 10,
@@ -149,7 +154,8 @@ export default {
       boxTypeOptions: [],
       supplierOptions: [],
       select: [],
-      status: false
+      status: false,
+      isView: false
 
     }
   },
@@ -157,8 +163,17 @@ export default {
     this.initTable()
   },
   methods: {
-    refund(id) {
-      this.refundId = id
+    view(id) {
+      this.id = id
+      this.isView = true
+      this.editDialog.show = true
+    },
+    refund(row) {
+      this.sendNum = row.sendNum
+      this.refundNum2 = row.refundNum
+      console.log(this.sendNum)
+      console.log(this.refundNum)
+      this.refundId = row.id
       this.refundDialog.show = true
     },
     audit(id) {
@@ -188,6 +203,7 @@ export default {
     orderAgain(id) {
       this.flag = true
       this.id = id
+      this.isView = false
       this.status = true
       this.editDialog.show = true
     },
@@ -198,6 +214,7 @@ export default {
     },
     updated(id) {
       this.flag = false
+      this.isView = false
       this.id = id
       this.editDialog.show = true
     },
@@ -230,8 +247,8 @@ export default {
     },
     toExcel() {
       var list = this.tableData
-      const th = ['任务编号', '客户名称', '客户单号', '款号', '箱型', '材质', '纸箱尺寸(mm)', '订单数量', '纸板到货数量', '已产数量', '成品仓位', '已送数量', '下单日期', '交货日期', '仓库状态']
-      const filterVal = ['no', 'name', 'customerNo', 'modelNo', 'boxType', 'material', 'cartonSize', 'orderNum', 'incomeNum', 'productNum', 'productSpace', 'sendNum', 'orderDate', 'deliveryDate', 'wosState']
+      const th = ['任务编号', '客户名称', '客户单号', '款号', '箱型', '材质', '纸箱尺寸(mm)', '订单数量', '纸板到货数量', '已产数量', '成品仓位', '已送数量', '退货数量', '下单日期', '交货日期', '仓库状态']
+      const filterVal = ['no', 'name', 'customerNo', 'modelNo', 'boxType', 'material', 'cartonSize', 'orderNum', 'incomeNum', 'productNum', 'productSpace', 'sendNum', 'refundNum', 'orderDate', 'deliveryDate', 'wosState']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '客户订单')
     },
