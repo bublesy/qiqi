@@ -1,6 +1,6 @@
 <template>
-  <div id="printTest" style="margin:30px">
-    <p class="font">订单未产总表</p>
+  <div style="margin:30px">
+
     <el-button type="info" style="margin-left:84%" @click="back">返回</el-button>
     <el-button v-print="'#printTest'" type="success">打印</el-button>
     <!-- <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
@@ -15,39 +15,41 @@
         <el-button size="mini" type="primary">查询</el-button>
       </el-form-item>
     </el-form> -->
-    <span style="margin-left:25%">制表:{{ name }}</span>
-    <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
-    <el-table
-      ref="multipleTable"
-      :data="tableData"
-      tooltip-effect="dark"
-      style="width: 100%"
-      border
-      stripe
-    >
-      <el-table-column type="selection" width="55" />
-      <el-table-column prop="name" label="客户名称" width="120" />
-      <el-table-column prop="no" label="任务编号" width="120" />
-      <el-table-column prop="customerNo" label="客户单号" width="120" />
-      <el-table-column prop="modelNo" label="款号" width="120" />
-      <el-table-column prop="boxType" label="箱型" width="120" />
-      <el-table-column prop="material" label="材质" width="120" />
-      <el-table-column prop="supplier" label="供方" width="120" />
-      <el-table-column prop="incomeNum" label="来料数量" width="120" />
-      <el-table-column prop="" label="尺寸" width="120">
-        <template slot-scope="scope">
-          {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="orderNum" label="订单数量" width="120" />
-      <el-table-column prop="productNum" label="已产数量" width="120" />
-      <el-table-column prop="" label="未产数量" width="120">
-        <template slot-scope="scope">
-          {{ scope.row.orderNum - scope.row.productNum }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="deliveryDate" label="交货日期" width="120" />
-    </el-table>
+    <el-card id="printTest">
+      <p class="font">订单未产总表</p>
+      <span style="margin-left:25%">制表:{{ name }}</span>
+      <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
+      <el-table
+        ref="multipleTable"
+        :data="tableData"
+        tooltip-effect="dark"
+        style="width: 100%"
+        border
+        stripe
+      >
+        <el-table-column type="selection" width="55" />
+        <el-table-column prop="name" label="客户名称" width="120" />
+        <el-table-column prop="no" label="任务编号" width="120" />
+        <el-table-column prop="customerNo" label="客户单号" width="120" />
+        <el-table-column prop="modelNo" label="款号" width="120" />
+        <el-table-column prop="boxType" label="箱型" width="120" />
+        <el-table-column prop="material" label="材质" width="120" />
+        <el-table-column prop="supplier" label="供方" width="120" />
+        <el-table-column prop="incomeNum" label="来料数量" width="120" />
+        <el-table-column prop="" label="尺寸" width="120">
+          <template slot-scope="scope">
+            {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="orderNum" label="订单数量" width="120" />
+        <el-table-column prop="productNum" label="已产数量" width="120" />
+        <el-table-column prop="" label="未产数量" width="120">
+          <template slot-scope="scope">
+            {{ scope.row.orderNum - scope.row.productNum }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="deliveryDate" label="交货日期" width="120" />
+      </el-table>
     <!-- <el-pagination
       :current-page="form.page"
       :page-sizes="[10, 20, 30, 40]"
@@ -57,6 +59,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     /> -->
+    </el-card>
   </div>
 </template>
 

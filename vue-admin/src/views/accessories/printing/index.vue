@@ -40,23 +40,41 @@
       <el-table
         :data="tableData"
         border
-        style="width: 400,margin-top:20px"
+        highlight-current-row
+
+        style="width:60%,margin-top:20px"
       >
         <el-table-column
+          prop="supplierId"
+          label="供应商"
+        />
+        <el-table-column
+          prop="pickingPeople"
+          label="领料人"
+        />
+        <el-table-column
           prop="date"
-          label="编码"
+          label="日期"
         />
         <el-table-column
           prop="specifications"
           label="品名规格"
         />
         <el-table-column
-          prop="company"
+          prop="unit"
           label="单位"
         />
         <el-table-column
           prop="number"
           label="数量"
+        />
+        <el-table-column
+          prop="perPrice"
+          label="单价"
+        />
+        <el-table-column
+          prop="money"
+          label="金额"
         />
       </el-table>
     </div>
@@ -73,6 +91,7 @@ export default {
   data() {
     return {
       tableData: [],
+      supplierId: '',
       specifications: '',
       company: '',
       number: '',
@@ -92,8 +111,8 @@ export default {
   methods: {
     // 返回
     toBack() {
-      // this.$router.push('/accessories/stock')
-      this.closeTag()
+      this.$router.push('/accessories/stock')
+      // this.closeTag()
     },
 
     toExcel() {

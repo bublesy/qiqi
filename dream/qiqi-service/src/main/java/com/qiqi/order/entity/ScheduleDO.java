@@ -33,6 +33,8 @@ public class ScheduleDO extends BaseModel {
 
     private String finished;
 
+    private Integer modCount;
+
     /**
      * 任务编号
      */

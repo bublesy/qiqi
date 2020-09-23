@@ -1,6 +1,5 @@
 <template>
-  <div id="printTest" style="margin:30px;width:100%;height:100%">
-    <p class="font">出货日报表</p>
+  <div style="margin:30px;width:100%;height:100%">
     <el-button type="info" style="margin-left:84%" @click="back">返回</el-button>
     <el-button v-print="'#printTest'" type="success">打印</el-button>
     <!-- <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
@@ -17,28 +16,30 @@
         <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
       </el-form-item>
     </el-form> -->
-    <span style="margin-left:25%">制表:{{ name }}</span>
-    <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
-    <el-table
-      ref="multipleTable"
-      :data="tableData"
-      tooltip-effect="dark"
-      style="width: 100%"
-      border
-      stripe
-    >
-      <el-table-column type="selection" width="55" />
-      <el-table-column prop="name" label="客户名称" width="120" />
-      <el-table-column prop="deliveryDate" label="出货日期" width="120" />
-      <el-table-column prop="outNo" label="出货单号" width="120" />
-      <el-table-column prop="boxType" label="箱型" width="120" />
-      <el-table-column prop="sendNum" label="出货数量" width="120" />
-      <el-table-column prop="perPrice" label="单价" width="120" />
-      <el-table-column prop="money" label="金额" width="120" />
-      <el-table-column prop="sign" label="回签状态" width="120" />
-    </el-table>
-    <p class="a">签收人:</p>
-    <p class="b">签收时间:</p>
+    <el-card id="printTest">
+      <p class="font">出货日报表</p>
+      <span style="margin-left:25%">制表:{{ name }}</span>
+      <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
+      <el-table
+        ref="multipleTable"
+        :data="tableData"
+        tooltip-effect="dark"
+        style="width: 100%"
+        border
+        stripe
+      >
+        <el-table-column type="selection" width="55" />
+        <el-table-column prop="name" label="客户名称" width="120" />
+        <el-table-column prop="deliveryDate" label="出货日期" width="120" />
+        <el-table-column prop="outNo" label="出货单号" width="120" />
+        <el-table-column prop="boxType" label="箱型" width="120" />
+        <el-table-column prop="sendNum" label="出货数量" width="120" />
+        <el-table-column prop="perPrice" label="单价" width="120" />
+        <el-table-column prop="money" label="金额" width="120" />
+        <el-table-column prop="sign" label="回签状态" width="120" />
+      </el-table>
+      <p class="a">签收人:</p>
+      <p class="b">签收时间:</p>
     <!-- <el-pagination
       :current-page="form.page"
       :page-sizes="[10, 20, 30, 40]"
@@ -48,6 +49,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     /> -->
+    </el-card>
   </div>
 </template>
 

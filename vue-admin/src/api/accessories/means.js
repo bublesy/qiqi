@@ -31,5 +31,9 @@ export function getUser() {
 
 // 对账明细表
 export function record(data) {
-  return request({ url: '/order/bill', method: 'post', data: data })
+  return request({ url: '/bill', method: 'post', data: data })
+}
+// 客户数据
+export function customer() {
+  return request({ url: '/order/customer', method: 'get' })
 }

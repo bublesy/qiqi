@@ -1,9 +1,9 @@
 <template>
-  <div id="print" style="padding:10px">
-    <p class="font">客户订单</p>
+  <div style="padding:10px">
     <el-button v-print="'#print'" size="mini" type="success">打印</el-button>
     <el-button size="mini" type="info" @click="back">返回</el-button>
-    <el-card>
+    <el-card id="print">
+      <p class="font">客户订单</p>
       <el-table
         ref="multipleTable"
         :data="tableData"

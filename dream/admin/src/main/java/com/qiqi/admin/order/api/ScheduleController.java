@@ -85,8 +85,10 @@ public class ScheduleController {
     @ApiOperation(value = "新增排期")
     @PostMapping("")
     public Boolean saveSchedule(@RequestBody ScheduleDO scheduleDO) {
-        ScheduleDO schedule = scheduleService.getById(scheduleDO);
-        if(schedule != null && !schedule.getDate().equals(scheduleDO.getDate())){
+        if(scheduleDO == null){
+            return false;
+        }
+        if(scheduleDO.getDate() != null && scheduleDO.getModCount() > 0){
             scheduleDO.setDate(TimeAddEight.formatTimeEight(scheduleDO.getDate()));
         }
         boolean b = scheduleService.saveOrUpdate(scheduleDO);

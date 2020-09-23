@@ -1,64 +1,66 @@
 <template>
-  <div id="printTest" class="app-container">
+  <div class="app-container">
     <el-button type="info" style="margin-left:84%" @click="back">返回</el-button>
     <el-button v-print="'#printTest'" type="success">打印</el-button>
-    <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
-    <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
-    <div class="dh">
-      <p>订货单：<span style="  font-weight: bolder;">{{ tableData.name }}</span></p>
-      <div>
-        <p>任务编号：<span style="  font-weight: bolder;font-size: 20px;">{{ tableData.no }}</span></p>
-        <p style="margin-top:-10px">交货日期：{{ tableData.deliveryDate }}</p>
+    <el-card id="printTest">
+      <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
+      <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
+      <div class="dh">
+        <p>订货单：<span style="  font-weight: bolder;">{{ tableData.name }}</span></p>
+        <div>
+          <p>任务编号：<span style="  font-weight: bolder;font-size: 20px;">{{ tableData.no }}</span></p>
+          <p style="margin-top:-10px">交货日期：{{ tableData.deliveryDate }}</p>
+        </div>
       </div>
-    </div>
-    <table>
-      <tr>
-        <td>客户单号</td>
-        <td class="center">{{ tableData.no }}</td>
-        <td>产品名称</td>
-        <td class="center">{{ tableData.boxType }}   </td>
-        <td>纸箱尺寸</td>
-        <td>{{ tableData.length }}*{{ +tableData.width }}*{{ tableData.length }}</td>
-        <td class="center">订单数量</td>
-        <td class="center">{{ tableData.orderNum }}</td>
-        <td class="center">纸箱面积</td>
-        <td class="center">{{ tableData.paperArea }}</td>
-      </tr>
-      <tr>
-        <td>款号/型号</td>
-        <td class="center">{{ tableData.modelNo }}</td>
-        <td>愣&nbsp;&nbsp;&nbsp;&nbsp;型</td>
-        <td class="center">{{ tableData.stare }} </td>
-        <td>纸片尺寸</td>
-        <td class="center">{{ tableData.paperLength }}*{{ +tableData.paperWidth }}</td>
-        <td class="center">颜色</td>
-        <td class="center">{{ tableData.color }}</td>
-        <td>总面积:</td>
-        <td class="center">{{ tableData.totalArea }}</td>
-      </tr>
-      <tr>
-        <td>材质</td>
-        <td class="center">{{ tableData.material }}</td>
-        <td>生产流程</td>
-        <td class="center" colspan="3"><span v-if="tableData.partialPressure">分压</span>&nbsp;&nbsp;
-          <span v-if="tableData.pasting">裱糊</span>&nbsp;&nbsp;
-          <span v-if="tableData.printing">印刷</span>&nbsp;&nbsp;
-          <span v-if="tableData.grooving">开槽</span>&nbsp;&nbsp;
-          <span v-if="tableData.dieCutting">模切</span>&nbsp;&nbsp;
-        </td>
-        <td>结合</td>
-        <td class="center">{{ tableData.combine }}</td>
-        <td>是否常规</td>
-        <td>
-          <input type="checkbox" :checked="tableData.conventional"> 是
+      <table>
+        <tr>
+          <td>客户单号</td>
+          <td class="center">{{ tableData.no }}</td>
+          <td>产品名称</td>
+          <td class="center">{{ tableData.boxType }}   </td>
+          <td>纸箱尺寸</td>
+          <td>{{ tableData.length }}*{{ +tableData.width }}*{{ tableData.length }}</td>
+          <td class="center">订单数量</td>
+          <td class="center">{{ tableData.orderNum }}</td>
+          <td class="center">纸箱面积</td>
+          <td class="center">{{ tableData.paperArea }}</td>
+        </tr>
+        <tr>
+          <td>款号/型号</td>
+          <td class="center">{{ tableData.modelNo }}</td>
+          <td>愣&nbsp;&nbsp;&nbsp;&nbsp;型</td>
+          <td class="center">{{ tableData.stare }} </td>
+          <td>纸片尺寸</td>
+          <td class="center">{{ tableData.paperLength }}*{{ +tableData.paperWidth }}</td>
+          <td class="center">颜色</td>
+          <td class="center">{{ tableData.color }}</td>
+          <td>总面积:</td>
+          <td class="center">{{ tableData.totalArea }}</td>
+        </tr>
+        <tr>
+          <td>材质</td>
+          <td class="center">{{ tableData.material }}</td>
+          <td>生产流程</td>
+          <td class="center" colspan="3"><span v-if="tableData.partialPressure">分压</span>&nbsp;&nbsp;
+            <span v-if="tableData.pasting">裱糊</span>&nbsp;&nbsp;
+            <span v-if="tableData.printing">印刷</span>&nbsp;&nbsp;
+            <span v-if="tableData.grooving">开槽</span>&nbsp;&nbsp;
+            <span v-if="tableData.dieCutting">模切</span>&nbsp;&nbsp;
+          </td>
+          <td>结合</td>
+          <td class="center">{{ tableData.combine }}</td>
+          <td>是否常规</td>
+          <td>
+            <input type="checkbox" :checked="tableData.conventional"> 是
           <!-- <input type="checkbox" :checked="tableData.partialPressure"> 否 -->
-        </td> </tr>
-      <tr>
-        <td class="center">备注</td>
-        <td colspan="10">{{ tableData.remark }}</td>
-      </tr>
-    </table>
-    <img v-if="url" :src="url" class="avatar">
+          </td> </tr>
+        <tr>
+          <td class="center">备注</td>
+          <td colspan="10">{{ tableData.remark }}</td>
+        </tr>
+      </table>
+      <img v-if="url" :src="url" class="avatar">
+    </el-card>
   </div>
 </template>
 
@@ -220,7 +222,7 @@ table td{
   height:100%;
 }
 .avatar {
-  width: 1200px;
+  width: 800px;
   height: 550px;
   display: block;
   margin-left: 21.3%;

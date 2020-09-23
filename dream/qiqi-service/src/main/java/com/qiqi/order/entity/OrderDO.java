@@ -48,6 +48,7 @@ public class OrderDO extends BaseModel {
 
     private String pressureSpecification;
 
+    private Long customerId;
 
     private BigDecimal totalArea;
 
@@ -59,6 +60,8 @@ public class OrderDO extends BaseModel {
 
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date date;
+
+    private Integer modCount;
 
     /**
      * 任务编号
@@ -285,6 +288,10 @@ public class OrderDO extends BaseModel {
      * 图片
      */
     private String img;
+
+    private String refundNum;
+
+    private Date refundTime;
 
 
 }

@@ -3,7 +3,7 @@
     <el-main>
       <h1 align="center">毛利估算</h1>
       <el-form :inline="true" :model="form" size="mini">
-        <el-form-item label="部门名称:">
+        <el-form-item label="客户名称:">
           <el-input v-model="form.name" clearable @clear="loadData" />
         </el-form-item>
         <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
@@ -18,33 +18,57 @@
           border=""
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" />
-          <el-table-column v-show="true" prop="customerName" label="客户名称" />
-          <el-table-column v-show="true" prop="phone" label="任务编号" />
-          <el-table-column v-show="true" prop="data" label="客户编号" />
-          <el-table-column v-show="true" prop="shipment" label="名称" />
-          <el-table-column v-show="true" prop="goods" label="款号" />
-          <el-table-column v-show="true" prop="type" label="长" />
-          <el-table-column v-show="true" prop="long" label="宽" />
-          <el-table-column v-show="true" prop="number" label="高" />
-          <el-table-column v-show="true" prop="price" label="订单数量" />
-          <el-table-column v-show="true" prop="money" label="金额" />
-          <el-table-column v-show="true" prop="money" label="折扣" />
-          <el-table-column v-show="true" prop="money" label="折扣金额" />
-          <el-table-column v-show="true" prop="money" label="成本单价" />
-          <el-table-column v-show="true" prop="money" label="成本金额" />
-          <el-table-column v-show="true" prop="money" label="毛利" />
-          <el-table-column v-show="true" prop="money" label="下单日期" />
-          <el-table-column v-show="true" prop="money" label="备注" />
-
-          <!-- <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" width="143" /> -->
-          <!-- <el-table-column v-show="true" prop="batching" label="配料面积"  />
-          <el-table-column v-show="true" prop="squarePrice" label="平方价"  />
-          <el-table-column v-show="true" prop="unitPrice" label="单价"  />
-          <el-table-column v-show="true" prop="amount" label="金额"  />
-          <el-table-column v-show="true" prop="unit" label="单位"  /> -->
+          <el-table-column v-show="true" prop="name" label="客户名称" />
+          <el-table-column v-show="true" prop="no" label="任务编号" />
+          <el-table-column v-show="true" prop="customerNo" label="客户单号" />
+          <el-table-column v-show="true" prop="boxType" label="箱型" />
+          <el-table-column v-show="true" prop="modelNo" label="款号" />
+          <el-table-column v-show="true" prop="length" label="长" />
+          <el-table-column v-show="true" prop="width" label="宽" />
+          <el-table-column v-show="true" prop="height" label="高" />
+          <el-table-column v-show="true" prop="unit" label="单位" />
+          <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" />
+          <el-table-column v-show="true" prop="orderNum" label="订单数量" />
+          <el-table-column v-show="true" prop="perPrice" label="单价" />
+          <el-table-column v-show="true" prop="orderNum" label="金额">
+            <template slot-scope="scope">
+              {{ scope.row.orderNum* scope.row.perPrice }}
+            </template>
+          </el-table-column>
+          <el-table-column v-show="true" prop="discount" label="折扣" width="100px">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.discount" :controls="false" style="width: 80%;" />%
+            </template>
+          </el-table-column>
+          <el-table-column v-show="true" prop="discountAmount" label="折扣金额">
+            <template slot-scope="scope">
+              {{ scope.row.orderNum* scope.row.perPrice * scope.row.discount / 100 }}
+            </template>
+          </el-table-column>
+          <el-table-column v-show="true" prop="costPrice" label="成本价" />
+          <el-table-column v-show="true" label="成本金额">
+            <template slot-scope="scope">
+              {{ scope.row.costPrice* scope.row.orderNum }}
+            </template>
+          </el-table-column>
+          <el-table-column v-show="true" prop="profit" label="毛利">
+            <template slot-scope="scope">
+              {{ scope.row.orderNum* scope.row.discount / 100- scope.row.costPrice* scope.row.orderNum }}
+            </template>
+          </el-table-column>
+          <el-table-column v-show="true" prop="pbilling" label="开单日期" />
+          <el-table-column v-show="true" label="操作">
+            <template slot-scope="scope">
+              <el-button type="primary" size="mini" @click="updated(scope)">保存</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <!--分页组件-->
+
+        <!-- <template slot-scope="scope">
+            {{ scope.row.orderNum* scope.row.perPrice }}
+          </template> -->
+
         <el-pagination
           background
           layout="total, sizes, prev, pager, next"
@@ -57,7 +81,7 @@
         />
       </div>
       <!-- 新增/编辑对账明细单 -->
-      <el-dialog :title="titleType+'对账明细表'" :visible.sync="purAddVisible" :close-on-click-modal="false">
+      <!-- <el-dialog :title="titleType+'对账明细表'" :visible.sync="purAddVisible" :close-on-click-modal="false">
         <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="120px">
           <el-form-item label="客户名称" prop="supplier">
             <el-input v-model="formAdd.customerName" disabled>/>
@@ -127,126 +151,63 @@
           <el-button size="small" @click="purAddNo">取 消</el-button>
           <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
         </span>
-      </el-dialog>
+      </el-dialog> -->
 
     </el-main>
   </el-container>
-
 </template>
-
 <script>
 import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
-
+import { mlist, updated } from '@/api/finance/profit'
 export default {
   name: 'Verify',
   mixins: [initData],
   data() {
     return {
-      // 选择月份
-      month: [{
-        value: '选项1',
-        label: '2020-02-11'
-      }, {
-        value: '选项2',
-        label: '2018-06-11'
-      }, {
-        value: '选项3',
-        label: '2014-09-11'
-      }, {
-        value: '选项4',
-        label: '2012-01-11'
-      }, {
-        value: '选项5',
-        label: '2013-02-11'
-      }],
-      // 选择客户
-      value: '',
-      customer: [{
-        value: '选项1',
-        label: '平安'
-      }, {
-        value: '选项2',
-        label: '吉安'
-      }, {
-        value: '选项3',
-        label: '上海'
-      }, {
-        value: '选项4',
-        label: '沈阳'
-      }, {
-        value: '选项5',
-        label: '湖南'
-      }],
-      valu: '',
-      form: {},
+      form: {
+        time: '',
+        page: 1,
+        count: 10,
+        quantityOverdue: '',
+        customerName: '',
+        name: ''
+      },
       formAdd: { },
       // 表单数据
-      tableData: [{
-        customerName: '李四',
-        phone: '15993472323',
-        data: '2020-09-11',
-        shipment: 'JA00668',
-        goods: '466',
-        type: '五箱',
-        long: 780 * 670 * 430,
-        number: 80,
-        price: 7,
-        money: 856
+      tableData: [
 
-      }],
-      addTableData: [],
-      customerFor: [{
-        id: '1',
-        name: '迪迦'
-      }],
-      purAddVisible: false,
-      purRules: {
-        supplier: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        pricing: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        billingTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        deliveryTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
-      },
-      supplierFor: [{
-        id: '1',
-        name: '腾讯'
-      }, {
-        id: '2',
-        name: '阿里'
-      }],
-      pricingFor: [{
-        id: '1',
-        name: '净边'
-      }, {
-        id: '2',
-        name: '净宽'
-      }],
-      titleType: '',
-      taskNumberVisible: false,
-      taskNumberTable: [{
-        taskNumber: '1',
-        taskName: '就这?'
-      }, {
-        taskNumber: '2',
-        taskName: '就这a ?'
-      }],
-      modifyTaskTable: [{
-        customerName: '张三',
-        taskNumber: '2'
-      }],
-      multipleSelection: [],
-      indexId: {}
-
+      ]
     }
   },
+  created() {
+    this.init()
+    // list().then(res => {
+    //   console.log(res)
+    // })
+  },
   methods: {
+    updated(scope) {
+      console.log(scope)
+    },
+    // 获取列表数据
+    loadData() {
+      this.form.page = this.pagination.page
+      this.form.count = this.pagination.size
+      mlist(this.form).then(res => {
+        this.tableData = res.list
+        this.pagination.total = res.total
+        console.log(res)
+        console.log(this.tableData.orderNum)
+      })
+    },
     toQuery() {
 
     },
     // 导出
     toExcel() {
       var list = this.tableData
-      const th = ['编码', '名称', '限定最大纸长']
+      const th = ['客户名称', '任务编号', '客户单号', '箱型', '款号', '长', '高', '单位', '采购数量', '订单数量', '单价', '金额', '折扣', '折扣金额', '成本价', '成本金额', '毛利', '开单日期']
       const filterVal = ['code', 'name', 'limitPaperLength']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '毛利估算表')

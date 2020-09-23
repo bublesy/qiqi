@@ -73,6 +73,7 @@
         <el-table-column prop="productNum" label="已产数量" width="120" />
         <el-table-column prop="productSpace" label="成品仓位" width="120" />
         <el-table-column prop="sendNum" label="已送数量" width="120" />
+        <el-table-column prop="refundNum" label="退货数量" width="120" />
         <!-- <el-table-column prop="lossNum" label="损耗数量" width="120" /> -->
         <el-table-column prop="orderDate" label="下单日期" width="120" />
         <el-table-column prop="deliveryDate" label="交货日期" width="120" />
@@ -84,16 +85,17 @@
         <el-table-column prop="making" label="制单人" width="120" />
         <el-table-column prop="auditTime" label="审核时间" width="120" />
         <el-table-column prop="audit" label="审核人" width="120" /> -->
-        <el-table-column label="操作" width="500">
+        <el-table-column label="操作" width="600">
           <template slot-scope="scope">
             <el-button type="warning" size="mini" :disabled="scope.row.audit==='审核'?true:false" @click="updated(scope.row.id)">编辑</el-button>
             <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
-              <el-button slot="reference" type="danger" size="mini">删除</el-button>
+              <el-button slot="reference" type="danger" size="mini" :disabled="scope.row.audit==='审核'?true:false">删除</el-button>
             </el-popconfirm>
             <el-button type="success" size="mini" @click="singlePrint(scope.row)">打印</el-button>
             <el-button type="warning" size="mini" @click="orderAgain(scope.row.id)">再次下单</el-button>
             <el-button type="primary" size="mini" @click="generate(scope.row)">生成施工单</el-button>
             <el-button type="primary" size="mini" :disabled="scope.row.audit==='审核'?true:false" @click="audit(scope.row.id)">审核</el-button>
+            <el-button type="primary" size="mini" @click="refund(scope.row.id)" @init="initTable">退货</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -108,21 +110,24 @@
       />
     </el-card>
     <editDialog :id="id" :dialog="editDialog" :flag="flag" :status="status" @init="initTable" />
+    <refundDialog :dialog="refundDialog" :refund-id="refundId" />
   </div>
 </template>
 
 <script>
 import editDialog from '@/views/order/edit/edit'
+import refundDialog from '@/views/order/edit/refund'
 import { export2Excel } from '@/utils/common'
 import { getOrder, delOrder, getUser, addOrUpdateOrder, getSingleOrder } from '@/api/order/customerOrder'
 export default {
   name: 'Edit',
-  components: { editDialog },
+  components: { editDialog, refundDialog },
   data() {
     return {
       flag: false,
       id: '测试施工单id',
       total: 0,
+      refundId: '',
       form: {
         page: 1,
         count: 10,
@@ -133,6 +138,9 @@ export default {
         isProduct: ''
       },
       editDialog: {
+        show: false
+      },
+      refundDialog: {
         show: false
       },
       tableData: [],
@@ -149,6 +157,10 @@ export default {
     this.initTable()
   },
   methods: {
+    refund(id) {
+      this.refundId = id
+      this.refundDialog.show = true
+    },
     audit(id) {
       getSingleOrder(id).then(res => {
         var data = res

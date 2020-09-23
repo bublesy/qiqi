@@ -295,17 +295,20 @@ export default {
           time: '' }).then(res => {
           this.supplier = res.list
           this.supplier.forEach(a => {
-            this.formAdd.supplier = a.supplier
+            // this.formAdd.supplier = a.supplier
+            if (a.id === this.formAdd.supplier) {
+              // this.formAdd.no = a.purchase
+            }
           })
         })
         // 采购单数据
-        purchaseList({ page: 1, size: 10, customerName: '', quantityOverdue: '', time: '' }).then(res => {
-          this.no = res.list
-          console.log(res)
-          this.no.forEach(a => {
-            this.formAdd.no = a.purchase
-          })
-        })
+        // purchaseList({ page: 1, size: 10, customerName: '', quantityOverdue: '', time: '' }).then(res => {
+        //   this.no = res.list
+        //   console.log(res)
+        //   this.no.forEach(a => {
+        //     this.formAdd.no = a.purchase
+        //   })
+        // })
         this.formAdd = res
       })
     },

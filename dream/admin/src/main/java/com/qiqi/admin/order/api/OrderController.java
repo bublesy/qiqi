@@ -15,6 +15,8 @@ import com.qiqi.basicdata.service.CustomerInformationService;
 import com.qiqi.basicdata.service.PaperboardDataSettingService;
 import com.qiqi.basicdata.service.SupplierService;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.endproductwarehouse.entity.EndProductWarehouseDO;
+import com.qiqi.endproductwarehouse.service.EndProductWarehouseService;
 import com.qiqi.order.dto.OrderDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.entity.ScheduleDO;
@@ -64,10 +66,12 @@ public class OrderController {
     private PaperboardDataSettingService paperboardDataSettingService;
 
     @Resource
+    private EndProductWarehouseService endProductWarehouseService;
+
+    @Resource
     private SysUserService sysUserService;
 
     private String state = "成品";
-    private String state2 = "非成品";
 
     @ApiOperation(value = "获取(列表)")
     @PostMapping("/list")
@@ -91,17 +95,6 @@ public class OrderController {
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<OrderDO>>() {}, iPage.getRecords()));
     }
 
-    @ApiOperation(value = "月结对账单")
-    @PostMapping("/bill")
-    public PageEntity<OrderDO> getBill(@RequestBody OrderDTO query){
-        QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(!ObjectUtils.isEmpty(query.getDeliveryDate()),"delivery_date",query.getDeliveryDate())
-                .like(StringUtils.isNotBlank(query.getName()),"name",query.getName());
-        IPage<OrderDO> iPage = orderService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
-
-        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<OrderDO>>() {}, iPage.getRecords()));
-    }
-
     @ApiOperation(value = "获取(单个)")
     @GetMapping("/{id}")
     public OrderDO getOrder(@PathVariable Long id) {
@@ -119,10 +112,12 @@ public class OrderController {
     @ApiOperation(value = "新增or修改")
     @PostMapping("")
     public Boolean saveOrder(@RequestBody OrderDO orderDO) {
+        if(orderDO == null){
+            return false;
+        }
         IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
         String no = idGeneratorUtils.nextId();
-        OrderDO order = orderService.getById(orderDO.getId());
-        if(orderDO != null && orderDO.getDeliveryDate() != null && order!= null && order.getDeliveryDate()!= null && !order.getDeliveryDate().equals(orderDO.getDeliveryDate())){
+        if(orderDO.getDeliveryDate() != null && orderDO.getModCount() > 0){
             orderDO.setDeliveryDate(TimeAddEight.formatTimeEight(orderDO.getDeliveryDate()));
         }
         orderDO.setNo(no);
@@ -135,12 +130,12 @@ public class OrderController {
         if(orderDO.getId() != null && !state.equals(orderDO.getIsProduct())){
                 BeanUtils.copyProperties(orderDO,scheduleDO);
                 scheduleDO.setDate(orderDO.getDeliveryDate());
-                scheduleDO.setId(order.getScheduleId());
+                scheduleDO.setId(orderDO.getScheduleId());
                 scheduleService.saveOrUpdate(scheduleDO);
         }
         if(orderDO.getId() != null && state.equals(orderDO.getIsProduct())){
-            if(order.getScheduleId() != null){
-                scheduleService.delete(order.getScheduleId());
+            if(orderDO.getScheduleId() != null){
+                scheduleService.delete(orderDO.getScheduleId());
             }
         }
         orderDO.setOrderDate(new Date());
@@ -149,6 +144,19 @@ public class OrderController {
         }
         if(orderDO.getId() == null){
             orderDO.setWosState("新订单");
+        }
+        EndProductWarehouseDO endProductWarehouseDO = endProductWarehouseService.getOne(new QueryWrapper<EndProductWarehouseDO>().eq("order_id",orderDO.getId()));
+        if(endProductWarehouseDO != null && endProductWarehouseDO.getEndProductPos() != null && orderDO.getRefundNum() != null){
+            Integer num = Integer.parseInt(endProductWarehouseDO.getEndProductPos()) + Integer.parseInt(orderDO.getRefundNum());
+            endProductWarehouseDO.setEndProductPos(num.toString());
+            boolean b = endProductWarehouseService.updateById(endProductWarehouseDO);
+            if(b){
+
+                orderDO.setRefundTime(new Date());
+            }
+        }else {
+            orderDO.setRefundNum(null);
+            orderDO.setRefundTime(null);
         }
         return orderService.saveOrUpdate(orderDO);
     }
