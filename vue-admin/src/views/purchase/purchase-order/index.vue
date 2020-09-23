@@ -58,12 +58,14 @@
           <el-table-column v-show="true" prop="amount" label="金额" width="140" />
           <el-table-column v-show="true" prop="position" label="仓位" width="140" />
           <el-table-column v-show="true" prop="endProductPos" label="成品仓位" width="140" />
+          <el-table-column v-show="true" prop="returnNum" label="退货数量" width="140" />
           <el-table-column label="操作" width="450">
             <template slot-scope="scope">
               <el-link type="danger" size="small" :disabled="scope.row.documentsNo!==null ?false : true" @click="drop(scope)">删除采购单</el-link>
               <el-link type="primary" size="small" :disabled="scope.row.documentsNo!==null ?true : false" @click="purAdd(scope)">生成采购单</el-link>
               <el-link type="primary" size="small" :disabled="(scope.row.position==='0' ?false : true)||(scope.row.endProductPos==='0' ?false : true)" @click="modifyPur(scope)">编辑采购单</el-link>
               <el-link type="primary" size="small" :disabled="(scope.row.position==='0' ?false : true)||(scope.row.endProductPos==='0' ?false : true)" @click="warehousing(scope)">入库</el-link>
+              <el-link type="primary" size="small" :disabled="scope.row.documentsNo!==null ?false : true" @click="addReturn(scope)">生成退货单</el-link>
               <el-link type="warning" size="small" :disabled="scope.row.documentsNo!==null ?false : true" @click="printing(scope)">生成打印单</el-link>
             </template>
           </el-table-column>
@@ -223,7 +225,7 @@
           <el-input v-model="formMaterial.num" />
         </el-form-item>
         <el-form-item label="单价:" prop="perPrice">
-          <el-input v-model="formMaterial.perPrice" />
+          <el-input v-model="formMaterial.perPrice" @change="numChange" />
         </el-form-item>
         <el-form-item label="金额:" prop="money">
           <el-input v-model="formMaterial.money" />
@@ -232,6 +234,48 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="supplierAddNo('supForm')">取 消</el-button>
         <el-button type="primary" @click="supplierAddOk('supForm')">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 新增/编辑对话框 -->
+    <el-dialog
+      title="提示"
+      :visible.sync="returnDialogVisible"
+      width="30%"
+      :close-on-click-modal="false"
+    >
+      <el-form ref="supForm" :rules="purRules" :inline="true" :model="formReturn" size="mini">
+        <el-form-item label="供方:" prop="supplier">
+          <el-input v-model="formReturn.supplier" disabled />
+        </el-form-item>
+        <el-form-item label="采购单号:" prop="no">
+          <el-input v-model="formReturn.no" disabled />
+        </el-form-item>
+        <el-form-item label="备注:" prop="note">
+          <el-input v-model="formReturn.note" />
+        </el-form-item>
+        <el-form-item label="采购数量:" prop="purchaseQuantity">
+          <el-input v-model="formReturn.purchaseQuantity" disabled />
+        </el-form-item>
+        <el-form-item v-if="formReturn.isProduct==='成品' ?false : true" label="仓位:" prop="position">
+          <el-input v-model="formReturn.position" disabled />
+        </el-form-item>
+        <el-form-item v-if="formReturn.isProduct==='成品' ?true : false" label="成品仓位">
+          <el-input-number v-model="formReturn.endProductPos" :controls="false" disabled />
+        </el-form-item>
+        <el-form-item label="退货数量:" prop="returnNum">
+          <el-input v-model="formReturn.returnNum" @change="returnNumChange" />
+        </el-form-item>
+        <el-form-item label="成本价:" prop="costPrice">
+          <el-input v-model="formReturn.costPrice" disabled />
+        </el-form-item>
+        <el-form-item label="退货金额:" prop="returnMoney">
+          <el-input v-model="formReturn.returnMoney" disabled />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="returnNo('supForm')">取 消</el-button>
+        <el-button type="primary" @click="returnOk('supForm')">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -245,6 +289,7 @@ import { export2Excel } from '@/utils/common'
 import { supplierSelect } from '@/api/supplier-cardboard-quotation/cardboard'
 import { purNoSelect } from '@/api/supplier-cardboard-quotation/cardboard'
 import { add } from '@/api/purchase/purchase'
+import { returnAdd } from '@/api/purchase/purchase'
 import { list } from '@/api/purchase/purchase'
 import { getById } from '@/api/purchase/purchase'
 import { specificationList } from '@/api/accessories/means'
@@ -270,7 +315,8 @@ export default {
         customerName: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         settlementPeriod: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         purchaseQuantity: [{ required: true, message: '该输入为必填项', trigger: 'blur' }],
-        costPrice: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        costPrice: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        returnNum: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
 
       },
       supplierFor: [],
@@ -288,13 +334,51 @@ export default {
       dialogVisible: false,
       formMaterial: {},
       specificationFor: [],
-      noFor: []
+      noFor: [],
+      returnDialogVisible: false,
+      formReturn: {}
     }
   },
   created() {
     this.init()
   },
   methods: {
+    returnOk(supForm) {
+      this.$refs[supForm].validate((valid) => {
+        if (valid) {
+          returnAdd(this.formReturn).then(res => {
+            this.$message.success(this.titleType + '成功')
+            this.init()
+          })
+          this.returnDialogVisible = false
+        } else {
+          return false
+        }
+      })
+    },
+    returnNo() {
+      this.returnDialogVisible = false
+    },
+    returnNumChange() {
+      this.formReturn.returnMoney = this.formReturn.returnNum * this.formReturn.costPrice
+    },
+    // 退货
+    addReturn(scope) {
+      this.returnDialogVisible = true
+      console.log(scope.row)
+      this.formReturn.no = scope.row.documentsNo
+      this.formReturn.costPrice = scope.row.costPrice
+      this.formReturn.id = scope.row.pid
+      this.formReturn.supplier = scope.row.supplier
+      this.formReturn.position = scope.row.position
+      this.formReturn.endProductPos = scope.row.endProductPos
+      this.formReturn.purchaseQuantity = scope.row.purchaseQuantity
+      this.formReturn.isProduct = scope.row.isProduct
+      this.formReturn.position = scope.row.position
+    },
+    numChange() {
+      this.formMaterial.money = this.formMaterial.num * this.formMaterial.perPrice
+    },
     specificationChange() {
       this.specificationFor.forEach(a => {
         if (a.id === this.formMaterial.specificationId) {
@@ -373,44 +457,123 @@ export default {
     // 选择打印
     selectPrinting() {
       if (this.form.quantityOverdue === '已过期') {
-        this.$router.push({
-          path: '/purchase_not_included_overdue',
-          query: { 'data': this.multipleSelection }
+        let flag = true
+        this.multipleSelection.forEach(a => {
+          if (a.documentsNo === null) {
+            this.$message.error('没有采购内容！！！')
+            flag = false
+          }
         })
+        if (flag) {
+          if (this.multipleSelection.length === 0) {
+            this.$message.error('请选择打印的内容！！！')
+            return flag
+          } else {
+            this.$router.push({
+              path: '/purchase_not_included_overdue',
+              query: { 'data': this.multipleSelection }
+            })
+          }
+        }
       } else if (this.form.quantityOverdue === '未过期') {
-        this.$router.push({
-          path: '/purchase_not_included',
-          query: { 'data': this.multipleSelection }
+        let flag = true
+        this.multipleSelection.forEach(a => {
+          if (a.documentsNo === null) {
+            this.$message.error('没有采购内容！！！')
+            flag = false
+          }
         })
+        if (flag) {
+          if (this.multipleSelection.length === 0) {
+            this.$message.error('请选择打印的内容！！！')
+            return flag
+          } else {
+            this.$router.push({
+              path: '/purchase_not_included',
+              query: { 'data': this.multipleSelection }
+            })
+          }
+        }
       } else {
-        if (this.multipleSelection.length === 0) {
-          this.$message.error('请选择打印的内容！！！')
-          return
-        } else {
-          this.$router.push({
-            path: '/purchase_order_printing',
-            query: { 'data': this.multipleSelection }
-          })
+        let flag = true
+        this.multipleSelection.forEach(a => {
+          if (a.documentsNo === null) {
+            this.$message.error('没有采购内容！！！')
+            flag = false
+          }
+        })
+        if (flag) {
+          if (this.multipleSelection.length === 0) {
+            this.$message.error('请选择打印的内容！！！')
+            return flag
+          } else {
+            this.$router.push({
+              path: '/purchase_order_printing',
+              query: { 'data': this.multipleSelection }
+            })
+          }
         }
       }
     },
     // 整页打印
     wholePrinting() {
       if (this.form.quantityOverdue === '已过期') {
-        this.$router.push({
-          path: '/purchase_not_included_overdue',
-          query: { 'data': this.tableData }
+        let flag = true
+        this.tableData.forEach(a => {
+          if (a.documentsNo === null) {
+            this.$message.error('没有采购内容！！！')
+            flag = false
+          }
         })
+        if (flag) {
+          if (this.tableData.length === 0) {
+            this.$message.error('请选择打印的内容！！！')
+            return flag
+          } else {
+            this.$router.push({
+              path: '/purchase_not_included_overdue',
+              query: { 'data': this.tableData }
+            })
+          }
+        }
       } else if (this.form.quantityOverdue === '未过期') {
-        this.$router.push({
-          path: '/purchase_not_included',
-          query: { 'data': this.tableData }
+        let flag = true
+        this.tableData.forEach(a => {
+          if (a.documentsNo === null) {
+            this.$message.error('没有采购内容！！！')
+            flag = false
+          }
         })
+        if (flag) {
+          if (this.tableData.length === 0) {
+            this.$message.error('请选择打印的内容！！！')
+            return flag
+          } else {
+            this.$router.push({
+              path: '/purchase_not_included',
+              query: { 'data': this.tableData }
+            })
+          }
+        }
       } else {
-        this.$router.push({
-          path: '/purchase_order_printing',
-          query: { 'data': this.tableData }
+        let flag = true
+        this.tableData.forEach(a => {
+          if (a.documentsNo === null) {
+            this.$message.error('没有采购内容！！！')
+            flag = false
+          }
         })
+        if (flag) {
+          if (this.tableData.length === 0) {
+            this.$message.error('请选择打印的内容！！！')
+            return flag
+          } else {
+            this.$router.push({
+              path: '/purchase_order_printing',
+              query: { 'data': this.tableData }
+            })
+          }
+        }
       }
     },
     // 打印
@@ -474,7 +637,9 @@ export default {
       this.formAdd.endProductPos = scope.row.endProductPos
       this.formAdd.position = scope.row.position
       this.formAdd.customerName = scope.row.id
+      this.formAdd.returnNum = scope.row.returnNum
       this.formAdd.supplierId = scope.row.supplierId
+      console.log(this.formAdd)
       warehousing(this.formAdd).then(res => {
         if (res) {
           this.identification = this.$message.success('入库成功')
@@ -502,6 +667,7 @@ export default {
         }
       })
     },
+
     // 新增订单
     purAdd(scope) {
       this.purAddVisible = true
@@ -512,6 +678,7 @@ export default {
       supplierSelect().then(res => {
         this.supplierFor = res
       })
+      this.formAdd = scope.row
       this.$set(this.formAdd, 'customerName', scope.row.name)
       this.$set(this.formAdd, 'taskNumber', scope.row.no)
       this.$set(this.formAdd, 'customerNo', scope.row.customerNo)

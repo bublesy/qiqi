@@ -12,7 +12,13 @@ public class PurchaseOrderDTO {
     private String position;
     private String endProductPos;
 
+    private String returnNum;
     private Long orderId;
+
+    private String orderNum;
+
+    private String pressureSpecification;
+
     /**
      * 供应商id
      */

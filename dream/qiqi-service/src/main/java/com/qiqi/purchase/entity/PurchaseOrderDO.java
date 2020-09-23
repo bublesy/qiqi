@@ -3,6 +3,8 @@ package com.qiqi.purchase.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.qiqi.common.base.BaseModel;
 import java.time.LocalDateTime;
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,10 +24,22 @@ public class PurchaseOrderDO extends BaseModel {
 
     private static final long serialVersionUID=1L;
 
+
+    private String returnNum;
+    private String returnDate;
     private String position;
+    private Date creditDate;
     private String endProductPos;
 
     private String settlementPeriod;
+
+    private String discount;
+
+    private String discountAmount;
+
+    private String profit;
+
+    private String inProductDate;
 
     private Long orderId;
 

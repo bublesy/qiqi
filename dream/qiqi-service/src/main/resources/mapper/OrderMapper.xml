@@ -3,7 +3,7 @@
 <mapper namespace="com.qiqi.order.mapper.OrderMapper">
     <select id="getList" resultType="com.qiqi.admin.purchase.model.PurchaseOrderVO">
 SELECT o.*,p.documents_no,p.purchaseQuantity,p.cost_price,p.amount,p.id as pid,p.end_product_pos,p.position,
-p.supplier_id,p.billingDate as pBilling  from  orders o left join purchase_order p on o.no = p.task_number
+p.supplier_id,p.billingDate as pBilling,p.return_num  from  orders o left join purchase_order p on o.no = p.task_number
         where o.is_deleted =0
         <if test=" customerName != null and customerName != '' ">
             and  o.name like concat('%', #{customerName} , '%')
