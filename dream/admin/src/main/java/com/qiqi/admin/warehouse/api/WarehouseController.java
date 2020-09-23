@@ -98,6 +98,7 @@ public class WarehouseController {
     @ApiOperation(value = "修改状态(批量))")
     @PostMapping("/upState")
     public Boolean updateState(@RequestBody List<String> idList) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:dd:ss");
         String join = StringUtils.join(idList, ",");
         Long id = Long.parseLong(join);
@@ -113,7 +114,8 @@ public class WarehouseController {
         warehouseDO.setCheckDate(df.format(new Date()));
         warehouseDO.setId(id);
         warehouseDO.setDeliveryStatus("已送货");
-
+        warehouseDO.setOutNo(dateFormat.format(new Date()));
+        warehouseDO.setOutDate(new Date());
         String order = byId.getOrderId();
         String deliveryQuantity = byId.getDeliveryQuantity();
         Long orderId = Long.parseLong(order);
@@ -122,14 +124,7 @@ public class WarehouseController {
         Integer a = Integer.parseInt(deliveryQuantity);
         orderDO.setSendNum(a);
         orderDO.setWosState("已送货");
-        // new Date()为获取当前系统时间，也可使用当前时间戳
-        Date date = null;
-        try {
-            date = df.parse(byId.getDeliveryDate());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        orderDO.setShipDate(date);
+        orderDO.setShipDate(warehouseDO.getOutDate());
         orderDO.setOutNo(byId.getWarehouseNo());
         orderService.updateById(orderDO);
 

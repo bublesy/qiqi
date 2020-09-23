@@ -47,8 +47,6 @@ public class MaterialSpareController {
         QueryWrapper<MaterialSpareDO> wrapper = new QueryWrapper<MaterialSpareDO>();
         wrapper.like(!ObjectUtils.isEmpty(time),"created_time",time)
                 .like(!ObjectUtils.isEmpty(material),"material_id",material);
-//        wrapper.like(!ObjectUtils.isEmpty(time),"created_time",MaterialSpareDO::getCreatedTime,time);
-//        wrapper.like(!ObjectUtils.isEmpty(material),MaterialSpareDO::getMaterialId,material);
         IPage<MaterialSpareDO> iPage = materialSpareService.page(new Page<>(page,count),wrapper);
         //todo: 需要转Vo
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<MaterialSpareDO>>() {}, iPage.getRecords()));

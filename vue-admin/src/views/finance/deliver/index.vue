@@ -3,7 +3,7 @@
     <div class="box">
       <div class="top">
         <el-tooltip class="item" effect="dark" content="单击下表一行数据无误，后选择过账" placement="top">
-          <el-button type="primary" @click="dialogVisible = true">过账</el-button>
+          <el-button type="primary" @click="batchPosting()">批量过账</el-button>
         </el-tooltip>
       </div>
     </div>
@@ -11,14 +11,13 @@
       title="确认过账"
       :visible.sync="dialogVisible"
       width="30%"
-      :before-close="handleClose"
       :close-on-click-modal="false"
     >
-      <span>当前出货单号【BWLO00079】过账年月【2012年09月】，确定过账吗?
+      <span>当前过账单号{{ oNo }},过账年月 {{ dateFormat(new Date()) }}，确定过账吗?
       </span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="postingOk()">确 定</el-button>
       </span>
     </el-dialog>
     <el-form ref="form" :model="form" label-width="80px" inline>
@@ -31,140 +30,70 @@
           <el-option label="未回签" value="未回签" />
         </el-select>
       </el-form-item>
-      <el-form-item label="账款年月:">
-        <el-col :span="18">
-          <el-date-picker v-model="form.accountMonthly" type="date" placeholder="选择日期" style="width: 100%;" />
-        </el-col>
-      </el-form-item>
-    </el-form>
-    <el-form ref="form" :model="form" label-width="80px" inline>
       <el-form-item label="出货单号:">
-        <el-select v-model="form.deliveryOrderNo" placeholder="请选择车号">
+        <el-select v-model="form.outNo" placeholder="请选择车号">
           <el-option
-            v-for="item in deliveryOrderNoFor"
+            v-for="item in outNoFor"
             :key="item.value"
-            :label="item.value"
-            :value="item.id"
+            :label="item.outNo"
+            :value="item.outNo"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="车号:">
-        <el-input v-model="form.carNo" />
       </el-form-item>
       <el-form-item label="送货人:">
-        <el-select v-model="form.deliveryman" placeholder="请选择" @change="specificationChange">
+        <el-select v-model="form.deliveryman" placeholder="请选择">
           <el-option
             v-for="item in deliverymanFor"
             :key="item.value"
-            :label="item.value"
+            :label="item.nickname"
             :value="item.id"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="业务员:">
-        <el-select v-model="form.theSalesman" placeholder="请选择" @change="specificationChange">
-          <el-option
-            v-for="item in deliverymanFor"
-            :key="item.value"
-            :label="item.value"
-            :value="item.id"
-          />
-        </el-select>
+      <el-form-item label="备注:">
+        <el-input v-model="form.note" />
       </el-form-item>
     </el-form>
-    <!-- <div class="bz">
-      <el-radio v-model="radio" label="1">备选项</el-radio>
-      <el-radio v-model="radio" label="2">备选项</el-radio>
-      备注<el-input v-model="input" placeholder="请输入内容" />
-    </div> -->
-    <div class="xz">
-      <el-radio v-model="radio" label="1">备选项</el-radio>
-      <el-radio v-model="radio" label="2">作废标记</el-radio>
-    </div>
-    <div style="float:left;margin-left: 95px;margin-bottom:20px">备注</div>
-    <div class="bz">
-      <el-input
-        v-model="input"
-        tooltip-effect="dark"
-        size="small"
-        style="foalt:left"
-        placeholder="请输入内容"
-        clearable
-        @click="clear"
-      />
-    </div>
+    <el-button type="primary" @click="getList()">查询</el-button>
     <el-table
       :data="tableData"
       border
       style="width: 100%"
       height="600"
-      @current-change="handleCurrentChange"
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column
-        type="selection"
-        width="55"
-      />
-      <el-table-column
-        label="#"
-        type="index"
-        width="50"
-      />
-      <el-table-column
-        prop="name"
-        label="客户名称"
-        width="180"
-      />
-      <el-table-column
-        prop="name"
-        label="任务编号"
-        width="180"
-      />
-      <el-table-column
-        prop="address"
-        label="款号"
-      />
-      <el-table-column
-        prop="address"
-        label="材质"
-      /><el-table-column
-        prop="address"
-        label="箱型"
-      /><el-table-column
-        prop="address"
-        label="长"
-      /><el-table-column
-        prop="address"
-        label="宽"
-      />
-      <el-table-column
-        prop="address"
-        label="高"
-      />
-      <el-table-column
-        prop="address"
-        label="出货数量"
-      />
-      <el-table-column
-        prop="address"
-        label="单价"
-      />
-      <el-table-column
-        prop="address"
-        label="金额"
-      />
-      <el-table-column
-        prop="address"
-        label="单位"
-      />
-      <el-table-column
-        prop="address"
-        label="备注"
-      />
+      <el-table-column type="selection" width="55" />
+      <el-table-column prop="name" label="客户名称" width="180" />
+      <el-table-column prop="no" label="任务编号" width="180" />
+      <el-table-column prop="modelNo" label="款号" />
+      <el-table-column prop="material" label="材质" />
+      <el-table-column prop="boxType" label="箱型" />
+      <el-table-column prop="length" label="长" />
+      <el-table-column prop="width" label="宽" />
+      <el-table-column prop="height" label="高" />
+      <el-table-column prop="deliveryQuantity" label="出货数量" />
+      <el-table-column prop="perPrice" label="单价" />
+      <el-table-column prop="money" label="金额" />
+      <el-table-column prop="unit" label="单位" />
+      <el-table-column prop="remark" label="备注" />
+      <el-table-column prop="outNo" label="出货单号" />
+      <el-table-column prop="sign" label="回签状态" />
+      <el-table-column prop="posting" label="过账状态" />
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-link type="primary" size="small" @click="posting(scope)">过账</el-link>
+        </template>
+      </el-table-column>
     </el-table>
+
   </div>
 </template>
 
 <script>
+import { endList } from '@/api/end-product/product'
+import { noList } from '@/api/end-product/product'
+import { getUser } from '@/api/accessories/means'
+import { updatePosting } from '@/api/end-product/product'
 
 export default window.$crudCommon({
   name: 'Deliver',
@@ -175,75 +104,97 @@ export default window.$crudCommon({
       dialogVisible: false,
       input: '',
       radio: '1',
-      tableData: [{
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-08',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-06',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-07',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+      tableData: [],
+      outNoFor: [],
+      deliverymanFor: [],
+      form: {
+        typeNo: '',
+        signBackState: '',
+        outNo: '',
+        deliveryman: '',
+        note: '',
+        page: '1',
+        size: '10'
       },
-      {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-08',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-06',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-07',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }]
+      oNo: '',
+      ids: [],
+      multipleSelection: []
     }
   },
   created() {
+    this.getList()
   },
   methods: {
-    clear() {
-      console.log(11111)
+    batchPosting() {
+      console.log(this.multipleSelection)
+      if (this.multipleSelection.length === 0) {
+        this.$message.error('请选择过招的内容！！！')
+        return
+      } else {
+        this.ids = []
+        this.multipleSelection.forEach(a => {
+          this.ids.push(a.eid)
+        })
+        updatePosting(this.ids).then(res => {
+          if (res) {
+            this.$message.success('成功')
+            this.getList()
+          } else {
+            this.$message.error('失败')
+          }
+          this.dialogVisible = false
+        })
+      }
     },
-    handleCurrentChange(val) {
-      // this.$router.push('/finance/receivables')
-      console.log(555)
+    postingOk() {
+      updatePosting(this.ids).then(res => {
+        if (res) {
+          this.$message.success('成功')
+          this.getList()
+        } else {
+          this.$message.error('失败')
+        }
+        this.dialogVisible = false
+      })
+    },
+    posting(scope) {
+      this.dialogVisible = true
+      this.oNo = scope.row.outNo
+      this.ids = []
+      this.ids.push(scope.row.eid)
+    },
+    dateFormat: function(time) {
+      var date = new Date(time)
+      var year = date.getFullYear()
+      /* 在日期格式中，月份是从0开始的，因此要加0
+     * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+     * */
+      var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+      var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+      var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+      var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+      var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+      // 拼接
+      return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
+    },
+    getList() {
+      noList().then(res => {
+        this.outNoFor = res
+      })
+      getUser().then(res => {
+        this.deliverymanFor = res
+      })
+      endList(this.form).then(res => {
+        this.tableData = res.list
+        this.tableData.forEach(a => {
+          if (a.sign === '' || a.sign === null) {
+            a.sign = '未回签'
+          }
+        })
+      })
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     },
     onLoadTable({ page, value, data }, callback) {
       // 首次加载去查询对应的值
