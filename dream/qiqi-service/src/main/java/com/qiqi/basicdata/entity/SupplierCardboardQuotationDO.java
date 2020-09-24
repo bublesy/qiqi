@@ -24,6 +24,7 @@ public class SupplierCardboardQuotationDO extends BaseModel {
      * code
      */
     private String code;
+    private Long supplierId;
     /**
      * totalPrice
      */

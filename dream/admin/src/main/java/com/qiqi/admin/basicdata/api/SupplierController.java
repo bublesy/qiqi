@@ -84,14 +84,16 @@ public class SupplierController {
     @ApiOperation(value = "新增供应商")
     @PostMapping("/add")
     public Boolean saveSupplier(@RequestBody SupplierDO supplierDO) {
-        SupplierCardboardQuotationDO supplierCardboardQuotationDO = new SupplierCardboardQuotationDO();
-        BeanUtils.copyProperties(supplierDO,supplierCardboardQuotationDO);
-        if (supplierDO.getId()==null ){
-            supplierCardboardQuotationService.save(supplierCardboardQuotationDO);
-        }else{
-            supplierCardboardQuotationService.update();
-        }
-        return supplierService.saveOrUpdate(supplierDO);
+//        boolean b =
+//
+//        SupplierCardboardQuotationDO supplierCardboardQuotationDO = new SupplierCardboardQuotationDO();
+//        BeanUtils.copyProperties(supplierDO,supplierCardboardQuotationDO);
+//        if (supplierDO.getId()==null ){
+//            supplierCardboardQuotationService.save(supplierCardboardQuotationDO);
+//        }else{
+//            supplierCardboardQuotationService.updateById(supplierCardboardQuotationDO);
+//        }
+        return  supplierService.saveOrUpdate(supplierDO);
     }
 
     @ApiOperation(value = "删除供应商(批量))")

@@ -24,8 +24,6 @@ import com.qiqi.order.service.OrderService;
 import com.qiqi.order.service.ScheduleService;
 import com.qiqi.sys.entity.SysUserDO;
 import com.qiqi.sys.service.SysUserService;
-import com.qiqi.warehouse.entity.WarehouseDO;
-import com.qiqi.warehouse.service.WarehouseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -72,8 +70,6 @@ public class OrderController {
 
     @Resource
     private SysUserService sysUserService;
-    @Resource
-    private WarehouseService warehouseService;
 
     private String state = "成品";
 
@@ -119,46 +115,24 @@ public class OrderController {
         if(orderDO == null){
             return false;
         }
-        if (orderDO.getIsProduct().equals("成品")){
-            EndProductWarehouseDO endProductWarehouseDO = endProductWarehouseService.getOne(new QueryWrapper<EndProductWarehouseDO>().eq("order_id",orderDO.getId()));
-            if(endProductWarehouseDO != null && endProductWarehouseDO.getEndProductPos() != null && orderDO.getRefundNum() != null){
-                Integer num = Integer.parseInt(endProductWarehouseDO.getEndProductPos()) + Integer.parseInt(orderDO.getRefundNum());
-                endProductWarehouseDO.setEndProductPos(num.toString());
-                boolean b = endProductWarehouseService.updateById(endProductWarehouseDO);
-                if(b){
-                    orderDO.setRefundTime(new Date());
-                    OrderDO orderDO1 = orderService.getById(orderDO.getId());
-                    Integer refundNum1 = (orderDO1.getRefundNum() == null ? 0 : Integer.parseInt(orderDO1.getRefundNum()));
-                    Integer refundNum = Integer.parseInt(orderDO.getRefundNum()) + refundNum1;
-                    orderDO.setRefundNum(refundNum.toString());
-                }
-
-            }else {
-                orderDO.setRefundNum(null);
-                orderDO.setRefundTime(null);
-                return false;
+        EndProductWarehouseDO endProductWarehouseDO = endProductWarehouseService.getOne(new QueryWrapper<EndProductWarehouseDO>().eq("order_id",orderDO.getId()));
+        if(endProductWarehouseDO != null && endProductWarehouseDO.getEndProductPos() != null && orderDO.getRefundNum() != null){
+            Integer num = Integer.parseInt(endProductWarehouseDO.getEndProductPos()) + Integer.parseInt(orderDO.getRefundNum());
+            endProductWarehouseDO.setEndProductPos(num.toString());
+            boolean b = endProductWarehouseService.updateById(endProductWarehouseDO);
+            if(b){
+                orderDO.setRefundTime(new Date());
+                OrderDO orderDO1 = orderService.getById(orderDO.getId());
+                Integer refundNum1 = (orderDO1.getRefundNum() == null ? 0 : Integer.parseInt(orderDO1.getRefundNum()));
+                Integer refundNum = Integer.parseInt(orderDO.getRefundNum()) + refundNum1;
+                orderDO.setRefundNum(refundNum.toString());
             }
-        }else{
-            WarehouseDO warehouseDO = warehouseService.getOne(new QueryWrapper<WarehouseDO>().eq("order_id",orderDO.getId()));
-            if(warehouseDO != null && warehouseDO.getPosition() != null && orderDO.getRefundNum() != null){
-                Integer num = Integer.parseInt(warehouseDO.getPosition()) + Integer.parseInt(orderDO.getRefundNum());
-                warehouseDO.setPosition(num.toString());
-                boolean b = warehouseService.updateById(warehouseDO);
-                if(b){
-                    orderDO.setRefundTime(new Date());
-                    OrderDO orderDO1 = orderService.getById(orderDO.getId());
-                    Integer refundNum1 = (orderDO1.getRefundNum() == null ? 0 : Integer.parseInt(orderDO1.getRefundNum()));
-                    Integer refundNum = Integer.parseInt(orderDO.getRefundNum()) + refundNum1;
-                    orderDO.setRefundNum(refundNum.toString());
-                }
 
-            }else {
-                orderDO.setRefundNum(null);
-                orderDO.setRefundTime(null);
-                return false;
-            }
+        }else {
+            orderDO.setRefundNum(null);
+            orderDO.setRefundTime(null);
+            return false;
         }
-
         return orderService.updateById(orderDO);
     }
 

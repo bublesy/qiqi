@@ -12,6 +12,7 @@ public class SupplierCardboardQuotationVO {
 
     private String ridgeType;
 
+    private Long scqId;
     private String name;
 
     /**

@@ -26,4 +26,11 @@ public interface SupplierCardboardQuotationMapper extends BaseMapper<SupplierCar
      * @time 2020/9/15 14:42
      */
     IPage findList(String code, String abbreviation, String time, Page<Object> objectPage);
+
+    /**
+     * 删除
+     * @param id
+     * @return
+     */
+    Boolean dropById(Long id);
 }
