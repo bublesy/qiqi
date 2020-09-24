@@ -30,8 +30,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderDO> implemen
     }
 
     @Override
-    public List<OrderDO> getAllBill() {
-        List<OrderDO> allOrder = orderMapper.getAllOrder();
+    public List<OrderDO> getAllBill(Long page,Long count,Long customerId,Date deliveryDate) {
+        List<OrderDO> allOrder = orderMapper.getAllOrder(page,count,customerId,deliveryDate);
         return allOrder;
+    }
+
+    @Override
+    public List<OrderDO> getTotal(Date deliveryDate) {
+        return orderMapper.getTotal(deliveryDate);
     }
 }

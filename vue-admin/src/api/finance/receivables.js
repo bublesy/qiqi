@@ -28,3 +28,7 @@ export function editRoleMenus(id, data) {
   return request({ url: '/dev/role/' + id + '/menu', data: data, method: 'put' })
 }
 
+// 应收款数据
+export function receivable() {
+  return request({ url: '/bill', method: 'get' })
+}

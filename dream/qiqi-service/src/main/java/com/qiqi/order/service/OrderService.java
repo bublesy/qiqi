@@ -29,5 +29,7 @@ public interface OrderService extends IService<OrderDO> {
      */
     IPage<OrderDO> GetList(Page<Object> objectPage, String customerName, String quantityOverdue, String time, String date);
 
-    List<OrderDO> getAllBill();
+    List<OrderDO> getAllBill(Long page,Long count,Long customerId,Date deliveryDate);
+
+    List<OrderDO> getTotal(Date deliveryDate);
 }

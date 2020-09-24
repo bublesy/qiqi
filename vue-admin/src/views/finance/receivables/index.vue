@@ -6,7 +6,7 @@
         <el-form-item label="客户:" prop="name">
           <el-select v-model="form.customerId" filterable placeholder="请选择">
             <el-option
-              v-for="item in tableData1"
+              v-for="item in tableData"
               :key="item.value"
               :label="item.name"
               :value="item.id"
@@ -30,18 +30,14 @@
       <div>
         <el-table
           ref="singleTable"
-          :data="tableData1"
+          :data="tableData"
           highlight-current-row
           style="width: 100%;margin-top:20px"
           border
         >
           <el-table-column v-show="true" prop="name" label="客户名称" />
-          <el-table-column v-show="true" prop="name" label="2012年-05月" />
-          <el-table-column v-show="true" prop="outNo" label="2012年-06月" />
-          <el-table-column v-show="true" prop="shipDate" label="2012年-07月" />
-          <el-table-column v-show="true" prop="deliveryDate" label="2012年-08月" />
-          <el-table-column v-show="true" prop="modelNo" label="2012年-09月" />
-          <el-table-column v-show="true" prop="modelNo" label="合计" />
+          <el-table-column v-for="(item, index) in tableData" :key="index" :label="item.label" :prop="item.prop" />>
+          <el-table-column v-show="true" prop="" label="合计" />
 
         </el-table>
         <!--分页组件-->
@@ -61,7 +57,9 @@
 </template>
 <script>
 import initData from '@/mixins/initData'
-import { record, customer } from '@/api/accessories/means'
+// import { record, customer } from '@/api/accessories/means'
+import { receivable } from '@/api/finance/receivables'
+
 export default {
   name: 'Verify',
   mixins: [initData],
@@ -88,19 +86,7 @@ export default {
         count: 10
       },
       // 表单数据
-      tableData: [{
-        customerName: '',
-        phone: '',
-        data: '2020--11',
-        shipment: '',
-        goods: '',
-        type: '',
-        long: '',
-        number: '',
-        price: '',
-        money: ''
-
-      }],
+      tableData: [],
       tableData1: [],
       purAddVisible: false,
       taskNumberVisible: false,
@@ -132,7 +118,13 @@ export default {
         }]
       },
       value1: '',
-      value2: ''
+      value2: '',
+      headers: [{
+        label: '',
+        prop: ''
+      }],
+      value3: [],
+      prop: ''
 
     }
   },
@@ -143,22 +135,38 @@ export default {
     supplierList() {},
     // 获取列表数据
     loadData() {
-      record(this.form).then(res => {
-        this.tableData1 = res.orderDOPageEntity.list
-        console.log(res)
-        this.pagination.total = res.orderDOPageEntity.total
-      })
-      // 获取用户数据
-      customer().then(res => {
-        console.log(res)
-        this.tableData = res
-
-        // this.pagination.total = res.total
+      receivable(this.form).then(res => {
+        this.tableData = []
+        res.forEach(element => {
+          element.forEach(a => {
+            this.headers.push(a)
+            this.tableData = this.headers
+            // this.headers.forEach(a => {
+            //   a.label = a.deliveryDate
+            //   a.prop = 'moneyDate'
+            // })
+          })
+        })
+        this.tableData.forEach(a => {
+          console.log(a.deliveryDate, a.money)
+          a.label = a.deliveryDate
+          if (a.deliveryDate !== undefined && a.money !== undefined) {
+            console.log(a.label, a.deliveryDate)
+            if (a.label === a.deliveryDate) {
+              console.log(1)
+              a.prop = 'moneyDate'
+              a.moneyDate = a.money
+            }
+          }
+        })
+        console.log(this.tableData)
       })
     },
     selectData() {
       this.loadData()
       this.disabled = false
+      console.log(this.value1)
+      console.log(this.value2)
     },
     // 打印
     printing() {
