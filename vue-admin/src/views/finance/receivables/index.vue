@@ -70,7 +70,6 @@ export default {
       // 选择客户
       value: '',
       customer: [],
-      valu: '',
       form: {
         count: 10,
         customerId: '',

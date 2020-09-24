@@ -37,11 +37,11 @@
           <el-table-column v-show="true" prop="amount" label="金额" />
           <el-table-column v-show="true" prop="discount" label="折扣" width="100px">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.discount" :controls="false" style="width: 80%;" @change="discountChange" />%
+              <el-input-number v-model="scope.row.discount" :controls="false" style="width: 80%;" @blur="discountChange" />%
             </template>
           </el-table-column>
           <el-table-column v-show="true" prop="discountAmount" label="折扣金额" />
-          <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" />
+          <el-table-column v-show="true" prop="position" label="采购数量" />
           <el-table-column v-show="true" prop="costPrice" label="成本价" />
           <el-table-column v-show="true" prop="costAmount" label="成本金额" />
           <el-table-column v-show="true" prop="profit" label="毛利" />
@@ -95,8 +95,12 @@ export default {
   methods: {
     discountChange() {
       this.tableData.forEach(a => {
-        a.discountAmount = a.orderNum * (a.discount / 100)
         a.profit = a.amount - a.costAmount - a.discountAmount
+        if (a.discount === 100) {
+          a.discountAmount = 0
+        } else {
+          a.discountAmount = a.amount * (a.discount / 100)
+        }
       })
     },
     // 获取列表数据
@@ -107,13 +111,9 @@ export default {
         this.tableData = res.list
         this.tableData.forEach(a => {
           a.discount = 100
-          if (a.discount === 100) {
-            a.discountAmount = 0
-          } else {
-            a.discountAmount = a.orderNum * (a.discount / 100)
-          }
+
           a.amount = a.orderNum * a.perPrice
-          a.costAmount = a.costPrice * a.purchaseQuantity
+          a.costAmount = a.costPrice * a.position
           a.profit = a.amount - a.costAmount - a.discountAmount
         })
         this.pagination.total = res.total
