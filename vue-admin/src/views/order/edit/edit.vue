@@ -243,7 +243,7 @@
       <p>添加样图:</p>
       <el-upload
         class="avatar-uploader"
-        action="http://192.168.1.150:8080/api/admin/file/upload"
+        :action="upLoadURL"
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
         :before-upload="beforeAvatarUpload"
@@ -296,6 +296,7 @@ export default {
         isProduct: '',
         modCount: 0
       },
+      upLoadURL: this.baseURL + '/file/upload',
       rules: {
         material: [
           { required: true, message: '请输入材质', trigger: 'blur' }

@@ -13,6 +13,7 @@ import com.qiqi.common.entity.PageEntity;
 import com.qiqi.order.dto.OrderDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.service.OrderService;
+import com.qiqi.order.vo.TotalVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -63,7 +64,7 @@ public class BillController {
 
     @ApiOperation(value = "应收款列表")
     @GetMapping("")
-    public Map<Long, List<OrderDO>> getAllBill(@RequestParam(value = "page",defaultValue = "1") Long page,
+    public Map<Long, List<OrderDTO>> getAllBill(@RequestParam(value = "page",defaultValue = "1") Long page,
                                                @RequestParam(value = "count",defaultValue = "10") Long count,
                                                @RequestParam(required = false) Long customerId,
                                                @RequestParam(required = false) Date deliveryDate){
@@ -73,14 +74,15 @@ public class BillController {
 //        Map<Long, List<OrderDO>> collect = list.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
 //        Collection<List<OrderDO>> values = collect.values();
 //        int sum = list.stream().map(orderDO -> orderDO.getMoney())..sum();
-        List<OrderDO> allBill = orderService.getAllBill(page,count,customerId,deliveryDate);
-        Map<Long, List<OrderDO>> collect = allBill.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
+        page = (page - 1) * count;
+        List<OrderDTO> allBill = orderService.getAllBill(page,count,customerId,deliveryDate);
+        Map<Long, List<OrderDTO>> collect = allBill.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
         return collect;
     }
 
     @ApiOperation(value = "总计")
     @GetMapping("/total")
-    public List<OrderDO> getTotal(@RequestParam Date deliveryDate){
+    public List<TotalVO> getTotal(@RequestParam(required = false) Date deliveryDate){
         return orderService.getTotal(deliveryDate);
     }
 }
