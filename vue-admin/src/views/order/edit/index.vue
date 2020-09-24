@@ -68,6 +68,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="orderNum" label="订单数量" width="120" />
+        <el-table-column prop="money" label="金额" width="120" />
         <el-table-column prop="incomeNum" label="纸板到货数量" width="120" />
         <el-table-column prop="space" label="仓位" width="120" />
         <el-table-column prop="productNum" label="已产数量" width="120" />
@@ -249,8 +250,8 @@ export default {
     },
     toExcel() {
       var list = this.tableData
-      const th = ['任务编号', '客户名称', '客户单号', '款号', '箱型', '材质', '纸箱尺寸(mm)', '订单数量', '纸板到货数量', '已产数量', '成品仓位', '已送数量', '退货数量', '下单日期', '交货日期', '仓库状态']
-      const filterVal = ['no', 'name', 'customerNo', 'modelNo', 'boxType', 'material', 'cartonSize', 'orderNum', 'incomeNum', 'productNum', 'productSpace', 'sendNum', 'refundNum', 'orderDate', 'deliveryDate', 'wosState']
+      const th = ['任务编号', '客户名称', '客户单号', '款号', '箱型', '材质', '纸箱尺寸(mm)', '订单数量', '金额', '纸板到货数量', '已产数量', '成品仓位', '已送数量', '退货数量', '下单日期', '交货日期', '仓库状态']
+      const filterVal = ['no', 'name', 'customerNo', 'modelNo', 'boxType', 'material', 'cartonSize', 'orderNum', 'money', 'incomeNum', 'productNum', 'productSpace', 'sendNum', 'refundNum', 'orderDate', 'deliveryDate', 'wosState']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '客户订单')
     },

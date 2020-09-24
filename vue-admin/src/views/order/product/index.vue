@@ -5,6 +5,7 @@
       <el-button v-print="'#print'" type="warning">打印当前</el-button>
       <el-button type="success" @click="print">前往打印</el-button>
       <!-- <el-button type="success" style="margin-left:60%" @click="back">返回</el-button> -->
+      <p style="margin-left:60%">注意:勾选需要在订单编辑中修改</p>
       <el-card id="print">
         <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
         <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
@@ -19,7 +20,7 @@
             <td>箱型：</td>
             <td colspan="2">{{ tableData.boxType }}    </td>
             <td>纸箱尺寸:</td>
-            <td colspan="2">{{ tableData.length }}*{{ +tableData.width }}*{{ tableData.length }}</td>
+            <td colspan="2">{{ tableData.length }}*{{ tableData.width }}*{{ tableData.length }}</td>
             <td>订单数量：</td>
             <td colspan="2">{{ tableData.orderNum }}</td>
           </tr>
@@ -29,14 +30,14 @@
             <td>愣型</td>
             <td colspan="2">{{ tableData.stare }}</td>
             <td>纸片尺寸:</td>
-            <td colspan="2">{{ tableData.paperLength }}*{{ +tableData.paperWidth }}</td>
+            <td colspan="2">{{ tableData.paperLength }}*{{ tableData.paperWidth }}</td>
             <td>纸箱面积：</td>
             <td colspan="2">{{ tableData.paperArea }}</td>
           </tr>
           <tr>
             <td colspan="3" class="center">印刷</td>
             <td colspan="3" class="center">结合</td>
-            <td colspan="6" rowspan="5" class="xx"><span>箱型展开图: </span>
+            <td colspan="6" rowspan="6" class="xx"><span>箱型展开图: </span>
               <img v-if="tableData.img" :src="url" class="avatar" style="width:200px;height:150px">
             </td>
           </tr>
@@ -63,7 +64,12 @@
             <td>备注</td>
           </tr>
           <tr>
-            <td><input type="checkbox" :checked="tableData.partialPressure"> 分压</td>
+            <td v-if="tableData.partialPressure">
+              <input type="checkbox" :checked="tableData.partialPressure">分压
+            </td>
+            <td v-else>
+              <el-checkbox>分压</el-checkbox>
+            </td>
             <td />
             <td />
             <td />
@@ -71,7 +77,12 @@
             <td />
           </tr>
           <tr>
-            <td><input type="checkbox" :checked="tableData.pasting"> 裱糊</td>
+            <td v-if="tableData.pasting">
+              <input type="checkbox" :checked="tableData.pasting">裱糊
+            </td>
+            <td v-else>
+              <el-checkbox>裱糊</el-checkbox>
+            </td>
             <td />
             <td />
             <td />
@@ -79,7 +90,12 @@
             <td />
           </tr>
           <tr>
-            <td><input type="checkbox" :checked="tableData.printing"> 印刷</td>
+            <td v-if="tableData.printing">
+              <input type="checkbox" :checked="tableData.printing">印刷
+            </td>
+            <td v-else>
+              <el-checkbox>印刷</el-checkbox>
+            </td>
             <td />
             <td />
             <td />
@@ -89,7 +105,12 @@
             <td>总面积</td>
           </tr>
           <tr>
-            <td><input type="checkbox" :checked="tableData.grooving"> 开槽</td>
+            <td v-if="tableData.grooving">
+              <input type="checkbox" :checked="tableData.grooving">开槽
+            </td>
+            <td v-else>
+              <el-checkbox>开槽</el-checkbox>
+            </td>
             <td />
             <td />
             <td />
@@ -99,7 +120,12 @@
             <td>{{ tableData.totalArea }}</td>
           </tr>
           <tr>
-            <td><input type="checkbox" :checked="tableData.dieCutting"> 模切</td>
+            <td v-if="tableData.dieCutting">
+              <input type="checkbox" :checked="tableData.dieCutting">模切
+            </td>
+            <td v-else>
+              <el-checkbox>模切</el-checkbox>
+            </td>
             <td />
             <td />
             <td />
@@ -107,16 +133,23 @@
             <td />
             <td>是否常规</td>
           </tr>
-          <td><input type="checkbox" :checked="tableData.combine"> 结合</td>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td>
-            <input type="checkbox" :checked="tableData.conventional"> 是
-          <!-- <input type="checkbox" :checked="!conventional"> 否 -->
+          <td v-if="tableData.combine">
+            <input type="checkbox" :checked="tableData.combine">结合
           </td>
+          <td v-else>
+            <el-checkbox>结合</el-checkbox>
+          </td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td /><td v-if="tableData.conventional">
+            <input type="checkbox" :checked="tableData.conventional">是
+          </td>
+          <td v-else>
+            <el-checkbox>是</el-checkbox>
+          </td>
+          <!-- <input type="checkbox" :checked="!conventional"> 否 -->
         </table>
         <div class="footer">
           <p>制单:{{ created }}</p>
@@ -140,7 +173,7 @@ export default {
       tableData: {},
       row: {},
       name: '',
-      created: ''
+      created: '', aa: null
     }
   },
   created() {
@@ -151,7 +184,6 @@ export default {
     this.row = row
     this.tableData = row
     this.tableData = row
-    console.log(row.img)
     this.url = this.baseURL + row.img
     getUserById(row.createdBy).then(res => {
       this.created = res.nickname
@@ -163,8 +195,6 @@ export default {
     },
     changeText() {
       this.reloadTag()
-    },
-    onload(id) {
     },
     print() {
       this.$router.push({

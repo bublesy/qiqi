@@ -1,7 +1,9 @@
 <template>
   <div class="app-container">
+
     <el-button type="info" style="margin-left:84%" @click="back">返回</el-button>
     <el-button v-print="'#printTest'" type="success">打印</el-button>
+    <p style="margin-left:60%">注意:勾选需要在订单编辑中修改</p>
     <el-card id="printTest">
       <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
       <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
@@ -50,10 +52,13 @@
           <td>结合</td>
           <td class="center">{{ tableData.combine }}</td>
           <td>是否常规</td>
-          <td>
-            <input type="checkbox" :checked="tableData.conventional"> 是
-          <!-- <input type="checkbox" :checked="tableData.partialPressure"> 否 -->
-          </td> </tr>
+          <td v-if="tableData.conventional">
+            <input type="checkbox" :checked="tableData.conventional">是
+          </td>
+          <td v-else>
+            <el-checkbox>是</el-checkbox>
+          </td>
+        </tr>
         <tr>
           <td class="center">备注</td>
           <td colspan="10">{{ tableData.remark }}</td>

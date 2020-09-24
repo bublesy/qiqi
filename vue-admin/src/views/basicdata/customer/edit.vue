@@ -121,7 +121,7 @@ export default {
     'dialog.show': function(val) {
       if (val) {
         if (this.id === '' || this.id === null) {
-          this.addForm = Object.assign({}, this.$options.data().addForm)
+          this.form = Object.assign({}, this.$options.data().form)
           // this.$refs.form.resetFields()
           getSalesman().then(res => {
             this.salesmanOptions = res.list

@@ -5,25 +5,26 @@ import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.qiqi.admin.order.dto.BillByCustomerAndMonth;
 import com.qiqi.admin.order.dto.BillDTO;
 import com.qiqi.admin.order.dto.BillVO;
 import com.qiqi.basicdata.entity.CustomerInformationDO;
 import com.qiqi.basicdata.service.CustomerInformationService;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.order.dto.BillsDTO;
 import com.qiqi.order.dto.OrderDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.service.OrderService;
 import com.qiqi.order.vo.TotalVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author hc
@@ -68,16 +69,24 @@ public class BillController {
                                                @RequestParam(value = "count",defaultValue = "10") Long count,
                                                @RequestParam(required = false) Long customerId,
                                                @RequestParam(required = false) Date deliveryDate){
-//        List<OrderDO> list = orderService.list(new QueryWrapper<OrderDO>()
-//        .eq(!ObjectUtils.isEmpty(deliveryDate),"delivery_date",deliveryDate)
-//        .like(StringUtils.isNotBlank(name),"name",name));
-//        Map<Long, List<OrderDO>> collect = list.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
-//        Collection<List<OrderDO>> values = collect.values();
-//        int sum = list.stream().map(orderDO -> orderDO.getMoney())..sum();
         page = (page - 1) * count;
-        List<OrderDTO> allBill = orderService.getAllBill(page,count,customerId,deliveryDate);
-        Map<Long, List<OrderDTO>> collect = allBill.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
-        return collect;
+        List<BillsDTO> allBill = orderService.getAllBill(page,count,customerId,deliveryDate);
+        List<BillByCustomerAndMonth> customerAndMonths = new ArrayList<>();
+        for (BillsDTO order1 : allBill) {
+            BillByCustomerAndMonth bill = new BillByCustomerAndMonth();
+            List<BigDecimal> money = new ArrayList<>();
+            for (BillsDTO order2 : allBill) {
+                if(order1.getCustomerId().equals(order2.getCustomerId()) && !order1.getId().equals(order2.getId())){
+                    money.add(order2.getMoney());
+                }
+            }
+            bill.setName(order1.getName());
+            bill.setMoney(money);
+            customerAndMonths.add(bill);
+        }
+        System.out.println(customerAndMonths);
+//        Map<Long, List<OrderDTO>> collect = allBill.stream().collect(Collectors.groupingBy(orderDO -> orderDO.getCustomerId()));
+        return null;
     }
 
     @ApiOperation(value = "总计")
