@@ -81,15 +81,15 @@ export default window.$crudCommon({
   },
   created: function() {
     this.tableData = this.$route.params.data
-    this.name = this.$route.params.data.name
+    this.name = this.$route.params.data[0].name
     // 截取到年
-    this.shipDate = this.$route.params.data.shipDate
+    this.shipDate = this.$route.params.data[0].shipDate
     this.shipDate = this.shipDate.substring(0, 4)
     // 截取到月
-    this.time = this.$route.params.data.shipDate
+    this.time = this.$route.params.data[0].shipDate
     this.time = this.time.substring(6, 7)
     console.log(this.time)
-    this.customerId = this.tableData.customerId
+    this.customerId = this.tableData[0].customerId
     // console.log(this.tableData)
     getCustomerById(this.customerId).then(res => {
       // console.log(res)
