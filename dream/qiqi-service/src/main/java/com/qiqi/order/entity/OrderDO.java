@@ -142,7 +142,7 @@ public class OrderDO extends BaseModel {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date deliveryDate;
 
-    private String myDate;
+//    private String myDate;
 
     /**
      * 常用箱

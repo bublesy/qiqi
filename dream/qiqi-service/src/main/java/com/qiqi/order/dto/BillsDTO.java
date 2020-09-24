@@ -20,7 +20,10 @@ public class BillsDTO {
 
     private BigDecimal money;
 
-    private Date myDate;
+    private Date deliveryDate;
 
     private Long customerId;
+
+
+    private String groudBy;
 }

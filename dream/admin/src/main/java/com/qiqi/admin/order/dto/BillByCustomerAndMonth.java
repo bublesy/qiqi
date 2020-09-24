@@ -1,5 +1,6 @@
 package com.qiqi.admin.order.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
