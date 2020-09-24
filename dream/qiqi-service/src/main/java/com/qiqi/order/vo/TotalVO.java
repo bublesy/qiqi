@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 public class TotalVO {
 
-    private Date myDate;
+    private String myDate;
 
     private BigDecimal money;
 }

@@ -3,7 +3,9 @@ package com.qiqi.order.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.qiqi.order.dto.OrderDTO;
 import com.qiqi.order.entity.OrderDO;
+import com.qiqi.order.vo.TotalVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -33,7 +35,7 @@ public interface OrderMapper extends BaseMapper<OrderDO> {
                            @Param("quantityOverdue")  String quantityOverdue,@Param("time")  String time,
                            @Param("date") String date);
 
-    List<OrderDO> getAllOrder(Long page,Long count,Long customerId,Date deliveryDate);
+    List<OrderDTO> getAllOrder(Long page, Long count, Long customerId, Date deliveryDate);
 
-    List<OrderDO> getTotal(Date deliveryDate);
+    List<TotalVO> getTotal(Date deliveryDate);
 }

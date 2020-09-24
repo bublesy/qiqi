@@ -11,4 +11,6 @@ import lombok.Data;
 public class OrderDTO extends OrderDO {
     private Long page;
     private Long count;
+
+    private String myDate;
 }
