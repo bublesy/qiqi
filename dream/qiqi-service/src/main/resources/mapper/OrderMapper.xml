@@ -18,26 +18,19 @@ p.supplier_id,p.billingDate as pBilling,p.return_num  from  orders o left join p
             and  o.created_time like concat('%', #{time} , '%')
         </if>
     </select>
-    <select id="getAllOrder" resultType="com.qiqi.order.dto.OrderDTO">
+    <select id="getAllOrder" resultType="com.qiqi.order.entity.OrderDO">
         SELECT name,SUM(`money`) as money, DATE_FORMAT(`delivery_date`,"%Y-%m") as myDate ,customer_id
         FROM `orders`
         WHERE `is_deleted`=0
-        <if test="deliveryDate != null">
-            and DATE_FORMAT(`delivery_date`,"%Y-%m") = #{deliveryDate}
-        </if>
-        <if test="customerId != null">
-            and customer_id = #{customerId}
-        </if>
-        GROUP BY customer_id,DATE_FORMAT(`delivery_date`,"%Y%m")
-        limit #{page},#{count}
+        and DATE_FORMAT(`delivery_date`,"%Y-%m") = #{deliveryDate}
+        and customer_id = #{customerId}
+        GROUP BY customer_id,DATE_FORMAT(`delivery_date`,"%Y%m") limit #{page} #{count}
     </select>
-    <select id="getTotal" resultType="com.qiqi.order.vo.TotalVO">
+    <select id="getTotal" resultType="com.qiqi.order.entity.OrderDO">
         select DATE_FORMAT(`delivery_date`,"%Y-%m") as myDate,sum(money)
         from orders o
         where o.is_deleted=0
-        <if test="deliveryDate != null">
-            and DATE_FORMAT(`delivery_date`,"%Y-%m") = #{deliveryDate}
-        </if>
+        and DATE_FORMAT(`delivery_date`,"%Y-%m") = #{deliveryDate}
         GROUP BY DATE_FORMAT(`delivery_date`,"%Y-%m")
     </select>
 

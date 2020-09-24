@@ -41,11 +41,11 @@
             </template>
           </el-table-column>
           <el-table-column v-show="true" prop="discountAmount" label="折扣金额" />
-          <el-table-column v-show="true" prop="position" label="采购数量" />
+          <el-table-column v-show="true" prop="quantity" label="采购数量" />
           <el-table-column v-show="true" prop="costPrice" label="成本价" />
           <el-table-column v-show="true" prop="costAmount" label="成本金额" />
           <el-table-column v-show="true" prop="profit" label="毛利" />
-          <el-table-column v-show="true" prop="pbilling" label="开单日期" />
+          <el-table-column v-show="true" prop="pbilling" label="开单日期" width="180" />
         </el-table>
         <el-pagination
           background
@@ -84,13 +84,15 @@ export default {
       formAdd: { },
       // 表单数据
       tableData: [
-        { discount: 100 }
+        { discount: 100 },
+        { quantity: '' }
       ]
     }
   },
   created() {
     this.init()
-    this.tableData.discount = 100
+    this.tableData.discount === 100
+    this.tableData.profit = 1
   },
   methods: {
     discountChange() {
@@ -108,17 +110,26 @@ export default {
       this.form.page = this.pagination.page
       this.form.count = this.pagination.size
       mlist(this.form).then(res => {
+        console.log(res)
         this.tableData = res.list
         this.tableData.forEach(a => {
           a.discount = 100
-
           a.amount = a.orderNum * a.perPrice
           a.costAmount = a.costPrice * a.position
-          a.profit = a.amount - a.costAmount - a.discountAmount
+          a.profit = a.amount - a.costAmount
+          if (a.position === '0') {
+            a.quantity = a.endProductPos
+          }
+          if (a.endProductPos === '0') {
+            a.quantity = a.position
+          }
+          if (a.discount === 100) {
+            a.discountAmount = 0
+          }
         })
         this.pagination.total = res.total
         // console.log(res)
-        console.log(this.tableData.orderNum)
+        // console.log(this.tableData.orderNum)
       })
     },
     // 修改数据
