@@ -113,7 +113,7 @@
       />
     </el-card>
     <editDialog :id="id" :dialog="editDialog" :flag="flag" :status="status" :is-view="isView" @init="initTable" />
-    <refundDialog :dialog="refundDialog" :refund-id="refundId" :send-num="sendNum" :refund-num2="refundNum2" @init="initTable" />
+    <refundDialog :dialog="refundDialog" :refund-id="refundId" :send-num="sendNum" :refund-num2="refundNum2" :is-product="Product" @init="initTable" />
   </div>
 </template>
 
@@ -127,6 +127,7 @@ export default {
   components: { editDialog, refundDialog },
   data() {
     return {
+      Product: '',
       flag: false,
       id: '测试施工单id',
       total: 0,
@@ -171,6 +172,7 @@ export default {
     refund(row) {
       this.sendNum = row.sendNum
       this.refundNum2 = row.refundNum
+      this.Product = row.isProduct
       console.log(this.sendNum)
       console.log(this.refundNum)
       this.refundId = row.id

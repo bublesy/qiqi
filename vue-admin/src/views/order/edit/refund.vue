@@ -45,6 +45,10 @@ export default {
     refundNum2: {
       type: String,
       default: ''
+    },
+    isProduct: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -71,6 +75,7 @@ export default {
             return this.$message.info('退货数量大于送货数量')
           }
           this.form.id = this.refundId
+          this.form.isProduct = this.isProduct
           refundNum(this.form).then(res => {
             if (res) {
               this.$message.success('退货成功')
