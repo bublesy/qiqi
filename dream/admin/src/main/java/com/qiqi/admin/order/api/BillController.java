@@ -73,18 +73,20 @@ public class BillController {
     public PageEntity<OrderDO> getAllBill(@RequestParam(value = "page",defaultValue = "1") Long page,
                                           @RequestParam(value = "count",defaultValue = "10") Long count,
                                           @RequestParam(required = false) Long customerId,
-                                          @RequestParam Date startDate,
-                                          @RequestParam Date endDate){
+                                          @RequestParam String startDate,
+                                          @RequestParam String endDate){
         List<TitleVO> titleList = new ArrayList<>();
         titleList.add(new TitleVO("客户","name"));
-        long month = DateUtil.betweenMonth(startDate, endDate, true)+1;
+        DateTime data1 = DateUtil.parse(startDate, "yyyy-MM-dd");
+        DateTime data2 = DateUtil.parse(endDate, "yyyy-MM-dd");
+        long month = DateUtil.betweenMonth(data1, data2, true)+1;
         for (int i = 0; i < month; i++) {
-            DateTime dataTime = DateUtil.offset(startDate, DateField.MONTH, i);
+            DateTime dataTime = DateUtil.offset(data1, DateField.MONTH, i);
             titleList.add(new TitleVO(DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月",DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月"));
         }
         QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(!ObjectUtils.isEmpty(customerId),"customer_id",customerId)
-                .between(!ObjectUtils.isEmpty(startDate)&&!ObjectUtils.isEmpty(endDate),"delivery_date",startDate,endDate);
+                .between(!ObjectUtils.isEmpty(data1)&&!ObjectUtils.isEmpty(data2),"delivery_date",data1,data2);
         IPage<OrderDO> iPage = orderService.page(new Page<>(page,count),queryWrapper);
         List<BillsDTO> allBill = Convert.convert(new TypeReference<List<BillsDTO>>() {}, iPage.getRecords());
         JSONArray jsonArray = new JSONArray();

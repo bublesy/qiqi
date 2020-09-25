@@ -42,7 +42,6 @@ class AdminApplicationTests {
         Date date1 = DateUtil.parse(dateStr1, "yyyy-MM-dd");
         long month = DateUtil.betweenMonth(date, date1, true)+1;
 
-        System.out.println(month);
         for (int i = 0; i < month; i++) {
             DateTime dataTime = DateUtil.offset(date1, DateField.MONTH, i);
             titleList.add(new TitleVO(DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月",DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月"));
@@ -61,7 +60,6 @@ class AdminApplicationTests {
 
         customerMap.forEach((key, value) -> {
             value.forEach(item -> {
-                System.out.println(item.getDeliveryDate());
                 item.setGroudBy(DateUtil.year(item.getDeliveryDate())+"年"+(DateUtil.month(item.getDeliveryDate())+1)+"月");
             });
 
@@ -80,7 +78,7 @@ class AdminApplicationTests {
                 list1.add(money.subtract(beginReceive));
                 json.put(key1,list1);
             });
-            json.put("total", total[0]);
+            json.put("total", total);
             for (String s : label) {
                 if(!json.containsKey(s)){
                     BigDecimal[] bigDecimals = new BigDecimal[3];
