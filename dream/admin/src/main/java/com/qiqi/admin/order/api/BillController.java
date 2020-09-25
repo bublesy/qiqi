@@ -72,7 +72,7 @@ public class BillController {
     @GetMapping("")
     public PageEntity<OrderDO> getAllBill(@RequestParam(value = "page",defaultValue = "1") Long page,
                                           @RequestParam(value = "count",defaultValue = "10") Long count,
-                                          @RequestParam Long customerId,
+                                          @RequestParam(required = false) Long customerId,
                                           @RequestParam Date startDate,
                                           @RequestParam Date endDate){
         List<TitleVO> titleList = new ArrayList<>();
@@ -99,15 +99,18 @@ public class BillController {
             Map<String, List<BillsDTO>> collect = value.stream().collect(Collectors.groupingBy(BillsDTO::getGroudBy));
             JSONObject json = new JSONObject();
             json.put("name",value.get(0).getName());
+            final BigDecimal[] total = {new BigDecimal("0.00")};
             collect.forEach((key1, value2) -> {
                 List<BigDecimal> list1 = new ArrayList();
                 BigDecimal money = value2.stream().map(data -> data.getMoney()).reduce(BigDecimal.ZERO, BigDecimal::add);
                 BigDecimal beginReceive = value2.stream().map(data -> data.getBeginReceive()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                total[0] = total[0].add(money);
                 list1.add(money);
                 list1.add(beginReceive);
                 list1.add(money.subtract(beginReceive));
                 json.put(key1,list1);
             });
+            json.put("total",total);
             for (String s : label) {
                 if(!json.containsKey(s)){
                     BigDecimal[] bigDecimals = new BigDecimal[3];
@@ -119,6 +122,7 @@ public class BillController {
             }
             jsonArray.add(json);
         });
+        titleList.add(new TitleVO("合计","total"));
         Map<String,Object> result = new HashMap<>();
         result.put("title",titleList);
         result.put("data",jsonArray);
@@ -128,7 +132,9 @@ public class BillController {
 
     @ApiOperation(value = "总计")
     @GetMapping("/total")
-    public List<TotalVO> getTotal(@RequestParam(required = false) Date deliveryDate){
-        return orderService.getTotal(deliveryDate);
+    public List<TotalVO> getTotal(@RequestParam String startDate,
+                                  @RequestParam String endDate,
+                                  @RequestParam(required = false) Long customerId){
+        return orderService.getTotal(startDate,endDate,customerId);
     }
 }
