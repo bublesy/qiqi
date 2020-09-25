@@ -79,70 +79,16 @@ public class BillController {
         if(startDate == null || endDate == null){
             return null;
         }
-//        List<TitleVO> titleList = new ArrayList<>();
-//        titleList.add(new TitleVO("客户","name"));
-//        DateTime date1 = DateUtil.parse(startDate, "yyyy-MM-dd");
-//        DateTime date2 = DateUtil.parse(endDate, "yyyy-MM-dd");
-//        long month = DateUtil.betweenMonth(date1, date2, true)+1;
-//        for (int i = 0; i < month; i++) {
-//            DateTime dataTime = DateUtil.offset(date1, DateField.MONTH, i);
-//            titleList.add(new TitleVO(DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月",DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月"));
-//        }
-//        QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
-//        queryWrapper.eq(!ObjectUtils.isEmpty(customerId),"customer_id",customerId)
-//                .between(!ObjectUtils.isEmpty(date1)&&!ObjectUtils.isEmpty(date2),"delivery_date",date1,date2);
-//        IPage<OrderDO> iPage = orderService.page(new Page<>(page,count),queryWrapper);
-//        List<BillsDTO> allBill = Convert.convert(new TypeReference<List<BillsDTO>>() {}, iPage.getRecords());
-//        JSONArray jsonArray = new JSONArray();
-//        Map<Long, List<BillsDTO>> customerMap = allBill.stream().collect(Collectors.groupingBy(BillsDTO::getCustomerId));
-//        List<String> label = new ArrayList<>();
-//        titleList.forEach(x->label.add(x.getLabel()));
-//        label.remove(0);
-//        customerMap.forEach((key, value) -> {
-//            value.forEach(item -> {
-//                item.setGroudBy(DateUtil.year(item.getDeliveryDate())+"年"+(DateUtil.month(item.getDeliveryDate())+1)+"月");
-//            });
-//            Map<String, List<BillsDTO>> collect = value.stream().collect(Collectors.groupingBy(BillsDTO::getGroudBy));
-//            JSONObject json = new JSONObject();
-//            json.put("name",value.get(0).getName());
-//            final BigDecimal[] total = {new BigDecimal("0.00")};
-//            collect.forEach((key1, value2) -> {
-//                List<BigDecimal> list1 = new ArrayList();
-//                BigDecimal money = value2.stream().map(data -> data.getMoney()).reduce(BigDecimal.ZERO, BigDecimal::add);
-//                BigDecimal beginReceive = value2.stream().map(data -> data.getBeginReceive()).reduce(BigDecimal.ZERO, BigDecimal::add);
-//                total[0] = total[0].add(money);
-//                list1.add(money);
-//                list1.add(beginReceive);
-//                list1.add(money.subtract(beginReceive));
-//                json.put(key1,list1);
-//            });
-//            json.put("total",total);
-//            for (String s : label) {
-//                if(!json.containsKey(s)){
-//                    BigDecimal[] bigDecimals = new BigDecimal[3];
-//                    bigDecimals[0] = BigDecimal.valueOf(0);
-//                    bigDecimals[1] = BigDecimal.valueOf(0);
-//                    bigDecimals[2] = BigDecimal.valueOf(0);
-//                    json.put(s,bigDecimals);
-//                }
-//            }
-//            jsonArray.add(json);
-//        });
-//        titleList.add(new TitleVO("合计","total"));
-//        Map<String,Object> result = new HashMap<>();
-//        result.put("title",titleList);
-//        result.put("data",jsonArray);
-//        System.out.println(JSONObject.toJSONString(result));
-//        return new PageEntity<>(iPage.getTotal(),result);
+
         PageEntity<OrderFinanceDTO> pageEntity = orderService.listOrder(new Page<>(page, count), customerId, startDate, endDate);
         return pageEntity;
     }
 
-    @ApiOperation(value = "总计")
-    @GetMapping("/total")
-    public List<TotalVO> getTotal(@RequestParam String startDate,
-                                  @RequestParam String endDate,
-                                  @RequestParam(required = false) Long customerId){
-        return orderService.getTotal(startDate,endDate,customerId);
-    }
+//    @ApiOperation(value = "总计")
+//    @GetMapping("/total")
+//    public List<TotalVO> getTotal(@RequestParam String startDate,
+//                                  @RequestParam String endDate,
+//                                  @RequestParam(required = false) Long customerId){
+//        return orderService.getTotal(startDate,endDate,customerId);
+//    }
 }

@@ -39,10 +39,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderDO> implemen
     }
 
 
-    @Override
-    public List<TotalVO> getTotal(Date startDate, Date endDate, Long customerId) {
-        return orderMapper.getTotal(startDate,endDate,customerId);
-    }
+//    @Override
+//    public List<TotalVO> getTotal(Date startDate, Date endDate, Long customerId) {
+//        return orderMapper.getTotal(startDate,endDate,customerId);
+//    }
 
     /**
      * @param objectPage
@@ -84,7 +84,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderDO> implemen
                 collect.get(key).forEach(a -> {
                     dates.put(a.getDate(), a.getMoney());
                     beginDates.put(a.getDate(), a.getBegin());
-                    endDates.put(a.getDate(), a.getMoney().subtract(a.getBegin()));
+                    if(a.getBegin() != null){
+                        endDates.put(a.getDate(), a.getMoney().subtract(a.getBegin()));
+                    }
                     decimal[0] = decimal[0].add(a.getMoney());
                 });
                 dto.setDates(dates);
