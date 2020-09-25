@@ -64,8 +64,8 @@ export default {
         } else {
           // 新增
           console.log('新增')
-          // this.form = Object.assign({}, this.$options.data().form)ddwgver\\464 \'\\
-          this.$refs.form.resetFields()
+          this.form = Object.assign({}, this.$options.data().form)
+          // this.$refs.form.resetFields()
         }
       }
     }
