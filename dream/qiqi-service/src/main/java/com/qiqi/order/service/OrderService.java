@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.qiqi.order.dto.BillsDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.vo.TotalVO;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.List;
@@ -31,7 +32,6 @@ public interface OrderService extends IService<OrderDO> {
      */
     IPage<OrderDO> GetList(Page<Object> objectPage, String customerName, String quantityOverdue, String time, String date);
 
-    List<BillsDTO> getAllBill(Long page, Long count, Long customerId, Date deliveryDate);
 
-    List<TotalVO> getTotal(Date deliveryDate);
+    List<TotalVO> getTotal(String startDate, String endDate, Long customerId);
 }
