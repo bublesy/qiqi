@@ -38,6 +38,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderDO> implemen
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     @Override
 <<<<<<< HEAD
     public List<TotalVO> getTotal(String startDate, String endDate, Long customerId) {
@@ -52,6 +53,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderDO> implemen
     public List<TotalVO> getTotal(Date deliveryDate) {
         return orderMapper.getTotal(deliveryDate);
 >>>>>>> parent of 2b5953c... 合并 #215024 从 djh 到 master
+=======
+
+    @Override
+    public List<TotalVO> getTotal(String startDate, String endDate, Long customerId) {
+        return orderMapper.getTotal(startDate,endDate,customerId);
+>>>>>>> hc
 =======
 
     @Override

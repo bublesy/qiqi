@@ -20,6 +20,7 @@ p.supplier_id,p.billingDate as pBilling,p.return_num  from  orders o left join p
     </select>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
     <select id="getAllOrder" resultType="com.qiqi.order.dto.OrderDTO">
@@ -48,16 +49,27 @@ p.supplier_id,p.billingDate as pBilling,p.return_num  from  orders o left join p
         from orders o
         where o.is_deleted = 0
 >>>>>>> hc
+=======
+
+    <select id="getTotal" resultType="com.qiqi.order.vo.TotalVO">
+        select DATE_FORMAT(`delivery_date`,"%Y-%m") as myDate,sum(money)
+        from orders o
+        where o.is_deleted = 0
+>>>>>>> hc
         <if test="startDate != null and endDate != null">
             and DATE_FORMAT(`delivery_date`,"%Y-%m") between #{startDate} and #{endDate}
         </if>
         <if test="customerId != null">
+<<<<<<< HEAD
 <<<<<<< HEAD
             and customer_id = #{customerId}
 =======
         <if test="deliveryDate != null">
             and DATE_FORMAT(`delivery_date`,"%Y-%m") = #{deliveryDate}
 >>>>>>> parent of 2b5953c... 合并 #215024 从 djh 到 master
+=======
+            and customerId = #{customerId}
+>>>>>>> hc
 =======
             and customerId = #{customerId}
 >>>>>>> hc

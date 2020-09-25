@@ -41,6 +41,7 @@ public interface OrderMapper extends BaseMapper<OrderDO> {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     List<TotalVO> getTotal(String startDate, String endDate, Long customerId);
 =======
@@ -48,6 +49,10 @@ public interface OrderMapper extends BaseMapper<OrderDO> {
 
     List<TotalVO> getTotal(Date deliveryDate);
 >>>>>>> parent of 2b5953c... 合并 #215024 从 djh 到 master
+=======
+
+    List<TotalVO> getTotal(String startDate, String endDate, Long customerId);
+>>>>>>> hc
 =======
 
     List<TotalVO> getTotal(String startDate, String endDate, Long customerId);

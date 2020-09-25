@@ -9,11 +9,14 @@ import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.vo.TotalVO;
 import org.springframework.web.bind.annotation.RequestParam;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import com.qiqi.order.dto.OrderDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.vo.TotalVO;
 >>>>>>> parent of 2b5953c... 合并 #215024 从 djh 到 master
+=======
+>>>>>>> hc
 =======
 >>>>>>> hc
 
@@ -43,6 +46,7 @@ public interface OrderService extends IService<OrderDO> {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     /**
      * 计算总价
@@ -59,6 +63,10 @@ public interface OrderService extends IService<OrderDO> {
 
     List<TotalVO> getTotal(Date deliveryDate);
 >>>>>>> parent of 2b5953c... 合并 #215024 从 djh 到 master
+=======
+
+    List<TotalVO> getTotal(String startDate, String endDate, Long customerId);
+>>>>>>> hc
 =======
 
     List<TotalVO> getTotal(String startDate, String endDate, Long customerId);

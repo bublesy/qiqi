@@ -77,7 +77,11 @@
         </el-form-item>
         <!-- 2020 9 9 -->
 <<<<<<< HEAD
+<<<<<<< HEAD
         <el-form-item label="交货日期:" prop="deliveryDate" label-width="85px">
+=======
+        <el-form-item label="交货日期:" prop="deliveryDate">
+>>>>>>> hc
 =======
         <el-form-item label="交货日期:" prop="deliveryDate">
 >>>>>>> hc
