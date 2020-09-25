@@ -71,13 +71,17 @@ public class BillController {
     @ApiOperation(value = "应收款列表")
     @GetMapping("")
     public PageEntity<Map<String,Object>> getAllBill(@RequestParam(value = "page",defaultValue = "1") Long page,
-                                          @RequestParam(value = "count",defaultValue = "10") Long count,
-                                          @RequestParam(required = false) Long customerId,
-                                          @RequestParam String startDate,
-                                          @RequestParam String endDate){
-        if(startDate == null || endDate == null){
-            return null;
-        }
+                                          @RequestParam(value = "count",defaultValue = "10") Long count
+//                                          @RequestParam(required = false) Long customerId,
+//                                          @RequestParam String startDate,
+//                                          @RequestParam String endDate
+    ){
+
+//        if(startDate == null || endDate == null){
+//            return null;
+//        }
+        String startDate = "2020-08-01";
+        String endDate = "2020-12-02";
         List<TitleVO> titleList = new ArrayList<>();
         titleList.add(new TitleVO("客户","name"));
         DateTime date1 = DateUtil.parse(startDate, "yyyy-MM-dd");
@@ -88,8 +92,8 @@ public class BillController {
             titleList.add(new TitleVO(DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月",DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月"));
         }
         QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(!ObjectUtils.isEmpty(customerId),"customer_id",customerId)
-                .between(!ObjectUtils.isEmpty(date1)&&!ObjectUtils.isEmpty(date2),"delivery_date",date1,date2);
+//        queryWrapper.eq(!ObjectUtils.isEmpty(customerId),"customer_id",customerId)
+//                .between(!ObjectUtils.isEmpty(date1)&&!ObjectUtils.isEmpty(date2),"delivery_date",date1,date2);
         IPage<OrderDO> iPage = orderService.page(new Page<>(page,count),queryWrapper);
         List<BillsDTO> allBill = Convert.convert(new TypeReference<List<BillsDTO>>() {}, iPage.getRecords());
         JSONArray jsonArray = new JSONArray();
@@ -140,6 +144,24 @@ public class BillController {
     public List<TotalVO> getTotal(@RequestParam String startDate,
                                   @RequestParam String endDate,
                                   @RequestParam(required = false) Long customerId){
-        return orderService.getTotal(startDate,endDate,customerId);
+        if(startDate == null || endDate == null){
+            return null;
+        }
+        Date date1 = DateUtil.parse(startDate, "yyyy-MM-dd");
+        Date date2 = DateUtil.parse(endDate, "yyyy-MM-dd");
+
+        QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(!ObjectUtils.isEmpty(customerId),"customer_id",customerId)
+                .between(!ObjectUtils.isEmpty(date1)&&!ObjectUtils.isEmpty(date2),"delivery_date",date1,date2);
+        List<OrderDO> list = orderService.list(queryWrapper);
+        List<BillsDTO> allBill = Convert.convert(new TypeReference<List<BillsDTO>>() {}, list);
+        Map<Date, List<BillsDTO>> collectMap = allBill.stream().collect(Collectors.groupingBy(billsDTO -> billsDTO.getDeliveryDate()));
+        collectMap.forEach((key,value) -> {
+            value.forEach(item -> {
+                item.setGroudBy(DateUtil.year(item.getDeliveryDate())+"年"+(DateUtil.month(item.getDeliveryDate())+1)+"月");
+            });
+            Map<String, List<BillsDTO>> collect = value.stream().collect(Collectors.groupingBy(BillsDTO::getGroudBy));
+        });
+        return null;
     }
 }

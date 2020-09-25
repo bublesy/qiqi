@@ -36,5 +36,5 @@ public interface OrderMapper extends BaseMapper<OrderDO> {
                            @Param("date") String date);
 
 
-    List<TotalVO> getTotal(String startDate, String endDate, Long customerId);
+    List<TotalVO> getTotal(Date startDate, Date endDate, Long customerId);
 }

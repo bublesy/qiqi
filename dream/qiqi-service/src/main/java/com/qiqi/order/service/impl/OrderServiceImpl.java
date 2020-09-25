@@ -35,7 +35,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderDO> implemen
 
 
     @Override
-    public List<TotalVO> getTotal(String startDate, String endDate, Long customerId) {
+    public List<TotalVO> getTotal(Date startDate, Date endDate, Long customerId) {
         return orderMapper.getTotal(startDate,endDate,customerId);
     }
 }
