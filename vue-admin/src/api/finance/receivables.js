@@ -29,6 +29,6 @@ export function editRoleMenus(id, data) {
 }
 
 // 应收款数据
-export function receivable() {
-  return request({ url: '/bill', method: 'get' })
+export function receivable(data) {
+  return request({ url: '/bill', method: 'get', params: data })
 }

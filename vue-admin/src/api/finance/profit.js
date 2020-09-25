@@ -34,5 +34,5 @@ export function mlist(data) {
 }
 // 毛利估算修改
 export function updated(data) {
-  return request({ url: '/purchase/order/update', method: 'put', data: data })
+  return request({ url: '/purchase/order/update', method: 'put', params: data })
 }
