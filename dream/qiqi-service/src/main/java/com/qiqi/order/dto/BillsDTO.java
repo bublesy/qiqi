@@ -2,7 +2,6 @@ package com.qiqi.order.dto;
 
 import lombok.Data;
 
-import javax.annotation.security.DenyAll;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -25,7 +24,6 @@ public class BillsDTO {
     private BigDecimal beginReceive;
 
     private Long customerId;
-
 
     private String groudBy;
 }
