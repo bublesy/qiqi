@@ -15,6 +15,9 @@ public class WarehouseVO {
 
     private String checkNum;
 
+    private String outNo;
+    private String outDate;
+
     private String checkDate;
 
     private String deliveryQuantity;
