@@ -33,9 +33,8 @@
           range-separator="至"
           start-placeholder="开始月份"
           end-placeholder="结束月份"
-          :picker-options="pickerOptions"
-          value-format="yyyy-MM-dd HH-mm-ss"
           size="mini"
+          @change="loadHeaders"
         />
         <el-button type="primary" size="mini" @click="selectData">查询</el-button>
         <el-button type="primary" size="mini" :disabled="disabled" @click="printing">生成月份打印单</el-button>
@@ -47,11 +46,21 @@
           highlight-current-row
           style="width: 100%;margin-top:20px"
           border
+          row-key="id"
+          default-expand-all
+          :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         >
-          <el-table-column v-for="(item, index) in headers" :key="index" :label="item.label" :prop="item.prop">
-            <!-- <template>
-              <span style="margin-left: 10px">{{ indexValue }}</span>
-            </template> -->
+          >
+          <el-table-column label="客户" prop="name" width="100" />
+          <el-table-column v-for="(item, index) in headers" :key="index" :label="item.label" :prop="item.prop" width="100">
+            <template slot-scope="scope">
+              {{ scope.row.dates[item.prop]?scope.row.dates[item.prop]:0 }}
+            </template>
+          </el-table-column>
+          <el-table-column label="合计" prop="total" width="100">
+            <template slot-scope="scope">
+              {{ scope.row.total }}
+            </template>
           </el-table-column>
         </el-table>
         <!--分页组件-->
@@ -75,6 +84,11 @@ import { receivable } from '@/api/finance/receivables'
 
 export default {
   name: 'Verify',
+  filters: {
+    toFixed(val) {
+      return val ? (val / 100).toFixed(2) : val
+    }
+  },
   mixins: [initData],
   data() {
     return {
@@ -146,14 +160,47 @@ export default {
   created() {
     this.initDate()
     this.init()
+    this.loadHeaders()
   },
   methods: {
+    load(tree, treeNode, resolve) {
+      setTimeout(() => {
+        resolve([
+          {
+            id: 31,
+            date: '2016-05-01',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1519 弄'
+          }, {
+            id: 32,
+            date: '2016-05-01',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1519 弄'
+          }
+        ])
+      }, 1000)
+    },
     initDate() {
       var end = new Date()
       var start = new Date()
       start.setMonth(start.getMonth() - 6)
       this.dates = [start, end]
       // console.log(this.dates)
+    },
+    loadHeaders() {
+      // this.headers = [{ label: '客户', prop: 'name' }]
+      this.headers = []
+      var min = new Date(this.dates[0])
+      var max = new Date(this.dates[1])
+      while (Date.parse(min) <= Date.parse(max)) {
+        var month = min.getMonth() + 1
+        this.headers.push({ label: min.getFullYear() + '年' + (month < 10 ? ('0' + month) : month) + '月', prop: min.getFullYear() + '-' + (month < 10 ? ('0' + month) : month) })
+        min.setMonth(month)
+      }
+      // this.headers.push({ label: '合计', prop: 'total' })
+      console.log(this.headers)
+      this.$set(this.form, 'startTime', this.$moment(this.dates[0]).startOf('month').format('YYYY-MM-DD') + ' 00:00:00')
+      this.$set(this.form, 'endTime', this.$moment(this.dates[1]).endOf('month').format('YYYY-MM-DD') + ' 23:59:59')
     },
     supplierList() {},
     // 获取列表数据
@@ -162,31 +209,8 @@ export default {
       this.form.endDate = this.dates[1]
       receivable(this.form).then(res => {
         console.log(res)
-        this.pagination.total = res.map.data.length
-        this.headers = res.map.title
-        this.tableData = res.map.data
-        Object.values(this.tableData).forEach(a => {
-          console.log(a)
-        })
-        // this.tableData.forEach(a => {
-        //   Object.values(a).forEach(b => {
-        //     console.log(b)
-        //     // this.solve = b
-        //     // this.solve.forEach(cc => {
-        //     //   this.indexValue = cc
-        //     //   console.log(this.indexValue)
-        //     // })
-        //     // (b, item) => {
-        //     //   for (var i in b) {
-        //     //     if (b[i] === item) {
-        //     //       console.log(i)
-        //     //       return i
-        //     //     }
-        //     //   }
-        //     // }
-        //   })
-        // })
-        // console.log('c', this.solve)
+        this.pagination.total = res.total
+        this.tableData = res.list
       })
     },
     selectData() {

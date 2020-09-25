@@ -31,6 +31,55 @@ p.supplier_id,p.billingDate as pBilling,p.return_num  from  orders o left join p
         </if>
         GROUP BY DATE_FORMAT(`delivery_date`,"%Y-%m")
     </select>
+    <select id="listOrder" resultType="com.qiqi.order.vo.OrderFinanceVO">
+        SELECT
+            o.`customer_id`,
+            c.`full_name` AS `name`,
+            SUM(o.`money`) AS `money`,
+            SUM(o.`begin_receive`) AS `begin`,
+            DATE_FORMAT(o.`delivery_date`,'%Y-%m') AS `date`
+        FROM `orders` o
+            INNER JOIN `customer_information` c ON c.`id`=o.`customer_id`
+        WHERE o.`is_deleted`=0
+            <if test="ids!=null and ids.size()>0">
+                AND o.`customer_id` in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="time!=null and time!='' and time!=null and time!=''">
+                AND o.`delivery_date` BETWEEN #{time} AND #{date}
+            </if>
+        GROUP BY o.`customer_id`,DATE_FORMAT(o.`delivery_date`,'%Y%m')
+    </select>
+    <select id="getPage" resultType="java.lang.Long">
+        SELECT
+            `customer_id`
+        FROM `orders`
+        WHERE `is_deleted`=0
+        <if test="time!=null and time!='' and date!=null and date!=''">
+            AND `delivery_date` BETWEEN #{time} AND #{date}
+        </if>
+        GROUP BY `customer_id`
+    </select>
+    <select id="listTotalOrder" resultType="com.qiqi.order.vo.OrderFinanceVO">
+        SELECT
+        SUM(o.`money`) AS `money`,
+        DATE_FORMAT(o.`delivery_date`,'%Y-%m') AS `date`
+        FROM `orders` o
+        INNER JOIN `customer_information` c ON c.`id`=o.`customer_id`
+        WHERE o.`is_deleted`=0
+        <if test="ids!=null and ids.size()>0">
+            AND o.`customer_id` in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="time!=null and time!='' and time!=null and time!=''">
+            AND o.`delivery_date` BETWEEN #{time} AND #{date}
+        </if>
+        GROUP BY DATE_FORMAT(o.`delivery_date`,'%Y%m')
+    </select>
 
 
 </mapper>
