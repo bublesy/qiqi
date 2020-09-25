@@ -70,11 +70,14 @@ public class BillController {
 
     @ApiOperation(value = "应收款列表")
     @GetMapping("")
-    public PageEntity<OrderDO> getAllBill(@RequestParam(value = "page",defaultValue = "1") Long page,
+    public PageEntity<Map<String,Object>> getAllBill(@RequestParam(value = "page",defaultValue = "1") Long page,
                                           @RequestParam(value = "count",defaultValue = "10") Long count,
                                           @RequestParam(required = false) Long customerId,
                                           @RequestParam String startDate,
                                           @RequestParam String endDate){
+        if(startDate == null || endDate == null){
+            return null;
+        }
         List<TitleVO> titleList = new ArrayList<>();
         titleList.add(new TitleVO("客户","name"));
         DateTime date1 = DateUtil.parse(startDate, "yyyy-MM-dd");
@@ -129,7 +132,7 @@ public class BillController {
         result.put("title",titleList);
         result.put("data",jsonArray);
         System.out.println(JSONObject.toJSONString(result));
-        return new PageEntity<>(iPage.getTotal(), Convert.convert(new TypeReference<List<OrderDO>>() {}, result));
+        return new PageEntity<>(iPage.getTotal(),result);
     }
 
     @ApiOperation(value = "总计")
