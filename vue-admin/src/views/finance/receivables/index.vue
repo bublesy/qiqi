@@ -13,13 +13,33 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="时间范围:">
-                     <DateTimeHorizon @dateTimeHorizonCallBack="dateTimeHorizonCallBack"  />
-                  </el-form-item>
-        </el-form-item label="时间范围:"></el-form>
-      <el-button type="primary" size="mini" @click="selectData">查询</el-button>
-      <el-button type="primary" size="mini" :disabled="disabled" @click="printing">生成月份打印单</el-button>
-
+        <!-- <el-date-picker
+          v-model="form.startDate"
+          type="month"
+          placeholder="开始时间"
+          value-format="yyyy-MM-dd HH-mm-ss"
+        />
+        <el-date-picker
+          v-model="form.endDate"
+          type="month"
+          placeholder="结束时间"
+          value-format="yyyy-MM-dd HH-mm-ss"
+        /> -->
+        <el-date-picker
+          v-model="dates"
+          type="monthrange"
+          align="right"
+          unlink-panels
+          range-separator="至"
+          start-placeholder="开始月份"
+          end-placeholder="结束月份"
+          :picker-options="pickerOptions"
+          value-format="yyyy-MM-dd HH-mm-ss"
+          size="mini"
+        />
+        <el-button type="primary" size="mini" @click="selectData">查询</el-button>
+        <el-button type="primary" size="mini" :disabled="disabled" @click="printing">生成月份打印单</el-button>
+      </el-form>
       <div>
         <el-table
           ref="singleTable"
@@ -28,10 +48,8 @@
           style="width: 100%;margin-top:20px"
           border
         >
-          <el-table-column v-show="true" prop="name" label="客户名称" />
-          <el-table-column v-for="(item, index) in tableData" :key="index" :label="item.label" :prop="item.prop" />>
+          <el-table-column v-for="(item, index) in headers" :key="index" :label="item.label" :prop="item.prop" />>
           <el-table-column v-show="true" prop="" label="合计" />
-
         </el-table>
         <!--分页组件-->
         <el-pagination
@@ -51,19 +69,24 @@
 <script>
 import initData from '@/mixins/initData'
 import { receivable } from '@/api/finance/receivables'
-import DateTimeHorizon from '@/components/dateTime_horizon'
 
 export default {
   name: 'Verify',
-  components: { DateTimeHorizon },
   mixins: [initData],
   data() {
     return {
+      // 选择月份
       month: [],
       // 选择客户
       value: '',
       customer: [],
 
+      formAdd: {
+        page: 1,
+        count: 10,
+        customerId: '',
+        startDate: ''
+      },
       // 表单数据
       tableData: [],
       tableData1: [],
@@ -73,41 +96,79 @@ export default {
       indexId: {},
       fullNames: [],
       disabled: true,
+      pickerOptions: {
+        shortcuts: [{
+          text: '本月',
+          onClick(picker) {
+            picker.$emit('pick', [new Date(), new Date()])
+          }
+        }, {
+          text: '今年至今',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date(new Date().getFullYear(), 0)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近六个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setMonth(start.getMonth() - 6)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
       headers: [{
         label: '',
         prop: ''
       }],
+      hheaders: [{ label: '3月', prop: 'a' }, { label: '4月', prop: 'b' }, { label: '3月', prop: 'c' }],
       value3: [],
       prop: '',
+      dates: [],
       form: {
+        page: 1,
+        count: 10,
         customerId: '',
         startDate: '',
-        endDate: ''
+        endDate: '',
+        id: ''
+
       }
 
     }
   },
   created() {
+    this.initDate()
     this.init()
   },
   methods: {
-    dateTimeHorizonCallBack(val) {
-      this.form.startDate = val[0].format('YYYY-MM-DD') + ' 00:00:00'
-      this.form.endDate = val[1].format('YYYY-MM-DD') + ' 23:59:59'
+    initDate() {
+      var end = new Date()
+      var start = new Date()
+      start.setMonth(start.getMonth() - 6)
+      this.dates = [start, end]
+      // console.log(this.dates)
     },
     supplierList() {},
     // 获取列表数据
     loadData() {
+      console.log(this.dates[0])
+      this.form.startDate = this.dates[0]
+      this.form.endDate = this.dates[1]
       console.log(this.form)
       receivable(this.form).then(res => {
         console.log(res)
+        this.pagination.total = res.map.data.length
+        this.headers = res.map.title
+        this.tableData = res.map.data
+        console.log(this.tableData)
       })
     },
     selectData() {
       this.loadData()
       this.disabled = false
-      // console.log(this.value1)
-      // console.log(this.value2)
     },
     // 打印
     printing() {
