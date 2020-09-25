@@ -13,9 +13,20 @@
             />
           </el-select>
         </el-form-item>
+        <!-- <el-date-picker
+          v-model="form.startDate"
+          type="month"
+          placeholder="开始时间"
+          value-format="yyyy-MM-dd HH-mm-ss"
+        />
         <el-date-picker
-          v-model="value2"
-          size="mini"
+          v-model="form.endDate"
+          type="month"
+          placeholder="结束时间"
+          value-format="yyyy-MM-dd HH-mm-ss"
+        /> -->
+        <el-date-picker
+          v-model="dates"
           type="monthrange"
           align="right"
           unlink-panels
@@ -23,6 +34,8 @@
           start-placeholder="开始月份"
           end-placeholder="结束月份"
           :picker-options="pickerOptions"
+          value-format="yyyy-MM-dd HH-mm-ss"
+          size="mini"
         />
         <el-button type="primary" size="mini" @click="selectData">查询</el-button>
         <el-button type="primary" size="mini" :disabled="disabled" @click="printing">生成月份打印单</el-button>
@@ -35,10 +48,8 @@
           style="width: 100%;margin-top:20px"
           border
         >
-          <el-table-column v-show="true" prop="name" label="客户名称" />
-          <el-table-column v-for="(item, index) in tableData" :key="index" :label="item.label" :prop="item.prop" />>
+          <el-table-column v-for="(item, index) in headers" :key="index" :label="item.label" :prop="item.prop" />>
           <el-table-column v-show="true" prop="" label="合计" />
-
         </el-table>
         <!--分页组件-->
         <el-pagination
@@ -57,7 +68,6 @@
 </template>
 <script>
 import initData from '@/mixins/initData'
-// import { record, customer } from '@/api/accessories/means'
 import { receivable } from '@/api/finance/receivables'
 
 export default {
@@ -70,20 +80,12 @@ export default {
       // 选择客户
       value: '',
       customer: [],
-      valu: '',
-      form: {
-        count: 10,
-        customerId: '',
-        deliveryDate: '',
-        page: 1,
-        fullName: '',
-        date: '',
-        id: '',
-        time: ''
-      },
+
       formAdd: {
         page: 1,
-        count: 10
+        count: 10,
+        customerId: '',
+        startDate: ''
       },
       // 表单数据
       tableData: [],
@@ -117,56 +119,54 @@ export default {
           }
         }]
       },
-      value1: '',
-      value2: '',
       headers: [{
         label: '',
         prop: ''
       }],
+      hheaders: [{ label: '3月', prop: 'a' }, { label: '4月', prop: 'b' }, { label: '3月', prop: 'c' }],
       value3: [],
-      prop: ''
+      prop: '',
+      dates: [],
+      form: {
+        page: 1,
+        count: 10,
+        customerId: '',
+        startDate: '',
+        endDate: '',
+        id: ''
+
+      }
 
     }
   },
   created() {
+    this.initDate()
     this.init()
   },
   methods: {
+    initDate() {
+      var end = new Date()
+      var start = new Date()
+      start.setMonth(start.getMonth() - 6)
+      this.dates = [start, end]
+      // console.log(this.dates)
+    },
     supplierList() {},
     // 获取列表数据
     loadData() {
+      console.log(this.dates[0])
+      this.form.startDate = this.dates[0]
+      this.form.endDate = this.dates[1]
       receivable(this.form).then(res => {
-        this.tableData = []
-        res.forEach(element => {
-          element.forEach(a => {
-            this.headers.push(a)
-            this.tableData = this.headers
-            // this.headers.forEach(a => {
-            //   a.label = a.deliveryDate
-            //   a.prop = 'moneyDate'
-            // })
-          })
-        })
-        this.tableData.forEach(a => {
-          console.log(a.deliveryDate, a.money)
-          a.label = a.deliveryDate
-          if (a.deliveryDate !== undefined && a.money !== undefined) {
-            console.log(a.label, a.deliveryDate)
-            if (a.label === a.deliveryDate) {
-              console.log(1)
-              a.prop = 'moneyDate'
-              a.moneyDate = a.money
-            }
-          }
-        })
-        console.log(this.tableData)
+        console.log(res)
+        this.pagination.total = res.map.data.length
+        this.headers = res.map.title
+        this.tableData = res.map.data
       })
     },
     selectData() {
       this.loadData()
       this.disabled = false
-      console.log(this.value1)
-      console.log(this.value2)
     },
     // 打印
     printing() {

@@ -3,7 +3,7 @@ package com.qiqi.order.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.qiqi.order.dto.OrderDTO;
+import com.qiqi.order.dto.BillsDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.vo.TotalVO;
 
@@ -31,7 +31,7 @@ public interface OrderService extends IService<OrderDO> {
      */
     IPage<OrderDO> GetList(Page<Object> objectPage, String customerName, String quantityOverdue, String time, String date);
 
-    List<OrderDTO> getAllBill(Long page, Long count, Long customerId, Date deliveryDate);
+    List<BillsDTO> getAllBill(Long page, Long count, Long customerId, Date deliveryDate);
 
     List<TotalVO> getTotal(Date deliveryDate);
 }

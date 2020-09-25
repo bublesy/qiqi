@@ -17,6 +17,9 @@ import java.util.Date;
 public class PurchaseOrderVO {
     private String pBilling;
     private String endProductPos;
+    private String discount;
+    private String discountAmount;
+    private String profit;
 
     private String inProductDate;
 

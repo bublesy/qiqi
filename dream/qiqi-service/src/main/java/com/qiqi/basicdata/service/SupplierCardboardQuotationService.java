@@ -26,4 +26,11 @@ public interface SupplierCardboardQuotationService extends IService<SupplierCard
      * @time 2020/9/15 14:40
      */
     IPage findList(String code, String abbreviation, String time, Page<Object> objectPage);
+
+    /**
+     * 删除
+     * @param id
+     * @return
+     */
+    Boolean dropById(Long id);
 }

@@ -32,7 +32,7 @@ export function editRoleMenus(id, data) {
 export function mlist(data) {
   return request({ url: '/purchase/order/list', method: 'get', params: data })
 }
-// 毛利估算保存
-export function profit(data) {
-  return request({ url: '/purchase/order', method: 'put', params: data })
+// 毛利估算修改
+export function updated(data) {
+  return request({ url: '/purchase/order/update', method: 'put', params: data })
 }

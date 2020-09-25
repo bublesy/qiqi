@@ -26,4 +26,9 @@ public class SupplierCardboardQuotationServiceImpl extends ServiceImpl<SupplierC
     public IPage findList(String code, String abbreviation, String time, Page<Object> objectPage) {
         return supplierCardboardQuotationMapper.findList(code,abbreviation,time,objectPage);
     }
+
+    @Override
+    public Boolean dropById(Long id) {
+        return supplierCardboardQuotationMapper.dropById(id);
+    }
 }

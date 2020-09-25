@@ -18,8 +18,8 @@ p.supplier_id,p.billingDate as pBilling,p.return_num  from  orders o left join p
             and  o.created_time like concat('%', #{time} , '%')
         </if>
     </select>
-    <select id="getAllOrder" resultType="com.qiqi.order.dto.OrderDTO">
-        SELECT name,SUM(`money`) as money, DATE_FORMAT(`delivery_date`,"%Y-%m") as myDate ,customer_id
+    <select id="getAllOrder" resultType="com.qiqi.order.dto.BillsDTO">
+        SELECT id,name,SUM(`money`) as money, DATE_FORMAT(`delivery_date`,"%Y-%m") as myDate ,customer_id
         FROM `orders`
         WHERE `is_deleted`=0
         <if test="deliveryDate != null">

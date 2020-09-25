@@ -81,6 +81,7 @@ public class SupplierCardboardQuotationController {
     @ApiOperation(value = "新增供应商纸板报价")
     @PostMapping("/add")
     public Boolean saveSupplierCardboardQuotation(@RequestBody SupplierCardboardQuotationDO supplierCardboardQuotationDO) {
+        supplierCardboardQuotationDO.setSupplierId(supplierCardboardQuotationDO.getId());
         return supplierCardboardQuotationService.saveOrUpdate(supplierCardboardQuotationDO);
     }
 
@@ -93,7 +94,7 @@ public class SupplierCardboardQuotationController {
     @ApiOperation(value = "删除供应商纸板报价(单个))")
     @DeleteMapping("/{id}")
     public Boolean deleteSupplierCardboardQuotationById(@PathVariable Long id) {
-        return supplierCardboardQuotationService.removeById(id);
+        return supplierCardboardQuotationService.dropById(id);
     }
 
     /**

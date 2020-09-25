@@ -196,7 +196,7 @@ public class PurchaseOrderController {
 
 
     @ApiOperation(value = "修改采购单")
-    @PutMapping("")
+    @PutMapping("/update")
     public Boolean updatePurchaseOrder(@RequestBody PurchaseOrderDO purchaseOrderDO) {
         return purchaseOrderService.updateById(purchaseOrderDO);
     }
