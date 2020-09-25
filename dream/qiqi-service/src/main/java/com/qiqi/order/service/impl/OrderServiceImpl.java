@@ -24,21 +24,18 @@ import java.util.List;
  */
 @Service
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderDO> implements OrderService {
+
     @Resource
     private OrderMapper orderMapper;
+
     @Override
     public IPage<OrderDO> GetList(Page<Object> objectPage, String customerName, String quantityOverdue, String time, String date) {
         return orderMapper.getList(objectPage,customerName,quantityOverdue,time,date);
     }
 
-    @Override
-    public List<BillsDTO> getAllBill(Long page, Long count, Long customerId, Date deliveryDate) {
-        List<BillsDTO> allOrder = orderMapper.getAllOrder(page,count,customerId,deliveryDate);
-        return allOrder;
-    }
 
     @Override
-    public List<TotalVO> getTotal(Date deliveryDate) {
-        return orderMapper.getTotal(deliveryDate);
+    public List<TotalVO> getTotal(String startDate, String endDate, Long customerId) {
+        return orderMapper.getTotal(startDate,endDate,customerId);
     }
 }

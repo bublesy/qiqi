@@ -71,7 +71,8 @@ export default {
     sure() {
       this.$refs.form.validate(x => {
         if (x) {
-          if (this.refundNum2 - this.sendNum >= 0) {
+          console.log(parseInt(this.form.refundNum) + parseInt(this.refundNum2))
+          if ((parseInt(this.form.refundNum) + parseInt(this.refundNum2)) > this.sendNum) {
             return this.$message.info('退货数量大于送货数量')
           }
           this.form.id = this.refundId

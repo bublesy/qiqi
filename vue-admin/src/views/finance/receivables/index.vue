@@ -48,9 +48,7 @@
           style="width: 100%;margin-top:20px"
           border
         >
-          <el-table-column label="">
-            <el-table-column v-for="(item, index) in headers" :key="index" :label="item.label" :prop="item.prop" />>
-          </el-table-column>
+          <el-table-column v-for="(item, index) in headers" :key="index" :label="item.label" :prop="item.prop" />>
           <el-table-column v-show="true" prop="" label="合计" />
         </el-table>
         <!--分页组件-->
@@ -132,9 +130,11 @@ export default {
       form: {
         page: 1,
         count: 10,
-        customerId: 1,
+        customerId: '',
         startDate: '',
-        endDate: ''
+        endDate: '',
+        id: ''
+
       }
 
     }
@@ -157,13 +157,11 @@ export default {
       console.log(this.dates[0])
       this.form.startDate = this.dates[0]
       this.form.endDate = this.dates[1]
-      console.log(this.form)
       receivable(this.form).then(res => {
         console.log(res)
         this.pagination.total = res.map.data.length
         this.headers = res.map.title
         this.tableData = res.map.data
-        console.log(this.tableData)
       })
     },
     selectData() {

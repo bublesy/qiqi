@@ -22,6 +22,8 @@ public class BillsDTO {
 
     private Date deliveryDate;
 
+    private BigDecimal beginReceive;
+
     private Long customerId;
 
 

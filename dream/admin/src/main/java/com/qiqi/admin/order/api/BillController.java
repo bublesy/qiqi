@@ -73,8 +73,8 @@ public class BillController {
     public PageEntity<OrderDO> getAllBill(@RequestParam(value = "page",defaultValue = "1") Long page,
                                           @RequestParam(value = "count",defaultValue = "10") Long count,
                                           @RequestParam(required = false) Long customerId,
-                                          @RequestParam(required = false) Date startDate,
-                                          @RequestParam(required = false) Date endDate){
+                                          @RequestParam Date startDate,
+                                          @RequestParam Date endDate){
         List<TitleVO> titleList = new ArrayList<>();
         titleList.add(new TitleVO("客户","name"));
         long month = DateUtil.betweenMonth(startDate, endDate, true)+1;
@@ -83,7 +83,8 @@ public class BillController {
             titleList.add(new TitleVO(DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月",DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月"));
         }
         QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(!ObjectUtils.isEmpty(customerId),"customer_id",customerId).between("delivery_date",startDate,endDate);
+        queryWrapper.eq(!ObjectUtils.isEmpty(customerId),"customer_id",customerId)
+                .between(!ObjectUtils.isEmpty(startDate)&&!ObjectUtils.isEmpty(endDate),"delivery_date",startDate,endDate);
         IPage<OrderDO> iPage = orderService.page(new Page<>(page,count),queryWrapper);
         List<BillsDTO> allBill = Convert.convert(new TypeReference<List<BillsDTO>>() {}, iPage.getRecords());
         JSONArray jsonArray = new JSONArray();
@@ -98,15 +99,30 @@ public class BillController {
             Map<String, List<BillsDTO>> collect = value.stream().collect(Collectors.groupingBy(BillsDTO::getGroudBy));
             JSONObject json = new JSONObject();
             json.put("name",value.get(0).getName());
+            final BigDecimal[] total = {new BigDecimal("0.00")};
             collect.forEach((key1, value2) -> {
-                BigDecimal reduce = value2.stream().map(data -> data.getMoney()).reduce(BigDecimal.ZERO, BigDecimal::add);
-                json.put(key1,reduce);
+                List<BigDecimal> list1 = new ArrayList();
+                BigDecimal money = value2.stream().map(data -> data.getMoney()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal beginReceive = value2.stream().map(data -> data.getBeginReceive()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                total[0] = total[0].add(money);
+                list1.add(money);
+                list1.add(beginReceive);
+                list1.add(money.subtract(beginReceive));
+                json.put(key1,list1);
             });
+            json.put("total",total);
             for (String s : label) {
-                if(!json.containsKey(s)){ json.put(s,0);}
+                if(!json.containsKey(s)){
+                    BigDecimal[] bigDecimals = new BigDecimal[3];
+                    bigDecimals[0] = BigDecimal.valueOf(0);
+                    bigDecimals[1] = BigDecimal.valueOf(0);
+                    bigDecimals[2] = BigDecimal.valueOf(0);
+                    json.put(s,bigDecimals);
+                }
             }
             jsonArray.add(json);
         });
+        titleList.add(new TitleVO("合计","total"));
         Map<String,Object> result = new HashMap<>();
         result.put("title",titleList);
         result.put("data",jsonArray);
@@ -116,7 +132,9 @@ public class BillController {
 
     @ApiOperation(value = "总计")
     @GetMapping("/total")
-    public List<TotalVO> getTotal(@RequestParam(required = false) Date deliveryDate){
-        return orderService.getTotal(deliveryDate);
+    public List<TotalVO> getTotal(@RequestParam String startDate,
+                                  @RequestParam String endDate,
+                                  @RequestParam(required = false) Long customerId){
+        return orderService.getTotal(startDate,endDate,customerId);
     }
 }
