@@ -21,6 +21,7 @@
           highlight-current-row
           style="width: 100%;margin-top:20px"
           border=""
+          @selection-change="handleSelectionChange"
         >
           <el-table-column v-show="true" prop="name" label="客户名称" />
           <el-table-column v-show="true" prop="no" label="任务编号" />
@@ -36,21 +37,15 @@
           <el-table-column v-show="true" prop="amount" label="金额" />
           <el-table-column v-show="true" prop="discount" label="折扣" width="100px">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.discount" :disabled="scope.row.pid !==null ?false:true" :controls="false" style="width: 80%;" @blur="discountChange" />%
+              <el-input-number v-model="scope.row.discount" :controls="false" style="width: 80%;" @blur="discountChange" />%
             </template>
           </el-table-column>
-          <el-table-column v-show="true" prop="discountAmount" label="优惠后金额" width="100" />
-          <el-table-column v-show="true" prop="quantity" label="采购数量" />
+          <el-table-column v-show="true" prop="discountAmount" label="折扣金额" />
+          <el-table-column v-show="true" prop="position" label="采购数量" />
           <el-table-column v-show="true" prop="costPrice" label="成本价" />
           <el-table-column v-show="true" prop="costAmount" label="成本金额" />
           <el-table-column v-show="true" prop="profit" label="毛利" />
-          <el-table-column v-show="true" prop="pbilling" label="开单日期" width="180" />
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button :disabled="scope.row.pid !==null ?false:true" size="mini" type="primary" @click="preservation(scope)">保存</el-button>
-            </template>
-          </el-table-column>
-
+          <el-table-column v-show="true" prop="pbilling" label="开单日期" />
         </el-table>
         <el-pagination
           background
@@ -70,7 +65,7 @@
 <script>
 import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
-import { mlist, updated } from '@/api/finance/profit'
+import { mlist, profit } from '@/api/finance/profit'
 export default {
   name: 'Verify',
   mixins: [initData],
@@ -83,64 +78,29 @@ export default {
         quantityOverdue: '',
         customerName: '',
         name: '',
-        discount: 100,
-        profit: '',
+        discount: 100
 
-        no: '',
-        customerNo: '',
-        boxType: '',
-        modelNo: '',
-        length: '',
-        width: '',
-        unit: '',
-        orderNum: '',
-        height: '',
-        perPrice: '',
-        amount: '',
-        costPrice: '',
-        costAmount: '',
-        pbilling: '',
-        quantity: ''
       },
       formAdd: { },
       // 表单数据
       tableData: [
-        { discount: 100 },
-        { quantity: '' }
-      ],
-      formUpdate: {}
+        { discount: 100 }
+      ]
     }
   },
   created() {
     this.init()
-    // this.tableData.discount === 100
+    this.tableData.discount = 100
   },
   methods: {
     discountChange() {
       this.tableData.forEach(a => {
-        a.profit = a.discountAmount - a.costAmount
+        a.profit = a.amount - a.costAmount - a.discountAmount
         if (a.discount === 100) {
-          a.discountAmount = a.amount
+          a.discountAmount = 0
         } else {
           a.discountAmount = a.amount * (a.discount / 100)
         }
-      })
-    },
-    // 修改
-    preservation(scope) {
-      console.log(scope.row)
-      this.formUpdate.id = scope.row.pid
-      this.formUpdate.discount = scope.row.discount
-      this.formUpdate.discountAmount = scope.row.discountAmount
-      this.formUpdate.profit = scope.row.profit
-      updated(this.formUpdate).then(res => {
-        this.tableData = res
-        if (res) {
-          this.$message.success('成功')
-        } else {
-          this.$message.error('失败')
-        }
-        this.loadData()
       })
     },
     // 获取列表数据
@@ -148,33 +108,30 @@ export default {
       this.form.page = this.pagination.page
       this.form.count = this.pagination.size
       mlist(this.form).then(res => {
-        console.log(res)
         this.tableData = res.list
         this.tableData.forEach(a => {
-          // a.discount = 100
-          if (a.discount === null) {
-            a.discount = 100
-          }
+          a.discount = 100
+
           a.amount = a.orderNum * a.perPrice
           a.costAmount = a.costPrice * a.position
-          a.profit = a.discountAmount - a.costAmount
-          if (a.discount === 100) {
-            a.profit = a.amount - a.costAmount
-          }
-          if (a.position === '0') {
-            a.quantity = a.endProductPos
-          }
-          if (a.endProductPos === '0') {
-            a.quantity = a.position
-          }
-          if (a.discount === 100) {
-            a.discountAmount = a.amount
-          }
+          a.profit = a.amount - a.costAmount - a.discountAmount
         })
         this.pagination.total = res.total
         // console.log(res)
-        // console.log(this.tableData.orderNum)
+        console.log(this.tableData.orderNum)
       })
+    },
+    // 修改数据
+    updated(scope) {
+      // console.log(scope)
+      profit(this.form).then(res => {
+        this.tableData = res
+        mlist()
+      })
+    },
+
+    toQuery() {
+
     },
     // 导出
     toExcel() {
@@ -183,6 +140,82 @@ export default {
       const filterVal = ['name', 'no', 'customerNo', 'boxType', 'modelNo', 'length', 'width', 'height', 'unit', 'orderNum', 'perPrice', 'amount', 'discount', 'discountAmount', 'purchaseQuantity', 'costPrice', 'costAmount', 'profit', 'pbilling']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '毛利估算表')
+    },
+    // 选择打印
+    selectPrinting() {
+      if (this.form.carryTo === '已过期') {
+        this.$router.push('/purchase_not_included_overdue')
+      } else if (this.form.carryTo === '未过期') {
+        this.$router.push('/purchase_not_included')
+      } else {
+        if (this.multipleSelection.length === 0) {
+          this.$message.error('请选择打印的内容！！！')
+          return
+        } else {
+          this.$router.push('/purchase_order_printing')
+        }
+      }
+    },
+    // 整页打印
+    wholePrinting() {
+      if (this.form.carryTo === '已过期') {
+        this.$router.push('/purchase_not_included_overdue')
+      } else if (this.form.carryTo === '未过期') {
+        this.$router.push('/purchase_not_included')
+      } else {
+        this.$router.push('/purchase_order_printing')
+      }
+    },
+    // 打印
+    printing() {
+      this.$router.push('/finance/verify_printing')
+    },
+    handleSelectionChange(row) {
+      this.multipleSelection = row
+    },
+    // 删除
+    drop() {
+      this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    // 编辑订单
+    modifyPur(row) {
+      this.purAddVisible = true
+      this.titleType = '编辑'
+    },
+    // 新增订单
+    purAdd() {
+      this.purAddVisible = true
+      this.titleType = '新增'
+      // 新增初始化数据
+      this.formAdd = {}
+    },
+    // 取消
+    purAddNo() {
+      this.purAddVisible = false
+      this.addTableData = []
+    },
+    purAddOk(purForm) {
+      this.$refs[purForm].validate((valid) => {
+        if (valid) {
+          this.purAddVisible = false
+        } else {
+          return false
+        }
+      })
     }
   }
 }

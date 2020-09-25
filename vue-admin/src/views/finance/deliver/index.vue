@@ -128,7 +128,7 @@ export default window.$crudCommon({
     batchPosting() {
       console.log(this.multipleSelection)
       if (this.multipleSelection.length === 0) {
-        this.$message.error('请选择过招的内容！！！')
+        this.$message.error('请选择过账的内容！！！')
         return
       } else {
         this.ids = []
