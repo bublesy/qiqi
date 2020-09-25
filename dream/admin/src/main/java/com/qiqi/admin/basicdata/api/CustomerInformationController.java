@@ -10,6 +10,8 @@ import com.qiqi.basicdata.entity.CustomerInformationDO;
 import com.qiqi.basicdata.entity.CustomerQuotationDO;
 import com.qiqi.basicdata.service.CustomerQuotationService;
 import com.qiqi.common.entity.PageEntity;
+import com.qiqi.order.entity.OrderDO;
+import com.qiqi.order.service.OrderService;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
@@ -38,6 +40,9 @@ public class CustomerInformationController {
 
     @Resource
     private CustomerQuotationService customerQuotationService;
+
+    @Resource
+    private OrderService orderService;
 
     @ApiOperation(value = "获取客户资料(列表)")
     @PostMapping("/list")
@@ -71,22 +76,39 @@ public class CustomerInformationController {
     @PostMapping("")
     public Boolean saveCustomerInformation(@RequestBody CustomerInformationDO customerInformationDO) {
         try {
-            if(customerInformationDO.getId() == null){
                 CustomerQuotationDO customerQuotationDO = new CustomerQuotationDO();
-                if(StringUtils.isNoneBlank(customerInformationDO.getCode())){
-                    customerQuotationDO.setCode(customerInformationDO.getCode());
+                if(customerInformationDO.getId() != null){
+                    if(StringUtils.isNoneBlank(customerInformationDO.getCode())){
+                        customerQuotationDO.setCode(customerInformationDO.getCode());
+                    }
+                    if(StringUtils.isNoneBlank(customerInformationDO.getShorts())){
+                        customerQuotationDO.setShorts(customerInformationDO.getShorts());
+                    }
+                    if(StringUtils.isNoneBlank(customerInformationDO.getFullName())){
+                        customerQuotationDO.setFullName(customerInformationDO.getFullName());
+                    }
+                    customerQuotationDO.setCustomerId(customerInformationDO.getId());
+                    customerQuotationService.update(customerQuotationDO,new QueryWrapper<CustomerQuotationDO>().eq("customer_id",customerInformationDO.getId()));
+                    OrderDO orderDO = new OrderDO();
+                    orderDO.setName(customerInformationDO.getFullName());
+                    orderDO.setBeginReceive(customerInformationDO.getBeginReceive());
+                    orderService.update(orderDO,new QueryWrapper<OrderDO>()
+                            .eq("customer_id",customerInformationDO.getId()));
                 }
-                if(StringUtils.isNoneBlank(customerInformationDO.getShorts())){
-                    customerQuotationDO.setShorts(customerInformationDO.getShorts());
-                }
-                if(StringUtils.isNoneBlank(customerInformationDO.getFullName())){
-                    customerQuotationDO.setFullName(customerInformationDO.getFullName());
-                }
-                if(!ObjectUtils.isEmpty(customerQuotationDO)){
+                customerInformationService.saveOrUpdate(customerInformationDO);
+                if(customerInformationDO.getId() == null){
+                    if(StringUtils.isNoneBlank(customerInformationDO.getCode())){
+                        customerQuotationDO.setCode(customerInformationDO.getCode());
+                    }
+                    if(StringUtils.isNoneBlank(customerInformationDO.getShorts())){
+                        customerQuotationDO.setShorts(customerInformationDO.getShorts());
+                    }
+                    if(StringUtils.isNoneBlank(customerInformationDO.getFullName())){
+                        customerQuotationDO.setFullName(customerInformationDO.getFullName());
+                    }
+                    customerQuotationDO.setCustomerId(customerInformationDO.getId());
                     customerQuotationService.save(customerQuotationDO);
                 }
-            }
-            customerInformationService.saveOrUpdate(customerInformationDO);
             return true;
         }catch (Exception e){
             e.printStackTrace();

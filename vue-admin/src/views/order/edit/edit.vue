@@ -76,7 +76,7 @@
           </el-select>
         </el-form-item>
         <!-- 2020 9 9 -->
-        <el-form-item label="交货日期:" prop="deliveryDate">
+        <el-form-item label="交货日期:" prop="deliveryDate" label-width="100px">
           <el-date-picker
             v-model="form.deliveryDate"
             style="width:190px"
@@ -434,6 +434,7 @@ export default {
           this.customerOptions.forEach(e => {
             if (e.id === this.form.customerId) {
               this.form.name = e.fullName
+              this.form.beginReceive = e.beginReceive
             }
           })
           addOrUpdateOrder(this.form).then(res => {

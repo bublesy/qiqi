@@ -161,7 +161,7 @@ public class OrderController {
                 BeanUtils.copyProperties(orderDO,scheduleDO);
                 scheduleDO.setDate(orderDO.getDeliveryDate());
                 scheduleDO.setId(orderDO.getScheduleId());
-                scheduleService.updateById(scheduleDO);
+                scheduleService.saveOrUpdate(scheduleDO);
         }
         if(orderDO.getId() != null && state.equals(orderDO.getIsProduct())){
             if(orderDO.getScheduleId() != null){
