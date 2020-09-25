@@ -186,8 +186,7 @@ export default {
           add(this.formAdd).then(res => {
             if (res) {
               this.$message.success(this.titleType + '成功')
-              this.$refs[purForm].resetFields()
-              this.loadData()
+              location.reload()
             } else {
               this.$message.error(this.titleType + '失败')
             }
@@ -204,7 +203,6 @@ export default {
           add(this.formAddCheck).then(res => {
             if (res) {
               this.$message.success(this.titleType + '成功')
-              this.$refs[purForm].resetFields()
               this.loadData()
             } else {
               this.$message.error(this.titleType + '失败')
@@ -254,43 +252,70 @@ export default {
     printing(scope) {
       if (this.form.carryTo === '已送货') {
         this.multipleSelection.push(scope.row)
-        // 更改送货状态
-        const idList = []
+        let flag = true
         this.multipleSelection.forEach(a => {
-          idList.push(a.id)
+          if (a.deliveryQuantity === null) {
+            this.$message.error('请先填写送货数量！！')
+            flag = false
+          }
         })
-        updateState(idList).then(res => {
-        })
-        this.$router.push({
-          path: '/end_product_list_delivery_note',
-          query: { 'data': this.multipleSelection }
-        })
+        if (flag) {
+          // 更改送货状态
+          const idList = []
+          this.multipleSelection.forEach(a => {
+            idList.push(a.id)
+          })
+          updateState(idList).then(res => {
+          })
+          this.$router.push({
+            path: '/end_product_list_delivery_note',
+            query: { 'data': this.multipleSelection }
+          })
+        }
       } else if (this.form.carryTo === '未送货') {
         this.multipleSelection.push(scope.row)
-        // 更改送货状态
-        const idList = []
+        let flag = true
         this.multipleSelection.forEach(a => {
-          idList.push(a.id)
+          if (a.deliveryQuantity === null) {
+            this.$message.error('请先填写送货数量！！')
+            flag = false
+          }
         })
-        updateState(idList).then(res => {
-        })
-        this.$router.push({
-          path: '/end_product_list_not_delivery_note',
-          query: { 'data': this.multipleSelection }
-        })
+        if (flag) {
+          // 更改送货状态
+          const idList = []
+          this.multipleSelection.forEach(a => {
+            idList.push(a.id)
+          })
+          updateState(idList).then(res => {
+          })
+          this.$router.push({
+            path: '/end_product_list_not_delivery_note',
+            query: { 'data': this.multipleSelection }
+          })
+        }
       } else {
         this.multipleSelection.push(scope.row)
-        // 更改送货状态
-        const idList = []
+        let flag = true
         this.multipleSelection.forEach(a => {
-          idList.push(a.id)
+          if (a.deliveryQuantity === null) {
+            this.$message.error('请先填写送货数量！！')
+            flag = false
+          }
         })
-        updateState(idList).then(res => {
-        })
-        this.$router.push({
-          path: '/end_product_list_delivery_note',
-          query: { 'data': this.multipleSelection }
-        })
+        if (flag) {
+        // 更改送货状态
+          const idList = []
+          this.multipleSelection.forEach(a => {
+            idList.push(a.id)
+          })
+          updateState(idList).then(res => {
+          })
+          this.$router.push({
+            path: '/end_product_list_delivery_note',
+            query: { 'data': this.multipleSelection }
+          })
+        }
       }
     },
     // 整页打印

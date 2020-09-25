@@ -21,17 +21,14 @@
       </span>
     </el-dialog>
     <el-form ref="form" :model="form" label-width="80px" inline>
-      <el-form-item label="单据类型:">
-        <el-input v-model="form.typeNo" disabled />
-      </el-form-item>
       <el-form-item label="回签状态:">
-        <el-select v-model="form.signBackState" placeholder="请选择回签状态">
+        <el-select v-model="form.signBackState" placeholder="请选择回签状态" :clearable="true">
           <el-option label="已回签" value="已回签" />
           <el-option label="未回签" value="未回签" />
         </el-select>
       </el-form-item>
       <el-form-item label="出货单号:">
-        <el-select v-model="form.outNo" placeholder="请选择车号">
+        <el-select v-model="form.outNo" placeholder="请选择车号" :clearable="true">
           <el-option
             v-for="item in outNoFor"
             :key="item.value"
@@ -41,7 +38,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="送货人:">
-        <el-select v-model="form.deliveryman" placeholder="请选择">
+        <el-select v-model="form.deliveryman" placeholder="请选择" :clearable="true">
           <el-option
             v-for="item in deliverymanFor"
             :key="item.value"
