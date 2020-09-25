@@ -175,7 +175,7 @@ export default {
       this.refundNum2 = row.refundNum
       this.Product = row.isProduct
       console.log(this.sendNum)
-      console.log(this.refundNum)
+      console.log(this.refundNum2)
       this.refundId = row.id
       this.refundDialog.show = true
     },

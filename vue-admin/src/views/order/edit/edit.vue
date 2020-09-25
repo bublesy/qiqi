@@ -76,7 +76,11 @@
           </el-select>
         </el-form-item>
         <!-- 2020 9 9 -->
-        <el-form-item label="交货日期:">
+<<<<<<< HEAD
+        <el-form-item label="交货日期:" prop="deliveryDate" label-width="85px">
+=======
+        <el-form-item label="交货日期:" prop="deliveryDate">
+>>>>>>> hc
           <el-date-picker
             v-model="form.deliveryDate"
             style="width:190px"
@@ -306,6 +310,9 @@ export default {
         ],
         customerId: [
           { required: true, message: '请选择客户', trigger: 'blur' }
+        ],
+        deliveryDate: [
+          { required: true, message: '请选择交货日期', trigger: 'blur' }
         ]
       },
       // 下拉框数组
@@ -430,7 +437,9 @@ export default {
           }
           this.customerOptions.forEach(e => {
             if (e.id === this.form.customerId) {
+              console.log(e)
               this.form.name = e.fullName
+              this.form.beginReceive = e.beginReceive
             }
           })
           addOrUpdateOrder(this.form).then(res => {
