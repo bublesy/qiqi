@@ -14,14 +14,13 @@ import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.service.OrderService;
 import com.qiqi.order.vo.TitleVO;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.BeanUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.StringUtils;
+import sun.rmi.runtime.Log;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @SpringBootTest
@@ -43,14 +42,11 @@ class AdminApplicationTests {
         Date date1 = DateUtil.parse(dateStr1, "yyyy-MM-dd");
         long month = DateUtil.betweenMonth(date, date1, true)+1;
 
-//        List<String> aaa = new ArrayList<>();
         System.out.println(month);
         for (int i = 0; i < month; i++) {
-            DateTime dataTime = DateUtil.offset(date, DateField.MONTH, i);
-//            aaa.add(DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月");
+            DateTime dataTime = DateUtil.offset(date1, DateField.MONTH, i);
             titleList.add(new TitleVO(DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月",DateUtil.year(dataTime)+"年"+(DateUtil.month(dataTime)+1)+"月"));
         }
-//        System.out.println(JSONObject.toJSONString(aaa));
         //--------------------------------------------------------------------------------------------------------------------------------------
         List<OrderDO> list = orderService.list();
         List<BillsDTO> allBill = Convert.convert(new TypeReference<List<BillsDTO>>() {}, list);
@@ -65,6 +61,7 @@ class AdminApplicationTests {
 
         customerMap.forEach((key, value) -> {
             value.forEach(item -> {
+                System.out.println(item.getDeliveryDate());
                 item.setGroudBy(DateUtil.year(item.getDeliveryDate())+"年"+(DateUtil.month(item.getDeliveryDate())+1)+"月");
             });
 
@@ -72,20 +69,30 @@ class AdminApplicationTests {
 
             JSONObject json = new JSONObject();
             json.put("name",value.get(0).getName());
+            final BigDecimal[] total = {new BigDecimal("0.00")};
             collect.forEach((key1, value2) -> {
-                System.out.println(key1);
-                BigDecimal reduce = value2.stream().map(data -> data.getMoney()).reduce(BigDecimal.ZERO, BigDecimal::add);
-                json.put(key1,reduce);
+                List<BigDecimal> list1 = new ArrayList();
+                BigDecimal money = value2.stream().map(data -> data.getMoney()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal beginReceive = value2.stream().map(data -> data.getBeginReceive()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                total[0] = total[0].add(money);
+                list1.add(money);
+                list1.add(beginReceive);
+                list1.add(money.subtract(beginReceive));
+                json.put(key1,list1);
             });
+            json.put("total", total[0]);
             for (String s : label) {
                 if(!json.containsKey(s)){
-                    json.put(s,0);
+                    BigDecimal[] bigDecimals = new BigDecimal[3];
+                    bigDecimals[0] = BigDecimal.valueOf(0);
+                    bigDecimals[1] = BigDecimal.valueOf(0);
+                    bigDecimals[2] = BigDecimal.valueOf(0);
+                    json.put(s,bigDecimals);
                 }
             }
-            System.out.println(json);
             jsonArray.add(json);
         });
-
+        titleList.add(new TitleVO("合计","total"));
         Map<String,Object> result = new HashMap<>();
         result.put("title",titleList);
         result.put("data",jsonArray);

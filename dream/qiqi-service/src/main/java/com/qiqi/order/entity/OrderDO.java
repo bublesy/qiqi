@@ -30,6 +30,8 @@ public class OrderDO extends BaseModel {
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date shipDate;
 
+    private BigDecimal beginReceive;
+
     private String audit;
 
     private String auditBy;
@@ -57,6 +59,8 @@ public class OrderDO extends BaseModel {
     private Boolean conventional;
 
     private String finished;
+
+    private BigDecimal beginReceive;
 
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date date;
@@ -142,8 +146,10 @@ public class OrderDO extends BaseModel {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date deliveryDate;
 
-//    private String myDate;
+<<<<<<< HEAD
 
+=======
+>>>>>>> parent of 2b5953c... 合并 #215024 从 djh 到 master
     /**
      * 常用箱
      */
