@@ -24,6 +24,7 @@ public class BillsDTO {
 
     private Long customerId;
 
+    private BigDecimal beginReceive;
 
     private String groudBy;
 }

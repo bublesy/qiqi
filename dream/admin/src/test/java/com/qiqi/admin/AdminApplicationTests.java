@@ -73,16 +73,23 @@ class AdminApplicationTests {
             JSONObject json = new JSONObject();
             json.put("name",value.get(0).getName());
             collect.forEach((key1, value2) -> {
-                System.out.println(key1);
-                BigDecimal reduce = value2.stream().map(data -> data.getMoney()).reduce(BigDecimal.ZERO, BigDecimal::add);
-                json.put(key1,reduce);
+                List<BigDecimal> list1 = new ArrayList();
+                BigDecimal money = value2.stream().map(data -> data.getMoney()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal beginReceive = value2.stream().map(data -> data.getBeginReceive()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                list1.add(money);
+                list1.add(beginReceive);
+                list1.add(money.subtract(beginReceive));
+                json.put(key1,list1);
             });
             for (String s : label) {
                 if(!json.containsKey(s)){
-                    json.put(s,0);
+                    BigDecimal[] bigDecimals = new BigDecimal[3];
+                    bigDecimals[0] = BigDecimal.valueOf(0);
+                    bigDecimals[1] = BigDecimal.valueOf(0);
+                    bigDecimals[2] = BigDecimal.valueOf(0);
+                    json.put(s,bigDecimals);
                 }
             }
-            System.out.println(json);
             jsonArray.add(json);
         });
 

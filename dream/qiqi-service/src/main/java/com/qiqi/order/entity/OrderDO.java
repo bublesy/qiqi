@@ -30,6 +30,8 @@ public class OrderDO extends BaseModel {
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date shipDate;
 
+    private BigDecimal beginReceive;
+
     private String audit;
 
     private String auditBy;
