@@ -40,12 +40,11 @@
           <el-table-column v-show="true" prop="position" label="仓位" width="140" />
           <el-table-column v-show="true" prop="position" label="实际库存数量" width="140" />
           <el-table-column v-show="true" prop="checkDate" label="盘点日期" width="160" />
-          <el-table-column v-show="true" prop="outNo" label="送货单号" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
               <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?true : false" @click="purAdd(scope)">新增送货数量</el-link>
-              <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?false : true" @click="modifyPur(scope)">编辑送货数量</el-link>
-              <el-link type="warning" size="small" @click="printing(scope)">生成送货单</el-link>
+              <el-link type="primary" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true)||(scope.row.checkDate===null ?false : true)" @click="modifyPur(scope)">编辑送货数量</el-link>
+              <el-link type="warning" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true)||(scope.row.checkDate===null ?false : true)" @click="printing(scope)">生成送货单</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -115,7 +114,21 @@ export default {
     this.init()
   },
   methods: {
-
+    // 打印
+    printing(scope) {
+      this.multipleSelection.push(scope.row)
+      // 更改送货状态
+      const idList = []
+      this.multipleSelection.forEach(a => {
+        idList.push(a.id)
+      })
+      upState(idList).then(res => {
+      })
+      this.$router.push({
+        path: '/cardboard_product',
+        query: { 'data': this.multipleSelection }
+      })
+    },
     checkNumChange() {
       this.$set(this.formAdd, 'differencesNum', this.formAdd.checkNum - this.formAdd.purchaseQuantity)
     },
@@ -125,7 +138,6 @@ export default {
         this.$set(this.queryParams, 'time', '')
       }
       list(this.queryParams).then(res => {
-        console.log(res)
         this.tableData = res.list
         this.tableData.forEach(a => {
           getCustomerById(a.customerId).then(data => {
@@ -147,30 +159,6 @@ export default {
         this.formAdd.differencesNum = this.formAdd.checkNum - this.formAdd.purchaseQuantity
       })
     },
-    // 打印
-    printing(scope) {
-      this.multipleSelection.push(scope.row)
-      let flag = true
-      this.multipleSelection.forEach(a => {
-        if (a.deliveryQuantity === null) {
-          this.$message.error('请先填写送货数量！！')
-          flag = false
-        }
-      })
-      if (flag) {
-        // 更改送货状态
-        const idList = []
-        this.multipleSelection.forEach(a => {
-          idList.push(a.id)
-        })
-        upState(idList).then(res => {
-        })
-        this.$router.push({
-          path: '/cardboard_product',
-          query: { 'data': this.multipleSelection }
-        })
-      }
-    },
     // 生成送货单
     purAdd(scope) {
       this.purAddVisible = true
@@ -179,7 +167,7 @@ export default {
       this.formAdd = {}
       this.$set(this.formAdd, 'id', scope.row.id)
       this.$set(this.formAdd, 'warehouseNo', scope.row.warehouseNo)
-      this.$set(this.formAdd, 'deliveryQuantity', scope.row.orderQuantity)
+      this.$set(this.formAdd, 'deliveryQuantity', scope.row.purchaseQuantity)
     },
     // 取消
     purAddNo() {
@@ -192,7 +180,8 @@ export default {
           add(this.formAdd).then(res => {
             if (res) {
               this.$message.success(this.titleType + '成功')
-              location.reload()
+              this.$refs[purForm].resetFields()
+              this.loadData()
             } else {
               this.$message.error(this.titleType + '失败')
             }
