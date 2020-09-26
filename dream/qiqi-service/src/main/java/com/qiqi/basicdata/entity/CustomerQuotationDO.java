@@ -28,6 +28,8 @@ public class CustomerQuotationDO extends BaseModel {
     @TableField(typeHandler = FastjsonTypeHandler.class)
     private JSONArray boxType;
 
+    private Long customerId;
+
     private BigDecimal totalPrice;
 
     /**

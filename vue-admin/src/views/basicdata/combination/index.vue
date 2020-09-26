@@ -40,7 +40,7 @@
       width="30%"
     >
       <el-form ref="supForm" :inline="true" :rules="supRules" :model="formAdd" size="mini">
-        <el-form-item label="职位名称:" prop="name">
+        <el-form-item label="组合名称:" prop="name">
           <el-input v-model="formAdd.name" />
         </el-form-item>
 

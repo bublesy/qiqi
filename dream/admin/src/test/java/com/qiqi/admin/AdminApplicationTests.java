@@ -98,16 +98,6 @@ class AdminApplicationTests {
         System.out.println(JSONObject.toJSONString(result));
     }
 
-    public static Boolean isExistField(String field, Object obj) {
-        if (obj == null || StringUtils.isEmpty(field)) {
-            return null;
-        }
-        Object o = JSON.toJSON(obj);
-        JSONObject jsonObj = new JSONObject();
-        if (o instanceof JSONObject) {
-            jsonObj = (JSONObject) o;
-        }
-        return jsonObj.containsKey(field);
-    }
+
 
 }

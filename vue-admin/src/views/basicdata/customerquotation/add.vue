@@ -200,7 +200,6 @@ export default {
       this.$refs.form.validate(x => {
         if (x) {
           var data = this.form
-          console.log(data)
           addOrUpdateCustomerQuotation(data).then(res => {
             if (res) {
               this.$message.success('保存成功')
