@@ -14,8 +14,7 @@ import java.util.Date;
 public class BillDTO {
     private Long page;
     private Long count;
-    private Long customerId;
+    private String name;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date deliveryDate;
+    private String deliveryDate;
 }

@@ -1,10 +1,12 @@
 package com.qiqi.admin.order.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.qiqi.basicdata.entity.CustomerInformationDO;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.order.entity.OrderDO;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -15,30 +17,40 @@ import java.util.List;
  */
 @Data
 public class BillVO {
-    PageEntity<OrderDO> orderDOPageEntity;
 
-    /**
-     * 全称
-     */
-    private String fullName;
+    private Long id;
 
-    /**
-     * 电话
-     */
-    private String phone;
+    private String name;
+    private String outNo;
 
-    /**
-     * 手机
-     */
-    private String mobilePhone;
+    @JsonFormat(pattern = "yyyy-MM")
+    private Date shipDate;
 
-    /**
-     * 传真
-     */
-    private String fax;
+    @JsonFormat(pattern = "yyyy-MM")
+    private Date deliveryDate;
 
-    /**
-     * 地址
-     */
-    private String address;
+    private BigDecimal beginReceive;
+
+    private String modelNo;
+
+    private String boxType;
+
+    private Integer length;
+
+    private Integer width;
+
+    private Integer height;
+
+    private Integer orderNum;
+
+    private BigDecimal perPrice;
+
+    private BigDecimal money;
+
+    private String post;
+
+    private String settlement;
+
+    private BigDecimal payed;
+
 }
