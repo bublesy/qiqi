@@ -2,6 +2,7 @@ package com.qiqi.admin.endproductwarehouse.api;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.qiqi.admin.warehouse.model.WarehouseList;
 import com.qiqi.endproductwarehouse.entity.EndProductWarehouseDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
@@ -11,6 +12,8 @@ import com.qiqi.common.entity.PageEntity;
 import com.qiqi.endproductwarehouse.model.EndProductWarehouseDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.service.OrderService;
+import com.qiqi.warehouse.entity.WarehouseDO;
+import com.qiqi.warehouse.service.WarehouseService;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.parameters.P;
@@ -43,6 +46,8 @@ public class EndProductWarehouseController {
     private EndProductWarehouseService endProductWarehouseService;
     @Resource
     private OrderService orderService;
+    @Resource
+    WarehouseService warehouseService;
 
     @ApiOperation(value = "获取产品仓库(列表)")
     @ApiImplicitParams({
@@ -77,16 +82,46 @@ public class EndProductWarehouseController {
         return endProductWarehouseService.list();
     }
 
+    @ApiOperation(value = "盘点(批量))")
+    @PostMapping("/check")
+    public Boolean check(@RequestBody WarehouseList warehouseList){
+        boolean flag = false;
+        EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
+        List<Long> ids = warehouseList.getIds();
+        List<String> surplusNums = warehouseList.getSurplusNums();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:dd:ss");
+        for(int i = 0;i<ids.size();i++){
+            endProductWarehouseDO.setId(ids.get(i));
+            endProductWarehouseDO.setCheckDate(df.format(new Date()));
+            endProductWarehouseDO.setEndProductPos(surplusNums.get(i));
+            flag = endProductWarehouseService.updateById(endProductWarehouseDO);
+        }
+        return flag;
+    }
+
+
     @PostMapping("/updatePosting")
     public Boolean updatePosting(@RequestBody List<Long> ids){
+        boolean flag = false;
         EndProductWarehouseDO byId = null;
+        EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
+        WarehouseDO warehouseDO = new WarehouseDO();
         for(Long id :ids){
             byId = endProductWarehouseService.getById(id);
+            if (byId == null){
+                WarehouseDO byId1 = warehouseService.getById(id);
+                BeanUtil.copyProperties(byId1,warehouseDO);
+                warehouseDO.setCarryTo("已过账");
+                warehouseService.updateById(warehouseDO);
+                flag = true;
+            }else{
+                BeanUtil.copyProperties(byId,endProductWarehouseDO);
+                endProductWarehouseDO.setPosting("已过账");
+                endProductWarehouseService.updateById(endProductWarehouseDO);
+                flag = true;
+            }
         }
-        EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
-        BeanUtil.copyProperties(byId,endProductWarehouseDO);
-        endProductWarehouseDO.setPosting("已过账");
-        return endProductWarehouseService.updateById(endProductWarehouseDO);
+        return flag;
     }
 
 
@@ -107,6 +142,12 @@ public class EndProductWarehouseController {
     @ApiOperation(value = "新增产品仓库")
     @PostMapping("/add")
     public Boolean saveEndProductWarehouse(@RequestBody EndProductWarehouseDO endProductWarehouseDO) {
+        String checkNum = endProductWarehouseDO.getCheckNum();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:dd:ss");
+        if (checkNum!=null || checkNum !=""){
+            endProductWarehouseDO.setCheckDate(df.format(new Date()));
+            endProductWarehouseDO.setEndProductPos(checkNum);
+        }
         return endProductWarehouseService.saveOrUpdate(endProductWarehouseDO);
     }
 
@@ -138,6 +179,14 @@ public class EndProductWarehouseController {
         endProductWarehouseDO.setCarryTo("已送货");
         endProductWarehouseDO.setOutNo(dateFormat.format(new Date()));
         endProductWarehouseDO.setOutDate(new Date());
+        String deliver= byId.getDeliveryQuantity();
+        Integer b = Integer.parseInt(deliver);
+        if (byId.getAlreadyDeliveryQuantity() == null){
+            endProductWarehouseDO.setAlreadyDeliveryQuantity(b);
+        }else{
+            Integer a = b+byId.getAlreadyDeliveryQuantity();
+            endProductWarehouseDO.setAlreadyDeliveryQuantity(a);
+        }
         String order = byId.getOrderId();
         String deliveryQuantity = byId.getDeliveryQuantity();
         Long orderId = Long.parseLong(order);

@@ -24,6 +24,13 @@ public class PurchaseOrderDO extends BaseModel {
 
     private static final long serialVersionUID=1L;
 
+    private String carryTo;
+
+    private Integer alreadyMoney;
+    private String settlementStatus;
+
+    private Integer totalAmount;
+    private String SettlementDate;
 
     private String returnNum;
     private String returnDate;

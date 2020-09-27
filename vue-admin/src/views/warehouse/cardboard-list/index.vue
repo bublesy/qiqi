@@ -34,18 +34,19 @@
           <el-table-column v-show="true" prop="noType" label="单据类型" width="140" />
           <el-table-column v-show="true" prop="orderQuantity" label="订单数量" width="140" />
           <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" width="140" />
-          <el-table-column v-show="true" prop="purchaseQuantity" label="库存数量" width="140" />
-          <el-table-column v-show="true" prop="warehousingDate" label="入仓日期" width="160" />
+          <el-table-column v-show="true" prop="alreadyDeliveryQuantity" label="已送数量" width="140" />
+          <el-table-column v-show="true" prop="stayDeliveryQuantity" label="待送数量" width="140" />
+          <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" width="140" />
           <el-table-column v-show="true" prop="warehousingDate" label="入仓日期" width="160" />
           <el-table-column v-show="true" prop="position" label="仓位" width="140" />
-          <el-table-column v-show="true" prop="position" label="实际库存数量" width="140" />
-          <el-table-column v-show="true" prop="checkDate" label="盘点日期" width="160" />
+          <el-table-column v-show="true" prop="productNum" label="已产数量" width="140" />
+          <el-table-column v-show="true" prop="outDate" label="送货日期" width="160" />
           <el-table-column v-show="true" prop="outNo" label="送货单号" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
               <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?true : false" @click="purAdd(scope)">新增送货数量</el-link>
-              <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?false : true" @click="modifyPur(scope)">编辑送货数量</el-link>
-              <el-link type="warning" size="small" @click="printing(scope)">生成送货单</el-link>
+              <el-link type="primary" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true) || (printingDis)" @click="modifyPur(scope)">编辑送货数量</el-link>
+              <el-link type="warning" size="small" :disabled="printingDis" @click="printing(scope)">生成送货单</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -68,8 +69,11 @@
           <el-form-item label="入仓单号:" prop="warehouseNo">
             <el-input v-model="formAdd.warehouseNo" disabled />
           </el-form-item>
+          <el-form-item label="订单数量:" prop="orderQuantity">
+            <el-input v-model="formAdd.orderQuantity" disabled />
+          </el-form-item>
           <el-form-item label="送货数量:" prop="deliveryQuantity">
-            <el-input v-model="formAdd.deliveryQuantity" />
+            <el-input v-model="formAdd.deliveryQuantity" @change="deliveryChange" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -108,16 +112,21 @@ export default {
       },
       titleType: '',
       multipleSelection: [],
-      drawerFor: []
+      drawerFor: [],
+      printingDis: false
     }
   },
   created() {
     this.init()
   },
   methods: {
-
-    checkNumChange() {
-      this.$set(this.formAdd, 'differencesNum', this.formAdd.checkNum - this.formAdd.purchaseQuantity)
+    deliveryChange() {
+      var a = this.formAdd.orderQuantity
+      if (a < this.formAdd.deliveryQuantity) {
+        this.$message.error('送货数量不能大于订单数量！！')
+        this.formAdd.deliveryQuantity = a
+        return
+      }
     },
     loadData() {
       this.queryParams.time = this.form.time
@@ -131,6 +140,11 @@ export default {
           getCustomerById(a.customerId).then(data => {
             this.$set(a, 'customerName', data.name)
           })
+          a.stayDeliveryQuantity = a.orderQuantity - a.alreadyDeliveryQuantity
+          var j = parseInt(a.orderQuantity)
+          if (a.alreadyDeliveryQuantity === j) {
+            this.printingDis = true
+          }
         })
         this.pagination.total = res.total
       })
@@ -180,6 +194,7 @@ export default {
       this.$set(this.formAdd, 'id', scope.row.id)
       this.$set(this.formAdd, 'warehouseNo', scope.row.warehouseNo)
       this.$set(this.formAdd, 'deliveryQuantity', scope.row.orderQuantity)
+      this.$set(this.formAdd, 'orderQuantity', scope.row.orderQuantity)
     },
     // 取消
     purAddNo() {

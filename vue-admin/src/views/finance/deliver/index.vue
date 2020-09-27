@@ -91,6 +91,7 @@ import { endList } from '@/api/end-product/product'
 import { noList } from '@/api/end-product/product'
 import { getUser } from '@/api/accessories/means'
 import { updatePosting } from '@/api/end-product/product'
+import { wareList } from '@/api/warehouse/warehouse'
 
 export default window.$crudCommon({
   name: 'Deliver',
@@ -182,11 +183,14 @@ export default window.$crudCommon({
         this.deliverymanFor = res
       })
       endList(this.form).then(res => {
-        this.tableData = res.list
-        this.tableData.forEach(a => {
-          if (a.sign === '' || a.sign === null) {
-            a.sign = '未回签'
-          }
+        this.tableData = []
+        res.list.forEach(a => {
+          this.tableData.push(a)
+        })
+        wareList(this.form).then(res => {
+          res.list.forEach(a => {
+            this.tableData.push(a)
+          })
         })
       })
     },

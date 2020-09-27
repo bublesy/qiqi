@@ -27,9 +27,11 @@ public class WarehouseDO extends BaseModel {
      * 入仓单号
      */
     private String warehouseNo;
-    private Date outDate;
+    private String outDate;
     private String outNo;
 
+    private Integer alreadyDeliveryQuantity;
+    private Integer productNum;
     private String deliveryDate;
 
     private String deliveryStatus;

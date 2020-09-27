@@ -23,6 +23,8 @@ public class EndProductWarehouseDO extends BaseModel {
     private static final long serialVersionUID=1L;
 
 
+    private Integer productNum;
+    private Integer alreadyDeliveryQuantity;
     private String outNo;
     private Date outDate;
     private String orderId;
