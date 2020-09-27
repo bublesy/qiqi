@@ -17,6 +17,8 @@ import com.qiqi.basicdata.service.SupplierService;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.endproductwarehouse.entity.EndProductWarehouseDO;
 import com.qiqi.endproductwarehouse.service.EndProductWarehouseService;
+import com.qiqi.finance.entity.CustomerDetailDO;
+import com.qiqi.finance.service.CustomerDetailService;
 import com.qiqi.order.dto.OrderDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.entity.ScheduleDO;
@@ -74,6 +76,8 @@ public class OrderController {
     private SysUserService sysUserService;
     @Resource
     private WarehouseService warehouseService;
+    @Resource
+    private CustomerDetailService customerDetailService;
 
     private String state = "成品";
 
@@ -168,6 +172,7 @@ public class OrderController {
         if(orderDO == null){
             return false;
         }
+        Long orderId = orderDO.getId();
         if(orderDO.getId() == null){
             IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
             String no = idGeneratorUtils.nextId();
@@ -200,7 +205,13 @@ public class OrderController {
         if(orderDO.getId() == null){
             orderDO.setWosState("新订单");
         }
-        return orderService.saveOrUpdate(orderDO);
+        boolean b = orderService.saveOrUpdate(orderDO);
+        if(orderId == null){
+            CustomerDetailDO customerDetailDO = new CustomerDetailDO();
+            customerDetailDO.setOrderId(orderId);
+            customerDetailService.save(customerDetailDO);
+        }
+        return b;
     }
 
     @ApiOperation(value = "删除(批量))")

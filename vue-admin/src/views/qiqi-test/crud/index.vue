@@ -14,7 +14,7 @@
         <td>客户单号</td>
         <td class="center">客户订单号</td>
         <td>产品名称</td>
-        <td class="center">五层箱     </td>
+        <td class="center">五层箱</td>
         <td>纸箱尺寸</td>
         <td>600x3000x400</td>
         <td class="center">订单数量</td>
