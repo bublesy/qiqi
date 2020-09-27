@@ -76,6 +76,7 @@ public class CustomerInformationController {
     @PostMapping("")
     public Boolean saveCustomerInformation(@RequestBody CustomerInformationDO customerInformationDO) {
         try {
+                Long id = customerInformationDO.getId();
                 CustomerQuotationDO customerQuotationDO = new CustomerQuotationDO();
                 if(customerInformationDO.getId() != null){
                     if(StringUtils.isNoneBlank(customerInformationDO.getCode())){
@@ -96,7 +97,7 @@ public class CustomerInformationController {
                             .eq("customer_id",customerInformationDO.getId()));
                 }
                 customerInformationService.saveOrUpdate(customerInformationDO);
-                if(customerInformationDO.getId() == null){
+                if(id == null){
                     if(StringUtils.isNoneBlank(customerInformationDO.getCode())){
                         customerQuotationDO.setCode(customerInformationDO.getCode());
                     }

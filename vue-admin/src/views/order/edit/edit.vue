@@ -8,7 +8,7 @@
     <p style="">订单信息</p>
     <el-card>
       <el-form ref="form" :model="form" label-width="80px" size="mini" :rules="rules" :inline="true">
-        <el-form-item label="选择客户:" prop="customerId">
+        <el-form-item label="选择客户:" prop="customerId" label-width="90px">
           <el-select v-model="form.customerId" placeholder="请选择">
             <el-option
               v-for="item in customerOptions"
@@ -249,8 +249,8 @@
         :before-upload="beforeAvatarUpload"
         :headers="headers"
       >
-        <img :src="imageUrl" class="avatar">
-        <!-- <i v-else class="el-icon-plus avatar-uploader-icon" /> -->
+        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+        <i v-else class="el-icon-plus avatar-uploader-icon" />
       </el-upload>
     </el-card>
   </el-dialog>
@@ -373,7 +373,7 @@ export default {
             this.imageUrl = null
             if (res.audit === '审核') {
               // this.auditStatus = true
-              if (status) {
+              if (this.status) {
                 this.saveStatus = false
               } else {
                 this.saveStatus = true

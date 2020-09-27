@@ -37,3 +37,17 @@ export function record(data) {
 export function customer() {
   return request({ url: '/order/customer', method: 'get' })
 }
+
+// 过账
+export function toPost(data) {
+  return request({ url: '/customer/detail/post', method: 'get', params: data })
+}
+
+export function getPost(id) {
+  return request({ url: '/customer/detail/' + id, method: 'get' })
+}
+
+export function toSettle(data) {
+  return request({ url: '/customer/detail/settlement', method: 'get', params: data })
+}
+

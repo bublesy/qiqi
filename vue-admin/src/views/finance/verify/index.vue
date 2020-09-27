@@ -3,23 +3,16 @@
     <el-main>
       <h1 align="center">对账明细表管理</h1>
       <el-form :inline="true" :model="form" size="mini">
-        <el-form-item label="日期:">
+        <el-form-item label="交货日期:">
           <el-date-picker
-            v-model="form.time"
+            v-model="form.deliveryDate"
             type="month"
             placeholder="选择月"
             value-format="yyyy-MM"
           />
         </el-form-item>
         <el-form-item label="客户:" prop="name">
-          <el-select v-model="form.customerId" filterable placeholder="请选择">
-            <el-option
-              v-for="item in tableData1"
-              :key="item.value"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
+          <el-input v-model="form.name" clearable />
         </el-form-item>
         <el-button type="primary" size="mini" @click="selectData">查询</el-button>
         <el-button type="primary" size="mini" :disabled="disabled" @click="printing">生成月份打印单</el-button>
@@ -38,27 +31,39 @@
           @selection-change="handleSelectionChange"
         >
 
-          <el-table-column v-show="true" prop="name" label="客户名称" />
-          <el-table-column v-show="true" prop="outNo" label="出货单号" />
-          <el-table-column v-show="true" prop="shipDate" label="出货日期" />
-          <el-table-column v-show="true" prop="deliveryDate" label="交货日期" />
-          <el-table-column v-show="true" prop="modelNo" label="物品单号/款号" />
-          <el-table-column v-show="true" prop="boxType" label="箱型" />
-          <el-table-column v-show="true" label="长x宽x高">
+          <el-table-column v-show="true" prop="name" label="客户名称" width="120" />
+          <el-table-column v-show="true" prop="outNo" label="出货单号" width="120" />
+          <el-table-column v-show="true" prop="shipDate" label="出货日期" width="120" />
+          <el-table-column v-show="true" prop="deliveryDate" label="交货日期" width="120" />
+          <el-table-column v-show="true" prop="modelNo" label="物品单号/款号" width="120" />
+          <el-table-column v-show="true" prop="boxType" label="箱型" width="80" />
+          <el-table-column v-show="true" label="长x宽x高" width="140">
             <template slot-scope="scope">
               {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
             </template>
           </el-table-column>
-          <el-table-column v-show="true" prop="orderNum" label="数量" />
-          <el-table-column v-show="true" prop="perPrice" label="单价" />
-          <el-table-column v-show="true" prop="money" label="金额" />
-          <!-- <el-table-column label="操作" width="213 ">
+          <el-table-column v-show="true" prop="orderNum" label="数量" width="80" />
+          <el-table-column v-show="true" prop="perPrice" label="单价" width="80" />
+          <el-table-column v-show="true" prop="money" label="金额" width="80" />
+          <el-table-column v-show="true" prop="beginReceive" label="期初" width="80" />
+
+          <el-table-column v-show="true" prop="payed" label="已付" width="80" />
+          <el-table-column v-show="true" prop="unPayed" label="欠款" width="80" />
+          <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="150">
             <template slot-scope="scope">
-              <el-link type="danger" size="small" @click="drop(scope.row.id)">删除</el-link>
-              <el-link type="primary" size="small" @click="modifyPur(scope.row.id)">编辑</el-link>
-              <el-link type="warning" size="small" @click="printing">生成月份打印单</el-link>
+              <div v-for="(item,key) in scope.row.settlementDate" :key="key">
+                {{ item }}
+              </div>
             </template>
-          </el-table-column> -->
+          </el-table-column>
+          <el-table-column v-show="true" prop="post" label="是否过账" width="80" />
+          <el-table-column v-show="true" prop="settlement" label="结算状态" width="80" />
+          <el-table-column label="操作" width="213 ">
+            <template slot-scope="scope">
+              <el-button size="mini" @click="post(scope.row)">过账</el-button>
+              <el-button type="success" size="mini" :disabled="scope.row.unPayed <= 0 ? true : false" @click="settlement(scope.row)">结算</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <!--分页组件-->
         <el-pagination
@@ -146,6 +151,8 @@
       </el-dialog> -->
 
     </el-main>
+    <postDialog :id="id" :dialog="postDialog" @init="selectData" />
+    <settlementDialog :id="id2" :dialog="settlementDialog" @init="selectData" />
   </el-container>
 
 </template>
@@ -154,13 +161,25 @@
 import initData from '@/mixins/initData'
 import { export2Excel } from '@/utils/common'
 import { record, customer } from '@/api/accessories/means'
+import postDialog from '@/views/finance/verify/post'
+import settlementDialog from '@/views/finance/verify/settlement'
 
 // import { record } from '@/finance/verify'
 export default {
   name: 'Verify',
+  components: { postDialog, settlementDialog },
   mixins: [initData],
   data() {
     return {
+      settlementState: false,
+      id: '',
+      id2: '',
+      postDialog: {
+        show: false
+      },
+      settlementDialog: {
+        show: false
+      },
       // 选择月份
       month: [],
       // 选择客户
@@ -217,20 +236,33 @@ export default {
     this.init()
   },
   methods: {
+    post(data) {
+      this.id = data.id
+      this.postDialog.show = true
+    },
+    settlement(data) {
+      this.id2 = data.id
+      this.settlementDialog.show = true
+    },
     supplierList() {},
     // 获取列表数据
     loadData() {
       record(this.form).then(res => {
-        this.tableData1 = res.orderDOPageEntity.list
-        console.log(this.tableData1)
-        this.pagination.total = res.orderDOPageEntity.total
+        this.tableData1 = res.list
+        this.tableData1.forEach(data => {
+          data.unPayed = Math.abs(data.money - data.beginReceive - data.payed)
+          if (data.post === null) {
+            data.post = '未过账'
+          }
+          if (data.settlement === null) {
+            data.settlement = '未结算'
+          }
+        })
+          .this.pagination.total = res.total
       })
       // 获取用户数据
       customer().then(res => {
-        console.log(res)
         this.tableData = res
-
-        // this.pagination.total = res.total
       })
     },
     selectData() {
@@ -326,7 +358,7 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-  >>>.el-dialog__header {
+.el-dialog__header {
     border: 1px;
   }
 </style>

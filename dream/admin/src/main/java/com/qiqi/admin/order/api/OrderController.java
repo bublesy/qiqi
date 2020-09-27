@@ -17,6 +17,8 @@ import com.qiqi.basicdata.service.SupplierService;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.endproductwarehouse.entity.EndProductWarehouseDO;
 import com.qiqi.endproductwarehouse.service.EndProductWarehouseService;
+import com.qiqi.finance.entity.CustomerDetailDO;
+import com.qiqi.finance.service.CustomerDetailService;
 import com.qiqi.order.dto.OrderDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.entity.ScheduleDO;
@@ -24,6 +26,8 @@ import com.qiqi.order.service.OrderService;
 import com.qiqi.order.service.ScheduleService;
 import com.qiqi.sys.entity.SysUserDO;
 import com.qiqi.sys.service.SysUserService;
+import com.qiqi.warehouse.entity.WarehouseDO;
+import com.qiqi.warehouse.service.WarehouseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -70,6 +74,10 @@ public class OrderController {
 
     @Resource
     private SysUserService sysUserService;
+    @Resource
+    private WarehouseService warehouseService;
+    @Resource
+    private CustomerDetailService customerDetailService;
 
     private String state = "成品";
 
@@ -115,24 +123,46 @@ public class OrderController {
         if(orderDO == null){
             return false;
         }
-        EndProductWarehouseDO endProductWarehouseDO = endProductWarehouseService.getOne(new QueryWrapper<EndProductWarehouseDO>().eq("order_id",orderDO.getId()));
-        if(endProductWarehouseDO != null && endProductWarehouseDO.getEndProductPos() != null && orderDO.getRefundNum() != null){
-            Integer num = Integer.parseInt(endProductWarehouseDO.getEndProductPos()) + Integer.parseInt(orderDO.getRefundNum());
-            endProductWarehouseDO.setEndProductPos(num.toString());
-            boolean b = endProductWarehouseService.updateById(endProductWarehouseDO);
-            if(b){
-                orderDO.setRefundTime(new Date());
-                OrderDO orderDO1 = orderService.getById(orderDO.getId());
-                Integer refundNum1 = (orderDO1.getRefundNum() == null ? 0 : Integer.parseInt(orderDO1.getRefundNum()));
-                Integer refundNum = Integer.parseInt(orderDO.getRefundNum()) + refundNum1;
-                orderDO.setRefundNum(refundNum.toString());
-            }
+        if (orderDO.getIsProduct().equals("成品")){
+            EndProductWarehouseDO endProductWarehouseDO = endProductWarehouseService.getOne(new QueryWrapper<EndProductWarehouseDO>().eq("order_id",orderDO.getId()));
+            if(endProductWarehouseDO != null && endProductWarehouseDO.getEndProductPos() != null && orderDO.getRefundNum() != null){
+                Integer num = Integer.parseInt(endProductWarehouseDO.getEndProductPos()) + Integer.parseInt(orderDO.getRefundNum());
+                endProductWarehouseDO.setEndProductPos(num.toString());
+                boolean b = endProductWarehouseService.updateById(endProductWarehouseDO);
+                if(b){
+                    orderDO.setRefundTime(new Date());
+                    OrderDO orderDO1 = orderService.getById(orderDO.getId());
+                    Integer refundNum1 = (orderDO1.getRefundNum() == null ? 0 : Integer.parseInt(orderDO1.getRefundNum()));
+                    Integer refundNum = Integer.parseInt(orderDO.getRefundNum()) + refundNum1;
+                    orderDO.setRefundNum(refundNum.toString());
+                }
 
-        }else {
-            orderDO.setRefundNum(null);
-            orderDO.setRefundTime(null);
-            return false;
+            }else {
+                orderDO.setRefundNum(null);
+                orderDO.setRefundTime(null);
+                return false;
+            }
+        }else{
+            WarehouseDO warehouseDO = warehouseService.getOne(new QueryWrapper<WarehouseDO>().eq("order_id",orderDO.getId()));
+            if(warehouseDO != null && warehouseDO.getPosition() != null && orderDO.getRefundNum() != null){
+                Integer num = Integer.parseInt(warehouseDO.getPosition()) + Integer.parseInt(orderDO.getRefundNum());
+                warehouseDO.setPosition(num.toString());
+                boolean b = warehouseService.updateById(warehouseDO);
+                if(b){
+                    orderDO.setRefundTime(new Date());
+                    OrderDO orderDO1 = orderService.getById(orderDO.getId());
+                    Integer refundNum1 = (orderDO1.getRefundNum() == null ? 0 : Integer.parseInt(orderDO1.getRefundNum()));
+                    Integer refundNum = Integer.parseInt(orderDO.getRefundNum()) + refundNum1;
+                    orderDO.setRefundNum(refundNum.toString());
+                }
+
+            }else {
+                orderDO.setRefundNum(null);
+                orderDO.setRefundTime(null);
+                return false;
+            }
         }
+
         return orderService.updateById(orderDO);
     }
 
@@ -142,6 +172,7 @@ public class OrderController {
         if(orderDO == null){
             return false;
         }
+        Long orderId = orderDO.getId();
         if(orderDO.getId() == null){
             IdGeneratorUtils idGeneratorUtils = new IdGeneratorUtils();
             String no = idGeneratorUtils.nextId();
@@ -174,7 +205,13 @@ public class OrderController {
         if(orderDO.getId() == null){
             orderDO.setWosState("新订单");
         }
-        return orderService.saveOrUpdate(orderDO);
+        boolean b = orderService.saveOrUpdate(orderDO);
+        if(orderId == null){
+            CustomerDetailDO customerDetailDO = new CustomerDetailDO();
+            customerDetailDO.setOrderId(orderDO.getId());
+            customerDetailService.save(customerDetailDO);
+        }
+        return b;
     }
 
     @ApiOperation(value = "删除(批量))")

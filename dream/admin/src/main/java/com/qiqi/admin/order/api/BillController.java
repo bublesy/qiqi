@@ -15,20 +15,18 @@ import com.qiqi.admin.order.dto.BillVO;
 import com.qiqi.basicdata.entity.CustomerInformationDO;
 import com.qiqi.basicdata.service.CustomerInformationService;
 import com.qiqi.common.entity.PageEntity;
-import com.qiqi.order.dto.BillsDTO;
+import com.qiqi.finance.entity.CustomerDetailDO;
+import com.qiqi.finance.service.CustomerDetailService;
 import com.qiqi.order.dto.OrderFinanceDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.service.OrderService;
-import com.qiqi.order.vo.TitleVO;
-import com.qiqi.order.vo.TotalVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -46,27 +44,32 @@ public class BillController {
     private OrderService orderService;
 
     @Resource
-    private CustomerInformationService customerInformationService;
+    private CustomerDetailService customerDetailService;
 
     @ApiOperation(value = "月结对账单")
     @PostMapping("")
-    public BillVO getBill(@RequestBody BillDTO query){
+    public PageEntity<BillVO> getBill(@RequestBody BillDTO query){
         QueryWrapper<OrderDO> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(!ObjectUtils.isEmpty(query.getDeliveryDate()),"delivery_date",query.getDeliveryDate())
-                .eq(!ObjectUtils.isEmpty(query.getCustomerId()),"customer_id",query.getCustomerId());
-        IPage<OrderDO> iPage = orderService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
-
-        PageEntity<OrderDO> orderDOPageEntity = new PageEntity<>(iPage.getTotal(), Convert.convert(new TypeReference<List<OrderDO>>() {
-        }, iPage.getRecords()));
-        BillVO billVO = new BillVO();
-        if(query.getCustomerId() != null){
-            CustomerInformationDO customerInformationDO = customerInformationService.getById(query.getCustomerId());
-            if(customerInformationDO != null){
-                BeanUtils.copyProperties(customerInformationDO,billVO);
-            }
-        }
-        billVO.setOrderDOPageEntity(orderDOPageEntity);
-        return billVO;
+        queryWrapper.like(StringUtils.isNotBlank(query.getName()),"name",query.getName())
+                    .apply(StringUtils.isNotBlank(query.getDeliveryDate()),
+                            "date_format (delivery_date,'%Y-%m') = '"+query.getDeliveryDate()+"'" );
+        Page<OrderDO> page = orderService.page(new Page<>(query.getPage(), query.getCount()),queryWrapper);
+        List<OrderDO> orderList = page.getRecords();
+        List<Long> orderIds = orderList.stream().map(data -> data.getId()).collect(Collectors.toList());
+        List<CustomerDetailDO> customerDetails = customerDetailService.list(new QueryWrapper<CustomerDetailDO>()
+                .in(orderIds != null && orderIds.size() > 0, "order_id", orderIds));
+        List<BillVO> convert = Convert.convert(new TypeReference<List<BillVO>>() {}, orderList);
+        convert.forEach(data->{
+            customerDetails.forEach(data2->{
+                if(data.getId().equals(data2.getOrderId())){
+                    data.setPost(data2.getPost());
+                    data.setSettlement(data2.getSettlement());
+                    data.setPayed(data2.getPayed());
+                    data.setSettlementDate(data2.getSettlementDate());
+                }
+            });
+        });
+        return new PageEntity<>(page.getTotal(),convert);
     }
 
     @ApiOperation(value = "应收款列表")
@@ -83,12 +86,4 @@ public class BillController {
         PageEntity<OrderFinanceDTO> pageEntity = orderService.listOrder(new Page<>(page, count), customerId, startDate, endDate);
         return pageEntity;
     }
-
-//    @ApiOperation(value = "总计")
-//    @GetMapping("/total")
-//    public List<TotalVO> getTotal(@RequestParam String startDate,
-//                                  @RequestParam String endDate,
-//                                  @RequestParam(required = false) Long customerId){
-//        return orderService.getTotal(startDate,endDate,customerId);
-//    }
 }
