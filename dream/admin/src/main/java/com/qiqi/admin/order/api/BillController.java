@@ -65,6 +65,7 @@ public class BillController {
                     data.setPost(data2.getPost());
                     data.setSettlement(data2.getSettlement());
                     data.setPayed(data2.getPayed());
+                    data.setSettlementDate(data2.getSettlementDate());
                 }
             });
         });

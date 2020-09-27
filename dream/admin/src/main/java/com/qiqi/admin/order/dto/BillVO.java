@@ -1,5 +1,6 @@
 package com.qiqi.admin.order.dto;
 
+import com.alibaba.fastjson.JSONArray;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.qiqi.basicdata.entity.CustomerInformationDO;
 import com.qiqi.common.entity.PageEntity;
@@ -22,6 +23,8 @@ public class BillVO {
 
     private String name;
     private String outNo;
+
+    private JSONArray settlementDate;
 
     @JsonFormat(pattern = "yyyy-MM")
     private Date shipDate;

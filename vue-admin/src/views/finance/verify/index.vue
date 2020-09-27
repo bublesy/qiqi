@@ -49,13 +49,19 @@
 
           <el-table-column v-show="true" prop="payed" label="已付" width="80" />
           <el-table-column v-show="true" prop="unPayed" label="欠款" width="80" />
-
+          <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="150">
+            <template slot-scope="scope">
+              <div v-for="(item,key) in scope.row.settlementDate" :key="key">
+                {{ item }}
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column v-show="true" prop="post" label="是否过账" width="80" />
           <el-table-column v-show="true" prop="settlement" label="结算状态" width="80" />
           <el-table-column label="操作" width="213 ">
             <template slot-scope="scope">
               <el-button size="mini" @click="post(scope.row)">过账</el-button>
-              <el-button type="success" size="mini" @click="settlement(scope.row)">结算</el-button>
+              <el-button type="success" size="mini" :disabled="scope.row.unPayed <= 0 ? true : false" @click="settlement(scope.row)">结算</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -165,6 +171,7 @@ export default {
   mixins: [initData],
   data() {
     return {
+      settlementState: false,
       id: '',
       id2: '',
       postDialog: {
@@ -243,7 +250,7 @@ export default {
       record(this.form).then(res => {
         this.tableData1 = res.list
         this.tableData1.forEach(data => {
-          data.unPayed = data.money - data.beginReceive - data.payed
+          data.unPayed = Math.abs(data.money - data.beginReceive - data.payed)
           if (data.post === null) {
             data.post = '未过账'
           }

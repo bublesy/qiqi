@@ -208,7 +208,7 @@ public class OrderController {
         boolean b = orderService.saveOrUpdate(orderDO);
         if(orderId == null){
             CustomerDetailDO customerDetailDO = new CustomerDetailDO();
-            customerDetailDO.setOrderId(orderId);
+            customerDetailDO.setOrderId(orderDO.getId());
             customerDetailService.save(customerDetailDO);
         }
         return b;
