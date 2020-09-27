@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qiqi.warehouse.mapper.WarehouseMapper">
-
+    <select id="wareList" resultType="com.qiqi.warehouse.model.WarehouseDTO">
+        SELECT o.*,e.out_no,e.carry_to,e.remark,e.delivery_quantity,e.id AS eId,e.carry_to as posting
+        FROM warehouse e LEFT JOIN orders o ON e.order_id = o.id
+        WHERE e.is_deleted =0
+        <if test=" warehouseDTO.signBackState =='已回签' ">
+            and  o.sign = #{warehouseDTO.signBackState}
+        </if>
+        <if test=" warehouseDTO.signBackState =='未回签' ">
+            and  o.sign is null
+        </if>
+        <if test=" warehouseDTO.outNo != null and warehouseDTO.outNo != '' ">
+            and  e.out_no = #{warehouseDTO.outNo}
+        </if>
+        <if test=" warehouseDTO.deliveryman != null and warehouseDTO.deliveryman != '' ">
+            and  e.created_by = #{warehouseDTO.deliveryman}
+        </if>
+        <if test=" warehouseDTO.note != null and warehouseDTO.note != '' ">
+            and  e.remark = #{warehouseDTO.note}
+        </if>
+    </select>
 </mapper>

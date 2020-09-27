@@ -15,6 +15,7 @@ public class PurchaseOrderDTO {
     private String returnNum;
     private Long orderId;
 
+    private Integer productNum;
     private String orderNum;
 
     private String pressureSpecification;

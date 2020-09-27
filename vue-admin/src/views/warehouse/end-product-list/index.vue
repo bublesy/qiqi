@@ -38,6 +38,8 @@
           <el-table-column v-show="true" prop="orderQuantity" label="订单数量" width="140" />
           <el-table-column v-show="true" prop="purQuantity" label="库存数量" width="140" />
           <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" width="140" />
+          <el-table-column v-show="true" prop="alreadyDeliveryQuantity" label="已送数量" width="140" />
+          <el-table-column v-show="true" prop="stayDeliveryQuantity" label="待送数量" width="140" />
           <el-table-column v-show="true" prop="carryTo" label="发货状态" width="140" />
           <el-table-column v-show="true" prop="posting" label="过账状态" width="140" />
           <el-table-column v-show="true" prop="boxType" label="箱型" width="140" />
@@ -48,15 +50,14 @@
           <el-table-column v-show="true" prop="unitPrice" label="成本价" width="140" />
           <el-table-column v-show="true" prop="endProductPos" label="成品仓位" width="140" />
           <el-table-column v-show="true" prop="warehousingData" label="入仓时间" width="160" />
-          <el-table-column v-show="true" prop="endProductPos" label="实际库存数量" width="140" />
-          <el-table-column v-show="true" prop="checkDate" label="盘点时间" width="160" />
+          <el-table-column v-show="true" prop="endProductPos" label="仓位" width="140" />
           <el-table-column v-show="true" prop="outNo" label="送货单号" width="160" />
           <el-table-column v-show="true" prop="outDate" label="送货日期" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
               <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?true : false" @click="purAdd(scope)">新增送货数量</el-link>
-              <el-link type="primary" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true)||(scope.row.checkDate===null ?false : true)" @click="modifyPur(scope)">编辑送货数量</el-link>
-              <el-link type="warning" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true)||(scope.row.checkDate===null ?false : true)" @click="printing(scope)">生成送货单</el-link>
+              <el-link type="primary" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true) || (printingDis)" @click="modifyPur(scope)">编辑送货数量</el-link>
+              <el-link type="warning" size="small" :disabled="printingDis" @click="printing(scope)">生成送货单</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -79,39 +80,16 @@
           <el-form-item label="入仓单号:" prop="warehouseNo">
             <el-input v-model="formAdd.warehouseNo" disabled />
           </el-form-item>
+          <el-form-item label="订单数量:" prop="orderQuantity">
+            <el-input v-model="formAdd.orderQuantity" disabled />
+          </el-form-item>
           <el-form-item label="送货数量:" prop="deliveryQuantity">
-            <el-input v-model="formAdd.deliveryQuantity" />
+            <el-input v-model="formAdd.deliveryQuantity" @change="deliveryChange" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button size="small" @click="purAddNo">取 消</el-button>
           <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
-        </span>
-      </el-dialog>
-
-      <!-- 新增/编辑盘点单 -->
-      <el-dialog :title="titleType+'盘点单'" :visible.sync="addCheckVisible">
-        <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAddCheck" size="mini" label-width="80px">
-
-          <el-form-item label="入仓单号:" prop="warehouseNo">
-            <el-input v-model="formAddCheck.warehouseNo" disabled />
-          </el-form-item>
-          <el-form-item label="库存数量" prop="purQuantity">
-            <el-input v-model="formAddCheck.purQuantity" disabled />
-          </el-form-item>
-          <el-form-item label="盘点数量" prop="checkNum">
-            <el-input v-model="formAddCheck.checkNum" @change="checkNumChange" />
-          </el-form-item>
-          <el-form-item label="差异数量">
-            <el-input v-model="formAddCheck.differencesNum" disabled />
-          </el-form-item>
-          <el-form-item label="备注:">
-            <el-input v-model="formAddCheck.remark" />
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button size="small" @click="addCheckNo">取 消</el-button>
-          <el-button size="small" type="primary" @click="addCheckOk('purForm')">确 定</el-button>
         </span>
       </el-dialog>
 
@@ -147,8 +125,8 @@ export default {
         carryTo: '',
         time: ''
       },
-      addCheckVisible: false,
-      formAddCheck: {}
+      formAddCheck: {},
+      printingDis: false
 
     }
   },
@@ -156,22 +134,15 @@ export default {
     this.init()
   },
   methods: {
+    deliveryChange() {
+      if (this.formAdd.deliveryQuantity > this.formAdd.orderQuantity) {
+        this.$message.error('送货数量不能大于订单数量！！')
+        this.formAdd.deliveryQuantity = this.formAdd.orderQuantity
+        return
+      }
+    },
     purAddNo() {
       this.purAddVisible = false
-    },
-    addCheckNo() {
-      this.addCheckVisible = false
-    },
-    checkNumChange() {
-      this.$set(this.formAddCheck, 'differencesNum', this.formAddCheck.checkNum - this.formAddCheck.purQuantity)
-    },
-    modifyCheck(scope) {
-      this.addCheckVisible = true
-      this.titleType = '编辑'
-      getById(scope.row.id).then(res => {
-        this.formAddCheck = res
-        this.formAddCheck.differencesNum = this.formAddCheck.checkNum - this.formAddCheck.purQuantity
-      })
     },
     modifyPur(scope) {
       this.purAddVisible = true
@@ -197,32 +168,6 @@ export default {
         }
       })
     },
-    addCheckOk(purForm) {
-      this.$refs[purForm].validate((valid) => {
-        if (valid) {
-          add(this.formAddCheck).then(res => {
-            if (res) {
-              this.$message.success(this.titleType + '成功')
-              this.loadData()
-            } else {
-              this.$message.error(this.titleType + '失败')
-            }
-          })
-          this.addCheckVisible = false
-        } else {
-          return false
-        }
-      })
-    },
-    addCheck(scope) {
-      this.addCheckVisible = true
-      this.titleType = '新增'
-      // 新增初始化数据
-      this.formAddCheck = {}
-      this.$set(this.formAddCheck, 'warehouseNo', scope.row.warehouseNo)
-      this.$set(this.formAddCheck, 'purQuantity', scope.row.purQuantity)
-      this.$set(this.formAddCheck, 'id', scope.row.id)
-    },
     purAdd(scope) {
       this.purAddVisible = true
       this.titleType = '新增'
@@ -231,6 +176,7 @@ export default {
       this.$set(this.formAdd, 'id', scope.row.id)
       this.$set(this.formAdd, 'warehouseNo', scope.row.warehouseNo)
       this.$set(this.formAdd, 'deliveryQuantity', scope.row.orderQuantity)
+      this.$set(this.formAdd, 'orderQuantity', scope.row.orderQuantity)
     },
     loadData() {
       this.queryParams.carryTo = this.form.carryTo
@@ -245,6 +191,11 @@ export default {
           getCustomerById(a.customerId).then(data => {
             this.$set(a, 'customerName', data.name)
           })
+          a.stayDeliveryQuantity = a.orderQuantity - a.alreadyDeliveryQuantity
+          var j = parseInt(a.orderQuantity)
+          if (a.alreadyDeliveryQuantity === j) {
+            this.printingDis = true
+          }
         })
       })
     },

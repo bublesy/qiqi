@@ -17,7 +17,11 @@ public class WarehouseVO {
 
     private String outNo;
     private String outDate;
+    private Long page;
+    private Long size;
+    private Integer productNum;
 
+    private Integer alreadyDeliveryQuantity;
     private String checkDate;
 
     private String deliveryQuantity;

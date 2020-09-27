@@ -20,3 +20,10 @@ export function getSupplierById(id) {
   return request({ url: '/warehouse/' + id, method: 'get' })
 }
 
+export function wareList(data) {
+  return request({ url: '/warehouse/wareList', method: 'post', data: data })
+}
+
+export function check(data) {
+  return request({ url: '/warehouse/check', method: 'post', data: data })
+}
