@@ -2,7 +2,7 @@
   <el-dialog
     title="结算"
     :visible.sync="dialog.show"
-    width="15%"
+    width="25%"
     :close-on-click-modal="false"
   >
     <el-form ref="form" :model="form" size="mini" :inline="true">
@@ -13,8 +13,17 @@
           <el-option value="已结算" label="已结算" />
         </el-select>
       </el-form-item>
-      <el-form-item label="付款金额:">
+      <el-form-item label="订单金额:">
+        <el-input-number v-model="form.money" :controls="false" :min="0" :precision="2" />
+      </el-form-item>
+      <el-form-item label="期初金额:">
+        <el-input-number v-model="form.beginReceive" :controls="false" :min="0" :precision="2" style="width:150px" />
+      </el-form-item>
+      <el-form-item label="已付金额:">
         <el-input-number v-model="form.payed" :controls="false" :min="0" :precision="2" />
+      </el-form-item>
+      <el-form-item label="待付款金额:">
+        <el-input-number v-model="form.unPayed" :controls="false" :min="0" :precision="2" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -40,7 +49,8 @@ export default {
   data() {
     return {
       form: {
-        settlement: '未结算'
+        settlement: '未结算',
+        settlementDate: []
       }
     }
   },
@@ -48,7 +58,12 @@ export default {
     'dialog.show': function(val) {
       if (val) {
         getPost(this.id).then(res => {
+          console.log(res)
           this.form.settlement = res.settlement
+          this.form.money = res.money
+          this.form.beginReceive = res.beginReceive
+          this.form.payed = res.payed
+          this.form.unPayed = this.form.money - this.form.beginReceive - this.form.payed
         })
       }
     }
@@ -57,6 +72,7 @@ export default {
     sure() {
       this.form.id = this.id
       console.log(this.form)
+      this.form.payed = this.form.payed + this.form.unPayed
       toSettle(this.form).then(res => {
         if (res) {
           this.$message.success('结算成功')

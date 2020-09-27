@@ -1,6 +1,9 @@
 package com.qiqi.finance.entity;
 
+import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.qiqi.common.base.BaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,12 +20,15 @@ import java.math.BigDecimal;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("customer_detail")
+@TableName(autoResultMap = true, value = "customer_detail")
 public class CustomerDetailDO extends BaseModel {
 
     private static final long serialVersionUID=1L;
 
     private Long orderId;
+
+    @TableField(typeHandler = FastjsonTypeHandler.class)
+    private JSONArray settlementDate;
 
     /**
      * 过账状态
@@ -35,6 +41,7 @@ public class CustomerDetailDO extends BaseModel {
     private String settlement;
 
     private BigDecimal payed;
+
 
 
 }
