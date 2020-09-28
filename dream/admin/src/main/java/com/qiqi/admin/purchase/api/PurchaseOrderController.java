@@ -223,20 +223,29 @@ public class PurchaseOrderController {
         boolean flag = false;
         String carryTo = purchaseOrderDO.getCarryTo();
         Integer alreadyMoney = purchaseOrderDO.getAlreadyMoney();
+        //设置日期格式
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String settlementStatus = purchaseOrderDO.getSettlementStatus();
-        if (carryTo!=null || carryTo !=""){
-            flag = purchaseOrderService.updateById(purchaseOrderDO);
-        }
-        if ((alreadyMoney !=null || alreadyMoney!=0 )&& (settlementStatus != null || settlementStatus !="" ) ){
-            flag = purchaseOrderService.updateById(purchaseOrderDO);
-        }
         Long id = purchaseOrderDO.getId();
         PurchaseOrderDO byId = purchaseOrderService.getById(id);
         Integer totalAmount = byId.getTotalAmount();
         Integer totalAmount1 = purchaseOrderDO.getTotalAmount();
+        if (carryTo!=null || carryTo !=""){
+            flag = purchaseOrderService.updateById(purchaseOrderDO);
+        }
+        if(alreadyMoney !=null && settlementStatus != null  ){
+            String settlementDate = byId.getSettlementDate();
+            if (settlementDate!=null){
+                purchaseOrderDO.setSettlementDate(settlementDate+"/"+df.format(new Date()));
+            }else{
+                purchaseOrderDO.setSettlementDate(df.format(new Date()));
+            }
+            flag = purchaseOrderService.updateById(purchaseOrderDO);
+        }
         if (totalAmount != totalAmount1){
             flag = purchaseOrderService.updateById(purchaseOrderDO);
         }
+
         return flag;
     }
 
