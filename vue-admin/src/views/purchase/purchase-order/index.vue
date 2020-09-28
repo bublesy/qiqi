@@ -639,6 +639,7 @@ export default {
       this.formAdd.customerName = scope.row.id
       this.formAdd.returnNum = scope.row.returnNum
       this.formAdd.supplierId = scope.row.supplierId
+      this.formAdd.productNum = scope.row.productNum
       console.log(this.formAdd)
       warehousing(this.formAdd).then(res => {
         if (res) {

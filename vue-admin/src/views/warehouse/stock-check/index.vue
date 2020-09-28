@@ -1,11 +1,11 @@
 <template>
   <el-container>
     <el-main>
-      <h1 align="center">仓库管理</h1>
+      <h1 align="center">仓库库存盘点管理</h1>
       <el-form :inline="true" :model="form" size="mini" align="center">
-        <el-form-item label="时间:">
+        <el-form-item label="盘点时间:">
           <el-date-picker
-            v-model="form.time"
+            v-model="form.checkTime"
             align="right"
             type="date"
             value-format="yyyy-MM-dd"
@@ -13,6 +13,8 @@
           />
         </el-form-item>
         <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
+        <el-button type="primary" size="mini" @click="fullCheck">整页盘点</el-button>
+        <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
       </el-form>
       <div>
         <el-table
@@ -22,6 +24,7 @@
           style="width: 100%"
           @selection-change="handleSelectionChange"
         >
+          <el-table-column type="selection" width="55" />
           <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" width="140" />
           <el-table-column v-show="true" prop="taskNumber" label="任务编号" width="140" />
           <el-table-column v-show="true" prop="customerName" label="客户名称" width="140" />
@@ -34,19 +37,17 @@
           <el-table-column v-show="true" prop="noType" label="单据类型" width="140" />
           <el-table-column v-show="true" prop="orderQuantity" label="订单数量" width="140" />
           <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" width="140" />
-          <el-table-column v-show="true" prop="alreadyDeliveryQuantity" label="已送数量" width="140" />
-          <el-table-column v-show="true" prop="stayDeliveryQuantity" label="待送数量" width="140" />
           <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" width="140" />
           <el-table-column v-show="true" prop="warehousingDate" label="入仓日期" width="160" />
-          <el-table-column v-show="true" prop="position" label="仓位" width="140" />
-          <el-table-column v-show="true" prop="productNum" label="已产数量" width="140" />
-          <el-table-column v-show="true" prop="outDate" label="送货日期" width="160" />
-          <el-table-column v-show="true" prop="outNo" label="送货单号" width="160" />
-          <el-table-column label="操作" width="500px">
+          <el-table-column v-show="true" prop="surplusNum" label="实际库存数量" width="140" />
+          <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" />
+          <el-table-column v-show="true" prop="position" label="剩余数量" width="160" />
+          <el-table-column v-show="true" prop="checkDate" label="盘点日期" width="160" />
+          <el-table-column label="操作" width="300px">
             <template slot-scope="scope">
-              <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?true : false" @click="purAdd(scope)">新增送货数量</el-link>
-              <el-link type="primary" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true) || (printingDis)" @click="modifyPur(scope)">编辑送货数量</el-link>
-              <el-link type="warning" size="small" :disabled="printingDis" @click="printing(scope)">生成送货单</el-link>
+              <el-link type="primary" size="small" :disabled="scope.row.checkNum!==null ?true : false" @click="purAdd(scope)">新增库存盘点</el-link>
+              <el-link type="primary" size="small" @click="modifyPur(scope)">编辑库存盘点</el-link>
+              <el-link type="warning" size="small" @click="printing(scope)">生成盘点单</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -62,23 +63,51 @@
           @current-change="pageChange"
         />
       </div>
-      <!-- 新增/编辑送货数量 -->
-      <el-dialog :title="titleType+'送货数量'" :visible.sync="purAddVisible">
+      <!-- 新增/编辑盘点数量 -->
+      <el-dialog :title="titleType+'盘点数量'" :visible.sync="purAddVisible">
         <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="80px">
 
           <el-form-item label="入仓单号:" prop="warehouseNo">
             <el-input v-model="formAdd.warehouseNo" disabled />
           </el-form-item>
-          <el-form-item label="订单数量:" prop="orderQuantity">
-            <el-input v-model="formAdd.orderQuantity" disabled />
+          <el-form-item label="库存数量:" prop="position">
+            <el-input v-model="formAdd.position" disabled />
           </el-form-item>
-          <el-form-item label="送货数量:" prop="deliveryQuantity">
-            <el-input v-model="formAdd.deliveryQuantity" @change="deliveryChange" />
+          <el-form-item label="盘点数量:" prop="checkNum">
+            <el-input v-model="formAdd.checkNum" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button size="small" @click="purAddNo">取 消</el-button>
           <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
+        </span>
+      </el-dialog>
+
+      <!-- 新增/编辑盘点数量 -->
+      <el-dialog :title="titleType+'盘点数量'" :visible.sync="fullCheckVisible">
+        <el-table
+          ref="singleTable"
+          :data="tableData"
+          highlight-current-row
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" />
+          <el-table-column v-show="true" prop="customerName" label="客户名称" />
+          <el-table-column v-show="true" prop="orderQuantity" label="订单数量" />
+          <el-table-column v-show="true" prop="warehousingDate" label="入仓日期" />
+          <el-table-column v-show="true" prop="surplusNum" label="实际库存数量" />
+          <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" />
+          <el-table-column v-show="true" prop="position" label="剩余库存数量">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.position" :controls="false" style="width:60px" size="mini" />
+            </template>>
+          </el-table-column>
+          <el-table-column v-show="true" prop="checkDate" label="盘点日期" />
+        </el-table>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" @click="CheckNo">取 消</el-button>
+          <el-button size="small" type="primary" @click="CheckOk('purForm')">确 定</el-button>
         </span>
       </el-dialog>
 
@@ -90,18 +119,18 @@
 <script>
 import initData from '@/mixins/initData'
 import { list } from '@/api/warehouse/warehouse'
-import { add } from '@/api/warehouse/warehouse'
+import { add, check } from '@/api/warehouse/warehouse'
 import { getById } from '@/api/warehouse/warehouse'
-import { upState } from '@/api/end-product/product'
+// import { upState } from '@/api/end-product/product'
 import { getCustomerById } from '@/api/basedata/customer'
 
 export default {
-  name: 'CardboardList',
+  name: 'StockCheck',
   mixins: [initData],
   data() {
     return {
       form: {
-        time: ''
+        checkTime: ''
       },
       formAdd: { differencesNum: '' },
       tableData: [],
@@ -113,25 +142,70 @@ export default {
       titleType: '',
       multipleSelection: [],
       drawerFor: [],
-      printingDis: false
+      printingDis: false,
+      fullCheckVisible: false,
+      ids: [],
+      surplusNums: [],
+      formCheck: {}
     }
   },
   created() {
     this.init()
   },
   methods: {
-    deliveryChange() {
-      var a = this.formAdd.orderQuantity
-      if (a < this.formAdd.deliveryQuantity) {
-        this.$message.error('送货数量不能大于订单数量！！')
-        this.formAdd.deliveryQuantity = a
-        return
-      }
+    // 打印
+    printing(scope) {
+      this.multipleSelection.push(scope.row)
+      this.$router.push({
+        path: '/stock_check_print',
+        query: { 'data': this.multipleSelection }
+      })
+    },
+    wholePrinting() {
+      this.$router.push({
+        path: '/stock_check_print',
+        query: { 'data': this.tableData }
+      })
+    },
+    CheckNo() {
+      this.fullCheckVisible = false
+    },
+    CheckOk() {
+      this.ids = []
+      this.surplusNums = []
+      this.tableData.forEach(a => {
+        this.ids.push(a.id)
+        this.surplusNums.push(a.position)
+      })
+      this.formCheck.ids = this.ids
+      this.formCheck.surplusNums = this.surplusNums
+      console.log(this.formCheck)
+      check(this.formCheck).then(res => {
+        if (res) {
+          this.$message.success(this.titleType + '成功')
+          location.reload()
+        } else {
+          this.$message.error(this.titleType + '失败')
+        }
+      })
+      this.fullCheckVisible = false
+    },
+    fullCheck() {
+      this.fullCheckVisible = true
+      this.tableData.forEach(a => {
+        var c = parseInt(a.position)
+        if (a.deliveryQuantity === null) {
+          a.surplusNum = c
+        } else {
+          var d = parseInt(a.deliveryQuantity)
+          a.surplusNum = c + d
+        }
+      })
     },
     loadData() {
-      this.queryParams.time = this.form.time
-      if (this.queryParams.time === null) {
-        this.$set(this.queryParams, 'time', '')
+      this.queryParams.checkTime = this.form.checkTime
+      if (this.queryParams.checkTime === null) {
+        this.$set(this.queryParams, 'checkTime', '')
       }
       list(this.queryParams).then(res => {
         console.log(res)
@@ -140,6 +214,14 @@ export default {
           getCustomerById(a.customerId).then(data => {
             this.$set(a, 'customerName', data.name)
           })
+          var c = parseInt(a.position)
+          if (a.deliveryQuantity === null) {
+            a.surplusNum = c
+          } else {
+            var d = parseInt(a.deliveryQuantity)
+            a.surplusNum = c + d
+          }
+
           a.stayDeliveryQuantity = a.orderQuantity - a.alreadyDeliveryQuantity
           var j = parseInt(a.orderQuantity)
           if (a.alreadyDeliveryQuantity === j) {
@@ -158,34 +240,10 @@ export default {
       this.titleType = '编辑'
       getById(scope.row.id).then(res => {
         this.formAdd = res
-        this.formAdd.differencesNum = this.formAdd.checkNum - this.formAdd.purchaseQuantity
+        this.formAdd.checkNum = res.position
       })
     },
-    // 打印
-    printing(scope) {
-      this.multipleSelection.push(scope.row)
-      let flag = true
-      this.multipleSelection.forEach(a => {
-        if (a.deliveryQuantity === null) {
-          this.$message.error('请先填写送货数量！！')
-          flag = false
-        }
-      })
-      if (flag) {
-        // 更改送货状态
-        const idList = []
-        this.multipleSelection.forEach(a => {
-          idList.push(a.id)
-        })
-        upState(idList).then(res => {
-        })
-        this.$router.push({
-          path: '/cardboard_product',
-          query: { 'data': this.multipleSelection }
-        })
-      }
-    },
-    // 生成送货单
+    // 生成盘点单
     purAdd(scope) {
       this.purAddVisible = true
       this.titleType = '生成'
@@ -193,8 +251,9 @@ export default {
       this.formAdd = {}
       this.$set(this.formAdd, 'id', scope.row.id)
       this.$set(this.formAdd, 'warehouseNo', scope.row.warehouseNo)
-      this.$set(this.formAdd, 'deliveryQuantity', scope.row.orderQuantity)
-      this.$set(this.formAdd, 'orderQuantity', scope.row.orderQuantity)
+      console.log(scope.row.surplusNum)
+      this.$set(this.formAdd, 'checkNum', scope.row.surplusNum)
+      this.$set(this.formAdd, 'position', scope.row.position)
     },
     // 取消
     purAddNo() {

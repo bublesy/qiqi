@@ -43,3 +43,7 @@ export function updatePosting(data) {
 export function upState(data) {
   return request({ url: '/warehouse/upState', method: 'post', data: data })
 }
+
+export function check(data) {
+  return request({ url: '/end/product/warehouse/check', method: 'post', data: data })
+}

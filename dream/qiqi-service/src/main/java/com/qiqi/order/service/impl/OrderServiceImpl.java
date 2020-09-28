@@ -9,14 +9,12 @@ import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.mapper.OrderMapper;
 import com.qiqi.order.service.OrderService;
 import com.qiqi.order.vo.OrderFinanceVO;
-import com.qiqi.order.vo.TotalVO;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**

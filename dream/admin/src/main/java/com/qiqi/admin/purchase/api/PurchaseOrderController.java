@@ -134,10 +134,19 @@ public class PurchaseOrderController {
             if ( purchaseOrderDTO.getReturnNum() == null ||  purchaseOrderDTO.getReturnNum() == ""){
                 endProductWarehouseDO.setEndProductPos(purchaseOrderDTO.getPurchaseQuantity());
             }else{
-                int i = Integer.parseInt(purchaseOrderDTO.getPurchaseQuantity());
-                int ret = Integer.parseInt(purchaseOrderDTO.getReturnNum());
-                String str =String.valueOf(i - ret);
-                endProductWarehouseDO.setEndProductPos(str);
+                Integer productNum = purchaseOrderDTO.getProductNum();
+                if (productNum !=null || productNum !=0){
+                    endProductWarehouseDO.setProductNum(purchaseOrderDTO.getProductNum());
+                    int i = Integer.parseInt(purchaseOrderDTO.getPurchaseQuantity());
+                    int ret = Integer.parseInt(purchaseOrderDTO.getReturnNum());
+                    String str =String.valueOf(i - ret + productNum);
+                    endProductWarehouseDO.setEndProductPos(str);
+                }else{
+                    int i = Integer.parseInt(purchaseOrderDTO.getPurchaseQuantity());
+                    int ret = Integer.parseInt(purchaseOrderDTO.getReturnNum());
+                    String str =String.valueOf(i - ret);
+                    endProductWarehouseDO.setEndProductPos(str);
+                }
             }
             endProductWarehouseDO.setHeight(purchaseOrderDTO.getHeight());
             endProductWarehouseDO.setCheckNum(endProductWarehouseDO.getEndProductPos());
@@ -165,14 +174,27 @@ public class PurchaseOrderController {
             warehouseDO.setPaperWidth(purchaseOrderDTO.getWidth());
             warehouseDO.setUnitPrice(purchaseOrderDTO.getCostPrice());
             String purchaseQuantity = purchaseOrderDTO.getPurchaseQuantity();
+            if (purchaseOrderDTO.getProductNum() == null || purchaseOrderDTO.getProductNum() == 0){
+                purchaseOrderDTO.setProductNum(0);
+            }
+            Integer pur = Integer.parseInt(purchaseQuantity);
             if ( purchaseOrderDTO.getReturnNum() == null ||  purchaseOrderDTO.getReturnNum() == ""){
-                warehouseDO.setPosition(purchaseOrderDTO.getPurchaseQuantity());
+                Integer a=   purchaseOrderDTO.getProductNum()+pur;
+                warehouseDO.setPosition(String.valueOf(a));
             }else{
-                String returnNum = purchaseOrderDTO.getReturnNum();
-                int i = Integer.parseInt(purchaseQuantity);
-                int ret = Integer.parseInt(returnNum);
-                String str =String.valueOf(i - ret);
-                warehouseDO.setPosition(str);
+                if (  purchaseOrderDTO.getProductNum() !=null ||   purchaseOrderDTO.getProductNum() !=0){
+                    warehouseDO.setProductNum(purchaseOrderDTO.getProductNum());
+                    int i = Integer.parseInt(purchaseOrderDTO.getPurchaseQuantity());
+                    int ret = Integer.parseInt(purchaseOrderDTO.getReturnNum());
+                    String str =String.valueOf(i - ret +   purchaseOrderDTO.getProductNum());
+                    warehouseDO.setPosition(str);
+                }else{
+                    String returnNum = purchaseOrderDTO.getReturnNum();
+                    int i = Integer.parseInt(purchaseQuantity);
+                    int ret = Integer.parseInt(returnNum);
+                    String str =String.valueOf(i - ret);
+                    warehouseDO.setPosition(str);
+                }
             }
             warehouseDO.setCheckNum(warehouseDO.getPurchaseQuantity());
             warehouseDO.setOrderId(purchaseOrderDTO.getCustomerName());
@@ -198,7 +220,24 @@ public class PurchaseOrderController {
     @ApiOperation(value = "修改采购单")
     @PutMapping("/update")
     public Boolean updatePurchaseOrder(@RequestBody PurchaseOrderDO purchaseOrderDO) {
-        return purchaseOrderService.updateById(purchaseOrderDO);
+        boolean flag = false;
+        String carryTo = purchaseOrderDO.getCarryTo();
+        Integer alreadyMoney = purchaseOrderDO.getAlreadyMoney();
+        String settlementStatus = purchaseOrderDO.getSettlementStatus();
+        if (carryTo!=null || carryTo !=""){
+            flag = purchaseOrderService.updateById(purchaseOrderDO);
+        }
+        if ((alreadyMoney !=null || alreadyMoney!=0 )&& (settlementStatus != null || settlementStatus !="" ) ){
+            flag = purchaseOrderService.updateById(purchaseOrderDO);
+        }
+        Long id = purchaseOrderDO.getId();
+        PurchaseOrderDO byId = purchaseOrderService.getById(id);
+        Integer totalAmount = byId.getTotalAmount();
+        Integer totalAmount1 = purchaseOrderDO.getTotalAmount();
+        if (totalAmount != totalAmount1){
+            flag = purchaseOrderService.updateById(purchaseOrderDO);
+        }
+        return flag;
     }
 
     @ApiOperation(value = "新增采购单")
@@ -211,6 +250,12 @@ public class PurchaseOrderController {
         purchaseOrderDO.setParPreSpe(purchaseOrderDTO.getPressureSpecification());
         purchaseOrderDO.setPaperHeight(purchaseOrderDTO.getHeight());
         purchaseOrderDO.setOrderId(purchaseOrderDTO.getId());
+        String amount = purchaseOrderDO.getCostPrice();
+        int i2 = Integer.parseInt(amount);
+        String purchaseQuantity = purchaseOrderDO.getPurchaseQuantity();
+        int i3 = Integer.parseInt(purchaseQuantity);
+        int i1 =  i2*i3;
+        purchaseOrderDO.setTotalAmount(i1);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = null;
         try {
