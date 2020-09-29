@@ -37,7 +37,7 @@
           @change="loadHeaders"
         />
         <el-button type="primary" size="mini" @click="selectData">查询</el-button>
-        <el-button type="primary" size="mini" :disabled="disabled" @click="printing">生成月份打印单</el-button>
+        <!-- <el-button type="primary" size="mini" :disabled="disabled" @click="printing">生成月份打印单</el-button> -->
       </el-form>
       <div>
         <el-table
@@ -51,13 +51,13 @@
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         >
           >
-          <el-table-column label="客户" prop="name" width="100" />
-          <el-table-column v-for="(item, index) in headers" :key="index" :label="item.label" :prop="item.prop" width="100">
+          <el-table-column label="客户" prop="name" />
+          <el-table-column v-for="(item, index) in headers" :key="index" :label="item.label" :prop="item.prop">
             <template slot-scope="scope">
               {{ scope.row.dates[item.prop]?scope.row.dates[item.prop]:0 }}
             </template>
           </el-table-column>
-          <el-table-column label="合计" prop="total" width="100">
+          <el-table-column label="合计" prop="total">
             <template slot-scope="scope">
               {{ scope.row.total }}
             </template>

@@ -38,6 +38,18 @@ module.exports = {
     }
   },
   configureWebpack: {
+    devServer: {
+      proxy: {
+        '/api/': {
+          target: 'http://192.168.1.150:8080/api/admin', // 设置你调用的接口域名和端口号 别忘了加http
+          ws: false, // 是否代理websockets
+          changeOrigin: true, // 这里设置是否跨域
+          pathRewrite: {
+            '^/api/': 'http://192.168.1.150:8080/api/admin'
+          }
+        }
+      }
+    },
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
     name: name,
@@ -47,10 +59,11 @@ module.exports = {
       }
     }
   },
+
   chainWebpack(config) {
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
-
+    config.entry('main').add('babel-polyfill') // main是入口js文件
     // set svg-sprite-loader
     config.module
       .rule('svg')

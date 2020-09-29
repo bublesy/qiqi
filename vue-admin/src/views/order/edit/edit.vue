@@ -85,14 +85,14 @@
             @blur="changeTime"
           />
         </el-form-item>
-        <el-form-item label="订货数量:">
+        <el-form-item label="订货数量:" prop="orderNum">
           <el-input v-model="form.orderNum" @input="orderNum" />
         </el-form-item>
         <!-- 1.00 -->
-        <el-form-item label="单价:">
+        <el-form-item label="单价:" prop="perPrice">
           <el-input v-model="form.perPrice" @input="perPrice" />
         </el-form-item>
-        <el-form-item label="金额:">
+        <el-form-item label="金额:" prop="money">
           <el-input v-model="form.money" @input="money" />
         </el-form-item>
         <!-- xlk -->
@@ -293,7 +293,7 @@ export default {
       // auditStatus: false,
       imageUrl: '',
       form: {
-        isProduct: '',
+        isProduct: '非成品',
         modCount: 0
       },
       upLoadURL: this.baseURL + '/file/upload',
@@ -309,6 +309,15 @@ export default {
         ],
         deliveryDate: [
           { required: true, message: '请选择交货日期', trigger: 'blur' }
+        ],
+        orderNum: [
+          { required: true, message: '请选择订单数量', trigger: 'blur' }
+        ],
+        perPrice: [
+          { required: true, message: '请选择单价', trigger: 'blur' }
+        ],
+        money: [
+          { required: true, message: '请选择金额', trigger: 'blur' }
         ]
       },
       // 下拉框数组

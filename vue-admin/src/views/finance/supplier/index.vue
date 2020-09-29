@@ -35,7 +35,13 @@
           <el-table-column v-show="true" prop="creditDate" label="账款年月" width="143" />
           <el-table-column v-show="true" prop="alreadyMoney" label="已付" width="80" />
           <el-table-column v-show="true" prop="unPayed" label="欠款" width="80" />
-          <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="150" />
+          <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="150">
+            <template slot-scope="scope">
+              <div v-for="(item,key) in scope.row.array" :key="key">
+                {{ item }}
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column v-show="true" prop="carryTo" label="是否过账" width="80" />
           <el-table-column v-show="true" prop="settlementStatus" label="结算状态" width="80" />
           <el-table-column label="操作" width="213 ">
@@ -160,6 +166,7 @@ export default {
   },
   methods: {
     setOk() {
+      this.dialogVisible = false
       updated(this.formSet).then(res => {
         if (res) {
           this.$message.success(this.titleType + '成功')
@@ -206,8 +213,8 @@ export default {
         this.tableData = res.list
         this.carryTo = this.tableData[0].carryTo
         this.tableData.forEach(a => {
-          var timeArr = a.settlementDate.replace(' ', ':').replace(/\:/g, '/').split('/')
-          a.settlementDate = timeArr
+          var list = a.settlementDate
+          this.$set(a, 'array', list.split('/'))
           a.unPayed = a.totalAmount - a.alreadyMoney
           a.returnAmount = a.returnNum * a.costPrice
         })
