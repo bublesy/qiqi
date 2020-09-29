@@ -57,8 +57,8 @@ public class EndProductWarehouseController {
     @GetMapping("/list")
     public PageEntity<EndProductWarehouseDO> getEndProductWarehousePage(@RequestParam(value = "page",defaultValue = "1") Long page,
                                                                         @RequestParam(value = "size",defaultValue = "10") Long size,
-                                                                        @RequestParam(value = "carryTo") String carryTo,
-                                                                        @RequestParam(value = "time") String time){
+                                                                        @RequestParam(value = "carryTo",required = false) String carryTo,
+                                                                        @RequestParam(value = "time",required = false) String time){
         //todo: 需要转Vo
         LambdaQueryWrapper<EndProductWarehouseDO> wrapper = new LambdaQueryWrapper<EndProductWarehouseDO>();
         wrapper.like(!ObjectUtils.isEmpty(time),EndProductWarehouseDO::getCreatedTime,time);
