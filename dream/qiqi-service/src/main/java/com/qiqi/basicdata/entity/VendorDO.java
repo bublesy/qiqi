@@ -25,7 +25,7 @@ public class VendorDO extends BaseModel {
      */
     private String name;
 
-    private Integer phone;
+    private String phone;
 
     private String address;
 

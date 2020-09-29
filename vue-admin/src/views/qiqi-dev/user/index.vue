@@ -19,8 +19,9 @@
               <el-tag v-for="(name, i) in scope.row.roleNames" :key="i" size="medium">{{ name }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="125" align="center" fixed="right">
+          <el-table-column label="操作" width="190" align="center" fixed="right">
             <template slot-scope="scope">
+              <el-button size="mini" type="primary" icon="el-icon-edit-outline" @click="editPwd(scope.row)" />
               <el-button size="mini" type="primary" icon="el-icon-edit" @click="edit(scope.row)" />
               <el-popover
                 :ref="scope.row.id"
@@ -48,6 +49,19 @@
           @current-change="pageChange"
         />
       </el-col>
+
+      <!-- 修改密码 -->
+      <el-dialog :title="'修改密码'" :visible.sync="editPwdVisible">
+        <el-form ref="pwdRules" :rules="pwdRules" :inline="true" :model="formPwd" size="mini">
+          <el-form-item label="密码" prop="password">
+            <el-input v-model="formPwd.password" show-password />
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" @click="editPwdNo('pwdRules')">取 消</el-button>
+          <el-button size="small" type="primary" @click="editPwdOk('pwdRules')">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-row>
   </div>
 </template>
@@ -55,6 +69,7 @@
 <script>
 import initData from '@/mixins/initData'
 import { getUsers, removeUser } from '@/api/qiqi-dev/user'
+import { editPwdUser } from '@/api/qiqi-dev/user'
 import eForm from './form'
 export default {
   name: 'DevUser',
@@ -71,13 +86,39 @@ export default {
       initMethod: 'loadData',
       tableData: [],
       isAdd: false,
-      delLoading: false
+      delLoading: false,
+      editPwdVisible: false,
+      formPwd: { password: '' },
+      pwdRules: {
+        password: [{ required: true, message: '密码不能为空', trigger: 'blur' },
+          { min: 6, message: '长度至少6位数', trigger: 'blur' }]
+      }
     }
   },
   created() {
     this.init()
   },
   methods: {
+    editPwdNo() {
+      this.editPwdVisible = false
+    },
+    editPwdOk(pwdRules) {
+      this.$refs[pwdRules].validate((valid) => {
+        if (valid) {
+          editPwdUser(this.formPwd).then(res => {
+            if (res) {
+              this.$message.success('修改成功')
+              this.loadData()
+            } else {
+              this.$message.error('修改失败')
+            }
+          })
+          this.editPwdVisible = false
+        } else {
+          return false
+        }
+      })
+    },
     loadData() {
       getUsers(this.queryParams).then(data => {
         this.tableData = data.list
@@ -94,7 +135,13 @@ export default {
       this.isAdd = false
       const _this = this.$refs.form
       _this.form = { ...data }
+      _this.passwordShow = false
       _this.dialog = true
+    },
+    editPwd(data) {
+      this.editPwdVisible = true
+      this.formPwd = {}
+      this.formPwd.id = data.id
     },
     subDelete(id) {
       this.delLoading = true

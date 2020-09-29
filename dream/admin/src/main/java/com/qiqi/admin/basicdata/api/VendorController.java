@@ -1,5 +1,7 @@
 package com.qiqi.admin.basicdata.api;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.qiqi.basicdata.entity.SupplierDO;
 import com.qiqi.basicdata.entity.VendorDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
@@ -7,6 +9,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
 import io.swagger.annotations.*;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.qiqi.basicdata.service.VendorService;
 
@@ -37,8 +40,11 @@ public class VendorController {
     })
     @GetMapping("")
     public PageEntity<VendorDO> getVendorPage(@RequestParam(value = "page",defaultValue = "1") Long page,
-                                        @RequestParam(value = "count",defaultValue = "10") Long count) {
-        IPage<VendorDO> iPage = vendorService.page(new Page<>(page,count));
+                                              @RequestParam(value = "count",defaultValue = "10") Long count,
+                                              @RequestParam(value = "name",required = false) String name) {
+        LambdaQueryWrapper<VendorDO> wrapper = new LambdaQueryWrapper<VendorDO>();
+        wrapper.like(!ObjectUtils.isEmpty(name),VendorDO::getName,name);
+        IPage<VendorDO> iPage = vendorService.page(new Page<>(page,count),wrapper);
         //todo: 需要转Vo
 
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<VendorDO>>() {}, iPage.getRecords()));
@@ -61,7 +67,7 @@ public class VendorController {
     @ApiOperation(value = "新增")
     @PostMapping("")
     public Boolean saveVendor(@RequestBody VendorDO vendorDO) {
-        return vendorService.save(vendorDO);
+        return vendorService.saveOrUpdate(vendorDO);
     }
 
     @ApiOperation(value = "删除(批量))")

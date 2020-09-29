@@ -98,14 +98,25 @@ public class DevUserController {
         return sysUserRoleService.saveBatch(userRoleDOList);
     }
 
+
+    @ApiOperation(value = "修改密码")
+    @PutMapping("/editPwdUser")
+    public Boolean editPwdUser(@RequestBody DevUserVO devUserVO) {
+        SysUserDO sysUserDO = new SysUserDO();
+        BeanUtils.copyProperties(devUserVO,sysUserDO);
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        sysUserDO.setPassword(bCryptPasswordEncoder.encode(devUserVO.getPassword()));
+        return sysUserService.updateById(sysUserDO);
+    }
+
     @ApiOperation(value = "新增系统用户")
     @PostMapping("")
     public Boolean saveSysUser(@RequestBody DevUserVO devUserVO) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         List<SysUserRoleDO> userRoleDOList = new ArrayList<>();
         SysUserDO sysUserDO = new SysUserDO();
         BeanUtils.copyProperties(devUserVO,sysUserDO);
-        sysUserDO.setPassword(passwordEncoder.encode("123456"));
+        sysUserDO.setPassword(bCryptPasswordEncoder.encode(devUserVO.getPassword()));
         sysUserService.save(sysUserDO);
         for (Long roleId : devUserVO.getRoleIds()) {
             SysUserRoleDO sysUserRoleDO = new SysUserRoleDO();
