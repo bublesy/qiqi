@@ -64,7 +64,7 @@ public class EndProductWarehouseController {
         wrapper.like(!ObjectUtils.isEmpty(time),EndProductWarehouseDO::getCreatedTime,time);
         if (carryTo.equals("已送货")){
             wrapper.le(!ObjectUtils.isEmpty(carryTo),EndProductWarehouseDO::getCarryTo,carryTo);
-        }else{
+        }else if(carryTo.equals("未送货")){
             wrapper.ge(!ObjectUtils.isEmpty(carryTo),EndProductWarehouseDO::getCarryTo,carryTo);
         }
         IPage<EndProductWarehouseDO> iPage = endProductWarehouseService.page(new Page<>(page,size),wrapper);

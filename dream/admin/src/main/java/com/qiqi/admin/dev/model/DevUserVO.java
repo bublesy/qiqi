@@ -17,6 +17,10 @@ public class DevUserVO {
      */
     private String nickname;
     /**
+     * 密码
+     */
+    private String password;
+    /**
      * 账号
      */
     private String username;
