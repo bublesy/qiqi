@@ -102,9 +102,6 @@ import {
 export default {
   name: 'Dashboard',
   inject: ['closeTag'],
-  computed: {
-    ...mapGetters(['name'])
-  },
   data() {
     return {
       customs: '',
@@ -204,6 +201,9 @@ export default {
         quantity: ''
       }
     }
+  },
+  computed: {
+    ...mapGetters(['name'])
   },
   created() {
     // 未付款
