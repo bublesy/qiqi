@@ -59,14 +59,14 @@
           <el-table-column v-show="true" prop="position" label="仓位" width="140" />
           <el-table-column v-show="true" prop="endProductPos" label="成品仓位" width="140" />
           <el-table-column v-show="true" prop="returnNum" label="退货数量" width="140" />
-          <el-table-column label="操作" width="450">
+          <el-table-column label="操作" width="650">
             <template slot-scope="scope">
-              <el-link type="danger" size="small" :disabled="scope.row.documentsNo!==null ?false : true" @click="drop(scope)">删除采购单</el-link>
-              <el-link type="primary" size="small" :disabled="scope.row.documentsNo!==null ?true : false" @click="purAdd(scope)">生成采购单</el-link>
-              <el-link type="primary" size="small" :disabled="(scope.row.position==='0' ?false : true)||(scope.row.endProductPos==='0' ?false : true)" @click="modifyPur(scope)">编辑采购单</el-link>
-              <el-link type="primary" size="small" :disabled="(scope.row.position==='0' ?false : true)||(scope.row.endProductPos==='0' ?false : true)" @click="warehousing(scope)">入库</el-link>
-              <el-link type="primary" size="small" :disabled="scope.row.documentsNo!==null ?false : true" @click="addReturn(scope)">生成退货单</el-link>
-              <el-link type="warning" size="small" :disabled="scope.row.documentsNo!==null ?false : true" @click="printing(scope)">生成打印单</el-link>
+              <el-button type="danger" style="width:90px" size="mini" :disabled="scope.row.documentsNo!==null ?false : true" @click="drop(scope)">删除采购单</el-button>
+              <el-button type="primary" size="mini" style="width:90px" :disabled="scope.row.documentsNo!==null ?true : false" @click="purAdd(scope)">生成采购单</el-button>
+              <el-button type="primary" size="mini" style="width:90px" :disabled="(scope.row.position==='0' ?false : true)||(scope.row.endProductPos==='0' ?false : true)" @click="modifyPur(scope)">编辑采购单</el-button>
+              <el-button type="primary" size="mini" style="width:60px" :disabled="(scope.row.position==='0' ?false : true)||(scope.row.endProductPos==='0' ?false : true)" @click="warehousing(scope)">入库</el-button>
+              <el-button type="primary" size="mini" style="width:90px" :disabled="scope.row.documentsNo!==null ?false : true" @click="addReturn(scope)">生成退货单</el-button>
+              <el-button type="warning" size="mini" style="width:90px" :disabled="scope.row.documentsNo!==null ?false : true" @click="printing(scope)">生成打印单</el-button>
             </template>
           </el-table-column>
         </el-table>

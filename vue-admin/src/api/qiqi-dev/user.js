@@ -15,3 +15,8 @@ export function editUser(data) {
 export function removeUser(id) {
   return request({ url: '/dev/user/' + id, method: 'delete' })
 }
+
+export function editPwdUser(data) {
+  return request({ url: '/dev/user/editPwdUser', data: data, method: 'put' })
+}
+
