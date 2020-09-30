@@ -19,7 +19,6 @@ router.beforeEach(async(to, from, next) => {
 
   // determine whether the user has logged in
   const hasToken = getToken()
-
   if (hasToken) {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
@@ -35,7 +34,6 @@ router.beforeEach(async(to, from, next) => {
           const { menus } = await store.dispatch('user/getInfo')
           // // generate accessible routes map based on permissions
           const accessRoutes = await store.dispatch('permission/generateRoutes', menus)
-
           // // dynamically add accessible routes
           router.addRoutes(accessRoutes)
 
