@@ -5,6 +5,7 @@
         <el-button @click="toBack">返回</el-button>
         <el-button v-print="'#print'" type="primary">打印</el-button>
         <h1 align="center">采购订单</h1>
+        <h3 align="center">{{ name }}</h3>
         <span style="margin-left:60px">供方:{{ fullName }}</span>
         <br>
         <span style="margin-left:60px">电话:{{ mobilePhone }}</span>
@@ -66,6 +67,7 @@
 <script scope>
 import initData from '@/mixins/initData'
 import { getById } from '@/api/supplier/supplier'
+import { list } from '@/api/basedata/firm'
 
 export default {
   name: 'PurchaseOrderPrinting',
@@ -84,7 +86,8 @@ export default {
       billingDate: '',
       date: '',
       length: '',
-      width: ''
+      width: '',
+      name: ''
 
     }
   },
@@ -119,6 +122,15 @@ export default {
       })
       this.pagination.total = this.tableData.length
       this.getSupplier()
+      list().then(res => {
+        var firmList = []
+        firmList = res.list
+        firmList.forEach(a => {
+          if (a.isFirm === true) {
+            this.name = a.name
+          }
+        })
+      })
     },
 
     // 加载供应商
