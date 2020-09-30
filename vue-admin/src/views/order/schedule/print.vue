@@ -3,6 +3,7 @@
     <el-button v-print="'#printTest'" type="success">打印</el-button>
     <el-button type="info" @click="back">返回</el-button>
     <el-card id="printTest">
+      <h1 style="margin-left:41%">{{ name2 }}</h1>
       <p class="font">生产排期表</p>
       <el-table
         ref="multipleTable"
@@ -55,7 +56,7 @@
 
 <script>
 // import { export2Excel } from '@/utils/common'
-
+import { list } from '@/api/basedata/firm'
 export default {
   data() {
     return {
@@ -66,20 +67,32 @@ export default {
         page: 1
       },
 
-      id: ''
+      id: '',
+      name2: ''
     }
   },
   created() {
-    var list = []
+    list().then(res => {
+      console.log(res)
+      var firmList = []
+      firmList = res.list
+      firmList.forEach(a => {
+        if (a.isFirm === true) {
+          this.name2 = a.name
+          console.log('name:' + this.name2)
+        }
+      })
+    })
+    var list2 = []
     var object = this.$route.query
     console.log(object)
     for (const key in object) {
       if (object.hasOwnProperty(key)) {
         const element = object[key]
-        list.push(element)
+        list2.push(element)
       }
     }
-    this.tableData = list
+    this.tableData = list2
   },
   methods: {
     back() {

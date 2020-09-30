@@ -2,21 +2,8 @@
   <div style="margin:30px;width:100%;height:100%">
     <el-button type="info" style="margin-left:84%" @click="back">返回</el-button>
     <el-button v-print="'#printTest'" type="success">打印</el-button>
-    <!-- <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
-      <el-form-item label="出货日期:">
-        <el-date-picker
-          v-model="form.date"
-          type="date"
-          placeholder="选择日期"
-        />
-      </el-form-item>
-      <el-form-item label="">
-        <el-button size="mini" type="primary">查询</el-button>
-        <el-button v-print="'#printTest'" type="warning">打印</el-button>
-        <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button><br>
-      </el-form-item>
-    </el-form> -->
     <el-card id="printTest">
+      <h1 style="margin-left:40%">{{ name2 }}</h1>
       <p class="font">出货日报表</p>
       <span style="margin-left:25%">制表:{{ name }}</span>
       <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
@@ -55,6 +42,7 @@
 
 <script>
 // import { export2Excel } from '@/utils/common'
+import { list } from '@/api/basedata/firm'
 import { getUser } from '@/api/order/customerOrder'
 export default {
   name: 'ProDaily',
@@ -66,25 +54,37 @@ export default {
         page: 1,
         size: 10
       },
-      name: ''
+      name: '',
+      name2: ''
     }
   },
   created() {
+    list().then(res => {
+      console.log(res)
+      var firmList = []
+      firmList = res.list
+      firmList.forEach(a => {
+        if (a.isFirm === true) {
+          this.name2 = a.name
+          console.log('name:' + this.name2)
+        }
+      })
+    })
     getUser().then(res => {
       this.name = res.nickname
     })
     var date = new Date()
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-    var list = []
+    var list2 = []
     var object = this.$route.query
     console.log(object)
     for (const key in object) {
       if (object.hasOwnProperty(key)) {
         const element = object[key]
-        list.push(element)
+        list2.push(element)
       }
     }
-    this.tableData = list
+    this.tableData = list2
   },
   methods: {
     back() {

@@ -3,6 +3,7 @@
     <el-button type="info" style="margin-left:84%" @click="back">返回</el-button>
     <el-button v-print="'#printTest'" type="success">打印</el-button>
     <el-card id="printTest">
+      <h1 style="margin-left:41%">{{ name2 }}</h1>
       <p class="font">生产日报表</p>
       <span style="margin-left:25%">制表:{{ name }}</span>
       <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
@@ -47,6 +48,7 @@
 <script>
 // import { export2Excel } from '@/utils/common'
 import { getUser } from '@/api/order/customerOrder'
+import { list } from '@/api/basedata/firm'
 export default {
   name: 'ProDaily',
   data() {
@@ -58,25 +60,37 @@ export default {
         size: 10
       },
       now: null,
-      name: ''
+      name: '',
+      name2: ''
     }
   },
   created() {
+    list().then(res => {
+      console.log(res)
+      var firmList = []
+      firmList = res.list
+      firmList.forEach(a => {
+        if (a.isFirm === true) {
+          this.name2 = a.name
+          console.log('name:' + this.name2)
+        }
+      })
+    })
     getUser().then(res => {
       this.name = res.nickname
     })
     var date = new Date()
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-    var list = []
+    var list2 = []
     var object = this.$route.query
     console.log(object)
     for (const key in object) {
       if (object.hasOwnProperty(key)) {
         const element = object[key]
-        list.push(element)
+        list2.push(element)
       }
     }
-    this.tableData = list
+    this.tableData = list2
   },
   methods: {
     back() {
