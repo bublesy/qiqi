@@ -3,7 +3,7 @@
     <el-button type="info" style="margin-left:84%" @click="back">返回</el-button>
     <el-button v-print="'#printTest'" type="success">打印</el-button>
     <el-card id="printTest">
-      <h1>{{ name2 }}</h1>
+      <h1 style="margin-right:8%">{{ name2 }}</h1>
       <p class="font">客户订单日报表</p>
       <span style="margin-left:25%">制表:{{ name }}</span>
       <span style="margin-left:400px">打印日期:{{ now }}</span><hr>
@@ -30,7 +30,7 @@
         <el-table-column prop="money" label="金额" width="120" />
         <el-table-column prop="deliveryDate" label="交货日期" width="120" />
       </el-table>
-    <!-- <el-pagination
+      <!-- <el-pagination
       :current-page="form.page"
       :page-sizes="[10, 20, 30, 40]"
       :page-size="form.size"
@@ -110,6 +110,12 @@ export default {
   /* text-align: center; */
   margin-left: 40%;
   margin-bottom: 0%;
+}
+h1{
+  text-align: center;
+  font-weight: normal;
+  margin-bottom: 0%;
+  height: 0px;
 }
 
 </style>
