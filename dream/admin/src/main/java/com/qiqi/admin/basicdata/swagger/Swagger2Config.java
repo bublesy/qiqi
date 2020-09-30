@@ -63,13 +63,6 @@ public class Swagger2Config {
         );
     }
 
-//    private SecurityContext getContextByPath(String pathRegex){
-//        return SecurityContext.builder()
-//                .securityReferences(defaultAuth())
-//                .forPaths(PathSelectors.regex(pathRegex))
-//                .build();
-//    }
-
     private List<SecurityReference> defaultAuth() {
         List<SecurityReference> result = new ArrayList<>();
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");

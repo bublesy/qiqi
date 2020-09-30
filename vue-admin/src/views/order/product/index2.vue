@@ -5,7 +5,7 @@
     <el-button v-print="'#printTest'" type="success">打印</el-button>
     <p style="margin-left:60%">注意:勾选需要在订单编辑中修改</p>
     <el-card id="printTest">
-      <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
+      <h2 style="margin-left:47%">{{ name2 }}</h2>
       <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
       <div class="dh">
         <p>订货单：<span style="  font-weight: bolder;">{{ tableData.name }}</span></p>
@@ -71,6 +71,7 @@
 
 <script>
 import { getUser } from '@/api/order/customerOrder'
+import { list } from '@/api/basedata/firm'
 export default window.$crudCommon({
   data() {
     return {
@@ -82,6 +83,16 @@ export default window.$crudCommon({
     }
   },
   created() {
+    list().then(res => {
+      var firmList = []
+      firmList = res.list
+      firmList.forEach(a => {
+        if (a.isFirm === true) {
+          this.name2 = a.name
+          console.log('name:' + this.name2)
+        }
+      })
+    })
     getUser().then(res => {
       this.name = res
     })
@@ -185,6 +196,12 @@ export default window.$crudCommon({
 })
 </script>
 <style scoped>
+h1{
+  margin-left: 47%;
+  font-weight: normal;
+  margin-bottom: 3%;
+  height: 0px;
+}
 .dh{
   display: flex;
   justify-content: space-between;

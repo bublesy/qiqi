@@ -7,7 +7,7 @@
       <!-- <el-button type="success" style="margin-left:60%" @click="back">返回</el-button> -->
       <p style="margin-left:60%">注意:勾选需要在订单编辑中修改</p>
       <el-card id="print">
-        <h2 style="text-align:center">海宁市中奇纸箱包装厂</h2>
+        <h1 style="text-align:center">{{ name2 }}</h1>
         <h2 style="text-align:center">生产&nbsp;&nbsp;制作单</h2>
         <div class="dh">
           <p>订货单位：<span style="  font-weight: bolder;">{{ tableData.name }}</span></p>
@@ -164,6 +164,7 @@
 
 <script>
 import { getUser, getUserById } from '@/api/order/customerOrder'
+import { list } from '@/api/basedata/firm'
 export default {
   name: 'TagMethods',
   inject: ['closeTag', 'reloadTag', 'refreshTag'],
@@ -177,6 +178,17 @@ export default {
     }
   },
   created() {
+    list().then(res => {
+      console.log(res)
+      var firmList = []
+      firmList = res.list
+      firmList.forEach(a => {
+        if (a.isFirm === true) {
+          this.name2 = a.name
+          console.log('name:' + this.name2)
+        }
+      })
+    })
     getUser().then(res => {
       this.name = res.nickname
     })

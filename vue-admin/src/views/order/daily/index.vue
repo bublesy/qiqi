@@ -120,7 +120,6 @@ export default {
       export2Excel(th, data, '箱类设定')
     },
     print() {
-      console.log('aaa')
       if (this.select.length === 0) {
         this.select = this.tableData
       }
