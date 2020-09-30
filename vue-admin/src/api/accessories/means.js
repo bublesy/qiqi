@@ -51,3 +51,48 @@ export function toSettle(data) {
   return request({ url: '/customer/detail/settlement', method: 'get', params: data })
 }
 
+// 客户总数
+export function get() {
+  return request({ url: '/home/customerTotal', method: 'get' })
+}
+// 较昨日新增
+export function added() {
+  return request({ url: '/home/add', method: 'get' })
+}
+// 订单总金额
+export function amount(param) {
+  return request({ url: '/home/orderMoneyTotal', params: param, method: 'get' })
+}
+// 订单已付款
+export function paid(param) {
+  return request({ url: '/home/orderPayed', params: param, method: 'get' })
+}
+// 订单未付款
+export function unpaid(param) {
+  return request({ url: '/home/orderUnPayed', params: param, method: 'get' })
+}
+// 订单总数
+export function orders(param) {
+  return request({ url: '/home/orderTotal', params: param, method: 'get' })
+}
+// 营业额
+
+// 供应商已结未结
+export function purchase(params) {
+  return request({ url: '/purchase/order/purList', method: 'get', params: params })
+}
+
+// 原料库存
+export function warehouseList(params) {
+  return request({ url: '/warehouse/list', method: 'get', params: params })
+}
+
+// 成品库存
+export function endWarehouseList(params) {
+  return request({ url: '/end/product/warehouse/list', method: 'get', params: params })
+}
+
+// 毛利估算数据
+export function mlist(data) {
+  return request({ url: '/purchase/order/list', method: 'get', params: data })
+}

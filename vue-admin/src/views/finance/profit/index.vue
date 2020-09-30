@@ -154,11 +154,11 @@ export default {
           if (a.discount === null) {
             a.discount = 100
           }
-
           console.log(a.discount)
           a.amount = a.orderNum * a.perPrice
           a.costAmount = a.costPrice * a.position
           a.profit = a.discountAmount - a.costAmount
+          a.profit = a.profit.toFixed(2)
           if (a.discount === 100) {
             a.profit = a.amount - a.costAmount
           }

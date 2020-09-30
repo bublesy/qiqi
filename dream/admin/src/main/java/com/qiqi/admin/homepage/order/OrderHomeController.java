@@ -139,17 +139,17 @@ public class OrderHomeController {
                 List<CustomerDetailDO> list = customerDetailService.list(new LambdaQueryWrapper<CustomerDetailDO>()
                         .ge(BaseModel::getCreatedTime, DateUtil.beginOfDay(date))
                         .le(BaseModel::getCreatedTime, DateUtil.endOfDay(date)));
-                return list.stream().map(data -> data.getPayed()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                return list.stream().map(data -> data.getPayed() == null ? BigDecimal.ZERO : data.getPayed()).reduce(BigDecimal.ZERO, BigDecimal::add);
             case 2:
                 List<CustomerDetailDO> list1 = customerDetailService.list(new LambdaQueryWrapper<CustomerDetailDO>()
                         .ge(BaseModel::getCreatedTime, DateUtil.beginOfMonth(date))
                         .le(BaseModel::getCreatedTime, DateUtil.endOfMonth(date)));
-                return list1.stream().map(data -> data.getPayed()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                return list1.stream().map(data -> data.getPayed() == null ? BigDecimal.ZERO : data.getPayed()).reduce(BigDecimal.ZERO, BigDecimal::add);
             case 3:
                 List<CustomerDetailDO> list2 = customerDetailService.list(new LambdaQueryWrapper<CustomerDetailDO>()
                         .ge(BaseModel::getCreatedTime, DateUtil.beginOfYear(date))
                         .le(BaseModel::getCreatedTime, DateUtil.endOfYear(date)));
-                return list2.stream().map(data -> data.getPayed()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                return list2.stream().map(data -> data.getPayed() == null ? BigDecimal.ZERO : data.getPayed()).reduce(BigDecimal.ZERO, BigDecimal::add);
             default:
                 return null;
         }
@@ -167,7 +167,7 @@ public class OrderHomeController {
                         .ge(BaseModel::getCreatedTime, DateUtil.beginOfDay(date))
                         .le(BaseModel::getCreatedTime, DateUtil.endOfDay(date)));
                 BigDecimal total = list1.stream().map(data -> data.getMoney()).reduce(BigDecimal.ZERO, BigDecimal::add);
-                BigDecimal payed = list2.stream().map(data -> data.getPayed()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal payed = list2.stream().map(data -> data.getPayed() == null ? BigDecimal.ZERO : data.getPayed()).reduce(BigDecimal.ZERO, BigDecimal::add);
                 return total.subtract(payed);
             case 2:
                 List<OrderDO> list3 = orderService.list(new LambdaQueryWrapper<OrderDO>()
@@ -177,7 +177,7 @@ public class OrderHomeController {
                         .ge(BaseModel::getCreatedTime, DateUtil.beginOfMonth(date))
                         .le(BaseModel::getCreatedTime, DateUtil.endOfMonth(date)));
                 BigDecimal total3 = list3.stream().map(data -> data.getMoney()).reduce(BigDecimal.ZERO, BigDecimal::add);
-                BigDecimal payed4 = list4.stream().map(data -> data.getPayed()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal payed4 = list4.stream().map(data -> data.getPayed() == null ? BigDecimal.ZERO : data.getPayed()).reduce(BigDecimal.ZERO, BigDecimal::add);
                 return total3.subtract(payed4);
             case 3:
                 List<OrderDO> list5 = orderService.list(new LambdaQueryWrapper<OrderDO>()
@@ -187,7 +187,7 @@ public class OrderHomeController {
                         .ge(BaseModel::getCreatedTime, DateUtil.beginOfYear(date))
                         .le(BaseModel::getCreatedTime, DateUtil.endOfYear(date)));
                 BigDecimal total5 = list5.stream().map(data -> data.getMoney()).reduce(BigDecimal.ZERO, BigDecimal::add);
-                BigDecimal payed6 = list6.stream().map(data -> data.getPayed()).reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal payed6 = list6.stream().map(data -> data.getPayed() == null ? BigDecimal.ZERO : data.getPayed()).reduce(BigDecimal.ZERO, BigDecimal::add);
                 return total5.subtract(payed6);
             default:
                 return null;

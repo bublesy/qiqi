@@ -15,7 +15,7 @@
           <el-input v-model="form.name" clearable />
         </el-form-item>
         <el-button type="primary" size="mini" @click="selectData">查询</el-button>
-        <el-button type="primary" size="mini" :disabled="disabled" @click="printing">生成月份打印单</el-button>
+        <!-- <el-button type="primary" size="mini" :disabled="disabled" @click="printing">生成月份打印单</el-button> -->
         <!-- <el-button type="primary" size="mini" @click="purAdd">新增</el-button> -->
         <!-- <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
         <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
