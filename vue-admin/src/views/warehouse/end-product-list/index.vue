@@ -56,8 +56,8 @@
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
               <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?true : false" @click="purAdd(scope)">新增送货数量</el-link>
-              <el-link type="primary" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true) || (printingDis)" @click="modifyPur(scope)">编辑送货数量</el-link>
-              <el-link type="warning" size="small" :disabled="scope.row.outNo!==null ?true : false" @click="printing(scope)">生成送货单</el-link>
+              <el-link type="primary" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true) || (scope.row.alreadyDeliveryQuantity===parseInt(scope.row.orderQuantity) )" @click="modifyPur(scope)">编辑送货数量</el-link>
+              <el-link type="warning" size="small" :disabled="scope.row.alreadyDeliveryQuantity===parseInt(scope.row.orderQuantity) ?true : false" @click="printing(scope)">生成送货单</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -125,8 +125,7 @@ export default {
         carryTo: '',
         time: ''
       },
-      formAddCheck: {},
-      printingDis: false
+      formAddCheck: {}
 
     }
   },
@@ -135,7 +134,9 @@ export default {
   },
   methods: {
     deliveryChange() {
-      if (this.formAdd.deliveryQuantity > this.formAdd.orderQuantity) {
+      var a = parseInt(this.formAdd.deliveryQuantity)
+      var b = parseInt(this.formAdd.orderQuantity)
+      if (a > b) {
         this.$message.error('送货数量不能大于订单数量！！')
         this.formAdd.deliveryQuantity = this.formAdd.orderQuantity
         return
@@ -192,10 +193,6 @@ export default {
             this.$set(a, 'customerName', data.name)
           })
           a.stayDeliveryQuantity = a.orderQuantity - a.alreadyDeliveryQuantity
-          var j = parseInt(a.orderQuantity)
-          if (a.alreadyDeliveryQuantity === j) {
-            this.printingDis = true
-          }
         })
       })
     },

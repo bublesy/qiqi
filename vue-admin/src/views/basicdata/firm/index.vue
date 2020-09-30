@@ -140,6 +140,7 @@ export default {
       }).then(() => {
         this.formAdd = scope.row
         this.formAdd.isFirm = true
+        console.log(this.formAdd)
         updateById(this.formAdd).then(res => {
           if (res) {
             this.$message.success('成功')
@@ -169,14 +170,11 @@ export default {
       list(this.form).then(res => {
         this.tableData = res.list
         this.tableData.forEach(a => {
-          console.log(a)
           if (a.isFirm === true) {
             a.isFirm = '是'
           } else {
             a.isFirm = '否'
           }
-          // var flag = false
-          console.log(a.isFirm)
           if (a.isFirm === '是') {
             this.firmDis = true
           }
