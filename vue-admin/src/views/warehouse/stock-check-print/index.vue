@@ -3,6 +3,7 @@
     <el-main>
       <el-button @click="toBack">返回</el-button>
       <el-button v-print="'#print'" type="primary">打印</el-button>
+      <h3 align="center">{{ name }}</h3>
       <span style="margin-left:70%">打印日期:{{ dateFormat(new Date()) }}</span>
       <div class="app-container">
         <el-table
@@ -65,6 +66,7 @@
 
 <script scope>
 import initData from '@/mixins/initData'
+import { list } from '@/api/basedata/firm'
 
 export default {
   name: 'StockCheckPrint',
@@ -72,7 +74,8 @@ export default {
   data() {
     return {
       tableData: [],
-      data: []
+      data: [],
+      name: ''
     }
   },
   created() {
@@ -97,15 +100,17 @@ export default {
     getList() {
       this.tableData = this.data
       this.tableData.forEach(a => {
-        console.log('aaa', a)
-        // a.amount = a.unitPrice * a.deliveryQuantity
-        // this.billingDate = a.billingDate
-        // this.documentsNo = a.documentsNo
-        // this.remark = a.remark
-        // this.customerId = a.customerId
-        // this.createdBy = a.createdBy
       })
       this.pagination.total = this.tableData.length
+      list().then(res => {
+        var firmList = []
+        firmList = res.list
+        firmList.forEach(a => {
+          if (a.isFirm === true) {
+            this.name = a.name
+          }
+        })
+      })
     },
     // 返回
     toBack() {

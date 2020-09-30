@@ -6,6 +6,7 @@
         <el-button v-print="'#print'" type="primary">打印</el-button>
         <span style="margin-left:70%">打印日期:{{ dateFormat(new Date()) }}</span>
         <h1 align="center">定作送货单</h1>
+        <h3 align="center">{{ name }}</h3>
         <span style="margin-left:60px">收货单位:{{ fullName }}</span>
         <br>
         <br>
@@ -67,6 +68,7 @@
 import initData from '@/mixins/initData'
 import { getCustomerById } from '@/api/basedata/customer'
 import { getNamesById } from '@/api/purchase/purchase'
+import { list } from '@/api/basedata/firm'
 
 export default {
   name: 'EndProductListDeliveryNote',
@@ -82,7 +84,8 @@ export default {
       remark: '',
       createdBy: '',
       nickname: '',
-      date: new Date()
+      date: new Date(),
+      name: ''
     }
   },
   created() {
@@ -118,6 +121,15 @@ export default {
       this.pagination.total = this.tableData.length
       this.getCustomer()
       this.getName()
+      list().then(res => {
+        var firmList = []
+        firmList = res.list
+        firmList.forEach(a => {
+          if (a.isFirm === true) {
+            this.name = a.name
+          }
+        })
+      })
     },
     // 加载客户
     getCustomer() {

@@ -222,7 +222,7 @@
           label="数量:"
           prop="num"
         >
-          <el-input v-model="formMaterial.num" />
+          <el-input v-model="formMaterial.num" @change="numChange" />
         </el-form-item>
         <el-form-item label="单价:" prop="perPrice">
           <el-input v-model="formMaterial.perPrice" @change="numChange" />
@@ -377,7 +377,8 @@ export default {
       this.formReturn.position = scope.row.position
     },
     numChange() {
-      this.formMaterial.money = this.formMaterial.num * this.formMaterial.perPrice
+      console.log(parseInt(this.formMaterial.num), parseInt(this.formMaterial.perPrice))
+      this.$set(this.formMaterial, 'money', parseInt(this.formMaterial.num) * parseInt(this.formMaterial.perPrice))
     },
     specificationChange() {
       this.specificationFor.forEach(a => {

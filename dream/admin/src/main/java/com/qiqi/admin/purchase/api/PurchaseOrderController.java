@@ -235,6 +235,9 @@ public class PurchaseOrderController {
         }
         if(alreadyMoney !=null && settlementStatus != null  ){
             String settlementDate = byId.getSettlementDate();
+            if (byId.getAlreadyMoney() != null || byId.getAlreadyMoney() != 0){
+                purchaseOrderDO.setAlreadyMoney(byId.getAlreadyMoney()+purchaseOrderDO.getAlreadyMoney());
+            }
             if (settlementDate!=null){
                 purchaseOrderDO.setSettlementDate(settlementDate+"/"+df.format(new Date()));
             }else{

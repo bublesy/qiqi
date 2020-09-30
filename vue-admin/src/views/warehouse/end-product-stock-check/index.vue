@@ -46,9 +46,9 @@
           <el-table-column v-show="true" prop="checkDate" label="盘点日期" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
-              <el-link type="primary" size="small" :disabled="scope.row.checkNum!==null ?true : false" @click="purAdd(scope)">新增库存盘点</el-link>
-              <el-link type="primary" size="small" @click="modifyPur(scope)">编辑库存盘点</el-link>
-              <el-link type="warning" size="small" @click="printing(scope)">生成盘点单</el-link>
+              <el-button type="primary" size="small" :disabled="scope.row.checkNum!==null ?true : false" @click="purAdd(scope)">新增库存盘点</el-button>
+              <el-button type="primary" size="small" @click="modifyPur(scope)">编辑库存盘点</el-button>
+              <el-button type="warning" size="small" @click="printing(scope)">生成盘点单</el-button>
             </template>
           </el-table-column>
         </el-table>
