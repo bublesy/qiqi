@@ -70,8 +70,8 @@
         width="25%"
         :close-on-click-modal="false"
       >
-        <el-form ref="form" :model="formSet" size="mini" :inline="true">
-          <el-form-item label="结算状态:">
+        <el-form ref="form" :rules="purRules" :model="formSet" size="mini" :inline="true">
+          <el-form-item label="结算状态:" prop="settlementStatus">
             <el-select v-model="formSet.settlementStatus" placeholder="选择结算状态" style="width:150px">
               <el-option value="未结算" label="未结算" />
               <el-option value="部分结算" label="部分结算" />
@@ -81,8 +81,8 @@
           <el-form-item label="金额:">
             <el-input-number v-model="formSet.money" :controls="false" disabled />
           </el-form-item>
-          <el-form-item label="付款金额:">
-            <el-input-number v-model="formSet.alreadyMoney" :controls="false" />
+          <el-form-item label="付款金额:" prop="alreadyMoney">
+            <el-input-number v-model="formSet.alreadyMoney" :controls="false" @change="alreadyMoneyChange" />
           </el-form-item>
           <el-form-item label="待付款金额:">
             <el-input-number v-model="formSet.unPayed" :controls="false" disabled />
@@ -90,7 +90,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="setOk">确 定</el-button>
+          <el-button type="primary" @click="setOk('form')">确 定</el-button>
         </span>
       </el-dialog>
       <!--过账对话框 -->
@@ -131,10 +131,8 @@ export default {
       tableData: [],
       purAddVisible: false,
       purRules: {
-        supplier: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        pricing: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        billingTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        deliveryTime: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        settlementStatus: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        alreadyMoney: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
       titleType: '',
       multipleSelection: [],
@@ -165,14 +163,20 @@ export default {
     this.init()
   },
   methods: {
-    setOk() {
-      this.dialogVisible = false
-      updated(this.formSet).then(res => {
-        if (res) {
-          this.$message.success(this.titleType + '成功')
-          this.loadData()
+    setOk(supForm) {
+      this.$refs[supForm].validate((valid) => {
+        if (valid) {
+          updated(this.formSet).then(res => {
+            if (res) {
+              this.$message.success(this.titleType + '成功')
+              this.loadData()
+            } else {
+              this.$message.error(this.titleType + '失败')
+            }
+          })
+          this.dialogVisible = false
         } else {
-          this.$message.error(this.titleType + '失败')
+          return false
         }
       })
     },
@@ -192,14 +196,29 @@ export default {
         }
       })
     },
+    alreadyMoneyChange() {
+      console.log(this.formSet.unPayed, this.formSet.alreadyMoney)
+      if (this.formSet.unPayed === this.formSet.money) {
+        if (this.formSet.alreadyMoney > this.formSet.money) {
+          this.$message.error('付款金额大于应收款金额！！')
+          this.$set(this.formSet, 'alreadyMoney', this.formSet.money - this.formSet.unPayed)
+          return
+        }
+      } else if (this.formSet.alreadyMoney > this.formSet.unPayed) {
+        this.$message.error('付款金额大于应收款金额！！')
+        this.$set(this.formSet, 'alreadyMoney', this.formSet.unPayed)
+        return
+      }
+    },
     // 结算
     settlement(scope) {
       this.dialogVisible = true
       // 操作接口数据
       this.formSet.money = scope.row.totalAmount
-      this.formSet.alreadyMoney = scope.row.unPayed
-      this.formSet.unPayed = scope.row.unPayed
+      this.formSet.alreadyMoney = scope.row.alreadyMoney
       this.formSet.id = scope.row.id
+      console.log(this.formSet.alreadyMoney)
+      this.formSet.unPayed = this.formSet.money - this.formSet.alreadyMoney
       // updated(this.formSet).then(res => {
       //   console.log(res)
       // })
@@ -213,9 +232,9 @@ export default {
         this.tableData = res.list
         this.carryTo = this.tableData[0].carryTo
         this.tableData.forEach(a => {
+          a.unPayed = a.totalAmount - a.alreadyMoney
           var list = a.settlementDate
           this.$set(a, 'array', list.split('/'))
-          a.unPayed = a.totalAmount - a.alreadyMoney
           a.returnAmount = a.returnNum * a.costPrice
         })
         this.pagination.total = res.total

@@ -55,9 +55,9 @@
           <el-table-column v-show="true" prop="outDate" label="送货日期" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
-              <el-link type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?true : false" @click="purAdd(scope)">新增送货数量</el-link>
-              <el-link type="primary" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true) || (scope.row.alreadyDeliveryQuantity===parseInt(scope.row.orderQuantity) )" @click="modifyPur(scope)">编辑送货数量</el-link>
-              <el-link type="warning" size="small" :disabled="scope.row.alreadyDeliveryQuantity===parseInt(scope.row.orderQuantity) ?true : false" @click="printing(scope)">生成送货单</el-link>
+              <el-button type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?true : false" @click="purAdd(scope)">新增送货数量</el-button>
+              <el-button type="primary" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true) || (scope.row.alreadyDeliveryQuantity===parseInt(scope.row.orderQuantity) )" @click="modifyPur(scope)">编辑送货数量</el-button>
+              <el-button type="warning" size="small" :disabled="scope.row.alreadyDeliveryQuantity===parseInt(scope.row.orderQuantity) ?true : false" @click="printing(scope)">生成送货单</el-button>
             </template>
           </el-table-column>
         </el-table>

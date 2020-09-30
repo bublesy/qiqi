@@ -72,6 +72,7 @@
         :type="dateType1"
         placeholder="选择日期"
         :format="dateType"
+        @change="typeChange"
       />
       <el-col :span="4" style="float: right">
         <el-radio-group v-model="timeType" @change="typeChange">
@@ -112,7 +113,7 @@ export default {
       paid: '',
       unpaid: '',
       orders: '',
-      value2: new Date().toString(),
+      value2: '',
       timeType: '',
       xData: [
         '1:00',
@@ -208,16 +209,13 @@ export default {
     // 未付款
     unpaid(this.un).then(res => {
       this.unpaid = res
-      console.log(res)
     })
     // 已付款
     paid(this.pa).then(res => {
       this.paid = res
-      console.log(res)
     })
     // 毛利
     mlist(this.mlists).then((res) => {
-      // console.log(res)
       var ml = 0
       res.list.forEach((a) => {
         // a.discount = 100
@@ -240,7 +238,6 @@ export default {
         if (a.discount === 100) {
           a.discountAmount = a.amount
         }
-        // console.log(a.profit);
         ml += a.amount
         this.gross = ml
       })
@@ -248,7 +245,6 @@ export default {
     // 营业额
     amount(this.am).then((res) => {
       this.amount = res
-      // console.log(res);
     })
     // 客户总数
     get().then((res) => {
@@ -327,7 +323,6 @@ export default {
   methods: {
     initCharts() {
       const myChart = this.$echarts.init(this.$refs.chart)
-      console.log(this.$refs.chart) // 绘制图表
       myChart.setOption({
         title: {
           text: ''
@@ -368,15 +363,28 @@ export default {
       })
     },
     typeChange(val) {
+      if (this.value2 === null || this.value2 === '') {
+        var a = new Date().getTime()
+        this.value2 = a
+        var b = new Date(this.value2)
+        var c = b.toString()
+        this.value2 = c
+        console.log(this.value2)
+      } else {
+        var d = this.value2.toString()
+        this.value2 = d
+        console.log(this.value2)
+      }
       // 日
       this.yData = []
       this.xData = []
       var data = {
         //  date: this.value2,
-        date: 'Mon, 28 Sep 2020 10:40:29 GMT ',
+        date: this.value2,
         type: 1
       }
-      if (val === '日') {
+
+      if (val === '日' || this.timeType === '日') {
         this.dateType = 'yyyy-MM-dd'
         this.dateType1 = 'date'
         data.type = 1
@@ -387,7 +395,6 @@ export default {
             this.yData[i] = res[i].营业额
           }
           // this.yData= res[0][0]
-          // console.log( res)
           this.initCharts()
         })
       } else if (val === '月') {
@@ -401,7 +408,6 @@ export default {
             this.yData[i] = res[i].营业额
           }
           // this.yData= res[0][0]
-          console.log(res)
           this.initCharts()
         })
       } else if (val === '年') {
@@ -415,11 +421,9 @@ export default {
             this.yData[i] = res[i].营业额
           }
           // this.yData= res[0][0]
-          // console.log( res)
           this.initCharts()
         })
       }
-      console.log(this.xData)
     }
   }
 }
