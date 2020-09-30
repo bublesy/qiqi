@@ -123,8 +123,6 @@ export default {
       var a = parseInt(this.formAdd.deliveryQuantity)
       var b = parseInt(this.formAdd.orderQuantity)
       if (a > b) {
-        console.log(this.formAdd.deliveryQuantity)
-        console.log(this.formAdd.orderQuantity)
         this.$message.error('送货数量不能大于订单数量！！')
         this.formAdd.deliveryQuantity = this.formAdd.orderQuantity
         return

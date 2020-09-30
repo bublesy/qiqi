@@ -197,15 +197,25 @@ export default {
       })
     },
     alreadyMoneyChange() {
-      this.formSet.unPayed = this.formSet.money - this.formSet.alreadyMoney
+      console.log(this.formSet.unPayed, this.formSet.alreadyMoney)
+      if (this.formSet.unPayed === this.formSet.money) {
+        if (this.formSet.alreadyMoney > this.formSet.money) {
+          this.$message.error('付款金额大于应收款金额！！')
+          this.$set(this.formSet, 'alreadyMoney', this.formSet.money - this.formSet.unPayed)
+          return
+        }
+      } else if (this.formSet.alreadyMoney > this.formSet.unPayed) {
+        this.$message.error('付款金额大于应收款金额！！')
+        this.$set(this.formSet, 'alreadyMoney', this.formSet.unPayed)
+        return
+      }
     },
     // 结算
     settlement(scope) {
       this.dialogVisible = true
       // 操作接口数据
       this.formSet.money = scope.row.totalAmount
-      this.formSet.alreadyMoney = scope.row.unPayed
-      // this.formSet.unPayed =  this.formSet.alreadyMoney
+      this.formSet.alreadyMoney = scope.row.alreadyMoney
       this.formSet.id = scope.row.id
       console.log(this.formSet.alreadyMoney)
       this.formSet.unPayed = this.formSet.money - this.formSet.alreadyMoney
