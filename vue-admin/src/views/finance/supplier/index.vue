@@ -8,6 +8,7 @@
           type="month"
           placeholder="选择月"
           value-format="yyyy-MM"
+          size="mini"
         />
         <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
       </el-form>
@@ -20,7 +21,6 @@
           border=""
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" width="55" />
           <el-table-column v-show="true" prop="taskNumber" label="任务编号" width="140" />
           <el-table-column v-show="true" prop="inProductDate" label="入仓日期" width="140" />
           <el-table-column v-show="true" prop="documentsNo" label="采购序号" width="140" />
@@ -30,9 +30,26 @@
           <el-table-column v-show="true" prop="purchaseQuantity" label="购入数量" width="140" />
           <el-table-column v-show="true" prop="returnNum" label="退货数量" width="140" />
           <el-table-column v-show="true" prop="returnAmount" label="退货金额" width="140" />
-          <el-table-column v-show="true" prop="costPrice" label="单价" width="140" />
+          <el-table-column v-show="true" prop="costPrice" label="成本价" width="140" />
           <el-table-column v-show="true" prop="totalAmount" label="总金额" width="140" />
           <el-table-column v-show="true" prop="creditDate" label="账款年月" width="143" />
+          <el-table-column v-show="true" prop="alreadyMoney" label="已付" width="80" />
+          <el-table-column v-show="true" prop="unPayed" label="欠款" width="80" />
+          <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="150">
+            <template slot-scope="scope">
+              <div v-for="(item,key) in scope.row.array" :key="key">
+                {{ item }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column v-show="true" prop="carryTo" label="是否过账" width="80" />
+          <el-table-column v-show="true" prop="settlementStatus" label="结算状态" width="80" />
+          <el-table-column label="操作" width="213 ">
+            <template slot-scope="scope">
+              <el-button size="mini" @click="post(scope)">过账</el-button>
+              <el-button type="success" size="mini" :disabled="scope.row.unPayed <= 0 ? true : false" @click="settlement(scope)">结算</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <!--分页组件-->
         <el-pagination
@@ -46,57 +63,54 @@
           @current-change="pageChange"
         />
       </div>
-      <!-- 新增/编辑对账明细单 -->
-      <el-dialog :title="titleType+'供应商对账明细表'" :visible.sync="purAddVisible" :close-on-click-modal="false">
-        <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="120px">
-          <el-form-item label="任务编号" prop="supplier">
-            <el-input v-model="formAdd.customerName" disabled>/>
-            </el-input>
+      <!--过账对话框  -->
+      <el-dialog
+        title="结算"
+        :visible.sync="dialogVisible"
+        width="25%"
+        :close-on-click-modal="false"
+      >
+        <el-form ref="form" :model="formSet" size="mini" :inline="true">
+          <el-form-item label="结算状态:">
+            <el-select v-model="formSet.settlementStatus" placeholder="选择结算状态" style="width:150px">
+              <el-option value="未结算" label="未结算" />
+              <el-option value="部分结算" label="部分结算" />
+              <el-option value="已结算" label="已结算" />
+            </el-select>
           </el-form-item>
-          <el-form-item label="入厂日期">
-            <el-input v-model="formAdd.ridgeType" disabled />
+          <el-form-item label="金额:">
+            <el-input-number v-model="formSet.money" :controls="false" disabled />
           </el-form-item>
-          <el-form-item label="采购序号">
-            <el-input v-model="formAdd.ridgeType" />
+          <el-form-item label="付款金额:">
+            <el-input-number v-model="formSet.alreadyMoney" :controls="false" />
           </el-form-item>
-          <el-form-item label="材质">
-            <el-input v-model="formAdd.ridgeType" />
-          </el-form-item>
-
-          <el-form-item label="纸长">
-            <el-input v-model="formAdd.ridgeType" />
-          </el-form-item>
-
-          <el-form-item label="纸宽">
-            <el-input v-model="formAdd.parPreSpe" />
-          </el-form-item>
-
-          <el-form-item label="购入数量">
-            <el-input v-model="formAdd.material" />
-          </el-form-item>
-
-          <el-form-item label="退货数量">
-            <el-input v-model="formAdd.paperLength" />
-          </el-form-item>
-
-          <el-form-item label="退货金额">
-            <el-input v-model="formAdd.paperWidth" />
-          </el-form-item>
-
-          <el-form-item label="单价">
-            <el-input v-model="formAdd.orderQuantity" />
-          </el-form-item>
-          <el-form-item label="账款年月">
-            <el-input v-model="formAdd.orderQuantity" />
+          <el-form-item label="待付款金额:">
+            <el-input-number v-model="formSet.unPayed" :controls="false" disabled />
           </el-form-item>
         </el-form>
-
         <span slot="footer" class="dialog-footer">
-          <el-button size="small" @click="purAddNo">取 消</el-button>
-          <el-button size="small" type="primary" @click="purAddOk('purForm')">确 定</el-button>
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="setOk">确 定</el-button>
         </span>
       </el-dialog>
-
+      <!--过账对话框 -->
+      <el-dialog
+        title="编辑过账状态"
+        :visible.sync="dialog"
+        width="10%"
+        :close-on-click-modal="false"
+      >
+        <el-form ref="form" :model="formCarryTo" size="mini" :inline="true">
+          <el-select v-model="formCarryTo.carryTo" placeholder="请选择">
+            <el-option value="未过账" label="未过账" />
+            <el-option value="已过账" label="已过账" />
+          </el-select>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialog = false">取 消</el-button>
+          <el-button type="primary" @click="sure">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-main>
   </el-container>
 
@@ -104,10 +118,9 @@
 
 <script>
 import initData from '@/mixins/initData'
-import { purList } from '@/api/purchase/purchase'
-
+import { purList, updated } from '@/api/purchase/purchase'
 export default {
-  name: 'Verify',
+  name: 'Supplier',
   mixins: [initData],
   data() {
     return {
@@ -126,15 +139,71 @@ export default {
       titleType: '',
       multipleSelection: [],
       form: {
-        time: ''
+        time: '',
+        carryTo: false
+      },
+      carryTo: '',
+      dialogVisible: false,
+      dialog: false,
+      options: [{
+        value: '选项1',
+        label: '过账'
+      }, {
+        value: '选项2',
+        label: '未过账'
+      }],
+      value: '',
+      formCarryTo: {
+        carryTo: ''
+      },
+      formSet: {
+        unPayed: ''
       }
-
     }
   },
   created() {
     this.init()
   },
   methods: {
+    setOk() {
+      this.dialogVisible = false
+      updated(this.formSet).then(res => {
+        if (res) {
+          this.$message.success(this.titleType + '成功')
+          this.loadData()
+        } else {
+          this.$message.error(this.titleType + '失败')
+        }
+      })
+    },
+    // 过账
+    post(scope) {
+      this.dialog = true
+      this.formCarryTo.id = scope.row.id
+    },
+    sure(val) {
+      this.dialog = false
+      updated(this.formCarryTo).then(res => {
+        if (res) {
+          this.$message.success(this.titleType + '成功')
+          this.loadData()
+        } else {
+          this.$message.error(this.titleType + '失败')
+        }
+      })
+    },
+    // 结算
+    settlement(scope) {
+      this.dialogVisible = true
+      // 操作接口数据
+      this.formSet.money = scope.row.totalAmount
+      this.formSet.alreadyMoney = scope.row.unPayed
+      this.formSet.unPayed = scope.row.unPayed
+      this.formSet.id = scope.row.id
+      // updated(this.formSet).then(res => {
+      //   console.log(res)
+      // })
+    },
     loadData() {
       this.queryParams.time = this.form.time
       if (this.queryParams.time === null) {
@@ -142,9 +211,12 @@ export default {
       }
       purList(this.queryParams).then(res => {
         this.tableData = res.list
+        this.carryTo = this.tableData[0].carryTo
         this.tableData.forEach(a => {
+          var list = a.settlementDate
+          this.$set(a, 'array', list.split('/'))
+          a.unPayed = a.totalAmount - a.alreadyMoney
           a.returnAmount = a.returnNum * a.costPrice
-          a.totalAmount = a.purchaseQuantity * a.costPrice - a.returnAmount
         })
         this.pagination.total = res.total
       })

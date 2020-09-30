@@ -39,4 +39,7 @@ export function getNamesById(id) {
 export function warehousing(data) {
   return request({ url: '/purchase/order/warehousing', method: 'post', data: data })
 }
-
+// 操作接口
+export function updated(data) {
+  return request({ url: '/purchase/order/update', method: 'put', data: data })
+}

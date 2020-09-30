@@ -18,6 +18,8 @@ import '@/permission' // permission control
 import moment from 'moment'
 Vue.prototype.$moment = moment
 
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts
 Vue.use(ElementUI)
 import Avue from '@smallwei/avue'
 import '@smallwei/avue/lib/index.css'
