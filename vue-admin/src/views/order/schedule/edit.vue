@@ -53,7 +53,8 @@ export default {
       form: {
         isSchedule: false,
         modCount: 0
-      }
+      },
+      productNums: 0
     }
   },
   watch: {
@@ -62,6 +63,7 @@ export default {
         getSingleSchedule(this.id).then(res => {
           this.form = res
           this.form.modCount = 0
+          this.productNums = res.orderNum
         })
       }
     }
@@ -71,7 +73,9 @@ export default {
       this.form.modCount++
     },
     sure() {
-      console.log(this.form)
+      if (this.form.productNum > this.productNums) {
+        return this.$message.info('已产数量不能大于订单数量')
+      }
       addOrUpdateSchedule(this.form).then(res => {
         updateProductNum().then(res => {
           console.log('修改数量')
