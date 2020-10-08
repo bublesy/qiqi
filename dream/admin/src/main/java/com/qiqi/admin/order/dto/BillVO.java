@@ -21,6 +21,8 @@ public class BillVO {
 
     private Long id;
 
+    private Long customerId;
+
     private String name;
     private String outNo;
 
