@@ -1,5 +1,6 @@
 package com.qiqi.admin.order.api;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qiqi.admin.order.util.TimeAddEight;
 import com.qiqi.order.dto.ScheduleDTO;
@@ -13,6 +14,8 @@ import com.qiqi.common.entity.PageEntity;
 import com.qiqi.order.service.OrderService;
 import com.qiqi.sys.entity.SysUserDO;
 import com.qiqi.sys.service.SysUserService;
+import com.qiqi.warehouse.entity.WarehouseDO;
+import com.qiqi.warehouse.service.WarehouseService;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
@@ -24,6 +27,7 @@ import javax.annotation.Resource;
 import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -51,6 +55,9 @@ public class ScheduleController {
 
     @Resource
     private OrderService orderService;
+
+    @Resource
+    private WarehouseService warehouseService;
 
     @ApiOperation(value = "获取排期(列表)")
     @PostMapping("/list")
@@ -105,7 +112,12 @@ public class ScheduleController {
         orderDO.setProductNum(product);
         orderDO.setFinished(finished);
         orderDO.setDate(date);
-        return orderService.update(orderDO,new QueryWrapper<OrderDO>().eq("schedule_id",this.scheduleId));
+        orderService.update(orderDO,new QueryWrapper<OrderDO>().eq("schedule_id",this.scheduleId));
+        List<OrderDO> orders = orderService.list(new QueryWrapper<OrderDO>().eq("schedule_id", this.scheduleId));
+        List<Long> collect = orders.stream().map(data -> data.getId()).collect(Collectors.toList());
+        WarehouseDO warehouseDO = new WarehouseDO();
+        warehouseDO.setProductNum(product);
+        return warehouseService.update(warehouseDO,new QueryWrapper<WarehouseDO>().eq("order_id",collect.get(0).toString()));
     }
 
     @ApiOperation(value = "删除排期(批量))")

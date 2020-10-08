@@ -193,7 +193,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="采购单号:" prop="no">
-          <el-select v-model="formMaterial.no">
+          <el-select v-model="formMaterial.no" @change="purNoChange">
             <el-option
               v-for="item in noFor"
               :key="item.id"
@@ -222,13 +222,13 @@
           label="数量:"
           prop="num"
         >
-          <el-input v-model="formMaterial.num" @change="numChange" />
+          <el-input-number v-model="formMaterial.num" :controls="false" @change="numChange" />
         </el-form-item>
         <el-form-item label="单价:" prop="perPrice">
-          <el-input v-model="formMaterial.perPrice" @change="numChange" />
+          <el-input-number v-model="formMaterial.perPrice" :controls="false" @change="numChange" />
         </el-form-item>
         <el-form-item label="金额:" prop="money">
-          <el-input v-model="formMaterial.money" />
+          <el-input-number v-model="formMaterial.money" :controls="false" disabled />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -377,7 +377,6 @@ export default {
       this.formReturn.position = scope.row.position
     },
     numChange() {
-      console.log(parseInt(this.formMaterial.num), parseInt(this.formMaterial.perPrice))
       this.$set(this.formMaterial, 'money', parseInt(this.formMaterial.num) * parseInt(this.formMaterial.perPrice))
     },
     specificationChange() {
@@ -386,6 +385,17 @@ export default {
           this.formMaterial.unit = a.unit
         }
       })
+    },
+    // 选择采购单号回调数量和单价
+    purNoChange() {
+      this.noFor.forEach(a => {
+        if (a.documentsNo === this.formMaterial.no) {
+          this.formMaterial.num = a.purchaseQuantity
+          this.formMaterial.perPrice = a.costPrice
+          this.formMaterial.money = this.formMaterial.num * this.formMaterial.perPrice
+        }
+      })
+      console.log(this.formMaterial.no)
     },
     // 新增辅料
     addMaterial() {

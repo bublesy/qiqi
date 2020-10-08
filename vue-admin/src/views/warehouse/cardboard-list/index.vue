@@ -46,7 +46,7 @@
             <template slot-scope="scope">
               <el-button type="primary" size="small" :disabled="scope.row.deliveryQuantity!==null ?true : false" @click="purAdd(scope)">新增送货数量</el-button>
               <el-button type="primary" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true) || (scope.row.alreadyDeliveryQuantity===parseInt(scope.row.orderQuantity) ?true : false)" @click="modifyPur(scope)">编辑送货数量</el-button>
-              <el-button type="warning" size="small" :disabled="scope.row.alreadyDeliveryQuantity===parseInt(scope.row.orderQuantity) ?true : false" @click="printing(scope)">生成送货单</el-button>
+              <el-button type="warning" size="small" :disabled="(scope.row.alreadyDeliveryQuantity===parseInt(scope.row.orderQuantity) ?true : false) || (parseInt(scope.row.deliveryQuantity)===0 ?true : false) " @click="printing(scope)">生成送货单</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -71,6 +71,9 @@
           </el-form-item>
           <el-form-item label="订单数量:" prop="orderQuantity">
             <el-input v-model="formAdd.orderQuantity" disabled />
+          </el-form-item>
+          <el-form-item label="已产数量:" prop="productNum">
+            <el-input v-model="formAdd.productNum" disabled />
           </el-form-item>
           <el-form-item label="送货数量:" prop="deliveryQuantity">
             <el-input v-model="formAdd.deliveryQuantity" @blur="deliveryChange" />
@@ -108,7 +111,8 @@ export default {
       addTableData: [],
       purAddVisible: false,
       purRules: {
-        checkNum: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        checkNum: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        deliveryQuantity: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
       titleType: '',
       multipleSelection: [],
@@ -121,10 +125,17 @@ export default {
   methods: {
     deliveryChange() {
       var a = parseInt(this.formAdd.deliveryQuantity)
-      var b = parseInt(this.formAdd.orderQuantity)
-      if (a > b) {
-        this.$message.error('送货数量不能大于订单数量！！')
-        this.formAdd.deliveryQuantity = this.formAdd.orderQuantity
+      var c = parseInt(this.formAdd.orderQuantity)
+
+      if (this.formAdd.productNum === null || this.formAdd.productNum === 0) {
+        var b = 0
+      } else {
+        b = parseInt(this.formAdd.productNum)
+      }
+      console.log(this.formAdd.productNum)
+      if (a > b || a > c) {
+        this.$message.error('送货数量不能大于已仓产数量或者订单数量！！')
+        this.formAdd.deliveryQuantity = c
         return
       }
     },
@@ -189,8 +200,9 @@ export default {
       this.formAdd = {}
       this.$set(this.formAdd, 'id', scope.row.id)
       this.$set(this.formAdd, 'warehouseNo', scope.row.warehouseNo)
-      this.$set(this.formAdd, 'deliveryQuantity', scope.row.orderQuantity)
+      // this.$set(this.formAdd, 'deliveryQuantity', scope.row.orderQuantity)
       this.$set(this.formAdd, 'orderQuantity', scope.row.orderQuantity)
+      this.$set(this.formAdd, 'productNum', scope.row.productNum)
     },
     // 取消
     purAddNo() {
