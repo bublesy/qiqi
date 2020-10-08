@@ -397,6 +397,10 @@ export default {
             this.imageUrl = this.baseURL + res.img
             if (this.isView) {
               this.saveStatus = true
+              console.log(this.baseURL)
+              if (this.baseURL === null || this.baseURL === '') {
+                this.upLoadURL = null
+              }
             }
           })
         } else {
