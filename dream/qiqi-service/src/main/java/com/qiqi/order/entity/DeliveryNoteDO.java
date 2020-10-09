@@ -35,5 +35,7 @@ public class DeliveryNoteDO extends BaseModel {
      */
     private String outNo;
 
+    private Boolean sign;
+
 
 }

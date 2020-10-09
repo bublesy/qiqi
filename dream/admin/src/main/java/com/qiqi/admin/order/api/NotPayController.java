@@ -24,7 +24,7 @@ import java.util.List;
  * @author hc
  * @since 2020-09-17
  */
-@Api("订单未产接口")
+@Api("订单未交接口")
 @RestController
 @RequestMapping("/notPay")
 public class NotPayController {

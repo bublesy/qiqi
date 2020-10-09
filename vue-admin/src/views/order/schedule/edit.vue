@@ -5,8 +5,8 @@
     width="18%"
     :close-on-click-modal="false"
   >
-    <el-form ref="form" :model="form" size="mini" :inline="true">
-      <el-form-item label="排期日期:">
+    <el-form ref="form" :model="form" size="mini" :inline="true" :rules="rules">
+      <el-form-item label="排期日期:" prop="date">
         <el-date-picker
           v-model="form.date"
           style="width:150px"
@@ -15,14 +15,20 @@
           @blur="changerModCount"
         />
       </el-form-item>
-      <el-form-item label="生产天数:">
+      <el-form-item label="生产天数:" prop="productDay">
         <el-input v-model="form.productDay" @input="productDay" />
       </el-form-item>
       <el-form-item label="已产数量:">
-        <el-input v-model="form.productNum" @input="productNum" />
+        <el-input v-model="form.productNum" disabled @input="productNum" />
       </el-form-item>
-      <el-form-item label="损耗数量:">
-        <el-input v-model="form.lossNum" @input="lossNum" />
+      <el-form-item label="生产数量:" prop="proNum">
+        <el-input v-model="form.proNum" @input="proNum" />
+      </el-form-item>
+      <el-form-item label="已耗数量:">
+        <el-input v-model="form.lossNum" disabled @input="lossNum" />
+      </el-form-item>
+      <el-form-item label="损耗数量:" prop="losNum">
+        <el-input v-model="form.losNum" @input="losNum" />
       </el-form-item>
       <el-form-item label="是否排期:">
         <el-checkbox v-model="form.isSchedule" />
@@ -54,7 +60,21 @@ export default {
         isSchedule: false,
         modCount: 0
       },
-      productNums: 0
+      productNums: 0,
+      rules: {
+        productDay: [
+          { required: true, message: '请输入生产天数', trigger: 'blur' }
+        ],
+        proNum: [
+          { required: true, message: '请输入生产数量', trigger: 'blur' }
+        ],
+        losNum: [
+          { required: true, message: '请输入损耗数量', trigger: 'blur' }
+        ],
+        date: [
+          { required: true, message: '请输入排期日期', trigger: 'blur' }
+        ]
+      }
     }
   },
   watch: {
@@ -93,6 +113,22 @@ export default {
         }
       }
     },
+    proNum(x) {
+      if (isNaN(x)) {
+        this.form.proNum = this.form.proNum.substring(0, this.form.proNum.length - 1)
+        if (isNaN(this.form.proNum)) {
+          this.form.proNum = ''
+        }
+      }
+    },
+    losNum(x) {
+      if (isNaN(x)) {
+        this.form.losNum = this.form.losNum.substring(0, this.form.losNum.length - 1)
+        if (isNaN(this.form.losNum)) {
+          this.form.losNum = ''
+        }
+      }
+    },
     changerModCount() {
       this.form.modCount++
     },
@@ -100,14 +136,20 @@ export default {
       if (this.form.productNum > this.productNums) {
         return this.$message.info('已产数量不能大于订单数量')
       }
-      addOrUpdateSchedule(this.form).then(res => {
-        updateProductNum().then(res => {
-          if (res) {
-            this.dialog.show = false
-            this.$message.success('修改成功')
-            this.$emit('init')
-          }
-        })
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.form.productNum = parseInt(this.form.productNum) + parseInt(this.form.proNum)
+          this.form.lossNum = parseInt(this.form.lossNum) + parseInt(this.form.losNum)
+          addOrUpdateSchedule(this.form).then(res => {
+            updateProductNum().then(res => {
+              if (res) {
+                this.dialog.show = false
+                this.$message.success('修改成功')
+                this.$emit('init')
+              }
+            })
+          })
+        }
       })
     }
   }
