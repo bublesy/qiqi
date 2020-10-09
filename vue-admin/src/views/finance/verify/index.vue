@@ -32,7 +32,6 @@
           border
           @selection-change="handleSelectionChange"
         >
-
           <el-table-column v-show="true" prop="name" label="客户名称" width="120" />
           <el-table-column v-show="true" prop="outNo" label="出货单号" width="120" />
           <el-table-column v-show="true" prop="shipDate" label="出货日期" width="120" />
@@ -48,7 +47,6 @@
           <el-table-column v-show="true" prop="perPrice" label="单价" width="80" />
           <el-table-column v-show="true" prop="money" label="金额" width="80" />
           <el-table-column v-show="true" prop="beginReceive" label="期初" width="80" />
-
           <el-table-column v-show="true" prop="payed" label="已付" width="80" />
           <el-table-column v-show="true" prop="unPayed" label="欠款" width="80" />
           <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="180">

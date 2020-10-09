@@ -51,7 +51,7 @@
         <el-input v-model="form.note" />
       </el-form-item>
     </el-form>
-    <el-button type="primary" @click="getList()">查询</el-button>
+    <el-button type="primary" @click="loadData ()">查询</el-button>
     <el-table
       :data="tableData"
       border
@@ -81,7 +81,14 @@
         </template>
       </el-table-column> -->
     </el-table>
-
+    <el-pagination
+      style="margin-top: 10px"
+      :total="pagination.total"
+      :current-page="pagination.page"
+      layout="total, prev, pager, next, sizes"
+      @size-change="sizeChange"
+      @current-change="pageChange"
+    />
   </div>
 </template>
 
@@ -91,9 +98,11 @@ import { noList } from '@/api/end-product/product'
 import { getUser } from '@/api/accessories/means'
 import { updatePosting } from '@/api/end-product/product'
 import { wareList } from '@/api/warehouse/warehouse'
+import initData from '@/mixins/initData'
 
 export default window.$crudCommon({
   name: 'Deliver',
+  mixins: [initData],
   data() {
     return {
       a: [],
@@ -119,7 +128,7 @@ export default window.$crudCommon({
     }
   },
   created() {
-    this.getList()
+    this.loadData()
   },
   methods: {
     batchPosting() {
@@ -135,7 +144,7 @@ export default window.$crudCommon({
         updatePosting(this.ids).then(res => {
           if (res) {
             this.$message.success('成功')
-            this.getList()
+            this.loadData()
           } else {
             this.$message.error('失败')
           }
@@ -147,7 +156,7 @@ export default window.$crudCommon({
       updatePosting(this.ids).then(res => {
         if (res) {
           this.$message.success('成功')
-          this.getList()
+          this.loadData()
         } else {
           this.$message.error('失败')
         }
@@ -174,14 +183,18 @@ export default window.$crudCommon({
       // 拼接
       return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
     },
-    getList() {
+    loadData() {
       noList().then(res => {
         this.outNoFor = res
       })
       getUser().then(res => {
         this.deliverymanFor = res
       })
+      this.form.page = this.pagination.page
+      this.form.count = this.pagination.size
       endList(this.form).then(res => {
+        console.log(res)
+        this.pagination.total = res.total
         this.tableData = []
         res.list.forEach(a => {
           this.tableData.push(a)
