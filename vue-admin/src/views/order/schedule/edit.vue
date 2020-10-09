@@ -16,14 +16,14 @@
         />
       </el-form-item>
       <el-form-item label="生产天数:">
-        <el-input v-model="form.productDay" />
+        <el-input v-model="form.productDay" @input="productDay" />
       </el-form-item>
       <el-form-item label="已产数量:">
-        <el-input v-model="form.productNum" />
+        <el-input v-model="form.productNum" @input="productNum" />
       </el-form-item>
-      <!-- <el-form-item label="成品数量:">
-        <el-input v-model="form.finished" />
-      </el-form-item> -->
+      <el-form-item label="损耗数量:">
+        <el-input v-model="form.lossNum" @input="lossNum" />
+      </el-form-item>
       <el-form-item label="是否排期:">
         <el-checkbox v-model="form.isSchedule" />
       </el-form-item>
@@ -69,6 +69,30 @@ export default {
     }
   },
   methods: {
+    productDay(x) {
+      if (isNaN(x)) {
+        this.form.productDay = this.form.productDay.substring(0, this.form.productDay.length - 1)
+        if (isNaN(this.form.productDay)) {
+          this.form.productDay = ''
+        }
+      }
+    },
+    productNum(x) {
+      if (isNaN(x)) {
+        this.form.productNum = this.form.productNum.substring(0, this.form.productNum.length - 1)
+        if (isNaN(this.form.productNum)) {
+          this.form.productNum = ''
+        }
+      }
+    },
+    lossNum(x) {
+      if (isNaN(x)) {
+        this.form.lossNum = this.form.lossNum.substring(0, this.form.lossNum.length - 1)
+        if (isNaN(this.form.lossNum)) {
+          this.form.lossNum = ''
+        }
+      }
+    },
     changerModCount() {
       this.form.modCount++
     },
@@ -78,7 +102,6 @@ export default {
       }
       addOrUpdateSchedule(this.form).then(res => {
         updateProductNum().then(res => {
-          console.log('修改数量')
           if (res) {
             this.dialog.show = false
             this.$message.success('修改成功')
