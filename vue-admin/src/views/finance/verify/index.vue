@@ -58,7 +58,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column v-show="true" prop="post" label="是否过账" width="80" />
+          <!-- <el-table-column v-show="true" prop="post" label="是否过账" width="80" /> -->
           <el-table-column v-show="true" prop="settlement" label="结算状态" width="80" />
           <el-table-column label="操作" width="88">
             <template slot-scope="scope">

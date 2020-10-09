@@ -14,7 +14,7 @@
         <el-col
           :span="3"
         ><h1>￥{{ paid }}</h1>
-          客户已收款</el-col>
+          客户已付款</el-col>
         <el-col
           :span="3"
         ><h1>{{ allPos }}</h1>
@@ -217,7 +217,7 @@ export default {
     })
     // 毛利
     mlist(this.mlists).then((res) => {
-      console.log(res)
+      // console.log(res)
       var ml = 0
       res.list.forEach((a) => {
         a.costAmount = a.costPrice * a.position

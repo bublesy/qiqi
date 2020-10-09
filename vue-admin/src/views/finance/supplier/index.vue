@@ -45,11 +45,11 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column v-show="true" prop="carryTo" label="是否过账" width="80" />
+          <!-- <el-table-column v-show="true" prop="carryTo" label="是否过账" width="80" /> -->
           <el-table-column v-show="true" prop="settlementStatus" label="结算状态" width="80" />
-          <el-table-column label="操作" width="213 ">
+          <el-table-column label="操作" width="100 ">
             <template slot-scope="scope">
-              <el-button size="mini" @click="post(scope)">过账</el-button>
+              <!-- <el-button size="mini" @click="post(scope)">过账</el-button> -->
               <el-button type="success" size="mini" :disabled="scope.row.unPayed <= 0 ? true : false" @click="settlement(scope)">结算</el-button>
             </template>
           </el-table-column>
@@ -70,7 +70,7 @@
       <el-dialog
         title="结算"
         :visible.sync="dialogVisible"
-        width="25%"
+        width="20%"
         :close-on-click-modal="false"
       >
         <el-form ref="form" :rules="purRules" :model="formSet" size="mini" :inline="true">
@@ -84,11 +84,14 @@
           <el-form-item label="金额:">
             <el-input-number v-model="formSet.money" :controls="false" disabled />
           </el-form-item>
-          <el-form-item label="付款金额:" prop="alreadyMoney">
-            <el-input-number v-model="formSet.alreadyMoney" :controls="false" @change="alreadyMoneyChange" />
-          </el-form-item>
           <el-form-item label="待付款金额:">
             <el-input-number v-model="formSet.unPayed" :controls="false" disabled />
+          </el-form-item>
+          <el-form-item label="已付款金额:" prop="alreadyMoney">
+            <el-input-number v-model="formSet.alreadyMoney" :controls="false" disabled @change="alreadyMoneyChange" />
+          </el-form-item>
+          <el-form-item label="付款金额" prop="">
+            <el-input-number v-model="formSet.alreadyMoney" :controls="false" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -104,10 +107,10 @@
         :close-on-click-modal="false"
       >
         <el-form ref="form" :model="formCarryTo" size="mini" :inline="true">
-          <el-select v-model="formCarryTo.carryTo" placeholder="请选择">
+          <!-- <el-select v-model="formCarryTo.carryTo" placeholder="请选择">
             <el-option value="未过账" label="未过账" />
             <el-option value="已过账" label="已过账" />
-          </el-select>
+          </el-select> -->
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialog = false">取 消</el-button>
@@ -134,8 +137,8 @@ export default {
       tableData: [],
       purAddVisible: false,
       purRules: {
-        settlementStatus: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
-        alreadyMoney: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        settlementStatus: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        // alreadyMoney: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
       titleType: '',
       multipleSelection: [],

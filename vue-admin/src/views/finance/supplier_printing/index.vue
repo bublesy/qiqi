@@ -74,10 +74,10 @@
           prop="settlementDate"
           label="结算日期"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="carryTo"
           label="是否过账"
-        />
+        /> -->
         <el-table-column
           prop="settlementStatus"
           label="结算状态"

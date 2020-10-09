@@ -70,10 +70,10 @@
           prop="settlementDate"
           label="结算日期"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="post"
           label="是否过账"
-        />
+        /> -->
         <el-table-column
           prop="settlement"
           label="结算状态"
