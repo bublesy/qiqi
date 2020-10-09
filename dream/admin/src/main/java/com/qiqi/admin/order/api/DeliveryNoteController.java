@@ -20,7 +20,6 @@ import com.qiqi.order.service.DeliveryNoteService;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,31 +47,32 @@ public class DeliveryNoteController {
                                            @RequestParam(defaultValue = "10") Long count,
                                            @RequestParam(required = false) String shipDate,
                                            @RequestParam String name,
-                                           @RequestParam String outNo){
-        IPage<DeliveryNoteDO> iPage = deliveryNoteService.page(new Page<>(page,count),new QueryWrapper<DeliveryNoteDO>()
+                                           @RequestParam String outNo) {
+        IPage<DeliveryNoteDO> iPage = deliveryNoteService.page(new Page<>(page, count), new QueryWrapper<DeliveryNoteDO>()
                 .apply(StringUtils.isNotBlank(shipDate),
-                        "date_format (created_time,'%Y-%m-%d') = '"+shipDate+"'" )
-                .like(StringUtils.isNotBlank(outNo),"out_no",outNo));
-        if(iPage.getRecords().size()==0){
+                        "date_format (created_time,'%Y-%m-%d') = '" + shipDate + "'")
+                .like(StringUtils.isNotBlank(outNo), "out_no", outNo));
+        if (iPage.getRecords().size() == 0) {
             return null;
         }
         List<Long> orderIds = iPage.getRecords().stream().map(DeliveryNoteDO::getOrderId).collect(Collectors.toList());
-        if (orderIds.size() <= 0){
+        if (orderIds.size() <= 0) {
             return null;
         }
         List<OrderDO> orders = orderService.listByIds(orderIds);
-        if(orders==null || orders.size() <= 0){
+        if (orders == null || orders.size() <= 0) {
             return null;
         }
-        if(name != null && name != ""){
+        if (name != null && name != "") {
             orders = orders.stream().filter(orderDO -> orderDO.getName().contains(name)).collect(Collectors.toList());
         }
-        List<DeliveryVO> convert = Convert.convert(new TypeReference<List<DeliveryVO>>() {}, iPage.getRecords());
+        List<DeliveryVO> convert = Convert.convert(new TypeReference<List<DeliveryVO>>() {
+        }, iPage.getRecords());
         List<OrderDO> finalOrders = orders;
         List<DeliveryVO> result = new ArrayList<>();
-        convert.forEach(data->{
-            finalOrders.forEach(data2->{
-                if(data.getOrderId().equals(data2.getId())){
+        convert.forEach(data -> {
+            finalOrders.forEach(data2 -> {
+                if (data.getOrderId().equals(data2.getId())) {
                     data.setBoxType(data2.getBoxType());
                     data.setName(data2.getName());
                     data.setPerPrice(data2.getPerPrice());
@@ -81,41 +81,7 @@ public class DeliveryNoteController {
                 }
             });
         });
-        return new PageEntity<>(iPage.getTotal(),result);
-    public PageEntity<DeliveryVO> delivery(@RequestParam(defaultValue = "1") Long page,
-                                           @RequestParam(defaultValue = "10") Long count,
-                                           @RequestParam(required = false) String shipDate,
-                                           @RequestParam String name,
-                                           @RequestParam String outNo){
-        IPage<DeliveryNoteDO> iPage = deliveryNoteService.page(new Page<>(page,count),new QueryWrapper<DeliveryNoteDO>()
-                .apply(StringUtils.isNotBlank(shipDate),
-                        "date_format (created_time,'%Y-%m-%d') = '"+shipDate+"'" )
-                .eq(StringUtils.isNotBlank(outNo),"out_no",outNo));
-        if(iPage.getRecords().size()==0){
-            return null;
-        }
-        List<Long> orderIds = iPage.getRecords().stream().map(DeliveryNoteDO::getOrderId).collect(Collectors.toList());
-        if (orderIds.size() <= 0){
-            return null;
-        }
-        List<OrderDO> orders = orderService.listByIds(orderIds);
-        if(orders==null || orders.size() <= 0){
-            return null;
-        }
-        if(name != null && name != ""){
-            orders = orders.stream().filter(orderDO -> orderDO.getName().equals(name)).collect(Collectors.toList());
-        }
-        List<DeliveryVO> convert = Convert.convert(new TypeReference<List<DeliveryVO>>() {}, orders);
-        convert.forEach(data->{
-            iPage.getRecords().forEach(data2->{
-                if(data.getId().equals(data2.getOrderId())){
-                    data.setShipDate(data2.getCreatedTime());
-                    data.setOutNo(data2.getOutNo());
-                    data.setSendNum(data2.getSendNum());
-                }
-            });
-        });
-        return new PageEntity<>(iPage.getTotal(),convert);
+        return new PageEntity<>(iPage.getTotal(), result);
     }
 
     @GetMapping("/getDeliveryList{id}")
