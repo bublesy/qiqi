@@ -17,11 +17,19 @@
           客户已付款</el-col>
         <el-col
           :span="3"
-        ><h1>{{ allPos }}</h1>
+        ><h1>￥0</h1>
+          供应商未付款</el-col>
+        <el-col
+          :span="3"
+        ><h1>￥0</h1>
+          供应商已付款</el-col>
+        <el-col
+          :span="3"
+        ><h1>{{ position }}</h1>
           仓库数量</el-col>
         <el-col
           :span="3"
-        ><h1>{{ pos }}</h1>
+        ><h1>{{ surplus }}</h1>
           仓库剩余数量</el-col>
         <!-- <el-col
           :span="3"
@@ -30,22 +38,23 @@
         <el-col
           :span="3"
         ><h1>{{ noc }}</h1>
-          仓库未发货</el-col> -->
+          仓库未发货</el-col>
+        -->
         <el-col
           :span="3"
-        ><h1>{{ allPos1 }}</h1>
+        ><h1>{{ storageQuantity }}</h1>
           成品仓库数量</el-col>
         <el-col
           :span="3"
-        ><h1>{{ pos1 }}</h1>
+        ><h1>{{ endProductPos }}</h1>
           成品仓库剩余数量</el-col>
         <el-col
           :span="3"
-        ><h1>{{ c1 }}</h1>
+        ><h1>{{ alreadyDeliveryQuantity }}</h1>
           成品仓库已发货</el-col>
         <el-col
           :span="3"
-        ><h1>{{ noc1 }}</h1>
+        ><h1>{{ delivereds }}</h1>
           成品仓库未发货</el-col>
         <el-col
           :span="3"
@@ -90,6 +99,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import {
+  purchase,
   get,
   added,
   amount,
@@ -199,7 +209,20 @@ export default {
         costPrice: '',
         costAmount: '',
         pbilling: '',
-        quantity: ''
+        quantity: '',
+        position: 0,
+        deliveryQuantity: 0
+      },
+      surplus: 0,
+      storageQuantity: 0,
+      endProductPos: 0,
+      alreadyDeliveryQuantity: 0,
+      delivereds: '',
+      time: '',
+      aaa: {
+        size: 1,
+        page: 10,
+        time: ''
       }
     }
   },
@@ -207,6 +230,13 @@ export default {
     ...mapGetters(['name'])
   },
   created() {
+    // 供应商已结未结 this.queryParams.time = this.form.time
+    // if (this.queryParams.time === null) {
+    //   this.$set(this.queryParams, 'time', '')
+    // }
+    purchase(this.aaa).then(res => {
+      console.log('供应商', res)
+    })
     // 未付款
     unpaid(this.un).then(res => {
       this.unpaid = res
@@ -238,56 +268,49 @@ export default {
     added().then((res) => {
       this.added = res
     })
-    // 总库存
+    // 仓库原料
     warehouseList(this.formWare).then((res) => {
-      var a1 = 0
-      var a2 = 0
-      var a3 = 0
+      console.log('原料', res.list)
+      var pos = 0
+      var del = 0
       res.list.forEach((a) => {
-        if (a.deliveryQuantity === undefined) {
+        pos += parseInt(a.position)
+        if (a.deliveryQuantity === null) {
           a.deliveryQuantity = 0
         }
-        if (a.orderQuantity === undefined) {
-          a.orderQuantity = 0
-        }
-        if (a.deliveryStatus === '未送货') {
-          a1 += parseInt(a.orderQuantity) - parseInt(a.deliveryQuantity)
-        }
-        if (a.deliveryStatus === '已送货') {
-          a2 += parseInt(a.orderQuantity) - parseInt(a.deliveryQuantity)
-        }
-        a3 += parseInt(a.position)
+        del += parseInt(a.deliveryQuantity)
       })
-      this.pos = a3
-      this.noc = a1
-      this.c = a2
-      this.allPos = a3 + a2
+      this.position = pos
+      this.deliveryQuantity = del
+      this.surplus = this.position - this.deliveryQuantity
     })
+    // 成品库存
     endWarehouseList(this.formEndWare).then((res) => {
-      // console.log('a',res)
-      console.log(res)
-      var a1 = 0
-      var a2 = 0
-      var a3 = 0
+      console.log('成品', res)
+      var sto = 0
+      var end = 0
+      var alr = 0
+      var ord = 0
       res.list.forEach((a) => {
-        if (a.deliveryQuantity === undefined) {
-          a.deliveryQuantity = 0
+        if (a.storageQuantity === null) {
+          a.storageQuantity = 0
         }
-        if (a.orderQuantity === undefined) {
-          a.orderQuantity = 0
+        if (a.alreadyDeliveryQuantity === null) {
+          a.alreadyDeliveryQuantity = 0
         }
-        if (a.carryTo === '未送货') {
-          a1 += parseInt(a.orderQuantity) - parseInt(a.deliveryQuantity)
+        if (a.orderNum === null) {
+          a.orderNum = 0
         }
-        if (a.carryTo === '已送货') {
-          a2 += parseInt(a.deliveryQuantity)
-        }
-        a3 += parseInt(a.endProductPos)
+        sto += parseInt(a.storageQuantity)
+        end += parseInt(a.endProductPos)
+        alr += parseInt(a.alreadyDeliveryQuantity)
+        ord += parseInt(a.orderNum)
       })
-      this.noc1 = a1
-      this.c1 = a2
-      this.pos1 = a3
-      this.allPos1 = a3 + a2
+      this.storageQuantity = sto
+      this.endProductPos = end
+      this.alreadyDeliveryQuantity = alr
+      this.orderNum = ord
+      this.delivereds = this.orderNum - this.alreadyDeliveryQuantity
     })
     // 订单总数
     var data = {

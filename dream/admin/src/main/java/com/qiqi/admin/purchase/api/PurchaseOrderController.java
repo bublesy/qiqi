@@ -77,7 +77,7 @@ public class PurchaseOrderController {
     @GetMapping("/purList")
     public PageEntity<PurchaseOrderDO> getPage(@RequestParam(value = "page",defaultValue = "1") Long page,
                                                             @RequestParam(value = "size",defaultValue = "10") Long size,
-                                                            @RequestParam(value = "time") String time) {
+                                                            @RequestParam(value = "time",required = false) String time) {
         LambdaQueryWrapper<PurchaseOrderDO> wrapper = new LambdaQueryWrapper<PurchaseOrderDO>();
         wrapper.like(!ObjectUtils.isEmpty(time),PurchaseOrderDO::getCreditDate,time);
         IPage<PurchaseOrderDO> iPage = purchaseOrderService.page(new Page<>(page,size),wrapper);

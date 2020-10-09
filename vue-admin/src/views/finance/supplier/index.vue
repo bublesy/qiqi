@@ -176,8 +176,7 @@ export default {
         this.$message.error('结算金额不能为空')
         return
       }
-
-      this.formSet.alreadyMoney = this.formSet.alreadyMoney1
+      this.formSet.alreadyMoney = this.formSet.alreadyMoney1 + this.formSet.alreadyMoney
       // console.log(this.formSet.alreadyMoney)
       this.$refs[supForm].validate((valid) => {
         if (valid) {
