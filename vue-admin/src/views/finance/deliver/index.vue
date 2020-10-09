@@ -27,29 +27,6 @@
           <el-option label="未回签" value="未回签" />
         </el-select>
       </el-form-item>
-      <el-form-item label="出货单号:">
-        <el-select v-model="form.outNo" placeholder="请选择车号" :clearable="true">
-          <el-option
-            v-for="item in outNoFor"
-            :key="item.value"
-            :label="item.outNo"
-            :value="item.outNo"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="送货人:">
-        <el-select v-model="form.deliveryman" placeholder="请选择" :clearable="true">
-          <el-option
-            v-for="item in deliverymanFor"
-            :key="item.value"
-            :label="item.nickname"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="备注:">
-        <el-input v-model="form.note" />
-      </el-form-item>
     </el-form>
     <el-button type="primary" @click="loadData ()">查询</el-button>
     <el-table
@@ -60,21 +37,17 @@
     >
       <!-- <el-table-column type="selection" width="55" /> -->
       <el-table-column prop="name" label="客户名称" width="180" />
-      <el-table-column prop="no" label="任务编号" width="180" />
-      <el-table-column prop="modelNo" label="款号" />
       <el-table-column prop="material" label="材质" />
       <el-table-column prop="boxType" label="箱型" />
-      <el-table-column prop="length" label="长" />
-      <el-table-column prop="width" label="宽" />
-      <el-table-column prop="height" label="高" />
       <el-table-column prop="deliveryQuantity" label="出货数量" />
+      <el-table-column prop="deliveryQuantity" label="订单数量" />
       <el-table-column prop="perPrice" label="单价" />
       <el-table-column prop="money" label="金额" />
       <el-table-column prop="unit" label="单位" />
-      <el-table-column prop="remark" label="备注" />
       <el-table-column prop="outNo" label="出货单号" />
       <el-table-column prop="sign" label="回签状态" />
       <el-table-column prop="posting" label="结算状态" />
+      <el-table-column prop="remark" label="备注" />
       <!-- <el-table-column label="操作">
         <template slot-scope="scope">
           <el-link type="primary" size="small" @click="posting(scope)">过账</el-link>
