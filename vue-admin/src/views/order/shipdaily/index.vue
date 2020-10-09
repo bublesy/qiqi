@@ -50,7 +50,7 @@
       <el-table-column label="操作" width="200">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="singlePrint(scope.row)">打印</el-button>
-          <el-button type="success" size="mini" @click="updated(scope.row.id)">编辑</el-button>
+          <el-button type="success" size="mini" @click="updated(scope.row.orderId)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -103,9 +103,9 @@ export default {
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   },
   methods: {
-    updated(id) {
+    updated(orderId) {
       this.edItDialog.show = true
-      this.id = id
+      this.id = orderId
     },
     query() {
       this.initTable()
@@ -122,6 +122,7 @@ export default {
         this.tableData = res.list
         console.log('aaa')
         this.tableData.forEach(x => {
+          this.$set(x, 'shipDate', x.createdTime)
           x.sign = x.sign === true ? '已回签' : '未回签'
           x.money = x.perPrice * x.sendNum
         })

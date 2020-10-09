@@ -14,11 +14,11 @@ import java.util.Date;
 @Data
 public class DeliveryVO {
 
-    private Long id;
+    private Long orderId;
     private Integer sendNum;
     private String outNo;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date shipDate;
+    private Date createdTime;
     private String name;
     private String boxType;
     private BigDecimal perPrice;

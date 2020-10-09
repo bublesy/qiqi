@@ -52,7 +52,7 @@ public class DeliveryNoteController {
         IPage<DeliveryNoteDO> iPage = deliveryNoteService.page(new Page<>(page,count),new QueryWrapper<DeliveryNoteDO>()
                 .apply(StringUtils.isNotBlank(shipDate),
                         "date_format (created_time,'%Y-%m-%d') = '"+shipDate+"'" )
-                .eq(StringUtils.isNotBlank(outNo),"out_no",outNo));
+                .like(StringUtils.isNotBlank(outNo),"out_no",outNo));
         if(iPage.getRecords().size()==0){
             return null;
         }
@@ -65,19 +65,23 @@ public class DeliveryNoteController {
             return null;
         }
         if(name != null && name != ""){
-            orders = orders.stream().filter(orderDO -> orderDO.getName().equals(name)).collect(Collectors.toList());
+            orders = orders.stream().filter(orderDO -> orderDO.getName().contains(name)).collect(Collectors.toList());
         }
-        List<DeliveryVO> convert = Convert.convert(new TypeReference<List<DeliveryVO>>() {}, orders);
+        List<DeliveryVO> convert = Convert.convert(new TypeReference<List<DeliveryVO>>() {}, iPage.getRecords());
+        List<OrderDO> finalOrders = orders;
+        List<DeliveryVO> result = new ArrayList<>();
         convert.forEach(data->{
-            iPage.getRecords().forEach(data2->{
-                if(data.getId().equals(data2.getOrderId())){
-                    data.setShipDate(data2.getCreatedTime());
-                    data.setOutNo(data2.getOutNo());
-                    data.setSendNum(data2.getSendNum());
+            finalOrders.forEach(data2->{
+                if(data.getOrderId().equals(data2.getId())){
+                    data.setBoxType(data2.getBoxType());
+                    data.setName(data2.getName());
+                    data.setPerPrice(data2.getPerPrice());
+                    data.setSign(data2.getSign());
+                    result.add(data);
                 }
             });
         });
-        return new PageEntity<>(iPage.getTotal(),convert);
+        return new PageEntity<>(iPage.getTotal(),result);
     }
 
 }

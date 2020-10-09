@@ -123,7 +123,6 @@ public class OrderController {
         if(orderDO == null){
             return false;
         }
-        if (orderDO.getIsProduct().equals("成品")){
             EndProductWarehouseDO endProductWarehouseDO = endProductWarehouseService.getOne(new QueryWrapper<EndProductWarehouseDO>().eq("order_id",orderDO.getId()));
             if(endProductWarehouseDO != null && endProductWarehouseDO.getEndProductPos() != null && orderDO.getRefundNum() != null){
                 Integer num = Integer.parseInt(endProductWarehouseDO.getEndProductPos()) + Integer.parseInt(orderDO.getRefundNum());
@@ -136,33 +135,11 @@ public class OrderController {
                     Integer refundNum = Integer.parseInt(orderDO.getRefundNum()) + refundNum1;
                     orderDO.setRefundNum(refundNum.toString());
                 }
-
             }else {
                 orderDO.setRefundNum(null);
                 orderDO.setRefundTime(null);
                 return false;
-            }
-        }else{
-            WarehouseDO warehouseDO = warehouseService.getOne(new QueryWrapper<WarehouseDO>().eq("order_id",orderDO.getId()));
-            if(warehouseDO != null && warehouseDO.getPosition() != null && orderDO.getRefundNum() != null){
-                Integer num = Integer.parseInt(warehouseDO.getPosition()) + Integer.parseInt(orderDO.getRefundNum());
-                warehouseDO.setPosition(num.toString());
-                boolean b = warehouseService.updateById(warehouseDO);
-                if(b){
-                    orderDO.setRefundTime(new Date());
-                    OrderDO orderDO1 = orderService.getById(orderDO.getId());
-                    Integer refundNum1 = (orderDO1.getRefundNum() == null ? 0 : Integer.parseInt(orderDO1.getRefundNum()));
-                    Integer refundNum = Integer.parseInt(orderDO.getRefundNum()) + refundNum1;
-                    orderDO.setRefundNum(refundNum.toString());
-                }
-
-            }else {
-                orderDO.setRefundNum(null);
-                orderDO.setRefundTime(null);
-                return false;
-            }
         }
-
         return orderService.updateById(orderDO);
     }
 
@@ -224,7 +201,7 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public Boolean deleteOrderById(@PathVariable Long id) {
         OrderDO order = orderService.getById(id);
-        scheduleService.removeById(order.getId());
+        scheduleService.removeById(order.getScheduleId());
         return orderService.removeById(id);
     }
 
