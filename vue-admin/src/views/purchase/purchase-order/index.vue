@@ -701,7 +701,7 @@ export default {
         this.supplierFor = res
       })
       this.formAdd = scope.row
-      this.formAdd.supplierId = scope.row.supplier
+      // this.supplierFor = scope.row.supplier
       this.$set(this.formAdd, 'customerName', scope.row.name)
       this.$set(this.formAdd, 'taskNumber', scope.row.no)
       this.$set(this.formAdd, 'customerNo', scope.row.customerNo)

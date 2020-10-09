@@ -1,5 +1,52 @@
 <template>
   <div class="dashboard-container">
+    <!-- 新增/编辑盘点数量 -->
+    <el-dialog title="预警" :visible.sync="warningVisible">
+      <el-table
+        ref="singleTable"
+        :data="warData"
+        highlight-current-row
+        style="width: 100%"
+      >
+        <el-table-column v-show="true" prop="position" label="仓库库存剩余数量" />
+      </el-table>
+      <el-table
+        ref="singleTable"
+        :data="endWarData"
+        highlight-current-row
+        style="width: 100%"
+      >
+        <el-table-column v-show="true" prop="position" label="成品库存剩余数量" />
+      </el-table>
+      <el-table
+        ref="singleTable"
+        :data="custSettData"
+        highlight-current-row
+        style="width: 100%"
+      >
+        <el-table-column v-show="true" prop="position" label="客户结算预警" />
+      </el-table>
+      <el-table
+        ref="singleTable"
+        :data="supplierSettData"
+        highlight-current-row
+        style="width: 100%"
+      >
+        <el-table-column v-show="true" prop="position" label="供应商结算预警" />
+      </el-table>
+      <el-table
+        ref="singleTable"
+        :data="endDisData"
+        highlight-current-row
+        style="width: 100%"
+      >
+        <el-table-column v-show="true" prop="position" label="成品发货预警" />
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="warningNo">取 消</el-button>
+        <el-button size="small" type="primary" @click="warningOk('purForm')">确 定</el-button>
+      </span>
+    </el-dialog>
     <H4>营业数据</H4>
     <el-card class="box-card">
       <el-row :gutter="20" style="text-align: center">
@@ -219,11 +266,13 @@ export default {
       alreadyDeliveryQuantity: 0,
       delivereds: '',
       time: '',
-      aaa: {
-        size: 1,
-        page: 10,
+      queryParams: {
+        size: 10,
+        page: 1,
         time: ''
-      }
+      },
+      warningVisible: false,
+      warData: [], custSettData: [], supplierSettData: [], endWarData: [], endDisData: []
     }
   },
   computed: {
@@ -234,7 +283,9 @@ export default {
     // if (this.queryParams.time === null) {
     //   this.$set(this.queryParams, 'time', '')
     // }
-    purchase(this.aaa).then(res => {
+    // this.queryParams.time = this.aaa.time
+    console.log(this.queryParams)
+    purchase(this.queryParams).then(res => {
       console.log('供应商', res)
     })
     // 未付款
@@ -325,11 +376,17 @@ export default {
       }
       this.initCharts()
     })
+    this.getWarning()
   },
   mounted() {
     this.initCharts()
   },
   methods: {
+    warningNo() { this.warningVisible = false },
+    warningOk() { this.warningVisible = false },
+    getWarning() {
+      this.warningVisible = true
+    },
     initCharts() {
       const myChart = this.$echarts.init(this.$refs.chart)
       myChart.setOption({

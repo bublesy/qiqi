@@ -54,3 +54,7 @@ export function check(data) {
 export function getDeliveryList(id) {
   return request({ url: '/delivery/note/getDeliveryList' + id, method: 'get' })
 }
+
+export function getList(params) {
+  return request({ url: '/delivery/note/getList', method: 'get', params: params })
+}

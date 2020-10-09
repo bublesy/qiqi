@@ -2,6 +2,7 @@ package com.qiqi.admin.order.api;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.qiqi.admin.purchase.model.PurchaseOrderVO;
 import com.qiqi.order.entity.DeliveryNoteDO;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
@@ -94,4 +95,13 @@ public class DeliveryNoteController {
         return deliveryNote;
     }
 
+
+    @GetMapping("/getList")
+    public PageEntity<DeliveryVO> getList(@RequestParam(defaultValue = "1") Long page,
+                                        @RequestParam(defaultValue = "10") Long count,
+                                        @RequestParam(required = false) String signs,
+                                        @RequestParam(required = false) String name){
+        IPage<DeliveryVO> iPage = deliveryNoteService.getList(new Page<>(page,count),signs,name);
+        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<DeliveryVO>>() {}, iPage.getRecords()));
+    }
 }
