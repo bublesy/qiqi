@@ -90,14 +90,17 @@ public class WarehouseController {
         return warehouseService.updateById(warehouseDO);
     }
 
-    @ApiOperation(value = "新增仓库")
+    @ApiOperation(value = "仓库库存盘点")
     @PostMapping("/add")
     public Boolean saveWarehouse(@RequestBody WarehouseDO warehouseDO) {
+        String position = warehouseDO.getPosition();
         String checkNum = warehouseDO.getCheckNum();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:dd:ss");
         if (checkNum!=null || checkNum !=""){
             warehouseDO.setCheckDate(df.format(new Date()));
-            warehouseDO.setPosition(checkNum);
+            int i = Integer.parseInt(position);
+            int g = Integer.parseInt(checkNum);
+            warehouseDO.setDeliveryQuantity(String.valueOf(i-g));
         }
         return warehouseService.saveOrUpdate(warehouseDO);
     }
@@ -125,7 +128,15 @@ public class WarehouseController {
         for(int i = 0;i<ids.size();i++){
             warehouseDO.setId(ids.get(i));
             warehouseDO.setCheckDate(df.format(new Date()));
-            warehouseDO.setPosition(surplusNums.get(i));
+            String s = surplusNums.get(i);
+            WarehouseDO byId = warehouseService.getById(ids.get(i));
+            String position = byId.getPosition();
+            if (s!=null || s !=""){
+                warehouseDO.setCheckDate(df.format(new Date()));
+                int j = Integer.parseInt(position);
+                int g = Integer.parseInt(s);
+                warehouseDO.setDeliveryQuantity(String.valueOf(j-g));
+            }
            flag = warehouseService.updateById(warehouseDO);
         }
         return flag;

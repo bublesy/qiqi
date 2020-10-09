@@ -14,7 +14,7 @@
         <el-col
           :span="3"
         ><h1>￥{{ paid }}</h1>
-          客户已收款</el-col>
+          客户已付款</el-col>
         <el-col
           :span="3"
         ><h1>{{ allPos }}</h1>
@@ -22,23 +22,23 @@
         <el-col
           :span="3"
         ><h1>{{ pos }}</h1>
-          仓库剩余库存</el-col>
-        <el-col
+          仓库剩余数量</el-col>
+        <!-- <el-col
           :span="3"
         ><h1>{{ c }}</h1>
           仓库已发货</el-col>
         <el-col
           :span="3"
         ><h1>{{ noc }}</h1>
-          仓库未发货</el-col>
+          仓库未发货</el-col> -->
         <el-col
           :span="3"
         ><h1>{{ allPos1 }}</h1>
-          成品仓库实际库存</el-col>
+          成品仓库数量</el-col>
         <el-col
           :span="3"
         ><h1>{{ pos1 }}</h1>
-          成品仓库剩余库存</el-col>
+          成品仓库剩余数量</el-col>
         <el-col
           :span="3"
         ><h1>{{ c1 }}</h1>
@@ -217,7 +217,7 @@ export default {
     })
     // 毛利
     mlist(this.mlists).then((res) => {
-      console.log(res)
+      // console.log(res)
       var ml = 0
       res.list.forEach((a) => {
         a.costAmount = a.costPrice * a.position
@@ -265,6 +265,7 @@ export default {
     })
     endWarehouseList(this.formEndWare).then((res) => {
       // console.log('a',res)
+      console.log(res)
       var a1 = 0
       var a2 = 0
       var a3 = 0

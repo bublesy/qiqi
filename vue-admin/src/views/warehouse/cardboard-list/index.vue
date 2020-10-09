@@ -33,14 +33,14 @@
           <el-table-column v-show="true" prop="carryTo" label="过账" width="140" />
           <el-table-column v-show="true" prop="noType" label="单据类型" width="140" />
           <el-table-column v-show="true" prop="orderQuantity" label="订单数量" width="140" />
-          <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" width="140" />
-          <el-table-column v-show="true" prop="alreadyDeliveryQuantity" label="已送数量" width="140" />
+          <!-- <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" width="140" />
+          <el-table-column v-show="true" prop="alreadyDeliveryQuantity" label="已送数量" width="140" /> -->
           <el-table-column v-show="true" prop="stayDeliveryQuantity" label="待送数量" width="140" />
           <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" width="140" />
           <el-table-column v-show="true" prop="warehousingDate" label="入仓日期" width="160" />
-          <el-table-column v-show="true" prop="position" label="仓位" width="140" />
-          <el-table-column v-show="true" prop="productNum" label="已产数量" width="140" />
-          <el-table-column v-show="true" prop="outDate" label="送货日期" width="160" />
+          <el-table-column v-show="true" prop="position" label="原料仓位" width="140" />
+          <!-- <el-table-column v-show="true" prop="productNum" label="已产数量" width="140" /> -->
+          <!-- <el-table-column v-show="true" prop="outDate" label="送货日期" width="160" />
           <el-table-column v-show="true" prop="outNo" label="送货单号" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
@@ -48,7 +48,7 @@
               <el-button type="primary" size="small" :disabled="(scope.row.deliveryQuantity!==null ?false : true) || (scope.row.alreadyDeliveryQuantity===parseInt(scope.row.orderQuantity) ?true : false)" @click="modifyPur(scope)">编辑送货数量</el-button>
               <el-button type="warning" size="small" :disabled="(scope.row.alreadyDeliveryQuantity===parseInt(scope.row.orderQuantity) ?true : false) || (parseInt(scope.row.deliveryQuantity)===0 ?true : false) " @click="printing(scope)">生成送货单</el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
         <!--分页组件-->
         <el-pagination

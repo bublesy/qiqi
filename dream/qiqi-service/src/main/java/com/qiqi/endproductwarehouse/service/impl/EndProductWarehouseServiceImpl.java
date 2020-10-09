@@ -27,4 +27,9 @@ public class EndProductWarehouseServiceImpl extends ServiceImpl<EndProductWareho
     public IPage<EndProductWarehouseDTO> endList(Page<Object> objectPage, EndProductWarehouseDTO endProductWarehouseDTO) {
         return endProductWarehouseMapper.endList(objectPage,endProductWarehouseDTO);
     }
+
+    @Override
+    public IPage<EndProductWarehouseDTO> getList(Page<Object> objectPage, String carryTo, String time) {
+        return endProductWarehouseMapper.getList(objectPage,carryTo,time);
+    }
 }

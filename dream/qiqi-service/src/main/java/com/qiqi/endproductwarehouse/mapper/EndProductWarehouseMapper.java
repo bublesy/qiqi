@@ -24,4 +24,13 @@ public interface EndProductWarehouseMapper extends BaseMapper<EndProductWarehous
      * @return
      */
     IPage<EndProductWarehouseDTO> endList(@Param("objectPage") Page<Object> objectPage,@Param("endProductWarehouseDTO") EndProductWarehouseDTO endProductWarehouseDTO);
+
+    /**
+     * 查询
+     * @param objectPage
+     * @param carryTo
+     * @param time
+     * @return
+     */
+    IPage<EndProductWarehouseDTO> getList(@Param("objectPage")Page<Object> objectPage,@Param("carryTo") String carryTo,@Param("time") String time);
 }

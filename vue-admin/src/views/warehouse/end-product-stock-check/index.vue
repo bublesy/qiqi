@@ -27,27 +27,19 @@
         >
           <el-table-column type="selection" width="55" />
           <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" width="140" />
-          <el-table-column v-show="true" prop="taskNumber" label="任务编号" width="140" />
-          <el-table-column v-show="true" prop="customerName" label="客户名称" width="140" />
-          <el-table-column v-show="true" prop="orderQuantity" label="订单数量" width="140" />
-          <el-table-column v-show="true" prop="purQuantity" label="采购数量" width="140" />
-          <el-table-column v-show="true" prop="endProductPos" label="库存数量" width="140" />
-          <el-table-column v-show="true" prop="carryTo" label="发货状态" width="140" />
-          <el-table-column v-show="true" prop="posting" label="过账状态" width="140" />
-          <el-table-column v-show="true" prop="length" label="长" width="140" />
-          <el-table-column v-show="true" prop="width" label="宽" width="140" />
-          <el-table-column v-show="true" prop="height" label="高" width="140" />
-          <el-table-column v-show="true" prop="unitPrice" label="成本价" width="140" />
-          <el-table-column v-show="true" prop="endProductPos" label="成品仓位" width="140" />
-          <el-table-column v-show="true" prop="warehousingData" label="入仓时间" width="160" />
-          <el-table-column v-show="true" prop="surplusNum" label="实际库存数量" width="140" />
-          <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" />
+          <el-table-column v-show="true" prop="no" label="任务编号" width="140" />
+          <el-table-column v-show="true" prop="name" label="客户名称" width="140" />
+          <el-table-column v-show="true" prop="orderNum" label="订单数量" width="140" />
+          <el-table-column v-show="true" prop="perPrice" label="单价" width="140" />
+          <el-table-column v-show="true" prop="createdTime" label="入仓时间" width="160" />
+          <el-table-column v-show="true" prop="storageQuantity" label="入库数量" width="140" />
+          <el-table-column v-show="true" prop="alreadyDeliveryQuantity" label="送货数量" />
           <el-table-column v-show="true" prop="endProductPos" label="剩余数量" width="160" />
           <el-table-column v-show="true" prop="checkDate" label="盘点日期" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
-              <el-button type="primary" size="small" :disabled="scope.row.checkNum!==null ?true : false" @click="purAdd(scope)">新增库存盘点</el-button>
-              <el-button type="primary" size="small" @click="modifyPur(scope)">编辑库存盘点</el-button>
+              <el-button type="primary" size="small" @click="purAdd(scope)">新增库存盘点</el-button>
+              <!-- <el-button type="primary" size="small" @click="modifyPur(scope)">编辑库存盘点</el-button> -->
               <el-button type="warning" size="small" @click="printing(scope)">生成盘点单</el-button>
             </template>
           </el-table-column>
@@ -66,7 +58,7 @@
       </div>
       <!-- 新增/编辑盘点数量 -->
       <el-dialog :title="titleType+'盘点数量'" :visible.sync="purAddVisible">
-        <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="80px">
+        <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="100px">
 
           <el-form-item label="入仓单号:" prop="warehouseNo">
             <el-input v-model="formAdd.warehouseNo" disabled />
@@ -94,11 +86,11 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" />
-          <el-table-column v-show="true" prop="customerName" label="客户名称" />
-          <el-table-column v-show="true" prop="orderQuantity" label="订单数量" />
-          <el-table-column v-show="true" prop="warehousingDate" label="入仓日期" />
-          <el-table-column v-show="true" prop="surplusNum" label="实际库存数量" />
-          <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" />
+          <el-table-column v-show="true" prop="name" label="客户名称" />
+          <el-table-column v-show="true" prop="orderNum" label="订单数量" />
+          <el-table-column v-show="true" prop="createdTime" label="入仓日期" />
+          <el-table-column v-show="true" prop="storageQuantity" label="入库数量" />
+          <el-table-column v-show="true" prop="alreadyDeliveryQuantity" label="送货数量" />
           <el-table-column v-show="true" prop="endProductPos" label="剩余库存数量">
             <template slot-scope="scope">
               <el-input-number v-model="scope.row.endProductPos" :controls="false" style="width:60px" size="mini" />
@@ -120,8 +112,7 @@
 <script>
 import initData from '@/mixins/initData'
 import { list } from '@/api/end-product/product'
-import { getCustomerById } from '@/api/basedata/customer'
-import { add } from '@/api/end-product/product'
+import { addCheck } from '@/api/end-product/product'
 import { getById } from '@/api/end-product/product'
 import { check } from '@/api/end-product/product'
 
@@ -135,7 +126,7 @@ export default {
       customerFor: [],
       purAddVisible: false,
       purRules: {
-        deliveryQuantity: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
+        alreadyDeliveryQuantity: [{ required: true, message: '该输入为必填项', trigger: 'change' }],
         checkNum: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
       titleType: '',
@@ -178,7 +169,7 @@ export default {
       this.ids = []
       this.surplusNums = []
       this.tableData.forEach(a => {
-        this.ids.push(a.id)
+        this.ids.push(a.eid)
         this.surplusNums.push(a.endProductPos)
       })
       this.formCheck.ids = this.ids
@@ -186,10 +177,10 @@ export default {
       console.log(this.formCheck)
       check(this.formCheck).then(res => {
         if (res) {
-          this.$message.success(this.titleType + '成功')
+          this.$message.success('成功')
           location.reload()
         } else {
-          this.$message.error(this.titleType + '失败')
+          this.$message.error('失败')
         }
       })
       this.fullCheckVisible = false
@@ -198,10 +189,10 @@ export default {
       this.fullCheckVisible = true
       this.tableData.forEach(a => {
         var c = parseInt(a.endProductPos)
-        if (a.deliveryQuantity === null) {
+        if (a.alreadyDeliveryQuantity === null) {
           a.surplusNum = c
         } else {
-          var d = parseInt(a.deliveryQuantity)
+          var d = parseInt(a.alreadyDeliveryQuantity)
           a.surplusNum = c + d
         }
       })
@@ -219,7 +210,7 @@ export default {
     purAddOk(purForm) {
       this.$refs[purForm].validate((valid) => {
         if (valid) {
-          add(this.formAdd).then(res => {
+          addCheck(this.formAdd).then(res => {
             if (res) {
               this.$message.success(this.titleType + '成功')
               location.reload()
@@ -238,10 +229,10 @@ export default {
       this.titleType = '新增'
       // 新增初始化数据
       this.formAdd = {}
-      this.$set(this.formAdd, 'id', scope.row.id)
+      this.$set(this.formAdd, 'id', scope.row.eid)
       this.$set(this.formAdd, 'warehouseNo', scope.row.warehouseNo)
-      this.$set(this.formAdd, 'checkNum', scope.row.checkNum)
-      this.$set(this.formAdd, 'endProductPos', scope.row.endProductPos)
+      this.$set(this.formAdd, 'checkNum', scope.row.endProductPos)
+      this.$set(this.formAdd, 'endProductPos', scope.row.surplusNum)
     },
     loadData() {
       this.queryParams.carryTo = this.form.carryTo
@@ -253,21 +244,18 @@ export default {
         this.tableData = res.list
         this.pagination.total = res.total
         this.tableData.forEach(a => {
-          getCustomerById(a.customerId).then(data => {
-            this.$set(a, 'customerName', data.name)
-          })
           var c = parseInt(a.endProductPos)
-          if (a.deliveryQuantity === null) {
+          if (a.alreadyDeliveryQuantity === null) {
             a.surplusNum = c
           } else {
-            var d = parseInt(a.deliveryQuantity)
+            var d = parseInt(a.alreadyDeliveryQuantity)
             a.surplusNum = c + d
           }
-          a.stayDeliveryQuantity = a.orderQuantity - a.alreadyDeliveryQuantity
-          var j = parseInt(a.orderQuantity)
-          if (a.alreadyDeliveryQuantity === j) {
-            this.printingDis = true
-          }
+          // a.stayDeliveryQuantity = a.orderQuantity - a.alreadyDeliveryQuantity
+          // var j = parseInt(a.orderQuantity)
+          // if (a.alreadyDeliveryQuantity === j) {
+          //   this.printingDis = true
+          // }
         })
       })
     },

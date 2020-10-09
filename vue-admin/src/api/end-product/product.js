@@ -3,6 +3,9 @@ import request from '@/utils/request'
 export function add(data) {
   return request({ url: '/end/product/warehouse/add', data: data, method: 'post' })
 }
+export function addCheck(data) {
+  return request({ url: '/end/product/warehouse/addCheck', data: data, method: 'post' })
+}
 
 export function list(params) {
   return request({ url: '/end/product/warehouse/list', method: 'get', params: params })
@@ -46,4 +49,8 @@ export function upState(data) {
 
 export function check(data) {
   return request({ url: '/end/product/warehouse/check', method: 'post', data: data })
+}
+
+export function getDeliveryList(id) {
+  return request({ url: '/delivery/note/getDeliveryList' + id, method: 'get' })
 }

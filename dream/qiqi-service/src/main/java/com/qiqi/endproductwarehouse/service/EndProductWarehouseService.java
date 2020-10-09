@@ -23,4 +23,13 @@ public interface EndProductWarehouseService extends IService<EndProductWarehouse
      * @return
      */
     IPage<EndProductWarehouseDTO> endList(Page<Object> objectPage, EndProductWarehouseDTO endProductWarehouseDTO);
+
+    /**
+     * 查询
+     * @param objectPage
+     * @param carryTo
+     * @param time
+     * @return
+     */
+    IPage<EndProductWarehouseDTO> getList(Page<Object> objectPage, String carryTo, String time);
 }

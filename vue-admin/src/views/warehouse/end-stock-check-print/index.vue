@@ -16,7 +16,7 @@
             label="入仓单号"
           />
           <el-table-column
-            prop="customerName"
+            prop="name"
             label="客户名称"
           />
           <el-table-column
@@ -28,7 +28,7 @@
             label="过账"
           />
           <el-table-column
-            prop="orderQuantity"
+            prop="orderNum"
             label="订单数量"
           />
           <el-table-column
@@ -36,7 +36,7 @@
             label="实际库存数量"
           />
           <el-table-column
-            prop="deliveryQuantity"
+            prop="alreadyDeliveryQuantity"
             label="发货数量"
           />
           <el-table-column
@@ -114,7 +114,7 @@ export default {
     },
     // 返回
     toBack() {
-      this.$router.push('/stock_check')
+      this.$router.push('/end_product_stock_check')
     }
   }
 }

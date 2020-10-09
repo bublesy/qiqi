@@ -2,9 +2,9 @@
   <div class="app-container">
     <div class="box">
       <div class="top">
-        <el-tooltip class="item" effect="dark" content="单击下表一行数据无误，后选择过账" placement="top">
+        <!-- <el-tooltip class="item" effect="dark" content="单击下表一行数据无误，后选择过账" placement="top">
           <el-button type="primary" @click="batchPosting()">批量过账</el-button>
-        </el-tooltip>
+        </el-tooltip> -->
       </div>
     </div>
     <el-dialog
@@ -51,15 +51,14 @@
         <el-input v-model="form.note" />
       </el-form-item>
     </el-form>
-    <el-button type="primary" @click="getList()">查询</el-button>
+    <el-button type="primary" @click="loadData ()">查询</el-button>
     <el-table
       :data="tableData"
       border
       style="width: 100%"
-      height="600"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" />
+      <!-- <el-table-column type="selection" width="55" /> -->
       <el-table-column prop="name" label="客户名称" width="180" />
       <el-table-column prop="no" label="任务编号" width="180" />
       <el-table-column prop="modelNo" label="款号" />
@@ -75,14 +74,21 @@
       <el-table-column prop="remark" label="备注" />
       <el-table-column prop="outNo" label="出货单号" />
       <el-table-column prop="sign" label="回签状态" />
-      <el-table-column prop="posting" label="过账状态" />
-      <el-table-column label="操作">
+      <el-table-column prop="posting" label="结算状态" />
+      <!-- <el-table-column label="操作">
         <template slot-scope="scope">
           <el-link type="primary" size="small" @click="posting(scope)">过账</el-link>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
-
+    <el-pagination
+      style="margin-top: 10px"
+      :total="pagination.total"
+      :current-page="pagination.page"
+      layout="total, prev, pager, next, sizes"
+      @size-change="sizeChange"
+      @current-change="pageChange"
+    />
   </div>
 </template>
 
@@ -92,9 +98,11 @@ import { noList } from '@/api/end-product/product'
 import { getUser } from '@/api/accessories/means'
 import { updatePosting } from '@/api/end-product/product'
 import { wareList } from '@/api/warehouse/warehouse'
+import initData from '@/mixins/initData'
 
 export default window.$crudCommon({
   name: 'Deliver',
+  mixins: [initData],
   data() {
     return {
       a: [],
@@ -120,7 +128,7 @@ export default window.$crudCommon({
     }
   },
   created() {
-    this.getList()
+    this.loadData()
   },
   methods: {
     batchPosting() {
@@ -136,7 +144,7 @@ export default window.$crudCommon({
         updatePosting(this.ids).then(res => {
           if (res) {
             this.$message.success('成功')
-            this.getList()
+            this.loadData()
           } else {
             this.$message.error('失败')
           }
@@ -148,7 +156,7 @@ export default window.$crudCommon({
       updatePosting(this.ids).then(res => {
         if (res) {
           this.$message.success('成功')
-          this.getList()
+          this.loadData()
         } else {
           this.$message.error('失败')
         }
@@ -175,14 +183,18 @@ export default window.$crudCommon({
       // 拼接
       return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
     },
-    getList() {
+    loadData() {
       noList().then(res => {
         this.outNoFor = res
       })
       getUser().then(res => {
         this.deliverymanFor = res
       })
+      this.form.page = this.pagination.page
+      this.form.count = this.pagination.size
       endList(this.form).then(res => {
+        console.log(res)
+        this.pagination.total = res.total
         this.tableData = []
         res.list.forEach(a => {
           this.tableData.push(a)

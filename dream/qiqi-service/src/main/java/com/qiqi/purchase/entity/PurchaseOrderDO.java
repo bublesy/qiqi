@@ -22,6 +22,8 @@ import lombok.EqualsAndHashCode;
 @TableName("purchase_order")
 public class PurchaseOrderDO extends BaseModel {
 
+    private Integer paymentAmount;
+
     private static final long serialVersionUID=1L;
 
     private String carryTo;
