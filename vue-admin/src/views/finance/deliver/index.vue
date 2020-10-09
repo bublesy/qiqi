@@ -22,10 +22,13 @@
     </el-dialog>
     <el-form ref="form" :model="form" label-width="80px" inline>
       <el-form-item label="回签状态:">
-        <el-select v-model="form.signBackState" placeholder="请选择回签状态" :clearable="true">
+        <el-select v-model="form.signs" placeholder="请选择回签状态" :clearable="true">
           <el-option label="已回签" value="已回签" />
           <el-option label="未回签" value="未回签" />
         </el-select>
+      </el-form-item>
+      <el-form-item label="客户名称:">
+        <el-input v-model="form.name" />
       </el-form-item>
     </el-form>
     <el-button type="primary" @click="loadData ()">查询</el-button>
@@ -37,16 +40,16 @@
     >
       <!-- <el-table-column type="selection" width="55" /> -->
       <el-table-column prop="name" label="客户名称" width="180" />
+      <el-table-column prop="outNo" label="出货单号" />
       <el-table-column prop="material" label="材质" />
       <el-table-column prop="boxType" label="箱型" />
-      <el-table-column prop="deliveryQuantity" label="出货数量" />
-      <el-table-column prop="deliveryQuantity" label="订单数量" />
+      <el-table-column prop="sendNum" label="出货数量" />
+      <el-table-column prop="orderNum" label="订单数量" />
       <el-table-column prop="perPrice" label="单价" />
       <el-table-column prop="money" label="金额" />
       <el-table-column prop="unit" label="单位" />
-      <el-table-column prop="outNo" label="出货单号" />
-      <el-table-column prop="sign" label="回签状态" />
-      <el-table-column prop="posting" label="结算状态" />
+      <el-table-column prop="signs" label="回签状态" />
+      <el-table-column prop="settlement" label="结算状态" />
       <el-table-column prop="remark" label="备注" />
       <!-- <el-table-column label="操作">
         <template slot-scope="scope">
@@ -71,6 +74,7 @@
 // import { getUser } from '@/api/accessories/means'
 import { updatePosting } from '@/api/end-product/product'
 // import { wareList } from '@/api/warehouse/warehouse'
+import { getList } from '@/api/end-product/product'
 import initData from '@/mixins/initData'
 
 export default window.$crudCommon({
@@ -87,13 +91,10 @@ export default window.$crudCommon({
       outNoFor: [],
       deliverymanFor: [],
       form: {
-        typeNo: '',
-        signBackState: '',
-        outNo: '',
-        deliveryman: '',
-        note: '',
+        signs: '',
         page: '1',
-        size: '10'
+        size: '10',
+        name: ''
       },
       oNo: '',
       ids: [],
@@ -159,19 +160,19 @@ export default window.$crudCommon({
     loadData() {
       this.form.page = this.pagination.page
       this.form.count = this.pagination.size
-      // endList(this.form).then(res => {
-      //   console.log(res)
-      //   this.pagination.total = res.total
-      //   this.tableData = []
-      //   res.list.forEach(a => {
-      //     this.tableData.push(a)
-      //   })
-      //   wareList(this.form).then(res => {
-      //     res.list.forEach(a => {
-      //       this.tableData.push(a)
-      //     })
-      //   })
-      // })
+      getList(this.form).then(res => {
+        console.log(res)
+        this.tableData = res.list
+        this.tableData.forEach(a => {
+          console.log(a.signs)
+          if (a.signs === null) {
+            // a.signs === '未回签'
+            this.$set(a, 'signs', '未回签')
+            console.log(a.signs)
+          }
+        })
+        this.pagination.total - res.total
+      })
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

@@ -1,7 +1,11 @@
 package com.qiqi.order.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.order.entity.DeliveryNoteDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.qiqi.order.vo.DeliveryVO;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -13,4 +17,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface DeliveryNoteMapper extends BaseMapper<DeliveryNoteDO> {
 
+    /**
+     * 查询
+     * @param objectPage
+     * @param signs
+     * @param name
+     * @return
+     */
+    IPage<DeliveryVO> getList(@Param("objectPage") Page<Object> objectPage,@Param("signs") String signs,@Param("name") String name);
 }
