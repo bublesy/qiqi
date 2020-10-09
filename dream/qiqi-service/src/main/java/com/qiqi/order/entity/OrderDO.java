@@ -36,8 +36,6 @@ public class OrderDO extends BaseModel {
 
     private String auditBy;
 
-    private Boolean sign;
-
     private String outNo;
 
     private Long scheduleId;
