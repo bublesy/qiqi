@@ -4,9 +4,10 @@
     <el-form ref="form" :model="form" label-width="80px" size="mini" :inline="true">
       <el-form-item label="出货日期:">
         <el-date-picker
-          v-model="form.deliveryDate"
+          v-model="form.shipDate"
           type="date"
           placeholder="选择日期"
+          value-format="yyyy-MM-dd"
         />
       </el-form-item>
       <el-form-item label="客户名称:">
@@ -83,7 +84,10 @@ export default {
       total: 0,
       form: {
         page: 1,
-        count: 10
+        count: 10,
+        shipDate: null,
+        name: '',
+        outNo: ''
       },
       select: [],
       name: '',
@@ -107,10 +111,19 @@ export default {
       this.initTable()
     },
     initTable() {
+      // if (this.form.shipDate != null) {
+      //   this.form.shipDate = this.form.shipDate.toString()
+      // }
       getShipDaily(this.form).then(res => {
+        if (res === '') {
+          this.tableData = []
+          return
+        }
         this.tableData = res.list
+        console.log('aaa')
         this.tableData.forEach(x => {
           x.sign = x.sign === true ? '已回签' : '未回签'
+          x.money = x.perPrice * x.sendNum
         })
         this.total = res.total
       })
@@ -126,7 +139,7 @@ export default {
     toExcel() {
       var list = this.tableData
       const th = ['客户名称', '出货日期', '出货单号', '箱型', '出货数量', '单价', '金额', '回签状态']
-      const filterVal = ['name', 'deliveryDate', 'outNo', 'boxType', 'sendNum', 'perPrice', 'money', 'sign']
+      const filterVal = ['name', 'shipDate', 'outNo', 'boxType', 'sendNum', 'perPrice', 'money', 'sign']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '箱类设定')
     },

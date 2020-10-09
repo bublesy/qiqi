@@ -17,7 +17,7 @@
       >
         <el-table-column type="selection" width="55" />
         <el-table-column prop="name" label="客户名称" width="120" />
-        <el-table-column prop="deliveryDate" label="出货日期" width="120" />
+        <el-table-column prop="shipDate" label="出货日期" width="120" />
         <el-table-column prop="outNo" label="出货单号" width="120" />
         <el-table-column prop="boxType" label="箱型" width="120" />
         <el-table-column prop="sendNum" label="出货数量" width="120" />
