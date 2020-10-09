@@ -35,6 +35,8 @@ public class ScheduleDO extends BaseModel {
 
     private Integer modCount;
 
+    private Integer lossNum;
+
     /**
      * 任务编号
      */

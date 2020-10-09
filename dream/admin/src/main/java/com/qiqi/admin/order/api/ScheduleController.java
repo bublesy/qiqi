@@ -3,6 +3,8 @@ package com.qiqi.admin.order.api;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qiqi.admin.order.util.TimeAddEight;
+import com.qiqi.endproductwarehouse.entity.EndProductWarehouseDO;
+import com.qiqi.endproductwarehouse.service.EndProductWarehouseService;
 import com.qiqi.order.dto.ScheduleDTO;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.entity.ScheduleDO;
@@ -23,8 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.qiqi.order.service.ScheduleService;
 
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import javax.xml.crypto.Data;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,8 +57,15 @@ public class ScheduleController {
 
     private Date date;
 
+    protected SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
+
+    private Integer lossNum;
+
     @Resource
     private OrderService orderService;
+
+    @Resource
+    private EndProductWarehouseService endProductWarehouseService;
 
     @Resource
     private WarehouseService warehouseService;
@@ -63,16 +74,17 @@ public class ScheduleController {
     @PostMapping("/list")
     public PageEntity<ScheduleDO> getSchedulePage(@RequestBody ScheduleDTO query) {
         QueryWrapper<ScheduleDO> queryWrapper = new QueryWrapper<>();
-        if(query.getDate() != null){
+        if (query.getDate() != null) {
             query.setDate(TimeAddEight.formatTimeEight(query.getDate()));
         }
-        queryWrapper.eq(!ObjectUtils.isEmpty(query.getDate()),"date",query.getDate())
-                .like(StringUtils.isNotBlank(query.getNo()),"no",query.getNo())
-                .like(StringUtils.isNotBlank(query.getName()),"name",query.getName());
-        IPage<ScheduleDO> iPage = scheduleService.page(new Page<>(query.getPage(),query.getCount()),queryWrapper);
+        queryWrapper.eq(!ObjectUtils.isEmpty(query.getDate()), "date", query.getDate())
+                .like(StringUtils.isNotBlank(query.getNo()), "no", query.getNo())
+                .like(StringUtils.isNotBlank(query.getName()), "name", query.getName());
+        IPage<ScheduleDO> iPage = scheduleService.page(new Page<>(query.getPage(), query.getCount()), queryWrapper);
         //todo: 需要转Vo
 
-        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<ScheduleDO>>() {}, iPage.getRecords()));
+        return new PageEntity<>(iPage.getTotal(), Convert.convert(new TypeReference<List<ScheduleDO>>() {
+        }, iPage.getRecords()));
     }
 
     @ApiOperation(value = "获取排期(单个)")
@@ -92,32 +104,46 @@ public class ScheduleController {
     @ApiOperation(value = "新增排期")
     @PostMapping("")
     public Boolean saveSchedule(@RequestBody ScheduleDO scheduleDO) {
-        if(scheduleDO == null){
+        if (scheduleDO == null) {
             return false;
         }
-        if(scheduleDO.getDate() != null && scheduleDO.getModCount() > 0){
+        if (scheduleDO.getDate() != null && scheduleDO.getModCount() > 0) {
             scheduleDO.setDate(TimeAddEight.formatTimeEight(scheduleDO.getDate()));
         }
+
         boolean b = scheduleService.saveOrUpdate(scheduleDO);
         this.scheduleId = scheduleDO.getId();
         this.product = scheduleDO.getProductNum();
         this.finished = scheduleDO.getFinished();
         this.date = scheduleDO.getDate();
+        this.lossNum = scheduleDO.getLossNum();
         return b;
     }
 
     @PutMapping("/order")
-    public Boolean updateSchedule(){
+    public Boolean updateSchedule() {
+        //订单
         OrderDO orderDO = new OrderDO();
         orderDO.setProductNum(product);
         orderDO.setFinished(finished);
         orderDO.setDate(date);
-        orderService.update(orderDO,new QueryWrapper<OrderDO>().eq("schedule_id",this.scheduleId));
+        orderDO.setLossNum(lossNum);
+        orderService.update(orderDO, new QueryWrapper<OrderDO>().eq("schedule_id", this.scheduleId));
         List<OrderDO> orders = orderService.list(new QueryWrapper<OrderDO>().eq("schedule_id", this.scheduleId));
         List<Long> collect = orders.stream().map(data -> data.getId()).collect(Collectors.toList());
-        WarehouseDO warehouseDO = new WarehouseDO();
-        warehouseDO.setProductNum(product);
-        return warehouseService.update(warehouseDO,new QueryWrapper<WarehouseDO>().eq("order_id",collect.get(0).toString()));
+        //非成品仓库
+        if (scheduleId != null) {
+            WarehouseDO warehouseDO = new WarehouseDO();
+            warehouseDO.setPosition(lossNum.toString());
+            warehouseService.update(warehouseDO,new QueryWrapper<WarehouseDO>().eq("order_id",collect.get(0)));
+        }
+        //成品仓库
+        EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
+        endProductWarehouseDO.setProductNum(product);
+        endProductWarehouseDO.setEndProductPos(product.toString());
+        endProductWarehouseDO.setOrderId(collect.get(0).toString());
+        endProductWarehouseDO.setWarehouseNo(dateFormat.format(new Date()));
+        return endProductWarehouseService.saveOrUpdate(endProductWarehouseDO, new QueryWrapper<EndProductWarehouseDO>().eq("order_id", collect.get(0).toString()));
     }
 
     @ApiOperation(value = "删除排期(批量))")
