@@ -26,6 +26,8 @@ public class BillVO {
     private String name;
     private String outNo;
 
+    private String no;
+
     private JSONArray settlementDate;
 
     @JsonFormat(pattern = "yyyy-MM")

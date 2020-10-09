@@ -13,7 +13,7 @@
         </el-form-item>
         <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
         <el-button type="primary" size="mini" @click="toExcel">导出</el-button>
-        <el-button type="primary" size="mini" @click="presers">批量审核</el-button>
+        <!-- <el-button type="primary" size="mini" @click="presers">批量审核</el-button> -->
       </el-form>
       <div>
         <el-table
@@ -23,7 +23,7 @@
           style="width: 100%;margin-top:20px"
           border=""
         >
-          <el-table-column type="selection" width="55" />
+          <!-- <el-table-column type="selection" width="55" /> -->
           <el-table-column v-show="true" prop="name" label="客户名称" />
           <el-table-column v-show="true" prop="no" label="任务编号" />
           <el-table-column v-show="true" prop="customerNo" label="客户单号" />

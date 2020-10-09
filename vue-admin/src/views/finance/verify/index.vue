@@ -33,8 +33,8 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column v-show="true" prop="name" label="客户名称" width="120" />
-          <el-table-column v-show="true" prop="outNo" label="出货单号" width="120" />
-          <el-table-column v-show="true" prop="shipDate" label="出货日期" width="120" />
+          <el-table-column v-show="true" prop="no" label="任务编号" width="120" />
+          <!-- <el-table-column v-show="true" prop="shipDate" label="出货日期" width="120" /> -->
           <el-table-column v-show="true" prop="deliveryDate" label="交货日期" width="120" />
           <el-table-column v-show="true" prop="modelNo" label="物品单号/款号" width="120" />
           <el-table-column v-show="true" prop="boxType" label="箱型" width="80" />

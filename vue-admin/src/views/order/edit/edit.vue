@@ -439,6 +439,15 @@ export default {
         if (x) {
           if (this.flag) {
             this.form.id = null
+            this.form.productNum = null
+            this.form.sendNum = null
+            this.form.lossNum = null
+            this.form.incomeNum = null
+            this.form.date = null
+            this.form.audit = null
+            this.form.modCount = null
+            this.form.refundNum = null
+            this.form.refundTime = null
           }
 
           if (this.form.id === null || this.form.id === '' || this.form.id === undefined) {

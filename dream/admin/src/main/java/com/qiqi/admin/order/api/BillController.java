@@ -1,6 +1,8 @@
 package com.qiqi.admin.order.api;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -73,7 +75,14 @@ public class BillController {
         if(startDate == null || endDate == null){
             return null;
         }
-        PageEntity<OrderFinanceDTO> pageEntity = orderService.listOrder(new Page<>(page, count), customerId, startDate, endDate);
+        Date parse = DateUtil.parse(endDate);
+        Date endDate2 = DateUtil.offsetMonth(parse, 1);
+        String endDate3 = DateUtil.format(endDate2, "yyyy-MM-dd");
+
+        Date parse2 = DateUtil.parse(startDate);
+        Date startDate2 = DateUtil.offsetMonth(parse2, 1);
+        String startDate3 = DateUtil.format(startDate2, "yyyy-MM-dd");
+        PageEntity<OrderFinanceDTO> pageEntity = orderService.listOrder(new Page<>(page, count), customerId, startDate3, endDate3);
         return pageEntity;
     }
 }

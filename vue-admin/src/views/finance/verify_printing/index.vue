@@ -22,13 +22,13 @@
         border
         style="width: 400,margin-top:20px"
       >
-        <el-table-column
+        <!-- <el-table-column
           prop="shipDate"
           label="出货日期"
-        />
+        /> -->
         <el-table-column
-          prop="outNo"
-          label="出货单号"
+          prop="no"
+          label="任务编号"
         />
         <el-table-column
           prop="modelNo"
