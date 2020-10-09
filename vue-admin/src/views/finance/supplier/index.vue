@@ -75,7 +75,7 @@
       >
         <el-form ref="form" :rules="purRules" :model="formSet" size="mini" :inline="true">
           <el-form-item label="结算状态:" prop="settlementStatus">
-            <el-select v-model="formSet.settlementStatus" placeholder="选择结算状态" style="width:150px">
+            <el-select v-model="formSet.settlementStatus" placeholder="选择结算状态" style="width:150px" disabled>
               <el-option value="未结算" label="未结算" />
               <el-option value="部分结算" label="部分结算" />
               <el-option value="已结算" label="已结算" />
@@ -88,10 +88,10 @@
             <el-input-number v-model="formSet.unPayed" :controls="false" disabled />
           </el-form-item>
           <el-form-item label="已付款金额:" prop="alreadyMoney">
-            <el-input-number v-model="formSet.alreadyMoney" :controls="false" disabled @change="alreadyMoneyChange" />
+            <el-input-number v-model="formSet.alreadyMoney" :controls="false" disabled />
           </el-form-item>
           <el-form-item label="付款金额" prop="">
-            <el-input-number v-model="formSet.alreadyMoney" :controls="false" />
+            <el-input-number v-model="formSet.alreadyMoney1" :controls="false" @change="alreadys" />
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -137,7 +137,7 @@ export default {
       tableData: [],
       purAddVisible: false,
       purRules: {
-        settlementStatus: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
+        // settlementStatus: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
         // alreadyMoney: [{ required: true, message: '该输入为必填项', trigger: 'change' }]
       },
       titleType: '',
@@ -161,7 +161,8 @@ export default {
         carryTo: ''
       },
       formSet: {
-        unPayed: ''
+        unPayed: '',
+        alreadyMoney1: 0
       }
     }
   },
@@ -170,11 +171,20 @@ export default {
   },
   methods: {
     setOk(supForm) {
+      console.log(this.formSet.alreadyMoney1)
+      if (this.formSet.alreadyMoney1 === undefined || this.formSet.alreadyMoney1 === '' || this.formSet.alreadyMoney1 === 0) {
+        this.$message.error('结算金额不能为空')
+        return
+      }
+
+      this.formSet.alreadyMoney = this.formSet.alreadyMoney1
+      // console.log(this.formSet.alreadyMoney)
       this.$refs[supForm].validate((valid) => {
         if (valid) {
           updated(this.formSet).then(res => {
             if (res) {
               this.$message.success(this.titleType + '成功')
+              this.formSet.alreadyMoney1 = 0
               this.loadData()
             } else {
               this.$message.error(this.titleType + '失败')
@@ -202,19 +212,24 @@ export default {
         }
       })
     },
-    alreadyMoneyChange() {
-      console.log(this.formSet.unPayed, this.formSet.alreadyMoney)
-      if (this.formSet.unPayed === this.formSet.money) {
-        if (this.formSet.alreadyMoney > this.formSet.money) {
-          this.$message.error('付款金额大于应收款金额！！')
-          this.$set(this.formSet, 'alreadyMoney', this.formSet.money - this.formSet.unPayed)
-          return
-        }
-      } else if (this.formSet.alreadyMoney > this.formSet.unPayed) {
-        this.$message.error('付款金额大于应收款金额！！')
-        this.$set(this.formSet, 'alreadyMoney', this.formSet.unPayed)
-        return
+    alreadys() {
+      // console.log(this.formSet.unPayed, this.formSet.alreadyMoney)
+      if (this.formSet.alreadyMoney1 > this.formSet.unPayed) {
+        this.$message.error('付款金额大于待付款金额！！')
+        // this.$set(this.formSet, 'alreadyMoney', this.formSet.unPayed)
+        this.formSet.alreadyMoney1 = this.formSet.unPayed
+        console.log(123)
       }
+      if (this.formSet.alreadyMoney1 === this.formSet.unPayed) {
+        this.formSet.settlementStatus = '已结算'
+      } else if (this.formSet.alreadyMoney1 < this.formSet.unPayed && this.formSet.alreadyMoney1 > 0) {
+        this.formSet.settlementStatus = '部分结算'
+      } else if (this.formSet.alreadyMoney1 === 0 && this.formSet.alreadyMoney === 0) {
+        this.formSet.settlementStatus = '未结算'
+      } else if (this.formSet.alreadyMoney1 === 0 && this.formSet.alreadyMoney > 0) {
+        this.formSet.settlementStatus = '部分结算'
+      }
+      console.log(this.formSet.settlementStatus)
     },
     // 结算
     settlement(scope) {
@@ -223,11 +238,8 @@ export default {
       this.formSet.money = scope.row.totalAmount
       this.formSet.alreadyMoney = scope.row.alreadyMoney
       this.formSet.id = scope.row.id
-      console.log(this.formSet.alreadyMoney)
+      // console.log(this.formSet.alreadyMoney)
       this.formSet.unPayed = this.formSet.money - this.formSet.alreadyMoney
-      // updated(this.formSet).then(res => {
-      //   console.log(res)
-      // })
     },
     loadData() {
       this.queryParams.time = this.form.time
@@ -235,6 +247,7 @@ export default {
         this.$set(this.queryParams, 'time', '')
       }
       purList(this.queryParams).then(res => {
+        console.log(res)
         this.tableData = res.list
         this.carryTo = this.tableData[0].carryTo
         this.tableData.forEach(a => {
@@ -263,6 +276,7 @@ export default {
     purAddNo() {
       this.purAddVisible = false
       this.addTableData = []
+      // l
     },
     purAddOk(purForm) {
       this.$refs[purForm].validate((valid) => {

@@ -51,7 +51,7 @@
 
           <el-table-column v-show="true" prop="payed" label="已付" width="80" />
           <el-table-column v-show="true" prop="unPayed" label="欠款" width="80" />
-          <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="120">
+          <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="180">
             <template slot-scope="scope">
               <div v-for="(item,key) in scope.row.settlementDate" :key="key">
                 {{ item }}
@@ -59,7 +59,7 @@
             </template>
           </el-table-column>
           <!-- <el-table-column v-show="true" prop="post" label="是否过账" width="80" /> -->
-          <el-table-column v-show="true" prop="settlement" label="结算状态" width="80" />
+          <el-table-column v-show="true" prop="settlement" label="结算状态" width="100" />
           <el-table-column label="操作" width="88">
             <template slot-scope="scope">
               <!-- <el-button size="mini" @click="post(scope.row)">过账</el-button> -->

@@ -70,10 +70,13 @@
           prop="unPayed"
           label="欠款"
         />
-        <el-table-column
-          prop="settlementDate"
-          label="结算日期"
-        />
+        <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="150">
+          <template slot-scope="scope">
+            <div v-for="(item,key) in scope.row.array" :key="key">
+              {{ item }}
+            </div>
+          </template>
+        </el-table-column>
         <!-- <el-table-column
           prop="carryTo"
           label="是否过账"
