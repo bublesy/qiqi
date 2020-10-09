@@ -36,16 +36,16 @@
           <el-table-column v-show="true" prop="carryTo" label="过账" width="140" />
           <el-table-column v-show="true" prop="noType" label="单据类型" width="140" />
           <el-table-column v-show="true" prop="orderQuantity" label="订单数量" width="140" />
-          <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" width="140" />
+          <!-- <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" width="140" /> -->
           <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" width="140" />
           <el-table-column v-show="true" prop="warehousingDate" label="入仓日期" width="160" />
-          <el-table-column v-show="true" prop="surplusNum" label="实际库存数量" width="140" />
-          <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" />
-          <el-table-column v-show="true" prop="position" label="剩余数量" width="160" />
+          <el-table-column v-show="true" prop="position" label="入库数量" width="140" />
+          <el-table-column v-show="true" prop="deliveryQuantity" label="损耗数量" />
+          <el-table-column v-show="true" prop="surplusNum" label="剩余数量" width="160" />
           <el-table-column v-show="true" prop="checkDate" label="盘点日期" width="160" />
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
-              <el-button type="primary" size="small" :disabled="scope.row.checkNum!==null ?true : false" @click="purAdd(scope)">新增库存盘点</el-button>
+              <el-button type="primary" size="small" @click="purAdd(scope)">新增库存盘点</el-button>
               <el-button type="primary" size="small" @click="modifyPur(scope)">编辑库存盘点</el-button>
               <el-button type="warning" size="small" @click="printing(scope)">生成盘点单</el-button>
             </template>
@@ -65,7 +65,7 @@
       </div>
       <!-- 新增/编辑盘点数量 -->
       <el-dialog :title="titleType+'盘点数量'" :visible.sync="purAddVisible">
-        <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="80px">
+        <el-form ref="purForm" :rules="purRules" :inline="true" :model="formAdd" size="mini" label-width="100px">
 
           <el-form-item label="入仓单号:" prop="warehouseNo">
             <el-input v-model="formAdd.warehouseNo" disabled />
@@ -96,11 +96,11 @@
           <el-table-column v-show="true" prop="customerName" label="客户名称" />
           <el-table-column v-show="true" prop="orderQuantity" label="订单数量" />
           <el-table-column v-show="true" prop="warehousingDate" label="入仓日期" />
-          <el-table-column v-show="true" prop="surplusNum" label="实际库存数量" />
-          <el-table-column v-show="true" prop="deliveryQuantity" label="送货数量" />
-          <el-table-column v-show="true" prop="position" label="剩余库存数量">
+          <el-table-column v-show="true" prop="position" label="入库数量" />
+          <el-table-column v-show="true" prop="deliveryQuantity" label="损耗数量" />
+          <el-table-column v-show="true" prop="surplusNum" label="剩余库存数量">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.position" :controls="false" style="width:60px" size="mini" />
+              <el-input-number v-model="scope.row.surplusNum" :controls="false" style="width:60px" size="mini" />
             </template>>
           </el-table-column>
           <el-table-column v-show="true" prop="checkDate" label="盘点日期" />
@@ -175,7 +175,7 @@ export default {
       this.surplusNums = []
       this.tableData.forEach(a => {
         this.ids.push(a.id)
-        this.surplusNums.push(a.position)
+        this.surplusNums.push(a.surplusNum)
       })
       this.formCheck.ids = this.ids
       this.formCheck.surplusNums = this.surplusNums
@@ -198,7 +198,7 @@ export default {
           a.surplusNum = c
         } else {
           var d = parseInt(a.deliveryQuantity)
-          a.surplusNum = c + d
+          a.surplusNum = c - d
         }
       })
     },
@@ -219,7 +219,7 @@ export default {
             a.surplusNum = c
           } else {
             var d = parseInt(a.deliveryQuantity)
-            a.surplusNum = c + d
+            a.surplusNum = c - d
           }
 
           a.stayDeliveryQuantity = a.orderQuantity - a.alreadyDeliveryQuantity
@@ -240,7 +240,7 @@ export default {
       this.titleType = '编辑'
       getById(scope.row.id).then(res => {
         this.formAdd = res
-        this.formAdd.checkNum = res.position
+        // this.formAdd.checkNum = res.position
       })
     },
     // 生成盘点单

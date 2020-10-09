@@ -132,15 +132,19 @@
             <el-checkbox v-model="formAdd.isProduct" disabled />
           </el-form-item>
 
-          <el-form-item v-if="!formAdd.isProduct" label="仓位">
+          <el-form-item v-if="!isProducts" label="原材料仓位">
             <el-input-number v-model="formAdd.position" :controls="false" disabled />
           </el-form-item>
 
-          <el-form-item v-if="formAdd.isProduct" label="成品仓位">
+          <el-form-item v-if="isProducts" label="成品仓位">
             <el-input-number v-model="formAdd.endProductPos" :controls="false" disabled />
           </el-form-item>
 
-          <el-form-item label="采购数量" prop="purchaseQuantity">
+          <el-form-item label="订单数量" prop="orderQuantity">
+            <el-input v-model="formAdd.orderQuantity" disabled />
+          </el-form-item>
+
+          <el-form-item label="采购原材料数量" prop="purchaseQuantity">
             <el-input v-model="formAdd.purchaseQuantity" @change="purchaseSelect" />
           </el-form-item>
 
@@ -336,7 +340,8 @@ export default {
       specificationFor: [],
       noFor: [],
       returnDialogVisible: false,
-      formReturn: {}
+      formReturn: {},
+      isProducts: false
     }
   },
   created() {
@@ -667,6 +672,7 @@ export default {
       this.titleType = '编辑'
       getById(scope.row.pid).then(res => {
         this.formAdd = res
+        this.formAdd.orderQuantity = res.orderQuantity
         // 加载供应商下拉框
         supplierSelect().then(res => {
           this.supplierFor = res
@@ -682,6 +688,10 @@ export default {
 
     // 新增订单
     purAdd(scope) {
+      console.log(scope.row.isProduct)
+      if (scope.row.isProduct === '成品') {
+        this.isProducts = true
+      }
       this.purAddVisible = true
       this.titleType = '新增'
       // 新增初始化数据
@@ -691,10 +701,11 @@ export default {
         this.supplierFor = res
       })
       this.formAdd = scope.row
+      this.formAdd.supplierId = scope.row.supplier
       this.$set(this.formAdd, 'customerName', scope.row.name)
       this.$set(this.formAdd, 'taskNumber', scope.row.no)
       this.$set(this.formAdd, 'customerNo', scope.row.customerNo)
-      this.$set(this.formAdd, 'purchaseQuantity', scope.row.orderNum)
+      this.$set(this.formAdd, 'orderQuantity', scope.row.orderNum)
       this.formAdd.position = 0
       this.formAdd.endProductPos = 0
       if (scope.row.isProduct === '成品') {

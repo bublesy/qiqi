@@ -80,4 +80,10 @@ public class DeliveryNoteController {
         return new PageEntity<>(iPage.getTotal(),convert);
     }
 
+    @GetMapping("/getDeliveryList{id}")
+    public List<DeliveryNoteDO> getDeliveryList(@PathVariable Long id){
+        List<DeliveryNoteDO> deliveryNote = deliveryNoteService.list(new QueryWrapper<DeliveryNoteDO>().eq("order_id", id));
+        return deliveryNote;
+    }
+
 }

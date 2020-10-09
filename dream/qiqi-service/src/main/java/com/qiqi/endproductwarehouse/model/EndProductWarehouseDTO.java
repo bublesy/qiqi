@@ -15,14 +15,29 @@ public class EndProductWarehouseDTO {
     private Long size;
     private String typeNo;
     private String signBackState;
+    private String no;
     private String outNo;
     private String deliveryman;
     private String posting;
+    private String carryTo;
     private String note;
 
-    private Long eId;
+    private String outDate;
 
+    private String warehouseNo;
+
+    private String createdTime;
+
+    private String endProductPos;
+
+    private String alreadyDeliveryQuantity;
+    private String name;
+
+
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date shipDate;
+
+    private BigDecimal beginReceive;
 
     private String audit;
 
@@ -30,11 +45,11 @@ public class EndProductWarehouseDTO {
 
     private Boolean sign;
 
-    private String carryTo;
     private Long scheduleId;
 
     private String isProduct;
 
+    private Long Id;
     private String wosState;
 
     private String stare;
@@ -55,16 +70,6 @@ public class EndProductWarehouseDTO {
     private Date date;
 
     private Integer modCount;
-
-    /**
-     * 任务编号
-     */
-    private String no;
-
-    /**
-     * 客户名称
-     */
-    private String name;
 
     /**
      * 客户单号
@@ -174,6 +179,8 @@ public class EndProductWarehouseDTO {
      * 金额
      */
     private BigDecimal money;
+
+    private Long createdBy;
 
     /**
      * 供方
@@ -285,5 +292,9 @@ public class EndProductWarehouseDTO {
     private String refundNum;
 
     private Date refundTime;
+
+
+    private Long eId;
+
 
 }

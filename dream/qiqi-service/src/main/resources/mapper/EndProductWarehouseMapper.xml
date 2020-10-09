@@ -20,4 +20,20 @@
             and  e.remark = #{endProductWarehouseDTO.note}
         </if>
     </select>
+
+
+    <select id="getList" resultType="com.qiqi.endproductwarehouse.model.EndProductWarehouseDTO">
+        SELECT o.*,e.`end_product_pos`,e.already_delivery_quantity,e.delivery_quantity,e.warehouse_no,e.carry_to,e.posting,e.created_time,e.id as eId,e.out_date
+        FROM end_product_warehouse e LEFT JOIN orders o ON e.`order_id` = o.`id`
+        where e.is_deleted =0
+        <if test="carryTo == '已送货' ">
+            and e.carry_to = #{carryTo}
+        </if>
+        <if test="carryTo == '未送货' ">
+            and e.carry_to = #{carryTo}
+        </if>
+        <if test="time !=null and time != ''  ">
+            and  e.created_time like concat('%', #{time} , '%')
+        </if>
+    </select>
 </mapper>

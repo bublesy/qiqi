@@ -134,19 +134,13 @@ public class PurchaseOrderController {
             if ( purchaseOrderDTO.getReturnNum() == null ||  purchaseOrderDTO.getReturnNum() == ""){
                 endProductWarehouseDO.setEndProductPos(purchaseOrderDTO.getPurchaseQuantity());
             }else{
-                Integer productNum = purchaseOrderDTO.getProductNum();
-                if (productNum !=null || productNum !=0){
-                    endProductWarehouseDO.setProductNum(purchaseOrderDTO.getProductNum());
-                    int i = Integer.parseInt(purchaseOrderDTO.getPurchaseQuantity());
-                    int ret = Integer.parseInt(purchaseOrderDTO.getReturnNum());
-                    String str =String.valueOf(i - ret + productNum);
-                    endProductWarehouseDO.setEndProductPos(str);
-                }else{
-                    int i = Integer.parseInt(purchaseOrderDTO.getPurchaseQuantity());
-                    int ret = Integer.parseInt(purchaseOrderDTO.getReturnNum());
-                    String str =String.valueOf(i - ret);
-                    endProductWarehouseDO.setEndProductPos(str);
-                }
+                String purchaseQuantity = purchaseOrderDTO.getPurchaseQuantity();
+                String returnNum = purchaseOrderDTO.getReturnNum();
+                int i = Integer.parseInt(purchaseQuantity);
+                int j = Integer.parseInt(returnNum);
+                int g = i-j;
+                String a =String.valueOf(g);
+                endProductWarehouseDO.setEndProductPos(a);
             }
             endProductWarehouseDO.setHeight(purchaseOrderDTO.getHeight());
             endProductWarehouseDO.setCheckNum(endProductWarehouseDO.getEndProductPos());
@@ -173,28 +167,16 @@ public class PurchaseOrderController {
             warehouseDO.setCustomerId(purchaseOrderDTO.getCustomerName());
             warehouseDO.setPaperWidth(purchaseOrderDTO.getWidth());
             warehouseDO.setUnitPrice(purchaseOrderDTO.getCostPrice());
-            String purchaseQuantity = purchaseOrderDTO.getPurchaseQuantity();
-            if (purchaseOrderDTO.getProductNum() == null || purchaseOrderDTO.getProductNum() == 0){
-                purchaseOrderDTO.setProductNum(0);
-            }
-            Integer pur = Integer.parseInt(purchaseQuantity);
             if ( purchaseOrderDTO.getReturnNum() == null ||  purchaseOrderDTO.getReturnNum() == ""){
-                Integer a=   purchaseOrderDTO.getProductNum()+pur;
-                warehouseDO.setPosition(String.valueOf(a));
+                warehouseDO.setPosition(purchaseOrderDTO.getPurchaseQuantity());
             }else{
-                if (  purchaseOrderDTO.getProductNum() !=null ||   purchaseOrderDTO.getProductNum() !=0){
-                    warehouseDO.setProductNum(purchaseOrderDTO.getProductNum());
-                    int i = Integer.parseInt(purchaseOrderDTO.getPurchaseQuantity());
-                    int ret = Integer.parseInt(purchaseOrderDTO.getReturnNum());
-                    String str =String.valueOf(i - ret +   purchaseOrderDTO.getProductNum());
-                    warehouseDO.setPosition(str);
-                }else{
-                    String returnNum = purchaseOrderDTO.getReturnNum();
-                    int i = Integer.parseInt(purchaseQuantity);
-                    int ret = Integer.parseInt(returnNum);
-                    String str =String.valueOf(i - ret);
-                    warehouseDO.setPosition(str);
-                }
+                String dtoPurchaseQuantity = purchaseOrderDTO.getPurchaseQuantity();
+                String returnNum = purchaseOrderDTO.getReturnNum();
+                int i = Integer.parseInt(dtoPurchaseQuantity);
+                int j = Integer.parseInt(returnNum);
+                int g = i-j;
+                String a =String.valueOf(g);
+                purchaseOrderDO.setEndProductPos(a);
             }
             warehouseDO.setCheckNum(warehouseDO.getPurchaseQuantity());
             warehouseDO.setOrderId(purchaseOrderDTO.getCustomerName());

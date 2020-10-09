@@ -47,3 +47,7 @@ export function upState(data) {
 export function check(data) {
   return request({ url: '/end/product/warehouse/check', method: 'post', data: data })
 }
+
+export function getDeliveryList(id) {
+  return request({ url: '/delivery/note/getDeliveryList' + id, method: 'get' })
+}

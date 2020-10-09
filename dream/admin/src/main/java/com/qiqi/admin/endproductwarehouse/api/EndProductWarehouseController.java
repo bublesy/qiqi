@@ -10,7 +10,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.endproductwarehouse.model.EndProductWarehouseDTO;
+import com.qiqi.order.entity.DeliveryNoteDO;
 import com.qiqi.order.entity.OrderDO;
+import com.qiqi.order.service.DeliveryNoteService;
 import com.qiqi.order.service.OrderService;
 import com.qiqi.warehouse.entity.WarehouseDO;
 import com.qiqi.warehouse.service.WarehouseService;
@@ -48,6 +50,8 @@ public class EndProductWarehouseController {
     private OrderService orderService;
     @Resource
     WarehouseService warehouseService;
+    @Resource
+    private DeliveryNoteService deliveryNoteService;
 
     @ApiOperation(value = "获取产品仓库(列表)")
     @ApiImplicitParams({
@@ -55,20 +59,13 @@ public class EndProductWarehouseController {
             @ApiImplicitParam(paramType = "query", name = "count", value = "当前页个数",required = true,dataType = "Long")
     })
     @GetMapping("/list")
-    public PageEntity<EndProductWarehouseDO> getEndProductWarehousePage(@RequestParam(value = "page",defaultValue = "1") Long page,
+    public PageEntity<EndProductWarehouseDTO> getEndProductWarehousePage(@RequestParam(value = "page",defaultValue = "1") Long page,
                                                                         @RequestParam(value = "size",defaultValue = "10") Long size,
                                                                         @RequestParam(value = "carryTo",required = false) String carryTo,
                                                                         @RequestParam(value = "time",required = false) String time){
         //todo: 需要转Vo
-        LambdaQueryWrapper<EndProductWarehouseDO> wrapper = new LambdaQueryWrapper<EndProductWarehouseDO>();
-        wrapper.like(!ObjectUtils.isEmpty(time),EndProductWarehouseDO::getCreatedTime,time);
-        if (carryTo.equals("已送货")){
-            wrapper.le(!ObjectUtils.isEmpty(carryTo),EndProductWarehouseDO::getCarryTo,carryTo);
-        }else if(carryTo.equals("未送货")){
-            wrapper.ge(!ObjectUtils.isEmpty(carryTo),EndProductWarehouseDO::getCarryTo,carryTo);
-        }
-        IPage<EndProductWarehouseDO> iPage = endProductWarehouseService.page(new Page<>(page,size),wrapper);
-        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<EndProductWarehouseDO>>() {}, iPage.getRecords()));
+        IPage<EndProductWarehouseDTO> iPage = endProductWarehouseService.getList(new Page<>(page,size),carryTo,time);
+        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<EndProductWarehouseDTO>>() {}, iPage.getRecords()));
     }
 
     @PostMapping("/endList")
@@ -142,13 +139,40 @@ public class EndProductWarehouseController {
     @ApiOperation(value = "新增产品仓库")
     @PostMapping("/add")
     public Boolean saveEndProductWarehouse(@RequestBody EndProductWarehouseDO endProductWarehouseDO) {
-        String checkNum = endProductWarehouseDO.getCheckNum();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:dd:ss");
-        if (checkNum!=null || checkNum !=""){
-            endProductWarehouseDO.setCheckDate(df.format(new Date()));
-            endProductWarehouseDO.setEndProductPos(checkNum);
+        String orderId = endProductWarehouseDO.getOrderId();
+        Long id = endProductWarehouseDO.getId();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
+        String deliveryQuantity = endProductWarehouseDO.getDeliveryQuantity();
+        int j = Integer.parseInt(deliveryQuantity);
+        DeliveryNoteDO deliveryNoteDO = new DeliveryNoteDO();
+        String endProductPos = endProductWarehouseDO.getEndProductPos();
+        int i = Integer.parseInt(endProductPos);
+        int g =i-j;
+        EndProductWarehouseDO byId = endProductWarehouseService.getById(id);
+        if (byId.getAlreadyDeliveryQuantity()!=null){
+            endProductWarehouseDO.setAlreadyDeliveryQuantity(byId.getAlreadyDeliveryQuantity()+j);
+        }else{
+            endProductWarehouseDO.setAlreadyDeliveryQuantity(Integer.parseInt(endProductWarehouseDO.getDeliveryQuantity()));
         }
-        return endProductWarehouseService.saveOrUpdate(endProductWarehouseDO);
+        if (deliveryQuantity!=null || deliveryQuantity !=""){
+            endProductWarehouseDO.setEndProductPos(String.valueOf(g));
+            endProductWarehouseDO.setCarryTo("已送货");
+            endProductWarehouseDO.setId(id);
+            endProductWarehouseDO.setOutNo(dateFormat.format(new Date()));
+            endProductWarehouseDO.setOutDate(new Date());
+        }
+        endProductWarehouseService.saveOrUpdate(endProductWarehouseDO);
+        deliveryNoteDO.setOrderId(Long.parseLong(orderId));
+        deliveryNoteDO.setSendNum(j);
+        deliveryNoteDO.setOutNo(dateFormat.format(new Date()));
+        OrderDO orderDO = new OrderDO();
+        orderDO.setId(Long.parseLong(orderId));
+        orderDO.setSendNum(endProductWarehouseDO.getAlreadyDeliveryQuantity());
+        orderDO.setWosState("已送货");
+        orderDO.setShipDate(endProductWarehouseDO.getOutDate());
+        orderDO.setOutNo(endProductWarehouseDO.getOutNo());
+        orderService.updateById(orderDO);
+        return deliveryNoteService.save(deliveryNoteDO);
     }
 
     @ApiOperation(value = "删除产品仓库(批量))")

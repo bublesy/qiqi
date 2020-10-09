@@ -134,7 +134,7 @@ public class ScheduleController {
         //非成品仓库
         if (scheduleId != null) {
             WarehouseDO warehouseDO = new WarehouseDO();
-            warehouseDO.setPosition(lossNum.toString());
+            warehouseDO.setDeliveryQuantity(lossNum.toString());
             warehouseService.update(warehouseDO,new QueryWrapper<WarehouseDO>().eq("order_id",collect.get(0)));
         }
         //成品仓库
