@@ -122,6 +122,7 @@ public class ScheduleController {
 
     @PutMapping("/order")
     public Boolean updateSchedule() {
+        EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
         //订单
         OrderDO orderDO = new OrderDO();
         orderDO.setProductNum(product);
@@ -131,18 +132,38 @@ public class ScheduleController {
         orderService.update(orderDO, new QueryWrapper<OrderDO>().eq("schedule_id", this.scheduleId));
         List<OrderDO> orders = orderService.list(new QueryWrapper<OrderDO>().eq("schedule_id", this.scheduleId));
         List<Long> collect = orders.stream().map(data -> data.getId()).collect(Collectors.toList());
+        // 差值
+        ScheduleDO scheduleDO = scheduleService.getById(scheduleId);
+        Integer a= product - (scheduleDO.getProductNum()==null ? 0 :scheduleDO.getProductNum());
+
+
+        List<EndProductWarehouseDO> endProductWarehouse = endProductWarehouseService.list(new QueryWrapper<EndProductWarehouseDO>().eq("order_id", collect.get(0)));
+        if (endProductWarehouse.size() !=0){
+            Integer productNum = endProductWarehouse.get(0).getProductNum() == null ? product : endProductWarehouse.get(0).getProductNum();
+            String endProduct = endProductWarehouse.get(0).getEndProductPos() == null ? product.toString() : endProductWarehouse.get(0).getEndProductPos();
+            Integer integer = Integer.parseInt(endProduct);
+            //成品仓库
+            endProductWarehouseDO.setProductNum(a+productNum);
+            endProductWarehouseDO.setStorageQuantity(a+integer);
+            endProductWarehouseDO.setEndProductPos(String.valueOf(a+integer));
+            endProductWarehouseDO.setOrderId(collect.get(0).toString());
+            endProductWarehouseDO.setWarehouseNo(dateFormat.format(new Date()));
+        }else{
+            //成品仓库
+            endProductWarehouseDO.setProductNum(product);
+            endProductWarehouseDO.setEndProductPos(String.valueOf(product));
+            endProductWarehouseDO.setOrderId(collect.get(0).toString());
+            endProductWarehouseDO.setWarehouseNo(dateFormat.format(new Date()));
+            endProductWarehouseDO.setStorageQuantity(product);
+        }
+
         //非成品仓库
         if (scheduleId != null) {
             WarehouseDO warehouseDO = new WarehouseDO();
             warehouseDO.setPosition(lossNum.toString());
             warehouseService.update(warehouseDO,new QueryWrapper<WarehouseDO>().eq("order_id",collect.get(0)));
         }
-        //成品仓库
-        EndProductWarehouseDO endProductWarehouseDO = new EndProductWarehouseDO();
-        endProductWarehouseDO.setProductNum(product);
-        endProductWarehouseDO.setEndProductPos(product.toString());
-        endProductWarehouseDO.setOrderId(collect.get(0).toString());
-        endProductWarehouseDO.setWarehouseNo(dateFormat.format(new Date()));
+
         return endProductWarehouseService.saveOrUpdate(endProductWarehouseDO, new QueryWrapper<EndProductWarehouseDO>().eq("order_id", collect.get(0).toString()));
     }
 
