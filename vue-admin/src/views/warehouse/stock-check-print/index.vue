@@ -3,6 +3,7 @@
     <el-main>
       <el-button @click="toBack">返回</el-button>
       <el-button v-print="'#print'" type="primary">打印</el-button>
+      <h1 align="center">仓库库存盘点打印</h1>
       <h3 align="center">{{ name }}</h3>
       <span style="margin-left:70%">打印日期:{{ dateFormat(new Date()) }}</span>
       <div class="app-container">
@@ -32,15 +33,15 @@
             label="订单数量"
           />
           <el-table-column
-            prop="surplusNum"
+            prop="position"
             label="实际库存数量"
           />
           <el-table-column
             prop="deliveryQuantity"
-            label="发货数量"
+            label="损耗数量"
           />
           <el-table-column
-            prop="position"
+            prop="surplusNum"
             label="剩余数量"
           />
           <el-table-column

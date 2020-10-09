@@ -89,7 +89,6 @@ public class EndProductWarehouseController {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:dd:ss");
         for(int i = 0;i<ids.size();i++){
             endProductWarehouseDO.setId(ids.get(i));
-            endProductWarehouseDO.setCheckDate(df.format(new Date()));
             endProductWarehouseDO.setEndProductPos(surplusNums.get(i));
             flag = endProductWarehouseService.updateById(endProductWarehouseDO);
         }
@@ -173,6 +172,19 @@ public class EndProductWarehouseController {
         orderDO.setOutNo(endProductWarehouseDO.getOutNo());
         orderService.updateById(orderDO);
         return deliveryNoteService.save(deliveryNoteDO);
+    }
+
+
+    @ApiOperation(value = "成品库存盘点")
+    @PostMapping("/addCheck")
+    public Boolean addCheck(@RequestBody EndProductWarehouseDO endProductWarehouseDO) {
+        String checkNum = endProductWarehouseDO.getCheckNum();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:dd:ss");
+        if (checkNum!=null || checkNum !=""){
+            endProductWarehouseDO.setCheckDate(df.format(new Date()));
+            endProductWarehouseDO.setEndProductPos(checkNum);
+        }
+        return endProductWarehouseService.saveOrUpdate(endProductWarehouseDO);
     }
 
     @ApiOperation(value = "删除产品仓库(批量))")

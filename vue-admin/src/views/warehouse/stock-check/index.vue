@@ -46,7 +46,7 @@
           <el-table-column label="操作" width="500px">
             <template slot-scope="scope">
               <el-button type="primary" size="small" @click="purAdd(scope)">新增库存盘点</el-button>
-              <el-button type="primary" size="small" @click="modifyPur(scope)">编辑库存盘点</el-button>
+              <!-- <el-button type="primary" size="small" @click="modifyPur(scope)">编辑库存盘点</el-button> -->
               <el-button type="warning" size="small" @click="printing(scope)">生成盘点单</el-button>
             </template>
           </el-table-column>

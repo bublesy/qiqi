@@ -22,6 +22,7 @@ public class EndProductWarehouseDO extends BaseModel {
 
     private static final long serialVersionUID=1L;
 
+    private Integer storageQuantity;
 
     private Integer productNum;
     private Integer alreadyDeliveryQuantity;

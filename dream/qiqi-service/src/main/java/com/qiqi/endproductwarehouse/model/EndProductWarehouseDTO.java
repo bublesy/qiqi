@@ -14,6 +14,7 @@ public class EndProductWarehouseDTO {
     private Long page;
     private Long size;
     private String typeNo;
+    private String checkDate;
     private String signBackState;
     private String no;
     private String outNo;
@@ -22,6 +23,7 @@ public class EndProductWarehouseDTO {
     private String carryTo;
     private String note;
 
+    private Integer storageQuantity;
     private String outDate;
 
     private String warehouseNo;

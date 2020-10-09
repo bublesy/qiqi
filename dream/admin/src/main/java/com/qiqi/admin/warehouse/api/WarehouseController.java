@@ -90,7 +90,7 @@ public class WarehouseController {
         return warehouseService.updateById(warehouseDO);
     }
 
-    @ApiOperation(value = "新增仓库")
+    @ApiOperation(value = "仓库库存盘点")
     @PostMapping("/add")
     public Boolean saveWarehouse(@RequestBody WarehouseDO warehouseDO) {
         String position = warehouseDO.getPosition();

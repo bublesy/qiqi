@@ -19,11 +19,11 @@
           style="width: 100%"
         >
           <el-table-column width="50px" align="center" />
-          <el-table-column prop="taskNumber" label="订单编号" />
-          <el-table-column prop="orderQuantity" label="订单量" />
-          <el-table-column prop="deliveryQuantity" label="送货量" />
-          <el-table-column prop="unitPrice" label="单价" />
-          <el-table-column prop="amount" label="金额" />
+          <el-table-column prop="customerNo" label="订单编号" />
+          <el-table-column prop="orderNum" label="订单量" />
+          <el-table-column prop="alreadyDeliveryQuantity" label="送货量" />
+          <el-table-column prop="perPrice" label="单价" />
+          <el-table-column prop="money" label="订单金额" />
           <el-table-column prop="remark" label="备注" />
         </el-table>
         <br>
@@ -66,7 +66,6 @@
 
 <script scope>
 import initData from '@/mixins/initData'
-import { getCustomerById } from '@/api/basedata/customer'
 import { getNamesById } from '@/api/purchase/purchase'
 import { list } from '@/api/basedata/firm'
 
@@ -90,7 +89,7 @@ export default {
   },
   created() {
     this.data = this.$route.query.data
-    console.log(this.data)
+    console.log('a', this.data)
     this.getList()
   },
   methods: {
@@ -117,9 +116,9 @@ export default {
         this.remark = a.remark
         this.customerId = a.customerId
         this.createdBy = a.createdBy
+        this.fullName = a.name
       })
       this.pagination.total = this.tableData.length
-      this.getCustomer()
       this.getName()
       list().then(res => {
         var firmList = []
@@ -131,14 +130,7 @@ export default {
         })
       })
     },
-    // 加载客户
-    getCustomer() {
-      getCustomerById(this.customerId).then(res => {
-        this.fullName = res.name
-        this.remark = res.remark
-      })
-    },
-    // 价值名称
+    // 名称
     getName() {
       getNamesById(this.createdBy).then(res => {
         console.log(res)
