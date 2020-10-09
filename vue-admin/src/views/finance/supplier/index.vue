@@ -10,7 +10,10 @@
           value-format="yyyy-MM"
           size="mini"
         />
-        <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
+        <el-tooltip class="item" effect="dark" content="按条件查询后打印" placement="top">
+          <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
+        </el-tooltip>
+        <el-button type="primary" size="mini" @click="printing">生成月份打印单</el-button>
       </el-form>
       <div>
         <el-table
@@ -32,7 +35,7 @@
           <el-table-column v-show="true" prop="returnAmount" label="退货金额" width="140" />
           <el-table-column v-show="true" prop="costPrice" label="成本价" width="140" />
           <el-table-column v-show="true" prop="totalAmount" label="总金额" width="140" />
-          <el-table-column v-show="true" prop="creditDate" label="账款年月" width="143" />
+          <el-table-column v-show="true" prop="creditDate" label="账款年月" width="160" />
           <el-table-column v-show="true" prop="alreadyMoney" label="已付" width="80" />
           <el-table-column v-show="true" prop="unPayed" label="欠款" width="80" />
           <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="150">
@@ -242,7 +245,8 @@ export default {
     },
     // 打印
     printing() {
-      this.$router.push('/finance/supplier_printing')
+      // this.$router.push('/finance/supplier_printing')
+      this.$router.push({ name: 'Supplier_printing', params: { 'data': this.tableData }})
     },
     handleSelectionChange(row) {
       this.multipleSelection = row

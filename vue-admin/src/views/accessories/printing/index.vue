@@ -99,14 +99,8 @@ export default {
     }
   },
   created() {
-    // console.log(document.getElementById('da'))
     this.tableData = [this.$route.query.data]
     console.log(this.tableData)
-    // this.getList()
-    // getUser().then(res => {
-    //   console.log(res)
-    //   this.tableData = res
-    // })
   },
   methods: {
     // 返回

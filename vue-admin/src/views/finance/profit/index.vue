@@ -13,6 +13,7 @@
         </el-form-item>
         <el-button type="primary" size="mini" @click="loadData()">查询</el-button>
         <el-button type="primary" size="mini" @click="toExcel">导出</el-button>
+        <el-button type="primary" size="mini" @click="presers">批量审核</el-button>
       </el-form>
       <div>
         <el-table
@@ -22,6 +23,7 @@
           style="width: 100%;margin-top:20px"
           border=""
         >
+          <el-table-column type="selection" width="55" />
           <el-table-column v-show="true" prop="name" label="客户名称" />
           <el-table-column v-show="true" prop="no" label="任务编号" />
           <el-table-column v-show="true" prop="customerNo" label="客户单号" />
@@ -47,7 +49,7 @@
           <el-table-column v-show="true" prop="pbilling" label="开单日期" width="180" />
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button :disabled="scope.row.pid !==null ?false:true" size="mini" type="primary" @click="preservation(scope)">保存</el-button>
+              <el-button :disabled="scope.row.pid !==null ?false:true" size="mini" type="primary" @click="preservation(scope)">审核</el-button>
             </template>
           </el-table-column>
 
@@ -85,7 +87,6 @@ export default {
         name: '',
         discount: 100,
         profit: '',
-
         no: '',
         customerNo: '',
         boxType: '',
@@ -125,7 +126,7 @@ export default {
         }
       })
     },
-    // 修改
+    // 审核
     preservation(scope) {
       // console.log(scope.row)
       this.formUpdate.id = scope.row.pid
@@ -133,7 +134,6 @@ export default {
       this.formUpdate.discountAmount = scope.row.discountAmount
       this.formUpdate.profit = scope.row.profit
       updated(this.formUpdate).then(res => {
-        // this.tableData = res
         if (res) {
           this.$message.success('成功')
         } else {
@@ -141,6 +141,10 @@ export default {
         }
         this.loadData()
       })
+    },
+    // 批量审核
+    presers() {
+      console.log(123)
     },
     // 获取列表数据
     loadData() {
@@ -154,10 +158,11 @@ export default {
           if (a.discount === null) {
             a.discount = 100
           }
-          console.log(a.discount)
+          // console.log(a.discount)
           a.amount = a.orderNum * a.perPrice
           a.costAmount = a.costPrice * a.position
           a.profit = a.discountAmount - a.costAmount
+          // console.log(a.profit)
           a.profit = a.profit.toFixed(2)
           if (a.discount === 100) {
             a.profit = a.amount - a.costAmount
