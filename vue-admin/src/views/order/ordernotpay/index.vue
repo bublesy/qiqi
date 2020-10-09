@@ -37,7 +37,7 @@
       <el-table-column prop="no" label="任务编号" width="120" />
       <el-table-column prop="customerNo" label="客户单号" width="120" />
       <el-table-column prop="boxType" label="箱型" width="120" />
-      <el-table-column prop="cartonSize" label="订单尺寸" width="120">
+      <el-table-column prop="cartonSize" label="订单尺寸" width="150">
         <template slot-scope="scope">
           {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
         </template>

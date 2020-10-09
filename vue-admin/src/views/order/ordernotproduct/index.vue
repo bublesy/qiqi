@@ -41,7 +41,7 @@
       <el-table-column prop="material" label="材质" width="120" />
       <el-table-column prop="supplier" label="供方" width="120" />
       <el-table-column prop="incomeNum" label="来料数量" width="120" />
-      <el-table-column prop="cartonSize" label="尺寸" width="120">
+      <el-table-column prop="cartonSize" label="尺寸" width="150">
         <template slot-scope="scope">
           {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
         </template>
