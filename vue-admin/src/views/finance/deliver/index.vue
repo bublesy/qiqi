@@ -66,11 +66,11 @@
 </template>
 
 <script>
-import { endList } from '@/api/end-product/product'
-import { noList } from '@/api/end-product/product'
-import { getUser } from '@/api/accessories/means'
+// import { endList } from '@/api/end-product/product'
+// import { noList } from '@/api/end-product/product'
+// import { getUser } from '@/api/accessories/means'
 import { updatePosting } from '@/api/end-product/product'
-import { wareList } from '@/api/warehouse/warehouse'
+// import { wareList } from '@/api/warehouse/warehouse'
 import initData from '@/mixins/initData'
 
 export default window.$crudCommon({
@@ -157,27 +157,21 @@ export default window.$crudCommon({
       return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
     },
     loadData() {
-      noList().then(res => {
-        this.outNoFor = res
-      })
-      getUser().then(res => {
-        this.deliverymanFor = res
-      })
       this.form.page = this.pagination.page
       this.form.count = this.pagination.size
-      endList(this.form).then(res => {
-        console.log(res)
-        this.pagination.total = res.total
-        this.tableData = []
-        res.list.forEach(a => {
-          this.tableData.push(a)
-        })
-        wareList(this.form).then(res => {
-          res.list.forEach(a => {
-            this.tableData.push(a)
-          })
-        })
-      })
+      // endList(this.form).then(res => {
+      //   console.log(res)
+      //   this.pagination.total = res.total
+      //   this.tableData = []
+      //   res.list.forEach(a => {
+      //     this.tableData.push(a)
+      //   })
+      //   wareList(this.form).then(res => {
+      //     res.list.forEach(a => {
+      //       this.tableData.push(a)
+      //     })
+      //   })
+      // })
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

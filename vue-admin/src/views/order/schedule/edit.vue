@@ -138,8 +138,8 @@ export default {
       }
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.form.productNum = parseInt(this.form.productNum) + parseInt(this.form.proNum)
-          this.form.lossNum = parseInt(this.form.lossNum) + parseInt(this.form.losNum)
+          this.form.productNum = parseInt(this.form.productNum == null ? 0 : this.form.productNum) + parseInt(this.form.proNum)
+          this.form.lossNum = parseInt(this.form.lossNum == null ? 0 : this.form.lossNum) + parseInt(this.form.losNum)
           addOrUpdateSchedule(this.form).then(res => {
             updateProductNum().then(res => {
               if (res) {

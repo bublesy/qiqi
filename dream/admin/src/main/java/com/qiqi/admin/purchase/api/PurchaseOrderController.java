@@ -133,8 +133,7 @@ public class PurchaseOrderController {
             endProductWarehouseDO.setPurQuantity(purchaseOrderDTO.getPurchaseQuantity());
             if ( purchaseOrderDTO.getReturnNum() == null ||  purchaseOrderDTO.getReturnNum() == ""){
                 endProductWarehouseDO.setEndProductPos(purchaseOrderDTO.getPurchaseQuantity());
-                endProductWarehouseDO.setStorageQuantity(Integer.parseInt(endProductWarehouseDO.getEndProductPos())
-                );
+                endProductWarehouseDO.setStorageQuantity(Integer.parseInt(purchaseOrderDTO.getPurchaseQuantity()) );
             }else{
                 String purchaseQuantity = purchaseOrderDTO.getPurchaseQuantity();
                 String returnNum = purchaseOrderDTO.getReturnNum();
