@@ -14,8 +14,10 @@
         <el-form-item label="客户:" prop="name">
           <el-input v-model="form.name" clearable />
         </el-form-item>
-        <el-button type="primary" size="mini" @click="selectData">查询</el-button>
-        <!-- <el-button type="primary" size="mini" :disabled="disabled" @click="printing">生成月份打印单</el-button> -->
+        <el-tooltip class="item" effect="dark" content="按条件查询后打印" placement="top">
+          <el-button type="primary" size="mini" @click="selectData">查询</el-button>
+        </el-tooltip>
+        <el-button type="primary" size="mini" :disabled="disabled" @click="printing">生成月份打印单</el-button>
         <!-- <el-button type="primary" size="mini" @click="purAdd">新增</el-button> -->
         <!-- <el-button type="warning" size="mini" @click="selectPrinting">选择打印</el-button>
         <el-button type="warning" size="mini" @click="wholePrinting">整页打印</el-button>
@@ -49,7 +51,7 @@
 
           <el-table-column v-show="true" prop="payed" label="已付" width="80" />
           <el-table-column v-show="true" prop="unPayed" label="欠款" width="80" />
-          <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="150">
+          <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="120">
             <template slot-scope="scope">
               <div v-for="(item,key) in scope.row.settlementDate" :key="key">
                 {{ item }}
@@ -58,9 +60,9 @@
           </el-table-column>
           <el-table-column v-show="true" prop="post" label="是否过账" width="80" />
           <el-table-column v-show="true" prop="settlement" label="结算状态" width="80" />
-          <el-table-column label="操作" width="213 ">
+          <el-table-column label="操作" width="88">
             <template slot-scope="scope">
-              <el-button size="mini" @click="post(scope.row)">过账</el-button>
+              <!-- <el-button size="mini" @click="post(scope.row)">过账</el-button> -->
               <el-button type="success" size="mini" :disabled="scope.row.unPayed <= 0 ? true : false" @click="settlement(scope.row)">结算</el-button>
             </template>
           </el-table-column>
@@ -248,6 +250,7 @@ export default {
     // 获取列表数据
     loadData() {
       record(this.form).then(res => {
+        console.log(res)
         this.tableData1 = res.list
         this.tableData1.forEach(data => {
           data.unPayed = Math.abs(data.money - data.beginReceive - data.payed)
@@ -258,7 +261,7 @@ export default {
             data.settlement = '未结算'
           }
         })
-          .this.pagination.total = res.total
+        this.pagination.total = res.total
       })
       // 获取用户数据
       customer().then(res => {
@@ -277,31 +280,6 @@ export default {
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '采购单导出')
     },
-    // 选择打印
-    selectPrinting() {
-      if (this.form.carryTo === '已过期') {
-        this.$router.push('/purchase_not_included_overdue')
-      } else if (this.form.carryTo === '未过期') {
-        this.$router.push('/purchase_not_included')
-      } else {
-        if (this.multipleSelection.length === 0) {
-          this.$message.error('请选择打印的内容！！！')
-          return
-        } else {
-          this.$router.push('/purchase_order_printing')
-        }
-      }
-    },
-    // 整页打印
-    wholePrinting() {
-      if (this.form.carryTo === '已过期') {
-        this.$router.push('/purchase_not_included_overdue')
-      } else if (this.form.carryTo === '未过期') {
-        this.$router.push('/purchase_not_included')
-      } else {
-        this.$router.push('/purchase_order_printing')
-      }
-    },
     // 打印
     printing() {
       // tableData1
@@ -309,51 +287,51 @@ export default {
     },
     handleSelectionChange(row) {
       this.multipleSelection = row
-    },
-    // 删除
-    drop() {
-      this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      })
-    },
-    // 编辑订单
-    modifyPur(row) {
-      this.purAddVisible = true
-      this.titleType = '编辑'
-    },
-    // 新增订单
-    purAdd() {
-      this.purAddVisible = true
-      this.titleType = '新增'
-      // 新增初始化数据
-      this.formAdd = {}
-    },
-    // 取消
-    purAddNo() {
-      this.purAddVisible = false
-      this.addTableData = []
-    },
-    purAddOk(purForm) {
-      this.$refs[purForm].validate((valid) => {
-        if (valid) {
-          this.purAddVisible = false
-        } else {
-          return false
-        }
-      })
     }
+    // // 删除
+    // drop() {
+    //   this.$confirm('此操作将永久删除该, 是否继续?', '提示', {
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     type: 'warning'
+    //   }).then(() => {
+    //     this.$message({
+    //       type: 'success',
+    //       message: '删除成功'
+    //     })
+    //   }).catch(() => {
+    //     this.$message({
+    //       type: 'info',
+    //       message: '已取消删除'
+    //     })
+    //   })
+    // },
+    // // 编辑订单
+    // modifyPur(row) {
+    //   this.purAddVisible = true
+    //   this.titleType = '编辑'
+    // },
+    // // 新增订单
+    // purAdd() {
+    //   this.purAddVisible = true
+    //   this.titleType = '新增'
+    //   // 新增初始化数据
+    //   this.formAdd = {}
+    // },
+    // 取消
+    // purAddNo() {
+    //   this.purAddVisible = false
+    //   this.addTableData = []
+    // }
+    // purAddOk(purForm) {
+    //   this.$refs[purForm].validate((valid) => {
+    //     if (valid) {
+    //       this.purAddVisible = false
+    //     } else {
+    //       return false
+    //     }
+    //   })
+    // }
   }
 }
 </script>

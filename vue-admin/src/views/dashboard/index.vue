@@ -6,19 +6,19 @@
         <el-col
           :span="3"
         ><h1>￥{{ amount }}</h1>
-          营业额</el-col>
+          年度营业额</el-col>
         <el-col
           :span="3"
         ><h1>￥{{ unpaid }}</h1>
           客户未付款</el-col>
         <el-col
           :span="3"
-        ><h1>￥{{ amount }}</h1>
+        ><h1>￥{{ paid }}</h1>
           客户已收款</el-col>
         <el-col
           :span="3"
         ><h1>{{ allPos }}</h1>
-          仓库实际库存</el-col>
+          仓库数量</el-col>
         <el-col
           :span="3"
         ><h1>{{ pos }}</h1>
@@ -50,7 +50,8 @@
         <el-col
           :span="3"
         ><h1>￥{{ gross }}</h1>
-          毛利</el-col>
+          毛利
+        </el-col>
         <el-col
           :span="3"
         ><h1>{{ customs }}</h1>
@@ -216,30 +217,13 @@ export default {
     })
     // 毛利
     mlist(this.mlists).then((res) => {
+      console.log(res)
       var ml = 0
       res.list.forEach((a) => {
-        // a.discount = 100
-        if (a.discount === null) {
-          a.discount = 100
-        }
-        a.amount = a.orderNum * a.perPrice
         a.costAmount = a.costPrice * a.position
         a.profit = a.discountAmount - a.costAmount
-        a.profit = a.profit.toFixed(2)
-        if (a.discount === 100) {
-          a.profit = a.amount - a.costAmount
-        }
-        if (a.position === '0') {
-          a.quantity = a.endProductPos
-        }
-        if (a.endProductPos === '0') {
-          a.quantity = a.position
-        }
-        if (a.discount === 100) {
-          a.discountAmount = a.amount
-        }
-        ml += a.amount
-        this.gross = ml
+        ml += a.profit
+        this.gross = ml.toFixed(2)
       })
     })
     // 营业额
@@ -270,7 +254,7 @@ export default {
           a1 += parseInt(a.orderQuantity) - parseInt(a.deliveryQuantity)
         }
         if (a.deliveryStatus === '已送货') {
-          a2 += parseInt(a.deliveryQuantity)
+          a2 += parseInt(a.orderQuantity) - parseInt(a.deliveryQuantity)
         }
         a3 += parseInt(a.position)
       })
@@ -280,6 +264,7 @@ export default {
       this.allPos = a3 + a2
     })
     endWarehouseList(this.formEndWare).then((res) => {
+      // console.log('a',res)
       var a1 = 0
       var a2 = 0
       var a3 = 0

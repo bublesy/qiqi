@@ -1,66 +1,88 @@
 <template>
   <div class="app-container">
     <div class="xz" />
-    <!-- <el-select v-model="value" placeholder="请选择月份">
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select>
-    <el-select v-model="value" placeholder="请选择客户">
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select> -->
     <el-button @click="toBack">返回</el-button>
     <el-button v-print="'#printTest'" type="primary">打印</el-button>
-    <!-- <el-pagination
-      style="float:right;"
-      :current-page="currentPage4"
-      :page-sizes="[10, 20, 30, 50]"
-      :page-size="1"
-      layout="prev, pager, next, jumper"
-      :total="10"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    /> -->
     <div id="printTest" class="biaoge">
       <h2 style="text-align:center">供方月结对账单</h2>
-      <p>供方:佳宏包装</p>
+      <p>供方:{{ name }}</p>
       <p style="text-align:center;margin-top:-40px">打印日期:{{ value }}</p>
-      <table>
-        <tr>
-          <th>任务编号</th>
-          <th>入厂日期</th>
-          <th>采购序号</th>
-          <th>材质</th>
-          <th>纸长</th>
-          <th>纸宽</th>
-          <th>购入数量</th>
-          <th>退货数量</th>
-          <th>退货金额</th>
-          <th>单价</th>
-          <th>账款年月</th>
-        </tr>
-        <tr v-for="item in tableData" id="printTest" :key="item.id">
-          <td>{{ item.number }}</td>
-          <td>{{ item.data }}</td>
-          <td>{{ item.serial }}</td>
-          <td>{{ item.texture }}</td>
-          <td>{{ item.long }}</td>
-          <td>{{ item.wide }}</td>
-          <td>{{ item.buy }}</td>
-          <td>{{ item.return }}</td>
-          <td>{{ item.amount }}</td>
-          <td>{{ item.univalence }}</td>
-          <td>{{ item.credit }}</td>
-        </tr>
-      </table>
+      <el-table
+        :data="tableData"
+        border
+        style="width: 400,margin-top:20px"
+      >
+        <el-table-column
+          prop="taskNumber"
+          label="任务编号"
+        />
+        <el-table-column
+          prop="inProductDate"
+          label="入厂日期"
+        />
+        <el-table-column
+          prop="documentsNo"
+          label="采购序号"
+          width="160"
+        />
+        <el-table-column
+          prop="material"
+          label="材质"
+        />
+        <el-table-column
+          prop="paperLength"
+          label="纸长"
+        />
+        <el-table-column
+          prop="paperWidth"
+          label="纸宽"
+        />
+        <el-table-column
+          prop="purchaseQuantity"
+          label="购入数量"
+        />
+        <el-table-column
+          prop="returnNum"
+          label="退货数量"
+        />
+        <el-table-column
+          prop="returnAmount"
+          label="退货金额"
+        />
+        <el-table-column
+          prop="costPrice"
+          label="成本价"
+        />
+        <el-table-column
+          prop="totalAmount"
+          label="总金额"
+        />
+        <el-table-column
+          prop="creditDate"
+          label="账款年月"
+          width="160"
+        />
+        <el-table-column
+          prop="alreadyMoney"
+          label="已付"
+        />
+        <el-table-column
+          prop="unPayed"
+          label="欠款"
+        />
+        <el-table-column
+          prop="settlementDate"
+          label="结算日期"
+        />
+        <el-table-column
+          prop="carryTo"
+          label="是否过账"
+        />
+        <el-table-column
+          prop="settlementStatus"
+          label="结算状态"
+        />
+      </el-table>
     </div>
   </div>
 </template>
@@ -68,7 +90,7 @@
 <script>
 
 export default window.$crudCommon({
-  name: 'Supplier',
+  name: 'Supplier_printing',
   data() {
     return {
       a: [],
@@ -85,14 +107,16 @@ export default window.$crudCommon({
         amount: 6.5,
         univalence: 550,
         credit: '2020-09-10'
-
-      }]
+      }],
+      name: ''
     }
   },
   created: function() {
+    this.tableData = this.$route.params.data
+    this.name = this.$route.params.data[0].customerName
+    console.log(this.tableData)
     var aData = new Date()
     console.log(aData) // Wed Aug 21 2019 10:00:58 GMT+0800 (中国标准时间)
-
     this.value =
       aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
     console.log(this.value) // 2019-8-20
@@ -179,7 +203,7 @@ export default window.$crudCommon({
     delAfter() {}
   }
 }, {
-  name: 'finance/supplier', // 模块名字
+  name: 'finance/supplier_printing', // 模块名字
   list: 'getRoles', // 列表接口名字
   update: 'editRole', // 更新接口名字
   add: 'addRole', // 新增接口名字

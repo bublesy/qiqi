@@ -54,6 +54,30 @@
           prop="money"
           label="金额"
         />
+        <el-table-column
+          prop="beginReceive"
+          label="期初"
+        />
+        <el-table-column
+          prop="payed"
+          label="已付"
+        />
+        <el-table-column
+          prop="unPayed"
+          label="欠款"
+        />
+        <el-table-column
+          prop="settlementDate"
+          label="结算日期"
+        />
+        <el-table-column
+          prop="post"
+          label="是否过账"
+        />
+        <el-table-column
+          prop="settlement"
+          label="结算状态"
+        />
       </el-table>
     </div>
   </div>
@@ -88,7 +112,7 @@ export default window.$crudCommon({
     // 截取到月
     this.time = this.$route.params.data[0].shipDate
     this.time = this.time.substring(6, 7)
-    console.log(this.time)
+    // console.log(this.time)
     this.customerId = this.tableData[0].customerId
     // console.log(this.tableData)
     getCustomerById(this.customerId).then(res => {
@@ -98,11 +122,9 @@ export default window.$crudCommon({
       this.phone = res.phone
       this.fax = res.fax
     })
-
     var aData = new Date()
     console.log(aData) // Wed Aug 21 2019 10:00:58 GMT+0800 (中国标准时间)
-    this.data =
-      aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
+    this.data = aData.getFullYear() + '-' + (aData.getMonth() + 1) + '-' + aData.getDate()
     // console.log(this.data) // 2019-8-20
   },
   methods: {
@@ -118,22 +140,10 @@ export default window.$crudCommon({
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '对账明细打印单')
     },
-
-    setVal() {
-      this.a = [{
-        label: '选项1',
-        value: 0
-      }, {
-        label: '选项2',
-        value: 1
-      }]
-    },
-
     // beforeOpen(done, type) {
     //   this.setVal()
     //   done()
     // },
-
     // 列表前操作方法
     listBefore() {
     },
