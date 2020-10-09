@@ -133,11 +133,11 @@ export default {
       this.form.modCount++
     },
     sure() {
-      if (this.form.productNum > this.productNums) {
-        return this.$message.info('已产数量不能大于订单数量')
-      }
       this.$refs.form.validate(valid => {
         if (valid) {
+          if (parseInt(this.form.productNum == null ? 0 : this.form.productNum) + parseInt(this.form.proNum) > this.productNums) {
+            return this.$message.info('已产数量不能大于订单数量')
+          }
           this.form.productNum = parseInt(this.form.productNum == null ? 0 : this.form.productNum) + parseInt(this.form.proNum)
           this.form.lossNum = parseInt(this.form.lossNum == null ? 0 : this.form.lossNum) + parseInt(this.form.losNum)
           addOrUpdateSchedule(this.form).then(res => {

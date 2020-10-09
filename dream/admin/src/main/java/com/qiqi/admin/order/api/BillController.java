@@ -1,19 +1,11 @@
 package com.qiqi.admin.order.api;
 
 import cn.hutool.core.convert.Convert;
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.TypeReference;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.admin.order.dto.BillDTO;
 import com.qiqi.admin.order.dto.BillVO;
-import com.qiqi.basicdata.entity.CustomerInformationDO;
-import com.qiqi.basicdata.service.CustomerInformationService;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.finance.entity.CustomerDetailDO;
 import com.qiqi.finance.service.CustomerDetailService;
@@ -23,7 +15,6 @@ import com.qiqi.order.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -82,7 +73,6 @@ public class BillController {
         if(startDate == null || endDate == null){
             return null;
         }
-
         PageEntity<OrderFinanceDTO> pageEntity = orderService.listOrder(new Page<>(page, count), customerId, startDate, endDate);
         return pageEntity;
     }

@@ -18,16 +18,16 @@
 </template>
 
 <script>
-import { getSingleOrder, addOrUpdateOrder } from '@/api/order/customerOrder'
+import { updateSign } from '@/api/order/shipdaily'
 export default {
   props: {
     dialog: {
       type: Object,
       default: () => {}
     },
-    id: {
-      type: String,
-      default: ''
+    row: {
+      type: Object,
+      default: () => {}
     }
   },
   data() {
@@ -40,15 +40,18 @@ export default {
   watch: {
     'dialog.show': function(val) {
       if (val) {
-        getSingleOrder(this.id).then(res => {
-          this.form = res
-        })
+        // getSingleOrder(this.id).then(res => {
+        //   this.form = res
+        // })
+        this.form.sign = (this.row.sign === '已回签')
       }
     }
   },
   methods: {
     sure() {
-      addOrUpdateOrder(this.form).then(res => {
+      console.log(this.row)
+      this.form.id = this.row.id
+      updateSign(this.form).then(res => {
         if (res) {
           this.$message.success('回签成功')
           this.$emit('init')

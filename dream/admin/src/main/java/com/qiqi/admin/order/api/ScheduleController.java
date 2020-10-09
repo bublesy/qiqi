@@ -14,6 +14,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.common.entity.PageEntity;
 import com.qiqi.order.service.OrderService;
+import com.qiqi.purchase.entity.PurchaseOrderDO;
+import com.qiqi.purchase.service.PurchaseOrderService;
 import com.qiqi.sys.entity.SysUserDO;
 import com.qiqi.sys.service.SysUserService;
 import com.qiqi.warehouse.entity.WarehouseDO;
@@ -69,6 +71,9 @@ public class ScheduleController {
 
     @Resource
     private WarehouseService warehouseService;
+    @Resource
+    PurchaseOrderService purchaseOrderService;
+    private Integer num;
 
     @ApiOperation(value = "获取排期(列表)")
     @PostMapping("/list")
@@ -110,7 +115,10 @@ public class ScheduleController {
         if (scheduleDO.getDate() != null && scheduleDO.getModCount() > 0) {
             scheduleDO.setDate(TimeAddEight.formatTimeEight(scheduleDO.getDate()));
         }
-
+        if(scheduleDO.getId() != null){
+            ScheduleDO scheduleDO1 = scheduleService.getById(scheduleDO.getId());
+            this.num = scheduleDO1.getProductNum();
+        }
         boolean b = scheduleService.saveOrUpdate(scheduleDO);
         this.scheduleId = scheduleDO.getId();
         this.product = scheduleDO.getProductNum();
@@ -133,10 +141,7 @@ public class ScheduleController {
         List<OrderDO> orders = orderService.list(new QueryWrapper<OrderDO>().eq("schedule_id", this.scheduleId));
         List<Long> collect = orders.stream().map(data -> data.getId()).collect(Collectors.toList());
         // 差值
-        ScheduleDO scheduleDO = scheduleService.getById(scheduleId);
-        Integer a= product - (scheduleDO.getProductNum()==null ? 0 :scheduleDO.getProductNum());
-
-
+        Integer a= product - (num == null ? 0 :num);
         List<EndProductWarehouseDO> endProductWarehouse = endProductWarehouseService.list(new QueryWrapper<EndProductWarehouseDO>().eq("order_id", collect.get(0)));
         if (endProductWarehouse.size() !=0){
             Integer productNum = endProductWarehouse.get(0).getProductNum() == null ? product : endProductWarehouse.get(0).getProductNum();
@@ -160,8 +165,15 @@ public class ScheduleController {
         //非成品仓库
         if (scheduleId != null) {
             WarehouseDO warehouseDO = new WarehouseDO();
-            warehouseDO.setPosition(lossNum.toString());
+            warehouseDO.setDeliveryQuantity(lossNum.toString());
             warehouseService.update(warehouseDO,new QueryWrapper<WarehouseDO>().eq("order_id",collect.get(0)));
+
+            PurchaseOrderDO purchaseOrderDO = new PurchaseOrderDO();
+            List<PurchaseOrderDO> purchaseOrderList = purchaseOrderService.list(new QueryWrapper<PurchaseOrderDO>().eq("order_id", collect.get(0)));
+            String position = purchaseOrderList.get(0).getPosition();
+            int i = Integer.parseInt(position);
+            purchaseOrderDO.setPosition(String.valueOf(i-lossNum));
+            purchaseOrderService.update(purchaseOrderDO,new QueryWrapper<PurchaseOrderDO>().eq("order_id",collect.get(0)));
         }
 
         return endProductWarehouseService.saveOrUpdate(endProductWarehouseDO, new QueryWrapper<EndProductWarehouseDO>().eq("order_id", collect.get(0).toString()));

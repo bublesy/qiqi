@@ -76,12 +76,16 @@ public class DeliveryNoteController {
                     data.setBoxType(data2.getBoxType());
                     data.setName(data2.getName());
                     data.setPerPrice(data2.getPerPrice());
-                    data.setSign(data2.getSign());
                     result.add(data);
                 }
             });
         });
         return new PageEntity<>(iPage.getTotal(), result);
+    }
+    @ApiOperation("修改回签状态")
+    @PostMapping("/sign")
+    public Boolean updateSign(@RequestBody DeliveryNoteDO deliveryNoteDO){
+        return deliveryNoteService.updateById(deliveryNoteDO);
     }
 
     @GetMapping("/getDeliveryList{id}")
