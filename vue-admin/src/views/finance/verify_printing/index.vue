@@ -110,12 +110,11 @@ export default window.$crudCommon({
     this.tableData = this.$route.params.data
     this.name = this.$route.params.data[0].name
     // 截取到年
-    this.shipDate = this.$route.params.data[0].shipDate
-    console.log(this.shipDate)
+    this.shipDate = this.$route.params.data[0].deliveryDate
     this.shipDate = this.shipDate.substring(0, 4)
 
     // 截取到月
-    this.time = this.$route.params.data[0].shipDate
+    this.time = this.$route.params.data[0].deliveryDate
     // this.time = this.time.substring(5, 7)
     this.time = this.time.split('-')[1]
     console.log(this.time)

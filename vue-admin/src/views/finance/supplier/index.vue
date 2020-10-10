@@ -196,7 +196,7 @@ export default {
           }, 0)
           sums[index] += ' '
         } else {
-          sums[index] = 'N/A'
+          sums[index] = '0'
         }
       })
 
