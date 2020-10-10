@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.admin.warehouse.model.WarehouseList;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -75,6 +77,32 @@ public class WarehouseController {
         IPage<WarehouseDTO> iPage = warehouseService.wareList(new Page<>(warehouseDTO.getPage(),warehouseDTO.getSize()),warehouseDTO);
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<WarehouseDTO>>() {}, iPage.getRecords()));
     }
+
+
+    @GetMapping("/getWarDate")
+    public List wareList(){
+        List<WarehouseDO> list = warehouseService.list();
+        List wareList = new ArrayList();
+        for (WarehouseDO warehouseDO:list){
+            String position = warehouseDO.getPosition();
+            int parseInt = Integer.parseInt(position);
+            if (warehouseDO.getDeliveryQuantity() !=null ){
+                String deliveryQuantity = warehouseDO.getDeliveryQuantity();
+                int parseInt1 = Integer.parseInt(deliveryQuantity);
+                int a=parseInt-parseInt1;
+                if (a<200){
+                    wareList.add(warehouseDO);
+                }
+            }else{
+                if (parseInt<200){
+                    wareList.add(warehouseDO);
+                }
+            }
+        }
+        return wareList;
+    }
+
+
 
     @ApiOperation(value = "获取仓库(单个)")
     @GetMapping("/{id}")

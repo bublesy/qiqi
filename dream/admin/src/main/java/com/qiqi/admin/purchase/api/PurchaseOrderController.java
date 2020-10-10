@@ -25,9 +25,11 @@ import com.qiqi.purchase.service.PurchaseOrderService;
 
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.text.DateFormat;
@@ -331,5 +333,40 @@ public class PurchaseOrderController {
     @GetMapping("/remove/{id}")
     public Boolean deletePurchaseOrderById(@PathVariable Long id) {
         return purchaseOrderService.empty(id);
+    }
+
+    @GetMapping("/getSupplierSettData")
+    public List getSupplierSettData(){
+        List<PurchaseOrderDO> list = purchaseOrderService.list();
+        List supplierList = new ArrayList();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        for (PurchaseOrderDO purchaseOrderDO:list){
+            String settlementPeriod = purchaseOrderDO.getSettlementPeriod();
+            int parseInt = Integer.parseInt(settlementPeriod);
+            String billingDate = purchaseOrderDO.getBillingDate();
+            Date dt = null;
+            try {
+                 dt= format.parse(billingDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Calendar rightNow = Calendar.getInstance();
+            rightNow.setTime(dt);
+            rightNow.add(Calendar.DAY_OF_YEAR,(parseInt+3));//日期加10天
+            Date dt1=rightNow.getTime();
+            long time1 = dt1.getTime();
+            Date date = null;
+            String format1 = format.format(new Date());
+            try {
+                date = format.parse(format1);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            long time = date.getTime();
+            if (time1<=time){
+                supplierList.add(purchaseOrderDO);
+            }
+        }
+        return supplierList;
     }
 }
