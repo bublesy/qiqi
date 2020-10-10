@@ -1,5 +1,72 @@
 <template>
   <div class="dashboard-container">
+    <!-- 新增/编辑盘点数量 -->
+    <el-dialog title="预警" :visible.sync="warningVisible">
+      <h3 align="center">仓库预警</h3>
+      <el-table
+        ref="singleTable"
+        :data="warData"
+        highlight-current-row
+        style="width: 100%"
+      >
+        <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" />
+        <el-table-column v-show="true" prop="surplusNum" label="仓库库存剩余数量" />
+      </el-table>
+      <br>
+      <h3 align="center">成品仓库预警</h3>
+      <el-table
+        ref="singleTable"
+        :data="endWarData"
+        highlight-current-row
+        style="width: 100%"
+      >
+        <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" />
+        <el-table-column v-show="true" prop="endProductPos" label="成品库存剩余数量" />
+      </el-table>
+      <br>
+      <h3 align="center">客户结算预警</h3>
+      <el-table
+        ref="singleTable"
+        :data="custSettData"
+        highlight-current-row
+        style="width: 100%"
+      >
+        <el-table-column v-show="true" prop="position" label="客户结算预警" />
+      </el-table>
+      <h3 align="center">供应商结算预警</h3>
+      <el-table
+        ref="singleTable"
+        :data="supplierSettData"
+        highlight-current-row
+        style="width: 100%"
+      >
+        <el-table-column v-show="true" prop="documentsNo" label="采购单号" />
+        <el-table-column v-show="true" prop="settlementDate" label="结算日期" />
+        <el-table-column v-show="true" prop="purchaseQuantity" label="订单数量" />
+        <el-table-column v-show="true" prop="costPrice" label="成本价" />
+        <el-table-column v-show="true" prop="amount" label="结算金额" />
+        <el-table-column v-show="true" prop="alreadyMoney" label="已收金额" />
+        <el-table-column v-show="true" prop="stayAlreadyMoney" label="代收金额" />
+      </el-table>
+      <br>
+      <h3 align="center">成品发货预警</h3>
+      <el-table
+        ref="singleTable"
+        :data="endDisData"
+        highlight-current-row
+        style="width: 100%"
+      >
+        <el-table-column v-show="true" prop="orderQuantity" label="订单数量" />
+        <el-table-column v-show="true" prop="alreadyDeliveryQuantity" label="已发货数量" />
+        <el-table-column v-show="true" prop="stayDeliveryQuantity" label="订单待发货数量" />
+        <el-table-column v-show="true" prop="endProductPos" label="成品仓库剩余库存" />
+        <el-table-column v-show="true" prop="storageQuantity" label="成品入库数量" />
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="warningNo">取 消</el-button>
+        <el-button size="small" type="primary" @click="warningOk('purForm')">确 定</el-button>
+      </span>
+    </el-dialog>
     <H4>营业数据</H4>
     <el-card class="box-card">
       <el-row :gutter="20" style="text-align: center">
@@ -17,11 +84,11 @@
           客户已付款</el-col>
         <el-col
           :span="3"
-        ><h1>￥{{ unpayed }}</h1>
+        ><h1>￥0</h1>
           供应商未付款</el-col>
         <el-col
           :span="3"
-        ><h1>￥{{ yfmoney }}</h1>
+        ><h1>￥0</h1>
           供应商已付款</el-col>
         <el-col
           :span="3"
@@ -58,7 +125,7 @@
           成品仓库未发货</el-col>
         <el-col
           :span="3"
-        ><h1>￥{{ paid-yfmoney }}</h1>
+        ><h1>￥{{ gross }}</h1>
           毛利
         </el-col>
         <el-col
@@ -98,6 +165,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { getWarDate } from '@/api/warehouse/warehouse'
+import { getEndWarDate } from '@/api/warehouse/warehouse'
+import { getSupplierSettData } from '@/api/warehouse/warehouse'
+import { getEndDisData } from '@/api/warehouse/warehouse'
+
 import {
   purchase,
   get,
@@ -107,8 +179,8 @@ import {
   unpaid,
   orders,
   warehouseList,
-  endWarehouseList
-  // mlist
+  endWarehouseList,
+  mlist
 } from '@/api/accessories/means'
 export default {
   name: 'Dashboard',
@@ -154,7 +226,8 @@ export default {
       dateType1: 'date',
       x: {
         page: 1,
-        size: 10
+        size: 10,
+        time: ''
       },
       //  供应商相关
       alreadyMoney: '',
@@ -210,8 +283,7 @@ export default {
         pbilling: '',
         quantity: '',
         position: 0,
-        deliveryQuantity: 0,
-        alreadyMoney: 0
+        deliveryQuantity: 0
       },
       surplus: 0,
       storageQuantity: 0,
@@ -219,34 +291,27 @@ export default {
       alreadyDeliveryQuantity: 0,
       delivereds: '',
       time: '',
-      unpayed: 0,
-      yfmoney: 0,
-      totalAmout: 0,
-      aaa: {
+      queryParams: {
         size: 10,
-        page: 1
-      }
+        page: 1,
+        time: ''
+      },
+      warningVisible: false,
+      warData: [], custSettData: [], supplierSettData: [], endWarData: [], endDisData: []
     }
   },
   computed: {
     ...mapGetters(['name'])
   },
   created() {
-    // 供应商已结未结
-    purchase(this.aaa).then(res => {
+    // 供应商已结未结 this.queryParams.time = this.form.time
+    // if (this.queryParams.time === null) {
+    //   this.$set(this.queryParams, 'time', '')
+    // }
+    // this.queryParams.time = this.aaa.time
+    console.log(this.queryParams)
+    purchase(this.queryParams).then(res => {
       console.log('供应商', res)
-      var not = 0
-      var tot = 0
-      res.list.forEach((a) => {
-        if (a.alreadyMoney === null) {
-          a.alreadyMoney = 0
-        }
-        not += parseInt(a.alreadyMoney)
-        tot += parseInt(a.totalAmount)
-      })
-      this.yfmoney = not
-      this.totalAmout = tot
-      this.unpayed = this.totalAmout - this.yfmoney
     })
     // 未付款
     unpaid(this.un).then(res => {
@@ -257,16 +322,16 @@ export default {
       this.paid = res
     })
     // 毛利
-    // mlist(this.mlists).then((res) => {
-    //   // console.log(res)
-    //   var ml = 0
-    //   res.list.forEach((a) => {
-    //     a.costAmount = a.costPrice * a.position
-    //     a.profit = a.discountAmount - a.costAmount
-    //     ml += a.profit
-    //     this.gross = ml.toFixed(2)
-    //   })
-    // })
+    mlist(this.mlists).then((res) => {
+      // console.log(res)
+      var ml = 0
+      res.list.forEach((a) => {
+        a.costAmount = a.costPrice * a.position
+        a.profit = a.discountAmount - a.costAmount
+        ml += a.profit
+        this.gross = ml.toFixed(2)
+      })
+    })
     // 营业额
     amount(this.am).then((res) => {
       this.amount = res
@@ -336,11 +401,57 @@ export default {
       }
       this.initCharts()
     })
+    this.getWarning()
   },
   mounted() {
     this.initCharts()
   },
   methods: {
+    warningNo() { this.warningVisible = false },
+    warningOk() { this.warningVisible = false },
+    getWarning() {
+      this.warningVisible = true
+      getWarDate().then(res => {
+        this.warData = res
+        this.warData.forEach(a => {
+          var b = parseInt(a.position)
+          var c = parseInt(a.deliveryQuantity)
+          a.surplusNum = b - c
+        })
+      })
+      getEndWarDate().then(res => {
+        this.endWarData = res
+      })
+      getSupplierSettData().then(res => {
+        this.supplierSettData = res
+        this.supplierSettData.forEach(a => {
+          a.stayAlreadyMoney = parseInt(a.amount) - a.alreadyMoney
+          var t = new Date(a.billingDate)
+          var t_s = t.getTime()
+          var days = parseInt(a.settlementPeriod)
+          var time = t_s + 1000 * 60 * 60 * 24 * days
+          var date = new Date(time)
+          var year = date.getFullYear()
+          /* 在日期格式中，月份是从0开始的，因此要加0
+          * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+          * */
+          var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+          var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+          var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+          var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+          var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+          // 拼接
+          year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
+          a.settlementDate = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
+        })
+      })
+      getEndDisData().then(res => {
+        this.endDisData = res
+        this.endDisData.forEach(a => {
+          a.stayDeliveryQuantity = parseInt(a.orderQuantity) - a.alreadyDeliveryQuantity
+        })
+      })
+    },
     initCharts() {
       const myChart = this.$echarts.init(this.$refs.chart)
       myChart.setOption({

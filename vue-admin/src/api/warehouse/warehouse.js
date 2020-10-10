@@ -27,3 +27,20 @@ export function wareList(data) {
 export function check(data) {
   return request({ url: '/warehouse/check', method: 'post', data: data })
 }
+
+export function getWarDate(params) {
+  return request({ url: '/warehouse/getWarDate', method: 'get', params: params })
+}
+
+export function getEndWarDate(params) {
+  return request({ url: '/end/product/warehouse/getEndWarDate', method: 'get', params: params })
+}
+
+export function getSupplierSettData(params) {
+  return request({ url: '/purchase/order/getSupplierSettData', method: 'get', params: params })
+}
+
+export function getEndDisData(params) {
+  return request({ url: '/end/product/warehouse/getEndDisData', method: 'get', params: params })
+}
+

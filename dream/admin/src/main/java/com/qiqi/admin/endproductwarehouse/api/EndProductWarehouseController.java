@@ -2,6 +2,7 @@ package com.qiqi.admin.endproductwarehouse.api;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qiqi.admin.warehouse.model.WarehouseList;
 import com.qiqi.endproductwarehouse.entity.EndProductWarehouseDO;
 import cn.hutool.core.convert.Convert;
@@ -28,6 +29,7 @@ import javax.annotation.Resource;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -242,4 +244,25 @@ public class EndProductWarehouseController {
     public Boolean deleteEndProductWarehouseById(@PathVariable Long id) {
         return endProductWarehouseService.removeById(id);
     }
+
+    @GetMapping("/getEndWarDate")
+    public List getEndWarDate(){
+       return endProductWarehouseService.list(new QueryWrapper<EndProductWarehouseDO>().le("end_product_pos", 200));
+    }
+
+    @GetMapping("/getEndDisData")
+    public List getEndDisData(){
+        List<EndProductWarehouseDO> list = endProductWarehouseService.list();
+        List endList = new ArrayList();
+        for (EndProductWarehouseDO endProductWarehouseDO :list){
+            Integer alreadyDeliveryQuantity = endProductWarehouseDO.getAlreadyDeliveryQuantity();
+            String orderQuantity = endProductWarehouseDO.getOrderQuantity();
+            int parseInt = Integer.parseInt(orderQuantity);
+            if (alreadyDeliveryQuantity!=parseInt){
+                endList.add(endProductWarehouseDO);
+            }
+        }
+        return endList;
+    }
+
 }
