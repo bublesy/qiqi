@@ -96,3 +96,8 @@ export function endWarehouseList(params) {
 export function mlist(data) {
   return request({ url: '/purchase/order/list', method: 'get', params: data })
 }
+// 客户结算预警
+export function client() {
+  return request({ url: '/home/warning', method: 'get' })
+}
+

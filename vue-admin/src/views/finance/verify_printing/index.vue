@@ -20,6 +20,8 @@
       <el-table
         :data="tableData"
         border
+        :summary-method="getSummaries"
+        show-summary
         style="width: 400,margin-top:20px"
       >
         <!-- <el-table-column
@@ -38,10 +40,11 @@
           prop="boxType"
           label="箱型"
         />
-        <el-table-column
-          prop="unit"
-          label="长x宽x高"
-        />
+        <el-table-column v-show="true" label="长x宽x高" prop="num">
+          <template slot-scope="scope">
+            {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="orderNum"
           label="数量"
@@ -108,10 +111,14 @@ export default window.$crudCommon({
     this.name = this.$route.params.data[0].name
     // 截取到年
     this.shipDate = this.$route.params.data[0].shipDate
+    console.log(this.shipDate)
     this.shipDate = this.shipDate.substring(0, 4)
+
     // 截取到月
     this.time = this.$route.params.data[0].shipDate
-    this.time = this.time.substring(6, 7)
+    // this.time = this.time.substring(5, 7)
+    this.time = this.time.split('-')[1]
+    console.log(this.time)
     // console.log(this.time)
     this.customerId = this.tableData[0].customerId
     // console.log(this.tableData)
@@ -128,6 +135,36 @@ export default window.$crudCommon({
     // console.log(this.data) // 2019-8-20
   },
   methods: {
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '总价'
+          return
+        }
+        if (index === 1 || index === 2 || index === 3 || index === 5 || index === 10 || index === 11) {
+          sums[index] = ''
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index] += ' '
+        } else {
+          sums[index] = 'N/A'
+        }
+      })
+
+      return sums
+    },
     // 返回
     toBack() {
       this.$router.push('/finance/verify')
@@ -135,8 +172,8 @@ export default window.$crudCommon({
     // 打印功能
     toExcel() {
       var list = this.tableData
-      const th = ['出货日期', '出货单号', '物品单号/款号', '箱型', '长x宽x高', '数量', '单价', '金额']
-      const filterVal = ['data', 'shipment', 'goods', 'type', 'long', 'number', 'price', 'money']
+      const th = ['任务编号', '物品单号/款号', '箱型', '长x宽x高', '数量', '单价', '金额', '期初', '已付', '欠款', '结算日期', '结算状态']
+      const filterVal = ['no', 'modelNo', 'boxType', 'num', 'orderNum', 'perPrice', 'money', 'beginReceive', 'payed', 'unPayed', 'settlementDate', 'settlement']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '对账明细打印单')
     },

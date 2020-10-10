@@ -11,6 +11,8 @@
         :data="tableData"
         border
         style="width: 400,margin-top:20px"
+        :summary-method="getSummaries"
+        show-summary
       >
         <el-table-column
           prop="taskNumber"
@@ -18,7 +20,7 @@
         />
         <el-table-column
           prop="inProductDate"
-          label="入厂日期"
+          label="入仓日期"
         />
         <el-table-column
           prop="documentsNo"
@@ -125,6 +127,36 @@ export default window.$crudCommon({
     console.log(this.value) // 2019-8-20
   },
   methods: {
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '总价'
+          return
+        }
+        if (index === 1 || index === 2 || index === 3 || index === 4 || index === 5 || index === 9 || index === 11 || index === 14 || index === 15 || index === 16) {
+          sums[index] = ''
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index] += ' '
+        } else {
+          sums[index] = 'N/A'
+        }
+      })
+
+      return sums
+    },
     // 返回
     toBack() {
       this.$router.push('/finance/supplier')

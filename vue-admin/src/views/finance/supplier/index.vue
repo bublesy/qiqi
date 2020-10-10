@@ -21,7 +21,9 @@
           :data="tableData"
           highlight-current-row
           style="width: 100%;margin-top:20px"
-          border=""
+          :summary-method="getSummaries"
+          show-summary
+          border
           @selection-change="handleSelectionChange"
         >
           <el-table-column v-show="true" prop="taskNumber" label="任务编号" width="140" />
@@ -170,13 +172,43 @@ export default {
     this.init()
   },
   methods: {
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '总价'
+          return
+        }
+        if (index === 1 || index === 2 || index === 3 || index === 4 || index === 5 || index === 9 || index === 11 || index === 14 || index === 15 || index === 16) {
+          sums[index] = ''
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index] += ' '
+        } else {
+          sums[index] = 'N/A'
+        }
+      })
+
+      return sums
+    },
     setOk(supForm) {
       console.log(this.formSet.alreadyMoney1)
       if (this.formSet.alreadyMoney1 === undefined || this.formSet.alreadyMoney1 === '' || this.formSet.alreadyMoney1 === 0) {
         this.$message.error('结算金额不能为空')
         return
       }
-      this.formSet.alreadyMoney = this.formSet.alreadyMoney1 + this.formSet.alreadyMoney
+      this.formSet.alreadyMoney = this.formSet.alreadyMoney1
       // console.log(this.formSet.alreadyMoney)
       this.$refs[supForm].validate((valid) => {
         if (valid) {
@@ -217,7 +249,7 @@ export default {
         this.$message.error('付款金额大于待付款金额！！')
         // this.$set(this.formSet, 'alreadyMoney', this.formSet.unPayed)
         this.formSet.alreadyMoney1 = this.formSet.unPayed
-        console.log(123)
+        // console.log(123)
       }
       if (this.formSet.alreadyMoney1 === this.formSet.unPayed) {
         this.formSet.settlementStatus = '已结算'
@@ -228,7 +260,7 @@ export default {
       } else if (this.formSet.alreadyMoney1 === 0 && this.formSet.alreadyMoney > 0) {
         this.formSet.settlementStatus = '部分结算'
       }
-      console.log(this.formSet.settlementStatus)
+      // console.log(this.formSet.settlementStatus)
     },
     // 结算
     settlement(scope) {
@@ -246,7 +278,7 @@ export default {
         this.$set(this.queryParams, 'time', '')
       }
       purList(this.queryParams).then(res => {
-        console.log(res)
+        // console.log(res)
         this.tableData = res.list
         this.carryTo = this.tableData[0].carryTo
         this.tableData.forEach(a => {

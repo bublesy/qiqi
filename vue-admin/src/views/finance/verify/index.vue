@@ -30,15 +30,17 @@
           highlight-current-row
           style="width: 100%;margin-top:20px"
           border
+          :summary-method="getSummaries"
+          show-summary
           @selection-change="handleSelectionChange"
         >
           <el-table-column v-show="true" prop="name" label="客户名称" width="120" />
           <el-table-column v-show="true" prop="no" label="任务编号" width="120" />
           <!-- <el-table-column v-show="true" prop="shipDate" label="出货日期" width="120" /> -->
           <el-table-column v-show="true" prop="deliveryDate" label="交货日期" width="120" />
-          <el-table-column v-show="true" prop="modelNo" label="物品单号/款号" width="120" />
+          <el-table-column v-show="true" prop="modelNo" label="物品单号/款号" />
           <el-table-column v-show="true" prop="boxType" label="箱型" width="80" />
-          <el-table-column v-show="true" label="长x宽x高" width="140">
+          <el-table-column v-show="true" label="长x宽x高">
             <template slot-scope="scope">
               {{ scope.row.length+' X '+scope.row.width+' X '+scope.row.height }}
             </template>
@@ -49,7 +51,7 @@
           <el-table-column v-show="true" prop="beginReceive" label="期初" width="80" />
           <el-table-column v-show="true" prop="payed" label="已付" width="80" />
           <el-table-column v-show="true" prop="unPayed" label="欠款" width="80" />
-          <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="180">
+          <el-table-column v-show="true" prop="settlementDate" label="结算日期">
             <template slot-scope="scope">
               <div v-for="(item,key) in scope.row.settlementDate" :key="key">
                 {{ item }}
@@ -236,6 +238,36 @@ export default {
     this.init()
   },
   methods: {
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '总价'
+          return
+        }
+        if (index === 1 || index === 2 || index === 3 || index === 4 || index === 5 || index === 7 || index === 14 || index === 13 || index === 12) {
+          sums[index] = ''
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index] += ' '
+        } else {
+          sums[index] = 'N/A'
+        }
+      })
+
+      return sums
+    },
     post(data) {
       this.id = data.id
       this.postDialog.show = true
