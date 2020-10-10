@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.order.entity.DeliveryNoteDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.qiqi.order.vo.DeliveryVO;
+import com.qiqi.order.vo.SendDeliveryVO;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -24,5 +25,5 @@ public interface DeliveryNoteMapper extends BaseMapper<DeliveryNoteDO> {
      * @param name
      * @return
      */
-    IPage<DeliveryVO> getList(@Param("objectPage") Page<Object> objectPage,@Param("signs") String signs,@Param("name") String name);
+    IPage<SendDeliveryVO> getList(@Param("objectPage") Page<Object> objectPage, @Param("signs") String signs, @Param("name") String name);
 }

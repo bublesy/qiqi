@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qiqi.order.entity.DeliveryNoteDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.qiqi.order.vo.DeliveryVO;
+import com.qiqi.order.vo.SendDeliveryVO;
 
 /**
  * <p>
@@ -23,6 +24,6 @@ public interface DeliveryNoteService extends IService<DeliveryNoteDO> {
      * @param name
      * @return
      */
-    IPage<DeliveryVO> getList(Page<Object> objectPage, String signs, String name);
+    IPage<SendDeliveryVO> getList(Page<Object> objectPage, String signs, String name);
 
 }

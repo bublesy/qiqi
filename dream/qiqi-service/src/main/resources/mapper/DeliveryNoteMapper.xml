@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qiqi.order.mapper.DeliveryNoteMapper">
-    <select id="getList" resultType="com.qiqi.order.vo.DeliveryVO">
+    <select id="getList" resultType="com.qiqi.order.vo.SendDeliveryVO">
          SELECT o.*,d.send_num,d.out_no,d.sign as signs,d.id AS dId,ct.settlement FROM delivery_note d LEFT JOIN orders o ON d.`order_id` = o.id
          left join `customer_detail` ct on o.id = ct.order_id
          where d.is_deleted =0

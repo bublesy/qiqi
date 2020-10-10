@@ -8,6 +8,6 @@
         FROM
         customer_detail cd
         LEFT JOIN orders o ON cd.order_id = o.id
-        where cd.payed &lt; o.money and DATEDIFF(now(),o.delivery_date) &gt; -100
+        where cd.payed &lt; o.money and DATEDIFF(now(),o.delivery_date) &gt; 7
     </select>
 </mapper>

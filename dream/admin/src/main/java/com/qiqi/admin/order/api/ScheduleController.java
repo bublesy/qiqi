@@ -74,6 +74,7 @@ public class ScheduleController {
     @Resource
     PurchaseOrderService purchaseOrderService;
     private Integer num;
+    private Integer lossT;
 
     @ApiOperation(value = "获取排期(列表)")
     @PostMapping("/list")
@@ -118,6 +119,7 @@ public class ScheduleController {
         if(scheduleDO.getId() != null){
             ScheduleDO scheduleDO1 = scheduleService.getById(scheduleDO.getId());
             this.num = scheduleDO1.getProductNum();
+            this.lossT = scheduleDO1.getLossNum();
         }
         boolean b = scheduleService.saveOrUpdate(scheduleDO);
         this.scheduleId = scheduleDO.getId();
@@ -141,7 +143,8 @@ public class ScheduleController {
         List<OrderDO> orders = orderService.list(new QueryWrapper<OrderDO>().eq("schedule_id", this.scheduleId));
         List<Long> collect = orders.stream().map(data -> data.getId()).collect(Collectors.toList());
         // 差值
-        Integer a= product - (num == null ? 0 :num);
+        Integer a= product - (num == null ? 0 : num);
+        Integer b= lossNum - (lossT == null ? 0 : lossT);
         List<EndProductWarehouseDO> endProductWarehouse = endProductWarehouseService.list(new QueryWrapper<EndProductWarehouseDO>().eq("order_id", collect.get(0)));
         if (endProductWarehouse.size() !=0){
             Integer productNum = endProductWarehouse.get(0).getProductNum() == null ? product : endProductWarehouse.get(0).getProductNum();
@@ -172,7 +175,7 @@ public class ScheduleController {
             List<PurchaseOrderDO> purchaseOrderList = purchaseOrderService.list(new QueryWrapper<PurchaseOrderDO>().eq("order_id", collect.get(0)));
             String position = purchaseOrderList.get(0).getPosition();
             int i = Integer.parseInt(position);
-            purchaseOrderDO.setPosition(String.valueOf(i-lossNum));
+            purchaseOrderDO.setPosition(String.valueOf(i-b));
             purchaseOrderService.update(purchaseOrderDO,new QueryWrapper<PurchaseOrderDO>().eq("order_id",collect.get(0)));
         }
 
