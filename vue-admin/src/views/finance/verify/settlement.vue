@@ -7,23 +7,23 @@
   >
     <el-form ref="form" :model="form" size="mini" :rules="supRules" :inline="true">
       <el-form-item label="结算状态:" prop="settlement">
-        <el-select v-model="form.settlement" placeholder="选择结算状态" style="width:150px">
+        <el-select v-model="form.settlement" style="width:150px" disabled>
           <el-option value="未结算" label="未结算" />
           <el-option value="部分结算" label="部分结算" />
           <el-option value="已结算" label="已结算" />
         </el-select>
       </el-form-item>
       <el-form-item label="订单金额:" prop="money">
-        <el-input-number v-model="form.money" :controls="false" :min="0" :precision="2" />
+        <el-input-number v-model="form.money" :controls="false" :min="0" :precision="2" disabled />
       </el-form-item>
       <el-form-item label="期初金额:" prop="beginReceive">
-        <el-input-number v-model="form.beginReceive" :controls="false" :min="0" :precision="2" style="width:150px" @input="beginReceive" />
+        <el-input-number v-model="form.beginReceive" :controls="false" :min="0" :precision="2" style="width:150px" disabled @input="beginReceive" />
       </el-form-item>
       <el-form-item label="已付金额:" prop="payed">
-        <el-input-number v-model="form.payed" :controls="false" :min="0" :precision="2" @input="payed" />
+        <el-input-number v-model="form.payed" :controls="false" :min="0" :precision="2" disabled @input="payed" />
       </el-form-item>
       <el-form-item label="待付款金额:">
-        <el-input-number v-model="form.unPayed" :controls="false" :min="0" :precision="2" />
+        <el-input-number v-model="form.unPayed" :controls="false" :min="0" :precision="2" @blur="unPayed" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -49,7 +49,7 @@ export default {
   data() {
     return {
       form: {
-        settlement: '未结算',
+        settlement: '已结算',
         settlementDate: []
       },
       supRules: {
@@ -70,11 +70,22 @@ export default {
           this.form.beginReceive = res.beginReceive
           this.form.payed = res.payed
           this.form.unPayed = this.form.money - this.form.beginReceive - this.form.payed
+          this.form.settlement = '已结算'
         })
       }
     }
   },
   methods: {
+    unPayed() {
+      console.log(this.form.unPayed)
+      if (this.form.unPayed === '0.00' || parseInt(this.form.unPayed) === 0) {
+        this.form.settlement = '未结算'
+      } else if (this.form.unPayed !== '0' && this.form.unPayed !== this.form.money) {
+        this.form.settlement = '部分结算'
+      } else {
+        this.form.settlement = '已结算'
+      }
+    },
     payed() {
       this.form.unPayed = this.form.money - this.form.beginReceive - this.form.payed
     },
