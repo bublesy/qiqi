@@ -445,7 +445,7 @@ export default {
             this.form.incomeNum = null
             this.form.date = null
             this.form.audit = null
-            this.form.modCount = null
+            this.form.modCount = 0
             this.form.refundNum = null
             this.form.refundTime = null
           }

@@ -7,6 +7,7 @@ import com.qiqi.order.mapper.DeliveryNoteMapper;
 import com.qiqi.order.service.DeliveryNoteService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qiqi.order.vo.DeliveryVO;
+import com.qiqi.order.vo.SendDeliveryVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,7 +25,7 @@ public class DeliveryNoteServiceImpl extends ServiceImpl<DeliveryNoteMapper, Del
     @Resource
     DeliveryNoteMapper deliveryNoteMapper;
     @Override
-    public IPage<DeliveryVO> getList(Page<Object> objectPage, String signs, String name) {
+    public IPage<SendDeliveryVO> getList(Page<Object> objectPage, String signs, String name) {
         return deliveryNoteMapper.getList(objectPage,signs,name);
     }
 }

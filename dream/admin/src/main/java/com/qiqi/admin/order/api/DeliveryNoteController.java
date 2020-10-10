@@ -12,6 +12,7 @@ import com.qiqi.common.entity.PageEntity;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.service.OrderService;
 import com.qiqi.order.vo.DeliveryVO;
+import com.qiqi.order.vo.SendDeliveryVO;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
@@ -97,11 +98,11 @@ public class DeliveryNoteController {
 
 
     @GetMapping("/getList")
-    public PageEntity<DeliveryVO> getList(@RequestParam(defaultValue = "1") Long page,
+    public PageEntity<SendDeliveryVO> getList(@RequestParam(defaultValue = "1") Long page,
                                         @RequestParam(defaultValue = "10") Long count,
                                         @RequestParam(required = false) String signs,
                                         @RequestParam(required = false) String name){
-        IPage<DeliveryVO> iPage = deliveryNoteService.getList(new Page<>(page,count),signs,name);
-        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<DeliveryVO>>() {}, iPage.getRecords()));
+        IPage<SendDeliveryVO> iPage = deliveryNoteService.getList(new Page<>(page,count),signs,name);
+        return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<SendDeliveryVO>>() {}, iPage.getRecords()));
     }
 }

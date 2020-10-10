@@ -50,6 +50,13 @@ public class OrderHomeController {
 
     }
 
+    @ApiOperation("客户订单总数")
+    @GetMapping("/orders")
+    public Integer getCustomerTotal(){
+
+        return orderService.count();
+    }
+
     @ApiOperation("营业额")
     @GetMapping("/orderTotal")
     public JSONArray getOrderTotal(@RequestParam @JsonFormat(pattern = "yyyy-MM-dd")Date date, Integer type){
