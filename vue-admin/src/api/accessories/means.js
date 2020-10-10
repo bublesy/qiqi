@@ -50,7 +50,10 @@ export function getPost(id) {
 export function toSettle(data) {
   return request({ url: '/customer/detail/settlement', method: 'get', params: data })
 }
-
+// 客户订单总数
+export function getOrder() {
+  return request({ url: '/home/orders', method: 'get' })
+}
 // 客户总数
 export function get() {
   return request({ url: '/home/customerTotal', method: 'get' })

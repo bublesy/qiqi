@@ -144,8 +144,8 @@
           订单未发货</el-col>
         <el-col
           :span="3"
-        ><h1>{{ customs }}</h1>
-          订单总数</el-col>
+        ><h1>{{ getOrder }}</h1>
+          客户订单总数</el-col>
         <el-col
           :span="3"
         ><h1>{{ customs }}</h1>
@@ -185,6 +185,7 @@ import { getSupplierSettData } from '@/api/warehouse/warehouse'
 import { getEndDisData } from '@/api/warehouse/warehouse'
 
 import {
+  getOrder,
   purchase,
   get,
   added,
@@ -210,6 +211,7 @@ export default {
       orders: '',
       value2: '',
       timeType: '',
+      getOrder: '',
       xData: [
         '1:00',
         '2:00',
@@ -361,6 +363,11 @@ export default {
     // 营业额
     amount(this.am).then((res) => {
       this.amount = res
+    })
+    // 客户订单总数
+    getOrder().then((res) => {
+      this.getOrder = res
+      // console.log(res)
     })
     // 客户总数
     get().then((res) => {
