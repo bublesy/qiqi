@@ -194,9 +194,10 @@ export default {
               return prev
             }
           }, 0)
+          // 改动
           sums[index] += ' '
         } else {
-          sums[index] = 'N/A'
+          sums[index] = '0'
         }
       })
 
