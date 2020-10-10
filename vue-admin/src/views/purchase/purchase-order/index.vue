@@ -196,7 +196,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="采购单号:" prop="no">
+        <!-- <el-form-item label="采购单号:" prop="no">
           <el-select v-model="formMaterial.no" @change="purNoChange">
             <el-option
               v-for="item in noFor"
@@ -205,7 +205,7 @@
               :value="item.documentsNo"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="备注:" prop="note">
           <el-input v-model="formMaterial.note" />
         </el-form-item>

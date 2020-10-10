@@ -39,6 +39,8 @@
           <el-table-column v-show="true" prop="purchaseQuantity" label="采购数量" width="140" />
           <el-table-column v-show="true" prop="warehousingDate" label="入仓日期" width="160" />
           <el-table-column v-show="true" prop="position" label="原料仓位" width="140" />
+          <el-table-column v-show="true" prop="deliveryQuantity" label="损耗数量" />
+          <el-table-column v-show="true" prop="surplusNum" label="剩余数量" width="160" />
           <!-- <el-table-column v-show="true" prop="productNum" label="已产数量" width="140" /> -->
           <!-- <el-table-column v-show="true" prop="outDate" label="送货日期" width="160" />
           <el-table-column v-show="true" prop="outNo" label="送货单号" width="160" />
@@ -148,6 +150,13 @@ export default {
         console.log(res)
         this.tableData = res.list
         this.tableData.forEach(a => {
+          var c = parseInt(a.position)
+          if (a.deliveryQuantity === null) {
+            a.surplusNum = c
+          } else {
+            var d = parseInt(a.deliveryQuantity)
+            a.surplusNum = c - d
+          }
           getCustomerById(a.customerId).then(data => {
             this.$set(a, 'customerName', data.name)
           })

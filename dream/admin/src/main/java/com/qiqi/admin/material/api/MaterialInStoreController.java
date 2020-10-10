@@ -22,6 +22,8 @@ import com.qiqi.material.service.MaterialInStoreService;
 
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -75,6 +77,7 @@ public class MaterialInStoreController {
     @ApiOperation(value = "新增")
     @PostMapping("")
     public Boolean saveMaterialInStore(@RequestBody MaterialInStoreDO materialInStoreDO) {
+        SimpleDateFormat df = new SimpleDateFormat("yyMMddHHmmss");
         String specificationId = materialInStoreDO.getSpecificationId();
         MaterialInventoryDO a = materialInventoryService.getNumBySpecificationId(specificationId);
         MaterialDataDO byId = materialDataService.getById(specificationId);
@@ -93,6 +96,7 @@ public class MaterialInStoreController {
             a.setMoney(materialInStoreDO.getMoney());
             materialInventoryService.updateById(a);
         }
+        materialInStoreDO.setNo(df.format(new Date()));
         return materialInStoreService.saveOrUpdate(materialInStoreDO);
     }
 
