@@ -118,8 +118,8 @@ export default window.$crudCommon({
   },
   created: function() {
     this.tableData = this.$route.params.data
-    this.name = this.$route.params.data[0].customerName
     console.log(this.tableData)
+    this.name = this.$route.params.data[0].customerName
     var aData = new Date()
     console.log(aData) // Wed Aug 21 2019 10:00:58 GMT+0800 (中国标准时间)
     this.value =
@@ -132,7 +132,7 @@ export default window.$crudCommon({
       const sums = []
       columns.forEach((column, index) => {
         if (index === 0) {
-          sums[index] = '总价'
+          sums[index] = '合计'
           return
         }
         if (index === 1 || index === 2 || index === 3 || index === 4 || index === 5 || index === 9 || index === 11 || index === 14 || index === 15 || index === 16) {
