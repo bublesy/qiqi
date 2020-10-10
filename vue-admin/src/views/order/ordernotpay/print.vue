@@ -90,7 +90,6 @@ export default {
       firmList.forEach(a => {
         if (a.isFirm === true) {
           this.name2 = a.name
-          console.log('name:' + this.name2)
         }
       })
     })
@@ -101,14 +100,13 @@ export default {
     this.now = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
     var list2 = []
     var object = this.$route.query
-    console.log(object)
     for (const key in object) {
       if (object.hasOwnProperty(key)) {
         const element = object[key]
         list2.push(element)
       }
     }
-    this.tableData = list
+    this.tableData = list2
   },
   methods: {
     back() {
