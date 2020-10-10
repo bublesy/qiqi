@@ -2,6 +2,9 @@ package com.qiqi.finance.mapper;
 
 import com.qiqi.finance.entity.CustomerDetailDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.qiqi.order.vo.WarningVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface CustomerDetailMapper extends BaseMapper<CustomerDetailDO> {
 
+    List<WarningVO> getWarning();
 }

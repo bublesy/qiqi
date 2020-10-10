@@ -5,8 +5,8 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.qiqi.order.vo.WarningVO;
 import com.qiqi.common.base.BaseModel;
-import com.qiqi.common.entity.PageEntity;
 import com.qiqi.finance.entity.CustomerDetailDO;
 import com.qiqi.finance.service.CustomerDetailService;
 import com.qiqi.order.entity.OrderDO;
@@ -42,6 +42,13 @@ public class OrderHomeController {
 
     @Resource
     private CustomerDetailService customerDetailService;
+
+    @ApiOperation("未付款预警")
+    @GetMapping("/warning")
+    public List<WarningVO> getWarning(){
+        return customerDetailService.getWarning();
+
+    }
 
     @ApiOperation("营业额")
     @GetMapping("/orderTotal")
