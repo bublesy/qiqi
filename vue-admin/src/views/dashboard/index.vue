@@ -45,6 +45,8 @@
         <el-table-column v-show="true" prop="purchaseQuantity" label="订单数量" />
         <el-table-column v-show="true" prop="costPrice" label="成本价" />
         <el-table-column v-show="true" prop="amount" label="结算金额" />
+        <el-table-column v-show="true" prop="alreadyMoney" label="已收金额" />
+        <el-table-column v-show="true" prop="stayAlreadyMoney" label="代收金额" />
       </el-table>
       <br>
       <h3 align="center">成品发货预警</h3>
@@ -423,6 +425,7 @@ export default {
       getSupplierSettData().then(res => {
         this.supplierSettData = res
         this.supplierSettData.forEach(a => {
+          a.stayAlreadyMoney = parseInt(a.amount) - a.alreadyMoney
           var t = new Date(a.billingDate)
           var t_s = t.getTime()
           var days = parseInt(a.settlementPeriod)
