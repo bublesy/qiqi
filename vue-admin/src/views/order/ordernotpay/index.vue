@@ -130,6 +130,7 @@ export default {
       if (this.select.length === 0) {
         this.select = this.tableData
       }
+      console.log(this.select)
       this.$router.push({
         path: '/noPayOrder',
         query: this.select
