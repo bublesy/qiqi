@@ -171,7 +171,7 @@ export default window.$crudCommon({
             console.log(a.signs)
           }
         })
-        this.pagination.total - res.total
+        this.pagination.total = res.total
       })
     },
     handleSelectionChange(val) {

@@ -8,6 +8,7 @@
         :data="warData"
         highlight-current-row
         style="width: 100%"
+        border
       >
         <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" />
         <el-table-column v-show="true" prop="surplusNum" label="仓库库存剩余数量" />
@@ -19,6 +20,7 @@
         :data="endWarData"
         highlight-current-row
         style="width: 100%"
+        border
       >
         <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" />
         <el-table-column v-show="true" prop="endProductPos" label="成品库存剩余数量" />
@@ -27,11 +29,17 @@
       <h3 align="center">客户结算预警</h3>
       <el-table
         ref="singleTable"
-        :data="custSettData"
+        :data="clients"
         highlight-current-row
         style="width: 100%"
+        border
       >
-        <el-table-column v-show="true" prop="position" label="客户结算预警" />
+        <el-table-column v-show="true" prop="name" label="客户名称" />
+        <el-table-column v-show="true" prop="orderNum" label="订单数量" width="200" />
+        <el-table-column label="金额" prop="money" />
+        <el-table-column v-show="true" prop="deliveryDate" label="交货日期" />
+        <el-table-column v-show="true" prop="payed" label="已付款" />
+        <el-table-column v-show="true" prop="unPayed" label="未付款" />
       </el-table>
       <h3 align="center">供应商结算预警</h3>
       <el-table
@@ -39,9 +47,10 @@
         :data="supplierSettData"
         highlight-current-row
         style="width: 100%"
+        border
       >
         <el-table-column v-show="true" prop="documentsNo" label="采购单号" />
-        <el-table-column v-show="true" prop="settlementDate" label="结算日期" />
+        <el-table-column v-show="true" prop="settlementDate" label="结算日期" width="200" />
         <el-table-column v-show="true" prop="purchaseQuantity" label="订单数量" />
         <el-table-column v-show="true" prop="costPrice" label="成本价" />
         <el-table-column v-show="true" prop="amount" label="结算金额" />
@@ -55,6 +64,7 @@
         :data="endDisData"
         highlight-current-row
         style="width: 100%"
+        border
       >
         <el-table-column v-show="true" prop="orderQuantity" label="订单数量" />
         <el-table-column v-show="true" prop="alreadyDeliveryQuantity" label="已发货数量" />
@@ -84,20 +94,29 @@
           客户已付款</el-col>
         <el-col
           :span="3"
-        ><h1>￥0</h1>
+        ><h1>￥{{ unpayed }}</h1>
           供应商未付款</el-col>
         <el-col
           :span="3"
-        ><h1>￥0</h1>
+        ><h1>￥{{ yfmoney }}</h1>
           供应商已付款</el-col>
         <el-col
           :span="3"
+        ><h1>￥{{ paid-yfmoney }}</h1>
+          毛利
+        </el-col>
+        <el-col
+          :span="3"
         ><h1>{{ position }}</h1>
-          仓库数量</el-col>
+          原料入库数量</el-col>
         <el-col
           :span="3"
         ><h1>{{ surplus }}</h1>
-          仓库剩余数量</el-col>
+          原料剩余数量</el-col>
+        <el-col
+          :span="3"
+        ><h1>{{ waste }}</h1>
+          原料损耗数量</el-col>
         <!-- <el-col
           :span="3"
         ><h1>{{ c }}</h1>
@@ -110,7 +129,7 @@
         <el-col
           :span="3"
         ><h1>{{ storageQuantity }}</h1>
-          成品仓库数量</el-col>
+          成品入库数量</el-col>
         <el-col
           :span="3"
         ><h1>{{ endProductPos }}</h1>
@@ -118,16 +137,11 @@
         <el-col
           :span="3"
         ><h1>{{ alreadyDeliveryQuantity }}</h1>
-          成品仓库已发货</el-col>
+          订单已发货</el-col>
         <el-col
           :span="3"
         ><h1>{{ delivereds }}</h1>
-          成品仓库未发货</el-col>
-        <el-col
-          :span="3"
-        ><h1>￥{{ gross }}</h1>
-          毛利
-        </el-col>
+          订单未发货</el-col>
         <el-col
           :span="3"
         ><h1>{{ customs }}</h1>
@@ -180,7 +194,8 @@ import {
   orders,
   warehouseList,
   endWarehouseList,
-  mlist
+  client
+  // mlist
 } from '@/api/accessories/means'
 export default {
   name: 'Dashboard',
@@ -291,27 +306,38 @@ export default {
       alreadyDeliveryQuantity: 0,
       delivereds: '',
       time: '',
-      queryParams: {
+      unpayed: 0,
+      yfmoney: 0,
+      totalAmout: 0,
+      waste: 0,
+      aaa: {
         size: 10,
         page: 1,
         time: ''
       },
       warningVisible: false,
-      warData: [], custSettData: [], supplierSettData: [], endWarData: [], endDisData: []
+      warData: [], custSettData: [], supplierSettData: [], endWarData: [], endDisData: [], clients: []
     }
   },
   computed: {
     ...mapGetters(['name'])
   },
   created() {
-    // 供应商已结未结 this.queryParams.time = this.form.time
-    // if (this.queryParams.time === null) {
-    //   this.$set(this.queryParams, 'time', '')
-    // }
-    // this.queryParams.time = this.aaa.time
-    console.log(this.queryParams)
-    purchase(this.queryParams).then(res => {
+    // 供应商已结未结
+    purchase(this.aaa).then(res => {
       console.log('供应商', res)
+      var not = 0
+      var tot = 0
+      res.list.forEach((a) => {
+        if (a.alreadyMoney === null) {
+          a.alreadyMoney = 0
+        }
+        not += parseInt(a.alreadyMoney)
+        tot += parseInt(a.totalAmount)
+      })
+      this.yfmoney = not
+      this.totalAmout = tot
+      this.unpayed = this.totalAmout - this.yfmoney
     })
     // 未付款
     unpaid(this.un).then(res => {
@@ -322,16 +348,16 @@ export default {
       this.paid = res
     })
     // 毛利
-    mlist(this.mlists).then((res) => {
-      // console.log(res)
-      var ml = 0
-      res.list.forEach((a) => {
-        a.costAmount = a.costPrice * a.position
-        a.profit = a.discountAmount - a.costAmount
-        ml += a.profit
-        this.gross = ml.toFixed(2)
-      })
-    })
+    // mlist(this.mlists).then((res) => {
+    //   // console.log(res)
+    //   var ml = 0
+    //   res.list.forEach((a) => {
+    //     a.costAmount = a.costPrice * a.position
+    //     a.profit = a.discountAmount - a.costAmount
+    //     ml += a.profit
+    //     this.gross = ml.toFixed(2)
+    //   })
+    // })
     // 营业额
     amount(this.am).then((res) => {
       this.amount = res
@@ -349,16 +375,19 @@ export default {
       console.log('原料', res.list)
       var pos = 0
       var del = 0
+      var was = 0
       res.list.forEach((a) => {
         pos += parseInt(a.position)
         if (a.deliveryQuantity === null) {
           a.deliveryQuantity = 0
         }
         del += parseInt(a.deliveryQuantity)
+        was += parseInt(a.deliveryQuantity)
       })
       this.position = pos
       this.deliveryQuantity = del
       this.surplus = this.position - this.deliveryQuantity
+      this.waste = was
     })
     // 成品库存
     endWarehouseList(this.formEndWare).then((res) => {
@@ -411,6 +440,14 @@ export default {
     warningOk() { this.warningVisible = false },
     getWarning() {
       this.warningVisible = true
+      // 客户结算预警
+      client().then(res => {
+        console.log('客户', res)
+        this.clients = res
+        this.clients.forEach(x => {
+          this.$set(x, 'unPayed', x.money - x.payed)
+        })
+      })
       getWarDate().then(res => {
         this.warData = res
         this.warData.forEach(a => {
