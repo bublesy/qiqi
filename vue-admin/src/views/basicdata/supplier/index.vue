@@ -28,6 +28,7 @@
         highlight-current-row
         style="width: 100%"
         align="center"
+        border
       >
         <el-table-column type="index" />
         <el-table-column property="code" label="编码" />

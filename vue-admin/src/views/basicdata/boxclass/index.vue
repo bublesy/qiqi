@@ -1,7 +1,7 @@
 <template>
   <div style="margin:30px">
     <p class="font">箱类设定</p>
-    <el-form ref="form" :model="queryForm" label-width="80px" size="mini" :inline="true">
+    <el-form ref="form" :model="queryForm" label-width="50px" size="mini" :inline="true">
       <el-form-item label="编码:">
         <el-input v-model="queryForm.code" />
       </el-form-item>
@@ -147,7 +147,7 @@ export default {
   font-size: 30px;
   font-family: 'Courier New', Courier, monospace;
   /* text-align: center; */
-  margin-left: 40%;
+  margin-left: 12%;
   margin-bottom: 0%;
 }
 

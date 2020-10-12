@@ -8,7 +8,7 @@
         ref="table"
         :data="tableData"
         tooltip-effect="dark"
-        style="width: 100%"
+        style="width: 55%"
         border
         stripe
       >
@@ -16,7 +16,7 @@
         <el-table-column prop="code" label="编码" width="120" />
         <el-table-column prop="shorts" label="客户简称" width="120" />
         <el-table-column prop="fullName" label="客户名称" width="120" />
-        <el-table-column prop="paperName" label="纸板名称" width="120" />
+        <el-table-column prop="paperName" label="纸板名称" />
         <el-table-column prop="boxType" label="箱型" width="120" />
         <el-table-column prop="squaredPrice" label="销售平方价(元)" width="120" />
         <el-table-column prop="boxPrice" label="箱型计价" width="120" />
