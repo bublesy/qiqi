@@ -20,7 +20,7 @@
       :data="tableData"
       tooltip-effect="dark"
       border
-      style="width: 100%"
+      style="width: 35%"
       stripe
     >
       <el-table-column type="index" width="55" />
@@ -33,7 +33,7 @@
           <span v-else>否</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="操作" width="150px">
+      <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
           <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
