@@ -2,7 +2,7 @@
   <div class="app-container">
     <h2 style="margin-left:10%">颜色管理</h2>
     <el-form :inline="true" :model="form" size="mini">
-      <el-form-item label="部门名称:">
+      <el-form-item label="颜色名称:">
         <el-input v-model="form.name" clearable />
       </el-form-item>
       <el-button type="primary" size="mini" @click="init()">查询</el-button>

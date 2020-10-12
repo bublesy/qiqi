@@ -2,7 +2,7 @@
   <div class="app-container">
     <h2 style="margin-left:10%">印刷版面管理</h2>
     <el-form :inline="true" :model="form" size="mini">
-      <el-form-item label="部门名称:">
+      <el-form-item label="印刷版面名称:">
         <el-input v-model="form.name" clearable />
       </el-form-item>
       <el-button type="primary" size="mini" @click="query">查询</el-button>
