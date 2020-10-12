@@ -15,10 +15,10 @@ import java.util.Date;
  */
 @Data
 public class SendDeliveryVO {
-    private String settlement;
+    private String settlements;
     private Long orderId;
-    private Integer sendNum;
-    private String outNo;
+    private Integer sendNums;
+    private String outNos;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdTime;
     private Long dId;
