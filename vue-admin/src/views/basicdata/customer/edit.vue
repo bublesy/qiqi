@@ -9,7 +9,7 @@
       <el-form-item label="编码:" prop="code">
         <el-input v-model="form.code" />
       </el-form-item>
-      <el-form-item label="客户简称:" prop="shorts">
+      <el-form-item label="客户简称:" prop="shorts" label-width="100px">
         <el-input v-model="form.shorts" />
       </el-form-item>
       <el-form-item label="客户名称:" prop="fullName">
@@ -58,7 +58,7 @@
       <el-form-item label="币种:">
         <el-input v-model="form.currency" readonly />
       </el-form-item>
-      <el-form-item label="期初应收:">
+      <el-form-item label="期初应收:" prop="beginReceive" label-width="100px">
         <el-input-number v-model="form.beginReceive" :controls="false" :precision="decimal" :min="0.00" />
       </el-form-item>
       <el-form-item label="信用额度:">
@@ -110,6 +110,12 @@ export default {
         mobilePhone: [
           { required: true, message: '请输入手机号码', trigger: 'blur' },
           { min: 11, max: 11, message: '手机号码必须为11位', trigger: 'blur' }
+        ],
+        beginReceive: [
+          { required: true, message: '请输入期初金额', trigger: 'blur' }
+        ],
+        shorts: [
+          { required: true, message: '请输入客户简称', trigger: 'blur' }
         ]
       },
       salesmanOptions: [],

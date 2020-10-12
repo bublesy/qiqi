@@ -18,6 +18,7 @@
     <el-button size="mini" type="primary" @click="query">查询</el-button>
     <!-- <el-button size="mini" type="primary" @click="add">新增</el-button> -->
     <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
+    <el-button type="warning" size="mini" @click="print">批量打印</el-button>
     <el-table
       ref="table"
       :data="tableData"
@@ -27,8 +28,8 @@
       stripe
       @selection-change="handleSelectionChange"
     >
-      <!-- <el-table-column type="selection" width="55" /> -->
-      <el-table-column type="index" />
+      <el-table-column type="selection" width="55" />
+      <!-- <el-table-column type="index" /> -->
       <el-table-column prop="code" label="编码" width="120" />
       <el-table-column prop="shorts" label="客户简称" width="120" />
       <el-table-column prop="fullName" label="客户名称" width="120" />
@@ -45,10 +46,11 @@
           <el-input-number v-model="scope.row.BoxPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:90px" />
         </template>
       </el-table-column> -->
-      <el-table-column label="操作" width="300">
+      <el-table-column label="操作" width="350">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" :disabled="scope.row.totalPrice===null?false:true" @click="add(scope.row.id)">新增报价单</el-button>
           <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
+          <el-button type="warning" size="mini" @click="singlePrint(scope.row)">打印</el-button>
           <el-popconfirm title="内容确定删除吗？" @onConfirm="deleted(scope.row.id)">
             <el-button slot="reference" type="danger" size="mini">删除</el-button>
           </el-popconfirm>
@@ -78,6 +80,7 @@ export default {
       flag: '',
       id: '',
       tableData: [],
+      select: [],
       addDialog: {
         show: false
       },
@@ -95,6 +98,26 @@ export default {
     this.initTable()
   },
   methods: {
+    print() {
+      if (this.select.length === 0) {
+        this.select = this.tableData
+      }
+      this.$router.push({
+        path: '/customerquotationprint',
+        query: this.select
+      })
+    },
+    handleSelectionChange(select) {
+      this.select = select
+    },
+    singlePrint(row) {
+      var list = []
+      list.push(row)
+      this.$router.push({
+        path: '/customerquotationprint',
+        query: list
+      })
+    },
     handleSizeChange(size) {
       this.size = this.form.count
       this.initTable()
@@ -141,7 +164,6 @@ export default {
     query() {
       this.initTable()
     },
-    handleSelectionChange() {},
     toExcel() {
       var list = this.tableData
       const th = ['编码', '简称', '全称', '销售平方价', '箱型计价']
