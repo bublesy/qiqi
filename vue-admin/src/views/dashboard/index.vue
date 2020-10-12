@@ -1,7 +1,8 @@
 <template>
   <div class="dashboard-container">
-    <!-- 新增/编辑盘点数量 -->
-    <el-dialog title="预警" :visible.sync="warningVisible">
+
+    <!-- 预警 -->
+    <el-dialog title="仓库预警" :visible.sync="warningVisible">
       <h3 align="center">仓库预警</h3>
       <el-table
         ref="singleTable"
@@ -13,19 +14,15 @@
         <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" />
         <el-table-column v-show="true" prop="surplusNum" label="仓库库存剩余数量" />
       </el-table>
-      <br>
-      <h3 align="center">成品仓库预警</h3>
-      <el-table
-        ref="singleTable"
-        :data="endWarData"
-        highlight-current-row
-        style="width: 100%"
-        border
-      >
-        <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" />
-        <el-table-column v-show="true" prop="endProductPos" label="成品库存剩余数量" />
-      </el-table>
-      <br>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="warningNo">取 消</el-button>
+        <el-button size="small" type="primary" @click="warningOk('purForm')">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 预警 -->
+    <el-dialog title="客户结算预警" :visible.sync="cutVisible">
       <h3 align="center">客户结算预警</h3>
       <el-table
         ref="singleTable"
@@ -42,6 +39,56 @@
         <el-table-column v-show="true" prop="payed" label="已付款" />
         <el-table-column v-show="true" prop="unPayed" label="未付款" />
       </el-table>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="curNo">取 消</el-button>
+        <el-button size="small" type="primary" @click="curOk('purForm')">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 预警 -->
+    <el-dialog title="成品仓库预警" :visible.sync="endVisible">
+      <h3 align="center">成品仓库预警</h3>
+      <el-table
+        ref="singleTable"
+        :data="endWarData"
+        highlight-current-row
+        style="width: 100%"
+        border
+      >
+        <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" />
+        <el-table-column v-show="true" prop="endProductPos" label="成品库存剩余数量" />
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="endNo">取 消</el-button>
+        <el-button size="small" type="primary" @click="endOk('purForm')">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 预警 -->
+    <el-dialog title="成品发货预警" :visible.sync="endDisVisible">
+      <h3 align="center">成品发货预警</h3>
+      <el-table
+        ref="singleTable"
+        :data="endDisData"
+        highlight-current-row
+        style="width: 100%"
+        border
+      >
+        <el-table-column v-show="true" prop="orderQuantity" label="订单数量" />
+        <el-table-column v-show="true" prop="alreadyDeliveryQuantity" label="已发货数量" />
+        <el-table-column v-show="true" prop="stayDeliveryQuantity" label="订单待发货数量" />
+        <el-table-column v-show="true" prop="endProductPos" label="成品仓库剩余库存" />
+        <el-table-column v-show="true" prop="storageQuantity" label="成品入库数量" />
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="endDisNo">取 消</el-button>
+        <el-button size="small" type="primary" @click="endDisOk('purForm')">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 预警 -->
+    <el-dialog title="供应商结算预警" :visible.sync="supplierVisible">
       <h3 align="center">供应商结算预警</h3>
       <el-table
         ref="singleTable"
@@ -58,27 +105,20 @@
         <el-table-column v-show="true" prop="alreadyMoney" label="已收金额" />
         <el-table-column v-show="true" prop="stayAlreadyMoney" label="代收金额" />
       </el-table>
-      <br>
-      <h3 align="center">成品发货预警</h3>
-      <el-table
-        ref="singleTable"
-        :data="endDisData"
-        highlight-current-row
-        style="width: 100%"
-        border
-      >
-        <el-table-column v-show="true" prop="orderQuantity" label="订单数量" />
-        <el-table-column v-show="true" prop="alreadyDeliveryQuantity" label="已发货数量" />
-        <el-table-column v-show="true" prop="stayDeliveryQuantity" label="订单待发货数量" />
-        <el-table-column v-show="true" prop="endProductPos" label="成品仓库剩余库存" />
-        <el-table-column v-show="true" prop="storageQuantity" label="成品入库数量" />
-      </el-table>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="warningNo">取 消</el-button>
-        <el-button size="small" type="primary" @click="warningOk('purForm')">确 定</el-button>
+        <el-button size="small" @click="supplierNo">取 消</el-button>
+        <el-button size="small" type="primary" @click="supplierOk('purForm')">确 定</el-button>
       </span>
     </el-dialog>
+
     <H4>营业数据</H4>
+    <el-tabs v-model="activeName" align="right" @tab-click="handleClick">
+      <el-tab-pane label="仓库预警" name="first" />
+      <el-tab-pane label="成品仓库预警" name="second" />
+      <el-tab-pane label="成品送货天数预警" name="third" />
+      <el-tab-pane label="客户结算预警" name="fourth" />
+      <el-tab-pane label="供应商结算预警" name="five" />
+    </el-tabs>
     <el-card class="box-card">
       <el-row :gutter="20" style="text-align: center">
         <el-col
@@ -157,6 +197,7 @@
           较昨日新增客户数</el-col>
       </el-row>
     </el-card>
+
     <H4>营业额</H4>
     <el-card>
       <el-date-picker
@@ -319,7 +360,12 @@ export default {
         time: ''
       },
       warningVisible: false,
-      warData: [], custSettData: [], supplierSettData: [], endWarData: [], endDisData: [], clients: []
+      endVisible: false,
+      cutVisible: false,
+      endDisVisible: false,
+      supplierVisible: false,
+      warData: [], custSettData: [], supplierSettData: [], endWarData: [], endDisData: [], clients: [],
+      activeName: ''
     }
   },
   computed: {
@@ -438,65 +484,82 @@ export default {
       }
       this.initCharts()
     })
-    this.getWarning()
   },
   mounted() {
     this.initCharts()
   },
   methods: {
-    warningNo() { this.warningVisible = false },
-    warningOk() { this.warningVisible = false },
-    getWarning() {
-      this.warningVisible = true
-      // 客户结算预警
-      client().then(res => {
-        console.log('客户', res)
-        this.clients = res
-        this.clients.forEach(x => {
-          this.$set(x, 'unPayed', x.money - x.payed)
+    handleClick(tab, event) {
+      if (this.activeName === 'first') {
+        this.warningVisible = true
+        getWarDate().then(res => {
+          this.warData = res
+          this.warData.forEach(a => {
+            var b = parseInt(a.position)
+            var c = parseInt(a.deliveryQuantity)
+            a.surplusNum = b - c
+          })
         })
-      })
-      getWarDate().then(res => {
-        this.warData = res
-        this.warData.forEach(a => {
-          var b = parseInt(a.position)
-          var c = parseInt(a.deliveryQuantity)
-          a.surplusNum = b - c
+      } else if (this.activeName === 'second') {
+        this.endVisible = true
+        getEndWarDate().then(res => {
+          this.endWarData = res
         })
-      })
-      getEndWarDate().then(res => {
-        this.endWarData = res
-      })
-      getSupplierSettData().then(res => {
-        this.supplierSettData = res
-        this.supplierSettData.forEach(a => {
-          a.stayAlreadyMoney = parseInt(a.amount) - a.alreadyMoney
-          var t = new Date(a.billingDate)
-          var t_s = t.getTime()
-          var days = parseInt(a.settlementPeriod)
-          var time = t_s + 1000 * 60 * 60 * 24 * days
-          var date = new Date(time)
-          var year = date.getFullYear()
-          /* 在日期格式中，月份是从0开始的，因此要加0
+      } else if (this.activeName === 'third') {
+        this.endDisVisible = true
+        getEndDisData().then(res => {
+          this.endDisData = res
+          this.endDisData.forEach(a => {
+            a.stayDeliveryQuantity = parseInt(a.orderQuantity) - a.alreadyDeliveryQuantity
+          })
+        })
+      } else if (this.activeName === 'fourth') {
+        this.cutVisible = true
+        // 客户结算预警
+        client().then(res => {
+          console.log('客户', res)
+          this.clients = res
+          this.clients.forEach(x => {
+            this.$set(x, 'unPayed', x.money - x.payed)
+          })
+        })
+      } else if (this.activeName === 'five') {
+        this.supplierVisible = true
+        getSupplierSettData().then(res => {
+          this.supplierSettData = res
+          this.supplierSettData.forEach(a => {
+            a.stayAlreadyMoney = parseInt(a.amount) - a.alreadyMoney
+            var t = new Date(a.billingDate)
+            var t_s = t.getTime()
+            var days = parseInt(a.settlementPeriod)
+            var time = t_s + 1000 * 60 * 60 * 24 * days
+            var date = new Date(time)
+            var year = date.getFullYear()
+            /* 在日期格式中，月份是从0开始的，因此要加0
           * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
           * */
-          var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
-          var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
-          var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
-          var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
-          var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
-          // 拼接
-          year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
-          a.settlementDate = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
+            var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+            var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+            var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+            var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+            var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+            // 拼接
+            year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
+            a.settlementDate = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
+          })
         })
-      })
-      getEndDisData().then(res => {
-        this.endDisData = res
-        this.endDisData.forEach(a => {
-          a.stayDeliveryQuantity = parseInt(a.orderQuantity) - a.alreadyDeliveryQuantity
-        })
-      })
+      }
     },
+    warningNo() { this.warningVisible = false },
+    warningOk() { this.warningVisible = false },
+    endNo() { this.endVisible = false },
+    endOk() { this.endVisible = false },
+    endDisNo() { this.endDisVisible = false },
+    endDisOk() { this.endDisVisible = false },
+    supplierNo() { this.supplierVisible = false },
+    supplierOk() { this.supplierVisible = false },
+    curNo() { this.cutVisible = false },
+    curOk() { this.cutVisible = false },
     initCharts() {
       const myChart = this.$echarts.init(this.$refs.chart)
       myChart.setOption({

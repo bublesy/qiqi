@@ -18,6 +18,8 @@ import com.qiqi.purchase.entity.PurchaseOrderDO;
 import com.qiqi.warehouse.entity.WarehouseDO;
 import com.qiqi.warehouse.model.WarehouseDTO;
 import com.qiqi.warehouse.service.WarehouseService;
+import com.qiqi.warning.entity.WarningDO;
+import com.qiqi.warning.service.WarningService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -51,6 +53,8 @@ public class WarehouseController {
     private WarehouseService warehouseService;
     @Resource
     private OrderService orderService;
+    @Resource
+    private WarningService warningService;
 
     @ApiOperation(value = "获取仓库(列表)")
     @ApiImplicitParams({
@@ -78,9 +82,13 @@ public class WarehouseController {
         return new PageEntity<>(iPage.getTotal(),Convert.convert(new TypeReference<List<WarehouseDTO>>() {}, iPage.getRecords()));
     }
 
-
+    Integer wareNum= null;
     @GetMapping("/getWarDate")
     public List wareList(){
+        List<WarningDO> warningList = warningService.list();
+        for (WarningDO ware:warningList){
+             wareNum = ware.getWareNum();
+        }
         List<WarehouseDO> list = warehouseService.list();
         List wareList = new ArrayList();
         for (WarehouseDO warehouseDO:list){
@@ -90,11 +98,13 @@ public class WarehouseController {
                 String deliveryQuantity = warehouseDO.getDeliveryQuantity();
                 int parseInt1 = Integer.parseInt(deliveryQuantity);
                 int a=parseInt-parseInt1;
-                if (a<200){
-                    wareList.add(warehouseDO);
+                if (wareNum !=null || wareNum!=0){
+                    if (a<wareNum){
+                        wareList.add(warehouseDO);
+                    }
                 }
             }else{
-                if (parseInt<200){
+                if (parseInt<wareNum){
                     wareList.add(warehouseDO);
                 }
             }

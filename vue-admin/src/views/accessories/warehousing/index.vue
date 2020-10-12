@@ -29,7 +29,7 @@
         />
         <el-table-column
           prop="no"
-          label="采购单号"
+          label="入库单号"
         />
         <el-table-column
           prop="money"
@@ -70,16 +70,6 @@
                 :key="item.id"
                 :label="item.fullName"
                 :value="item.fullName"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="采购单号:" prop="no">
-            <el-select v-model="formAdd.no" placeholder="此为必选项" @change="specificationChange">
-              <el-option
-                v-for="item in no"
-                :key="item.id"
-                :label="item.documentsNo"
-                :value="item.documentsNo"
               />
             </el-select>
           </el-form-item>
