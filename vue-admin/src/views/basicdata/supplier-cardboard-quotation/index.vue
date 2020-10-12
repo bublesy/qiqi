@@ -21,7 +21,7 @@
         </el-form-item>
 
         <el-button size="mini" type="primary" @click="loadData()">查询</el-button>
-        <el-button type="success" size="mini" @click="toExcel">Excel导出</el-button>
+        <el-button type="success" size="mini" @click="wholePrinting(scope)">打印</el-button>
       </el-form>
       <el-table
         ref="singleTable"
@@ -41,11 +41,12 @@
         <el-table-column property="cardboardQuotation" label="纸板报价" />
         <el-table-column property="preferentialSetting" label="优惠设定" />
         <el-table-column property="totalPrice" label="总价" />
-        <el-table-column label="操作" width="300px">
+        <el-table-column label="操作" width="400px">
           <template slot-scope="scope">
             <el-button type="primary" size="small" :disabled="scope.row.name!==null ?true : false" @click="supCarQuoAdd(scope)">新增纸板报价单</el-button>
             <el-button type="primary" size="small" :disabled="scope.row.name!==null ?false : true" @click="modifyPur(scope)">编辑</el-button>
             <el-button type="danger" size="small" @click="drop(scope)">删除</el-button>
+            <el-button type="success" size="small" @click="printing(scope)">生成打印单</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -103,7 +104,7 @@
 <script>
 import initData from '@/mixins/initData'
 import pinyin from 'js-pinyin'
-import { export2Excel } from '@/utils/common'
+// import { export2Excel } from '@/utils/common'
 import { add } from '@/api/supplier-cardboard-quotation/cardboard'
 import { list } from '@/api/supplier-cardboard-quotation/cardboard'
 import { removeById } from '@/api/supplier-cardboard-quotation/cardboard'
@@ -132,13 +133,29 @@ export default {
         abbreviation: '',
         time: ''
       },
-      pagerFor: []
+      pagerFor: [],
+      multipleSelection: []
     }
   },
   created() {
     this.init()
   },
   methods: {
+    wholePrinting() {
+      this.$router.push({
+        path: '/supplier_cardboard_printing',
+        query: { 'data': this.tableData }
+      })
+    },
+    // 打印
+    printing(scope) {
+      console.log(scope.row)
+      this.multipleSelection.push(scope.row)
+      this.$router.push({
+        path: '/supplier_cardboard_printing',
+        query: { 'data': this.multipleSelection }
+      })
+    },
     cardboardChange() {
       this.formAdd.totalPrice = this.formAdd.cardboardQuotation * this.formAdd.preferentialSetting
     },
@@ -153,14 +170,6 @@ export default {
         this.tableData = res.list
         this.pagination.total = res.total
       })
-    },
-    // 导出
-    toExcel() {
-      var list = this.tableData
-      const th = ['编码', '名称']
-      const filterVal = ['code', 'name']
-      const data = list.map(v => filterVal.map(k => v[k]))
-      export2Excel(th, data, '供应商纸板报价')
     },
     // 自动生成编码
     abbrevChange() {

@@ -56,7 +56,7 @@ public class WarningController {
     @PutMapping("")
     public Boolean updateWarning(@RequestBody WarningDO warningDO) {
         boolean flag = false;
-        List<WarningDO> list = warningService.list();
+            List<WarningDO> list = warningService.list();
         if (list.size() == 0){
             flag=warningService.save(warningDO);
         }else{
