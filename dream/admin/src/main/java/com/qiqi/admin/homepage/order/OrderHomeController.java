@@ -11,6 +11,8 @@ import com.qiqi.finance.entity.CustomerDetailDO;
 import com.qiqi.finance.service.CustomerDetailService;
 import com.qiqi.order.entity.OrderDO;
 import com.qiqi.order.service.OrderService;
+import com.qiqi.warning.entity.WarningDO;
+import com.qiqi.warning.service.WarningService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.ObjectUtils;
@@ -43,10 +45,24 @@ public class OrderHomeController {
     @Resource
     private CustomerDetailService customerDetailService;
 
+    @Resource
+    private WarningService warningService;
+
     @ApiOperation("未付款预警")
     @GetMapping("/warning")
     public List<WarningVO> getWarning(){
-        return customerDetailService.getWarning();
+        List<WarningDO> list = warningService.list();
+        WarningDO warningDO = null;
+        Integer orderDay = null;
+        if(!list.isEmpty()){
+            warningDO = list.get(0);
+        }
+        if(warningDO == null){
+            orderDay = 7;
+        }else {
+            orderDay = warningDO.getOrderDay() == null ? 7 : warningDO.getOrderDay();
+        }
+        return customerDetailService.getWarning(orderDay);
 
     }
 
