@@ -41,7 +41,7 @@
         <el-table-column property="cardboardQuotation" label="纸板报价" />
         <el-table-column property="preferentialSetting" label="优惠设定" />
         <el-table-column property="totalPrice" label="总价" />
-        <el-table-column label="操作" width="400px">
+        <el-table-column label="操作" width="500px">
           <template slot-scope="scope">
             <el-button type="primary" size="small" :disabled="scope.row.name!==null ?true : false" @click="supCarQuoAdd(scope)">新增纸板报价单</el-button>
             <el-button type="primary" size="small" :disabled="scope.row.name!==null ?false : true" @click="modifyPur(scope)">编辑</el-button>
