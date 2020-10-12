@@ -68,6 +68,32 @@ public class MaterialInStoreController {
         return materialInStoreService.getById(id);
     }
 
+    @ApiOperation(value = "获取(单个)")
+    @GetMapping("/intoHousing/{id}")
+    public boolean intoHousing(@PathVariable Long id) {
+        boolean flag =false;
+        MaterialInStoreDO materialInStore = materialInStoreService.getById(id);
+        String specificationId = materialInStore.getSpecificationId();
+        MaterialInventoryDO a = materialInventoryService.getNumBySpecificationId(specificationId);
+        MaterialDataDO byId = materialDataService.getById(specificationId);
+        if (a==null){
+            MaterialInventoryDO materialInventoryDO = new MaterialInventoryDO();
+            BeanUtil.copyProperties(materialInStore,materialInventoryDO);
+            materialInventoryDO.setNumber(materialInStore.getNum());
+            materialInventoryDO.setSupplierId(materialInStore.getSupplier());
+            materialInventoryDO.setUnit(byId.getUnit());
+            flag= materialInventoryService.saveOrUpdate(materialInventoryDO);
+        }else{
+            a.setNumber(a.getNumber()+materialInStore.getNum());
+            a.setSupplierId(materialInStore.getSupplier());
+            a.setUnit(byId.getUnit());
+            a.setPerPrice(materialInStore.getPerPrice());
+            a.setMoney(materialInStore.getMoney());
+            flag= materialInventoryService.updateById(a);
+        }
+        return flag;
+    }
+
     @ApiOperation(value = "修改")
     @PutMapping("")
     public Boolean updateMaterialInStore(@RequestBody MaterialInStoreDO materialInStoreDO) {
@@ -78,24 +104,6 @@ public class MaterialInStoreController {
     @PostMapping("")
     public Boolean saveMaterialInStore(@RequestBody MaterialInStoreDO materialInStoreDO) {
         SimpleDateFormat df = new SimpleDateFormat("yyMMddHHmmss");
-        String specificationId = materialInStoreDO.getSpecificationId();
-        MaterialInventoryDO a = materialInventoryService.getNumBySpecificationId(specificationId);
-        MaterialDataDO byId = materialDataService.getById(specificationId);
-        if (a==null){
-            MaterialInventoryDO materialInventoryDO = new MaterialInventoryDO();
-            BeanUtil.copyProperties(materialInStoreDO,materialInventoryDO);
-            materialInventoryDO.setNumber(materialInStoreDO.getNum());
-            materialInventoryDO.setSupplierId(materialInStoreDO.getSupplier());
-            materialInventoryDO.setUnit(byId.getUnit());
-            materialInventoryService.saveOrUpdate(materialInventoryDO);
-        }else{
-            a.setNumber(a.getNumber()+materialInStoreDO.getNum());
-            a.setSupplierId(materialInStoreDO.getSupplier());
-            a.setUnit(byId.getUnit());
-            a.setPerPrice(materialInStoreDO.getPerPrice());
-            a.setMoney(materialInStoreDO.getMoney());
-            materialInventoryService.updateById(a);
-        }
         materialInStoreDO.setNo(df.format(new Date()));
         return materialInStoreService.saveOrUpdate(materialInStoreDO);
     }

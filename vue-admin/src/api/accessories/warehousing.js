@@ -24,6 +24,10 @@ export function getById(id) {
   return request({ url: '/material/in/store/' + id, method: 'get' })
 }
 
+export function intoHousing(id) {
+  return request({ url: '/material/in/store/intoHousing/' + id, method: 'get' })
+}
+
 export function listunit(data) {
   return request({ url: '/material/data/list', method: 'post', data: data })
 }

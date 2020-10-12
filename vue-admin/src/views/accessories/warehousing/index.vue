@@ -37,13 +37,14 @@
         />
         <el-table-column
           label="操作"
-          width="150"
+          width="250"
         >
           <template slot-scope="scope">
             <el-button size="mini" type="warning" @click="modifyPur(scope)">编辑</el-button>
             <el-popconfirm title="内容确定删除吗？" @onConfirm="drop(scope)">
               <el-button slot="reference" type="danger" size="mini">删除</el-button>
             </el-popconfirm>
+            <el-button size="mini" type="warning" @click="warehousing(scope)">入库</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -118,7 +119,7 @@
 </template>
 <script>
 import initData from '@/mixins/initData'
-import { list, add, removeById, getById, listunit, supplier, purchaseList } from '@/api/accessories/warehousing'
+import { list, add, removeById, getById, intoHousing, listunit, supplier, purchaseList } from '@/api/accessories/warehousing'
 import { specificationList } from '@/api/accessories/means'
 import { export2Excel } from '@/utils/common'
 export default {
@@ -260,6 +261,15 @@ export default {
         this.table = res.list
         console.log(11)
         console.log(res)
+      })
+    },
+
+    // 入库
+    warehousing(scope) {
+      console.log(scope.row.specificationId)
+      var id = scope.row.id
+      intoHousing(id).then(res => {
+
       })
     },
     // 编辑
