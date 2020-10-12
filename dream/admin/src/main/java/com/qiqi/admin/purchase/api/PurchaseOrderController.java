@@ -18,6 +18,8 @@ import com.qiqi.sys.entity.SysUserDO;
 import com.qiqi.sys.service.SysUserService;
 import com.qiqi.warehouse.entity.WarehouseDO;
 import com.qiqi.warehouse.service.WarehouseService;
+import com.qiqi.warning.entity.WarningDO;
+import com.qiqi.warning.service.WarningService;
 import io.swagger.annotations.*;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,7 +59,8 @@ public class PurchaseOrderController {
     private EndProductWarehouseService endProductWarehouseService;
     @Resource
     private OrderService orderService;
-
+    @Resource
+    private WarningService warningService;
 
     @ApiOperation(value = "获取采购单(列表)")
     @ApiImplicitParams({
@@ -335,8 +338,13 @@ public class PurchaseOrderController {
         return purchaseOrderService.empty(id);
     }
 
+    Integer days =null;
     @GetMapping("/getSupplierSettData")
     public List getSupplierSettData(){
+        List<WarningDO> warningList = warningService.list();
+        for (WarningDO ware:warningList){
+            days = ware.getSupplierDay();
+        }
         List<PurchaseOrderDO> list = purchaseOrderService.list();
         List supplierList = new ArrayList();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -352,7 +360,10 @@ public class PurchaseOrderController {
             }
             Calendar rightNow = Calendar.getInstance();
             rightNow.setTime(dt);
-            rightNow.add(Calendar.DAY_OF_YEAR,(parseInt+3));//日期加10天
+            if (days == null || days == 0){
+                days =0;
+            }
+            rightNow.add(Calendar.DAY_OF_YEAR,(parseInt+days));//日期加10天
             Date dt1=rightNow.getTime();
             long time1 = dt1.getTime();
             Date date = null;

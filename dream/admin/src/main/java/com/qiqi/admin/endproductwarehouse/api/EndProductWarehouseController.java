@@ -17,7 +17,10 @@ import com.qiqi.order.service.DeliveryNoteService;
 import com.qiqi.order.service.OrderService;
 import com.qiqi.warehouse.entity.WarehouseDO;
 import com.qiqi.warehouse.service.WarehouseService;
+import com.qiqi.warning.entity.WarningDO;
+import com.qiqi.warning.service.WarningService;
 import io.swagger.annotations.*;
+import jdk.nashorn.internal.runtime.regexp.joni.Warnings;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.parameters.P;
 import org.springframework.util.ObjectUtils;
@@ -26,10 +29,12 @@ import com.qiqi.endproductwarehouse.service.EndProductWarehouseService;
 
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -54,6 +59,8 @@ public class EndProductWarehouseController {
     WarehouseService warehouseService;
     @Resource
     private DeliveryNoteService deliveryNoteService;
+    @Resource
+    private WarningService warningService;
 
     @ApiOperation(value = "获取产品仓库(列表)")
     @ApiImplicitParams({
@@ -244,22 +251,48 @@ public class EndProductWarehouseController {
     public Boolean deleteEndProductWarehouseById(@PathVariable Long id) {
         return endProductWarehouseService.removeById(id);
     }
-
+    Integer endNum = null;
+    Integer endWareSendDays =null;
     @GetMapping("/getEndWarDate")
     public List getEndWarDate(){
-       return endProductWarehouseService.list(new QueryWrapper<EndProductWarehouseDO>().le("end_product_pos", 200));
+        List<WarningDO> warningList = warningService.list();
+        for (WarningDO ware:warningList){
+            endNum = ware.getEndWareNum();
+        }
+        if (endNum ==null || endNum ==0){
+            endNum = 0;
+        }
+       return endProductWarehouseService.list(new QueryWrapper<EndProductWarehouseDO>().le("end_product_pos", endNum));
     }
 
     @GetMapping("/getEndDisData")
     public List getEndDisData(){
+        List<WarningDO> warningList = warningService.list();
+        for (WarningDO ware:warningList){
+            endWareSendDays = ware.getEndWareSendDays();
+        }
         List<EndProductWarehouseDO> list = endProductWarehouseService.list();
         List endList = new ArrayList();
         for (EndProductWarehouseDO endProductWarehouseDO :list){
             Integer alreadyDeliveryQuantity = endProductWarehouseDO.getAlreadyDeliveryQuantity();
             String orderQuantity = endProductWarehouseDO.getOrderQuantity();
-            int parseInt = Integer.parseInt(orderQuantity);
-            if (alreadyDeliveryQuantity!=parseInt){
-                endList.add(endProductWarehouseDO);
+
+            String orderId = endProductWarehouseDO.getOrderId();
+            OrderDO byId = orderService.getById(orderId);
+            Date deliveryDate = byId.getDeliveryDate();
+//            long time = deliveryDate.getTime();
+            Calendar rightNow = Calendar.getInstance();
+            rightNow.setTime(deliveryDate);
+            rightNow.add(Calendar.DAY_OF_YEAR,(endWareSendDays));//日期加天数
+            Date time = rightNow.getTime();
+            long time1 = time.getTime();
+            Date dateTime = new Date();
+            long time2 = dateTime.getTime();
+            if (time1<time2){
+                int parseInt = Integer.parseInt(orderQuantity);
+                if (alreadyDeliveryQuantity!=parseInt){
+                    endList.add(endProductWarehouseDO);
+                }
             }
         }
         return endList;

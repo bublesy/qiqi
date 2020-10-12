@@ -55,7 +55,14 @@ public class WarningController {
     @ApiOperation(value = "修改预警")
     @PutMapping("")
     public Boolean updateWarning(@RequestBody WarningDO warningDO) {
-        return warningService.updateById(warningDO);
+        boolean flag = false;
+        List<WarningDO> list = warningService.list();
+        if (list.size() == 0){
+            flag=warningService.save(warningDO);
+        }else{
+            flag=warningService.updateById(warningDO);
+        }
+        return flag;
     }
 
     @ApiOperation(value = "新增预警")

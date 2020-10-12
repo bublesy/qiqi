@@ -43,7 +43,7 @@ public class WarningDO extends BaseModel {
     /**
      * 预警成品仓库发货数量
      */
-    private Integer endWareSendNum;
+    private Integer endWareSendDays;
 
 
 }
