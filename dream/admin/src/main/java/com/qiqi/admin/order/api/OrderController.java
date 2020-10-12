@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.*;
 import sun.awt.SunHints;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -186,6 +187,7 @@ public class OrderController {
         if(orderId == null){
             CustomerDetailDO customerDetailDO = new CustomerDetailDO();
             customerDetailDO.setOrderId(orderDO.getId());
+            customerDetailDO.setPayed(BigDecimal.ZERO);
             customerDetailService.save(customerDetailDO);
         }
         return b;

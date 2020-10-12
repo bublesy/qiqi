@@ -18,6 +18,7 @@ import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -44,7 +45,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserDO> im
 
         List<String> permissions = allMenuList.stream().map(SysMenuDO::getCode).collect(toList());
         List<SysMenuDO> list = allMenuList.stream().filter(data -> data.getType() != MenuTypeEnum.BUTTON.getCode()).collect(toList());
-
+        list.sort(Comparator.comparing(SysMenuDO::getSort));
         List<MenuVo> menus = TreeUtil.getTreeList(0L, Convert.convert(new TypeReference<List<MenuVo>>() {}, list));
 
         userInfoVo.setAvatar(sysUserDO.getAvatar());
