@@ -16,5 +16,5 @@ import java.util.List;
  */
 public interface CustomerDetailMapper extends BaseMapper<CustomerDetailDO> {
 
-    List<WarningVO> getWarning();
+    List<WarningVO> getWarning(Integer orderDay);
 }

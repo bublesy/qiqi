@@ -16,5 +16,5 @@ import java.util.List;
  */
 public interface CustomerDetailService extends IService<CustomerDetailDO> {
 
-    List<WarningVO> getWarning();
+    List<WarningVO> getWarning(Integer orderDay);
 }

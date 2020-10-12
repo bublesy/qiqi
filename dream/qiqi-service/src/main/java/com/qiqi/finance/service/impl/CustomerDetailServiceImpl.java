@@ -25,7 +25,7 @@ public class CustomerDetailServiceImpl extends ServiceImpl<CustomerDetailMapper,
     CustomerDetailMapper customerDetailMapper;
 
     @Override
-    public List<WarningVO> getWarning() {
-        return customerDetailMapper.getWarning();
+    public List<WarningVO> getWarning(Integer orderDay) {
+        return customerDetailMapper.getWarning(orderDay);
     }
 }
