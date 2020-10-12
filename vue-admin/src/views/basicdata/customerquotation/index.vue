@@ -23,7 +23,7 @@
       ref="table"
       :data="tableData"
       tooltip-effect="dark"
-      style="width: 100%"
+      style="width: 85%"
       border
       stripe
       @selection-change="handleSelectionChange"
@@ -46,7 +46,7 @@
           <el-input-number v-model="scope.row.BoxPrice" size="mini" :precision="2" :controls="false" :min="0" style="width:90px" />
         </template>
       </el-table-column> -->
-      <el-table-column label="操作" width="350">
+      <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" :disabled="scope.row.totalPrice===null?false:true" @click="add(scope.row.id)">新增报价单</el-button>
           <el-button type="warning" size="mini" @click="updated(scope.row.id)">编辑</el-button>
