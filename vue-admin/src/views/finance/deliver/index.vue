@@ -40,16 +40,16 @@
     >
       <!-- <el-table-column type="selection" width="55" /> -->
       <el-table-column prop="name" label="客户名称" width="180" />
-      <el-table-column prop="outNo" label="出货单号" />
+      <el-table-column prop="outNos" label="出货单号" />
       <el-table-column prop="material" label="材质" />
       <el-table-column prop="boxType" label="箱型" />
-      <el-table-column prop="sendNum" label="出货数量" />
+      <el-table-column prop="sendNums" label="出货数量" />
       <el-table-column prop="orderNum" label="订单数量" />
       <el-table-column prop="perPrice" label="单价" />
       <el-table-column prop="money" label="金额" />
       <el-table-column prop="unit" label="单位" />
       <el-table-column prop="signs" label="回签状态" />
-      <el-table-column prop="settlement" label="结算状态" />
+      <el-table-column prop="settlements" label="结算状态" />
       <el-table-column prop="remark" label="备注" />
       <!-- <el-table-column label="操作">
         <template slot-scope="scope">
@@ -161,10 +161,9 @@ export default window.$crudCommon({
       this.form.page = this.pagination.page
       this.form.count = this.pagination.size
       getList(this.form).then(res => {
-        console.log(res)
         this.tableData = res.list
         this.tableData.forEach(a => {
-          console.log(a.signs)
+          a.money = a.perPrice * a.sendNums
           if (a.signs === null) {
             // a.signs === '未回签'
             this.$set(a, 'signs', '未回签')
