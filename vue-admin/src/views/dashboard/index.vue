@@ -38,6 +38,7 @@
         <el-table-column v-show="true" prop="orderNum" label="订单数量" width="200" />
         <el-table-column label="金额" prop="money" />
         <el-table-column v-show="true" prop="deliveryDate" label="交货日期" />
+        <el-table-column label="期初金额" prop="beginReceive" />
         <el-table-column v-show="true" prop="payed" label="已付款" />
         <el-table-column v-show="true" prop="unPayed" label="未付款" />
       </el-table>
