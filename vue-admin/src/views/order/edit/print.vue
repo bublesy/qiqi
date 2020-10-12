@@ -32,7 +32,7 @@
         <el-table-column prop="productNum" label="已产数量" width="120" />
         <el-table-column prop="productSpace" label="成品仓位" width="120" />
         <el-table-column prop="sendNum" label="已送数量" width="120" />
-        <el-table-column prop="refundNum" label="退货数量" width="120" />
+        <!-- <el-table-column prop="refundNum" label="退货数量" width="120" /> -->
         <!-- <el-table-column prop="lossNum" label="损耗数量" width="120" /> -->
         <el-table-column prop="orderDate" label="下单日期" width="120" />
         <el-table-column prop="deliveryDate" label="交货日期" width="120" />

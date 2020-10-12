@@ -74,7 +74,7 @@
         <el-table-column prop="productNum" label="已产数量" width="120" />
         <el-table-column prop="productSpace" label="成品仓位" width="120" />
         <el-table-column prop="sendNum" label="已送数量" width="120" />
-        <el-table-column prop="refundNum" label="退货数量" width="120" />
+        <!-- <el-table-column prop="refundNum" label="退货数量" width="120" /> -->
         <!-- <el-table-column prop="lossNum" label="损耗数量" width="120" /> -->
         <el-table-column prop="orderDate" label="下单日期" width="120" />
         <el-table-column prop="deliveryDate" label="交货日期" width="120" />
@@ -99,7 +99,7 @@
             <el-popconfirm title="审核后将不可更改!" @onConfirm="audit(scope.row.id)">
               <el-button slot="reference" type="primary" size="mini" :disabled="scope.row.audit==='审核'?true:false">审核</el-button>
             </el-popconfirm>
-            <el-button type="primary" size="mini" @click="refund(scope.row)" @init="initTable">退货</el-button>
+            <!-- <el-button type="primary" size="mini" @click="refund(scope.row)" @init="initTable">退货</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -250,8 +250,8 @@ export default {
     },
     toExcel() {
       var list = this.tableData
-      const th = ['任务编号', '客户名称', '客户单号', '款号', '箱型', '材质', '纸箱尺寸(mm)', '订单数量', '金额', '纸板到货数量', '已产数量', '成品仓位', '已送数量', '退货数量', '下单日期', '交货日期', '仓库状态']
-      const filterVal = ['no', 'name', 'customerNo', 'modelNo', 'boxType', 'material', 'cartonSize', 'orderNum', 'money', 'incomeNum', 'productNum', 'productSpace', 'sendNum', 'refundNum', 'orderDate', 'deliveryDate', 'wosState']
+      const th = ['任务编号', '客户名称', '客户单号', '款号', '箱型', '材质', '纸箱尺寸(mm)', '订单数量', '金额', '纸板到货数量', '已产数量', '成品仓位', '已送数量', /* '退货数量',*/ '下单日期', '交货日期', '仓库状态']
+      const filterVal = ['no', 'name', 'customerNo', 'modelNo', 'boxType', 'material', 'cartonSize', 'orderNum', 'money', 'incomeNum', 'productNum', 'productSpace', 'sendNum', /* 'refundNum',*/ 'orderDate', 'deliveryDate', 'wosState']
       const data = list.map(v => filterVal.map(k => v[k]))
       export2Excel(th, data, '客户订单')
     },
