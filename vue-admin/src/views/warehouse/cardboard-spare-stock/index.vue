@@ -21,19 +21,20 @@
         ref="singleTable"
         :data="stockSpareTable"
         highlight-current-row
-        style="width: 100%"
+        style="width: 80%"
         align="center"
+        border
       >
         <el-table-column property="supplierName" label="供方" width="120" />
         <el-table-column property="materialId" label="材质" width="120" />
         <el-table-column property="ridgeTypeId" label="楞型" width="120" />
-        <el-table-column property="specification" label="分压规格" width="120" />
+        <el-table-column property="specification" label="分压规格" />
         <el-table-column property="paperLength" label="纸长" width="120" />
         <el-table-column property="paperWidth" label="纸宽" width="120" />
         <el-table-column property="purchaseQuantity" label="购入数量" width="120" />
         <el-table-column property="unitPrice" label="单价" width="120" />
-        <el-table-column property="remark" label="备注" width="120" />
-        <el-table-column label="操作" width="120">
+        <el-table-column property="remark" label="备注" />
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="danger" size="small" @click="drop(scope)">删除</el-button>
             <el-button type="primary" size="small" @click="modifyPur(scope)">编辑</el-button>
