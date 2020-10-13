@@ -29,6 +29,7 @@
           highlight-current-row
           style="width: 100%"
           align="center"
+          border
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" />

@@ -20,6 +20,7 @@
           :data="tableData"
           highlight-current-row
           style="width: 100%"
+          border
           @selection-change="handleSelectionChange"
         >
           <el-table-column v-show="true" prop="warehouseNo" label="入仓单号" width="140" />
