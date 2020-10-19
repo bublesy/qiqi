@@ -62,46 +62,6 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: '主页', icon: 'dashboard', affix: true }
     }]
-  },
-  {
-    path: '/index',
-    component: () => import('@/views/order/product/index')
-  },
-  {
-    path: '/index2',
-    component: () => import('@/views/order/product/index2')
-  },
-  {
-    path: '/customerOrder',
-    component: () => import('@/views/order/edit/print')
-  },
-  {
-    path: '/scheduleOrder',
-    component: () => import('@/views/order/schedule/print')
-  },
-  {
-    path: '/prodailyOrder',
-    component: () => import('@/views/order/prodaily/print')
-  },
-  {
-    path: '/dailyOrder',
-    component: () => import('@/views/order/daily/print')
-  },
-  {
-    path: '/noProductOrder',
-    component: () => import('@/views/order/ordernotproduct/print')
-  },
-  {
-    path: '/noPayOrder',
-    component: () => import('@/views/order/ordernotpay/print')
-  },
-  {
-    path: '/shipOrder',
-    component: () => import('@/views/order/shipdaily/print')
-  },
-  {
-    path: '/customerquotationprint',
-    component: () => import('@/views/basicdata/customerquotation/print')
   }
 ]
 

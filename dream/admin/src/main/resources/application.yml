@@ -26,25 +26,4 @@ spring:
 jwt:
   secret: qiqi-admin-secret #JWT加解密使用的密钥
   expiration: 604800 #JWT的超期限时间(60*60*24*7)
-fdfs:
-  # 链接超时
-  connect-timeout: 60
-  # 读取时间
-  so-timeout: 60
-  # 生成缩略图参数
-  thumb-image:
-    width: 150
-    height: 150
-  tracker-list: 192.168.1.150:8080
-minio:
-  # 图片bucket名称
-  imageBucket: "images"
-  # 视频bucket名称
-  videoBucket: "videos"
-  # 文档bucket名称
-  docBucket: "document"
-  # Minio服务地址
-  host: "http://oss.qiqidream.fun"
-  access-key: "jcy"
-  secret-key: "jcy123456"
 
